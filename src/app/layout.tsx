@@ -25,6 +25,11 @@ export const metadata: Metadata = {
     "Admit Card 2026",
     "indiajobnotice.com",
   ],
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
