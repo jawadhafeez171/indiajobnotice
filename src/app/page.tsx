@@ -114,19 +114,22 @@ export default function HomePage() {
         </section>
 
         {/* Central Govt Circulars */}
-        <section>
-          <div className="flex items-baseline justify-between mb-4 border-b border-[#EAE2D2] pb-2">
+        <section id="central-jobs">
+          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 mb-4 border-b border-[#EAE2D2] pb-2">
             <div className="flex items-center gap-2.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#1E3799]" />
               <div>
                 <h2 className="font-serif text-xl font-bold text-[#1A1918]">
-                  Central Government Notifications
+                  Central Government Gazette Circulars
                 </h2>
                 <p className="text-xs text-[#68635B]">
-                  UPSC, Staff Selection Commission (SSC), Railways (RRB), and Banking (IBPS)
+                  Complete coverage across UPSC (CSE, NDA, CDS, CAPF), SSC (CGL, CHSL, GD, MTS, CPO), Railways (NTPC, Group D, ALP, JE), Banking (SBI, IBPS, RBI), Teaching & Postal
                 </p>
               </div>
             </div>
+            <span className="text-xs font-mono font-bold text-[#1E3799] bg-[#EEF2FA] px-2.5 py-1 rounded border border-[#CCD8F0] self-start sm:self-auto shrink-0">
+              {centralJobs.length} Central Gazettes Active
+            </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

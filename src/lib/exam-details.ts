@@ -51,6 +51,167 @@ const EXAM_DATA_REGISTRY: Record<
     syllabus: SyllabusSubjectSection[];
   }
 > = {
+  "upsc-cse-2026": {
+    stages: [
+      {
+        stageName: "Stage 1: Civil Services Preliminary Examination (Screening)",
+        mode: "Offline (OMR Sheet)",
+        totalQuestions: 180,
+        totalMarks: 400,
+        duration: "2 Hours per Paper (Morning & Afternoon)",
+        negativeMarking: "1/3rd (0.33%) deducted for each incorrect MCQ",
+        qualifyingCriteria: "Paper-2 (CSAT) mandatory 33% qualifying. Merit for Mains based strictly on Paper-1 GS.",
+        subjects: [
+          { name: "Paper-1: General Studies (History, Polity, Geography, Economy, Env, Current)", questions: 100, marks: 200, durationMinutes: 120 },
+          { name: "Paper-2: CSAT (Comprehension, Reasoning, Basic Numeracy - 33% Qualifying)", questions: 80, marks: 200, durationMinutes: 120 },
+        ],
+      },
+      {
+        stageName: "Stage 2: Civil Services Main Examination (Written Descriptive)",
+        mode: "Descriptive (Subjective Pen-Paper)",
+        totalQuestions: 9,
+        totalMarks: 1750,
+        duration: "3 Hours each Paper (5 Days)",
+        negativeMarking: "Subjective Evaluation",
+        qualifyingCriteria: "Papers A & B (Languages) qualifying (25%). Merit computed out of 1750 marks across 7 ranking papers.",
+        subjects: [
+          { name: "Paper A: Indian Language (Qualifying - 300M)", questions: 6, marks: 300 },
+          { name: "Paper B: English Language (Qualifying - 300M)", questions: 5, marks: 300 },
+          { name: "Paper I: Essay Paper (Two 1000-1200 word essays)", questions: 2, marks: 250 },
+          { name: "Paper II: General Studies I (Heritage, Culture, History & Geography)", questions: 20, marks: 250 },
+          { name: "Paper III: General Studies II (Governance, Constitution, Polity, Social Justice & IR)", questions: 20, marks: 250 },
+          { name: "Paper IV: General Studies III (Technology, Economic Development, Biodiversity, Security)", questions: 20, marks: 250 },
+          { name: "Paper V: General Studies IV (Ethics, Integrity and Aptitude)", questions: 12, marks: 250 },
+          { name: "Paper VI: Optional Subject Paper 1", questions: 5, marks: 250 },
+          { name: "Paper VII: Optional Subject Paper 2", questions: 5, marks: 250 },
+        ],
+      },
+      {
+        stageName: "Stage 3: Personality Test / Interview (Dholpur House)",
+        mode: "UPSC Board Interview",
+        totalQuestions: 0,
+        totalMarks: 275,
+        duration: "30 to 45 Minutes",
+        qualifyingCriteria: "Grand Total computed out of 2025 Marks (1750 Mains + 275 Interview) for IAS/IPS cadre allotment.",
+        subjects: [
+          { name: "Board Assessment: Intellectual integrity, mental caliber, leadership & administrative judgment", questions: 0, marks: 275 },
+        ],
+      },
+    ],
+    cutoffs: [
+      { year: "2023 Final (Prelims)", category: "General (UR)", score: "75.41", maxMarks: "200" },
+      { year: "2023 Final (Prelims)", category: "EWS", score: "68.02", maxMarks: "200" },
+      { year: "2023 Final (Prelims)", category: "OBC", score: "74.75", maxMarks: "200" },
+      { year: "2023 Final (Prelims)", category: "SC", score: "59.25", maxMarks: "200" },
+      { year: "2023 Final (Prelims)", category: "ST", score: "47.82", maxMarks: "200" },
+    ],
+    syllabus: [
+      {
+        subject: "General Studies Paper-1 (Prelims)",
+        topics: [
+          "Current Events of National and International Importance",
+          "History of India and Indian National Movement",
+          "Indian and World Geography - Physical, Social, Economic Geography of India and the World",
+          "Indian Polity and Governance - Constitution, Political System, Panchayati Raj, Public Policy, Rights Issues",
+          "Economic and Social Development - Sustainable Development, Poverty, Inclusion, Demographics, Social Sector Initiatives",
+          "General issues on Environmental Ecology, Bio-diversity and Climate Change",
+        ],
+      },
+      {
+        subject: "Civil Services Aptitude Test (CSAT)",
+        topics: [
+          "Reading Comprehension & Interpersonal Skills",
+          "Logical Reasoning and Analytical Ability",
+          "Decision-making and Problem-solving",
+          "General Mental Ability & Basic Numeracy (Numbers and their relations, Orders of magnitude up to Class X)",
+          "Data Interpretation (Charts, graphs, tables, data sufficiency up to Class X)",
+        ],
+      },
+    ],
+  },
+  "ssc-gd-constable-2026": {
+    stages: [
+      {
+        stageName: "Stage 1: Computer Based Examination (CBE 160 Marks)",
+        mode: "Online (CBT)",
+        totalQuestions: 80,
+        totalMarks: 160,
+        duration: "60 Minutes",
+        negativeMarking: "0.25 marks deducted for each wrong answer (+2 for correct)",
+        qualifyingCriteria: "Shortlisted candidates (8 times vacancies) called for PST & PET round",
+        subjects: [
+          { name: "Part A: General Intelligence & Reasoning", questions: 20, marks: 40 },
+          { name: "Part B: General Knowledge & General Awareness", questions: 20, marks: 40 },
+          { name: "Part C: Elementary Mathematics", questions: 20, marks: 40 },
+          { name: "Part D: English OR Hindi (Language choice)", questions: 20, marks: 40 },
+        ],
+      },
+      {
+        stageName: "Stage 2: Physical Standard Test (PST) & Physical Efficiency Test (PET)",
+        mode: "Ground Field Race & Measurements",
+        totalQuestions: 0,
+        totalMarks: 0,
+        duration: "Standard timing on race ground",
+        qualifyingCriteria: "Must qualify running endurance within prescribed time limits",
+        subjects: [
+          { name: "Male Running: 5 km race in 24 minutes", questions: 1, marks: 0 },
+          { name: "Female Running: 1.6 km race in 8.5 minutes", questions: 1, marks: 0 },
+        ],
+      },
+      {
+        stageName: "Stage 3: Detailed Medical Examination (DME) & Document Verification",
+        mode: "CAPF Medical Board Verification",
+        totalQuestions: 0,
+        totalMarks: 0,
+        duration: "Hospital Board",
+        qualifyingCriteria: "Eye vision minimum 6/6 & 6/9 without glasses, no color blindness, orthopedic check",
+        subjects: [],
+      },
+    ],
+    physical: {
+      heightMale: "170 cm (162.5 cm for ST; 165 cm for North-East & Hill tribes)",
+      heightFemale: "157 cm (150 cm for ST; 152.5 cm for Hill tribes)",
+      chestMale: "80 cm unexpanded with minimum 5 cm expansion (76 cm for ST)",
+      runningMale: "5 km within 24 Minutes (Qualifying)",
+      runningFemale: "1.6 km within 8.5 Minutes (Qualifying)",
+      otherCriteria: "Proportionate weight to height and age as per medical standards. Tattoos on salute arm prohibited.",
+    },
+    cutoffs: [
+      { year: "Previous Cycle (SSB/CISF GD)", category: "UR (All-India)", score: "138.50", maxMarks: "160" },
+      { year: "Previous Cycle (SSB/CISF GD)", category: "OBC", score: "135.20", maxMarks: "160" },
+      { year: "Previous Cycle (SSB/CISF GD)", category: "EWS", score: "132.80", maxMarks: "160" },
+      { year: "Previous Cycle (SSB/CISF GD)", category: "SC", score: "123.40", maxMarks: "160" },
+      { year: "Previous Cycle (SSB/CISF GD)", category: "ST", score: "118.60", maxMarks: "160" },
+    ],
+    syllabus: [
+      {
+        subject: "General Intelligence & Reasoning",
+        topics: [
+          "Arithmetic Number Series, Non-verbal series, Coding and Decoding",
+          "Spatial Visualization, Spatial Orientation, Visual Memory",
+          "Discrimination, Observation, Relationship concepts, Arithmetical reasoning",
+          "Analogies, Similarities and Differences",
+        ],
+      },
+      {
+        subject: "General Knowledge & General Awareness",
+        topics: [
+          "Sports, History, Culture, Geography, Economic Scene",
+          "General Polity, Indian Constitution, Scientific Research",
+          "Current Affairs of National and International importance",
+        ],
+      },
+      {
+        subject: "Elementary Mathematics",
+        topics: [
+          "Number Systems, Computation of Whole Numbers, Decimals and Fractions",
+          "Fundamental arithmetical operations, Percentages, Ratio and Proportion",
+          "Averages, Interest (Simple & Compound), Profit and Loss, Discount",
+          "Mensuration, Time and Distance, Ratio and Time, Time and Work",
+        ],
+      },
+    ],
+  },
   "ssc-cgl-2026": {
     stages: [
       {
@@ -295,6 +456,205 @@ const EXAM_DATA_REGISTRY: Record<
           "Advanced Puzzles: Circular, Linear, Floor-Flat, Box arrangements",
           "Machine Input-Output, Coded Inequalities, Direction & Distance",
           "Critical Reasoning: Statement-Assumption, Cause & Effect, Inference",
+        ],
+      },
+    ],
+  },
+  "rrb-group-d-2026": {
+    stages: [
+      {
+        stageName: "Stage 1: Computer Based Test (CBT 100 Marks)",
+        mode: "Online (CBT)",
+        totalQuestions: 100,
+        totalMarks: 100,
+        duration: "90 Minutes (120 minutes for PwBD)",
+        negativeMarking: "1/3rd (0.33 mark) deducted for each incorrect answer",
+        qualifyingCriteria: "Shortlisting 3 times vacancy for Physical Efficiency Test (PET)",
+        subjects: [
+          { name: "General Science (Physics, Chemistry, Life Sciences up to 10th CBSE)", questions: 25, marks: 25 },
+          { name: "Mathematics (Arithmetic, Algebra, Geometry, Stats)", questions: 25, marks: 25 },
+          { name: "General Intelligence and Reasoning", questions: 30, marks: 30 },
+          { name: "General Awareness and Current Affairs", questions: 20, marks: 20 },
+        ],
+      },
+      {
+        stageName: "Stage 2: Physical Efficiency Test (PET - Mandatory Qualifying)",
+        mode: "Field Athletics Test",
+        totalQuestions: 0,
+        totalMarks: 0,
+        duration: "Standard timing on race ground",
+        qualifyingCriteria: "Must qualify both weight-carry and running events without setting down weight",
+        subjects: [
+          { name: "Male Weight Carry: 35 kg weight for a distance of 100 meters in 2 minutes", questions: 1, marks: 0 },
+          { name: "Male Running: 1,000 meters in 4 minutes 15 seconds in one single chance", questions: 1, marks: 0 },
+          { name: "Female Weight Carry: 20 kg weight for a distance of 100 meters in 2 minutes", questions: 1, marks: 0 },
+          { name: "Female Running: 1,000 meters in 5 minutes 40 seconds in one single chance", questions: 1, marks: 0 },
+        ],
+      },
+      {
+        stageName: "Stage 3: Document Verification (DV) and Medical Examination",
+        mode: "Railway Hospital Medical Board",
+        totalQuestions: 0,
+        totalMarks: 0,
+        duration: "As per Railway norms",
+        qualifyingCriteria: "Medical Standards A-2, A-3, B-1, B-2, C-1 and C-2 depending on post assignment",
+        subjects: [],
+      },
+    ],
+    cutoffs: [
+      { year: "Previous Cycle (Normalized)", category: "UR (General)", score: "68.20 - 74.50", maxMarks: "100" },
+      { year: "Previous Cycle (Normalized)", category: "OBC", score: "63.40 - 70.10", maxMarks: "100" },
+      { year: "Previous Cycle (Normalized)", category: "EWS", score: "54.00 - 62.50", maxMarks: "100" },
+      { year: "Previous Cycle (Normalized)", category: "SC", score: "55.80 - 64.20", maxMarks: "100" },
+      { year: "Previous Cycle (Normalized)", category: "ST", score: "48.90 - 58.70", maxMarks: "100" },
+    ],
+    syllabus: [
+      {
+        subject: "General Science",
+        topics: [
+          "Physics: Work, Power, Energy, Gravitation, Electricity, Optics, Sound",
+          "Chemistry: Periodic Table, Acids & Bases, Chemical Reactions, Metals and Non-metals",
+          "Biology: Cell Structure, Human Body Systems, Genetics, Ecology, Diseases",
+        ],
+      },
+      {
+        subject: "Mathematics",
+        topics: [
+          "Number system, BODMAS, Decimals, Fractions, LCM, HCF",
+          "Ratio and Proportion, Percentages, Mensuration, Time and Work",
+          "Time and Distance, Simple and Compound Interest, Profit and Loss",
+          "Algebra, Geometry and Trigonometry, Elementary Statistics",
+        ],
+      },
+    ],
+  },
+  "sbi-po-2026": {
+    stages: [
+      {
+        stageName: "Phase-I: Preliminary Examination (Online 100 Marks)",
+        mode: "Online (CBT)",
+        totalQuestions: 100,
+        totalMarks: 100,
+        duration: "60 Minutes (Strictly 20 mins per section)",
+        negativeMarking: "1/4th (0.25 mark) penalty for wrong answers",
+        qualifyingCriteria: "Top 10 times total vacancies shortlisted for Phase-II Mains",
+        subjects: [
+          { name: "English Language", questions: 30, marks: 30, durationMinutes: 20 },
+          { name: "Quantitative Aptitude", questions: 35, marks: 35, durationMinutes: 20 },
+          { name: "Reasoning Ability", questions: 35, marks: 35, durationMinutes: 20 },
+        ],
+      },
+      {
+        stageName: "Phase-II: Main Examination (Objective 200M + Descriptive 50M)",
+        mode: "Online (CBT + Typing)",
+        totalQuestions: 157,
+        totalMarks: 250,
+        duration: "3 Hours 30 Minutes",
+        negativeMarking: "1/4th (0.25 mark) penalty for wrong objective answers",
+        qualifyingCriteria: "Score normalized to 75 marks out of 100 for final merit",
+        subjects: [
+          { name: "Reasoning & Computer Aptitude", questions: 40, marks: 50, durationMinutes: 50 },
+          { name: "Data Analysis & Interpretation", questions: 30, marks: 50, durationMinutes: 45 },
+          { name: "General / Economy / Banking Awareness", questions: 50, marks: 60, durationMinutes: 45 },
+          { name: "English Language", questions: 35, marks: 40, durationMinutes: 40 },
+          { name: "Descriptive Writing (Letter & Essay Typing)", questions: 2, marks: 50, durationMinutes: 30 },
+        ],
+      },
+      {
+        stageName: "Phase-III: Psychometric Test, Group Exercises (20M) & Interview (30M)",
+        mode: "In-Person Assessment at SBI LHO",
+        totalQuestions: 0,
+        totalMarks: 50,
+        duration: "Group Discussion + 25 mins Interview",
+        qualifyingCriteria: "Normalized to 25 marks. Final merit out of 100 (75 Mains + 25 Phase-III).",
+        subjects: [
+          { name: "Group Discussion & Prioritization Exercise", questions: 1, marks: 20 },
+          { name: "Personal Interview & Banking Acumen", questions: 0, marks: 30 },
+        ],
+      },
+    ],
+    cutoffs: [
+      { year: "2023-24 Cycle (Prelims)", category: "General (UR)", score: "59.25", maxMarks: "100" },
+      { year: "2023-24 Cycle (Prelims)", category: "EWS", score: "59.25", maxMarks: "100" },
+      { year: "2023-24 Cycle (Prelims)", category: "OBC", score: "59.25", maxMarks: "100" },
+      { year: "2023-24 Cycle (Prelims)", category: "SC", score: "53.00", maxMarks: "100" },
+      { year: "2023-24 Cycle (Prelims)", category: "ST", score: "47.50", maxMarks: "100" },
+    ],
+    syllabus: [
+      {
+        subject: "Data Analysis & Interpretation (SBI Standard)",
+        topics: [
+          "Advanced Caselets & Missing Variable Data Interpretation",
+          "Scatter Plot, Radar Graph, Probability-based DI",
+          "Data Sufficiency (3 Statements), Arithmetic Word Problems",
+        ],
+      },
+      {
+        subject: "Banking & Financial Awareness",
+        topics: [
+          "SBI products, YONO platform, financial technology initiatives",
+          "Monetary policy, NPA resolution, Insolvency & Bankruptcy Code",
+          "Union Budget allocations, Economic Survey highlights",
+        ],
+      },
+    ],
+  },
+  "upsc-nda-2026": {
+    stages: [
+      {
+        stageName: "Stage 1: Written Examination (Mathematics + GAT 900 Marks)",
+        mode: "Offline (OMR Sheet)",
+        totalQuestions: 270,
+        totalMarks: 900,
+        duration: "5 Hours (2.5 Hours Math + 2.5 Hours GAT)",
+        negativeMarking: "1/3rd (0.33%) deducted for each incorrect answer",
+        qualifyingCriteria: "Minimum qualifying standard: 25% marks in each paper mandatory",
+        subjects: [
+          { name: "Code 01: Mathematics (Algebra, Calculus, Matrices, Trig)", questions: 120, marks: 300, durationMinutes: 150 },
+          { name: "Code 02: General Ability Test (Part A English 200M + Part B GK 400M)", questions: 150, marks: 600, durationMinutes: 150 },
+        ],
+      },
+      {
+        stageName: "Stage 2: SSB Interview (Intelligence & Personality Test)",
+        mode: "5-Day Services Selection Board",
+        totalQuestions: 0,
+        totalMarks: 900,
+        duration: "5 Consecutive Days",
+        qualifyingCriteria: "Officer Intelligence Rating (OIR), PPDT, GTO tasks, Psychology test, and Final Board Conference",
+        subjects: [
+          { name: "Stage-I: Screening (OIR & PPDT)", questions: 2, marks: 0 },
+          { name: "Stage-II: Psychological Tests, Group Testing Officer (GTO) Tasks & Interview", questions: 0, marks: 900 },
+        ],
+      },
+    ],
+    physical: {
+      heightMale: "157 cm (162.5 cm for Air Force Flying Branch; 152 cm for Gorkhas/Hills)",
+      heightFemale: "152 cm (162.5 cm for Air Force Flying Branch)",
+      chestMale: "Minimum 5 cm expansion required",
+      runningMale: "2.4 km run in 15 minutes, 20 Squats, Pushups & Chin-ups (Recommended physical standard)",
+      runningFemale: "2.4 km run in 17 minutes, 15 Squats, Pushups",
+      otherCriteria: "Unmarried status strictly enforced during entire training at NDA Khadakwasla.",
+    },
+    cutoffs: [
+      { year: "NDA (Previous Exam)", category: "Written Exam Minimum", score: "301", maxMarks: "900" },
+      { year: "NDA (Previous Exam)", category: "Final Recommended Candidate", score: "664", maxMarks: "1800" },
+    ],
+    syllabus: [
+      {
+        subject: "Mathematics (NDA Syllabus)",
+        topics: [
+          "Algebra: Sets, Relations, Complex Numbers, Progressions, Permutations & Combinations",
+          "Matrices and Determinants: Applications to system of linear equations",
+          "Trigonometry: Angles, Properties of Triangles, Inverse trigonometric functions",
+          "Analytical Geometry: 2D and 3D Lines, Conic sections, Sphere",
+          "Differential & Integral Calculus, Vectors, Statistics and Probability",
+        ],
+      },
+      {
+        subject: "General Ability Test (GAT)",
+        topics: [
+          "Part A (English): Grammar, Usage, Vocabulary, Comprehension (200 marks)",
+          "Part B (General Knowledge): Physics (100M), Chemistry (60M), General Science (40M), History & Freedom Movement (80M), Geography (80M), Current Events (40M)",
         ],
       },
     ],
