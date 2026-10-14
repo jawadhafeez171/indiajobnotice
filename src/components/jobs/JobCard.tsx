@@ -1,9 +1,12 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import { JobNotification, getCategoryColors } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
-import { FileText, ArrowRight } from "lucide-react";
+import { FileText, ArrowRight, Bookmark } from "lucide-react";
+import { useWatchlist } from "@/lib/watchlist";
 
 interface Props {
   job: JobNotification;
@@ -11,6 +14,9 @@ interface Props {
 }
 
 export function JobCard({ job, currentStateSlug }: Props) {
+  const { isSaved, toggleSave } = useWatchlist();
+  const saved = isSaved(job.id);
+
   const daysLeft = getDaysRemaining(job.applicationEndDate);
   const isEndingSoon = daysLeft > 0 && daysLeft <= 7;
   const categoryColors = getCategoryColors(job.category);
@@ -44,7 +50,22 @@ export function JobCard({ job, currentStateSlug }: Props) {
             </span>
           </div>
 
-          <JobStatusBadge status={job.status} />
+          <div className="flex items-center gap-1.5">
+            <JobStatusBadge status={job.status} />
+            <button
+              onClick={() => toggleSave(job.id)}
+              className={cn(
+                "p-1 rounded transition-colors",
+                saved
+                  ? "text-[#E96B15] hover:text-[#D4590A]"
+                  : "text-[#B8B0A2] hover:text-[#1E3799]"
+              )}
+              title={saved ? "Remove from Pinned Notices" : "Pin notice to Watchlist"}
+              aria-label={saved ? "Unpin notice" : "Pin notice"}
+            >
+              <Bookmark className={cn("w-4 h-4", saved && "fill-[#E96B15]")} />
+            </button>
+          </div>
         </div>
 
         {/* Title */}

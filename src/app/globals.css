@@ -43,3 +43,31 @@ a, button {
 ::-webkit-scrollbar-thumb:hover {
   background: #beb29e;
 }
+
+/* Official Print Gazette Digest Styles */
+@media print {
+  header, footer, nav, button, .print\:hidden {
+    display: none !important;
+  }
+  body {
+    background-color: white !important;
+    color: black !important;
+    font-size: 11pt !important;
+  }
+  .print\:border-none {
+    border: none !important;
+  }
+  .print\:shadow-none {
+    box-shadow: none !important;
+  }
+  .print\:p-0 {
+    padding: 0 !important;
+  }
+  .print\:m-0 {
+    margin: 0 !important;
+  }
+  a[href]:after {
+    content: none !important;
+  }
+}
+

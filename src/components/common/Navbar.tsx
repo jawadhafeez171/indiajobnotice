@@ -2,9 +2,11 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X, Bookmark, Calendar } from "lucide-react";
 import { BrandLogo } from "./BrandLogo";
 import { StateSelectorModal } from "./StateSelectorModal";
+import { WatchlistDrawer } from "./WatchlistDrawer";
+import { useWatchlist } from "@/lib/watchlist";
 import { getStateBySlug } from "@/config/states";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
 
@@ -14,7 +16,9 @@ interface Props {
 
 export function Navbar({ currentStateSlug }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isWatchlistOpen, setIsWatchlistOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { savedCount } = useWatchlist();
 
   const currentState = currentStateSlug && currentStateSlug !== "central"
     ? getStateBySlug(currentStateSlug)
@@ -45,7 +49,7 @@ export function Navbar({ currentStateSlug }: Props) {
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-6 text-sm text-[#3E3C38] font-medium">
+            <nav className="hidden lg:flex items-center gap-5 text-sm text-[#3E3C38] font-medium">
               <a
                 href={currentState ? getStateSubdomainUrl(currentState.slug) : getCentralPortalUrl()}
                 className="hover:text-[#1E3799] transition-colors font-semibold"
@@ -54,10 +58,18 @@ export function Navbar({ currentStateSlug }: Props) {
               </a>
 
               <Link
+                href="/calendar"
+                className="hover:text-[#1E3799] transition-colors font-semibold flex items-center gap-1.5"
+              >
+                <Calendar className="w-3.5 h-3.5 text-[#1E3799]" />
+                <span>Exam Calendar</span>
+              </Link>
+
+              <Link
                 href="/calculator"
                 className="text-[#E96B15] hover:text-[#D4590A] transition-colors font-bold flex items-center gap-1"
               >
-                <span>Age & Eligibility</span>
+                <span>Age Calculator</span>
               </Link>
 
               <button
@@ -83,10 +95,38 @@ export function Navbar({ currentStateSlug }: Props) {
               >
                 Results
               </a>
+
+              {/* Watchlist Bookmark Trigger */}
+              <button
+                onClick={() => setIsWatchlistOpen(true)}
+                className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-[#EAE2D2] hover:border-[#1E3799] text-[#1A1918] hover:text-[#1E3799] text-xs font-bold transition-all shadow-2xs hover:shadow-xs"
+                title="View your saved and pinned notifications"
+              >
+                <Bookmark className={`w-3.5 h-3.5 ${savedCount > 0 ? "fill-[#E96B15] text-[#E96B15]" : "text-[#68635B]"}`} />
+                <span>Pinned</span>
+                {savedCount > 0 && (
+                  <span className="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black bg-[#E96B15] text-white">
+                    {savedCount}
+                  </span>
+                )}
+              </button>
             </nav>
 
             {/* Mobile Actions */}
             <div className="flex items-center gap-2 lg:hidden">
+              <button
+                onClick={() => setIsWatchlistOpen(true)}
+                className="p-1.5 relative rounded-md bg-white border border-[#EAE2D2] text-[#1A1918]"
+                aria-label="View Saved Circulars"
+              >
+                <Bookmark className={`w-4 h-4 ${savedCount > 0 ? "fill-[#E96B15] text-[#E96B15]" : "text-[#68635B]"}`} />
+                {savedCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#E96B15] text-white text-[9px] font-bold flex items-center justify-center font-mono">
+                    {savedCount}
+                  </span>
+                )}
+              </button>
+
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="px-2.5 py-1.5 rounded-md bg-[#EEF2FA] text-xs font-bold text-[#1E3799] border border-[#CCD8F0]"
@@ -125,9 +165,34 @@ export function Navbar({ currentStateSlug }: Props) {
               >
                 Latest Notifications
               </a>
+              <Link
+                href="/calendar"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-1 hover:text-[#1E3799] flex items-center gap-2"
+              >
+                <Calendar className="w-4 h-4 text-[#1E3799]" />
+                <span>Exam Schedule Calendar 2026</span>
+              </Link>
               <Link href="/calculator" onClick={() => setMobileMenuOpen(false)} className="py-1 text-[#E96B15] font-bold">
                 Age & Eligibility Calculator
               </Link>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setIsWatchlistOpen(true);
+                }}
+                className="py-1 text-left hover:text-[#1E3799] flex items-center justify-between"
+              >
+                <span className="flex items-center gap-2">
+                  <Bookmark className="w-4 h-4 text-[#E96B15]" />
+                  <span>My Pinned Circulars</span>
+                </span>
+                {savedCount > 0 && (
+                  <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[#E96B15] text-white">
+                    {savedCount}
+                  </span>
+                )}
+              </button>
               <a href="#admit-cards" onClick={() => setMobileMenuOpen(false)} className="py-1 hover:text-[#1E3799]">
                 Admit Cards
               </a>
@@ -144,6 +209,12 @@ export function Navbar({ currentStateSlug }: Props) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         currentStateSlug={currentStateSlug}
+      />
+
+      {/* Aspirant Watchlist Drawer */}
+      <WatchlistDrawer
+        isOpen={isWatchlistOpen}
+        onClose={() => setIsWatchlistOpen(false)}
       />
     </>
   );

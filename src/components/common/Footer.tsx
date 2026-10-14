@@ -91,6 +91,11 @@ export function Footer() {
               <li><a href={getCentralPortalUrl()} className="hover:text-[#FFA666] font-medium">Railway RRB NTPC, ALP, Group D</a></li>
               <li><a href={getCentralPortalUrl()} className="hover:text-[#FFA666] font-medium">IBPS PO, Clerk, SO Banking</a></li>
               <li>
+                <Link href="/calendar" className="text-[#A9B8DE] hover:text-[#FFA666] font-medium flex items-center gap-1">
+                  <span>📅 Exam Calendar 2026</span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/calculator" className="text-[#FFA666] hover:underline font-bold flex items-center gap-1 pt-1">
                   <span>🧮 Age & Eligibility Calculator</span>
                 </Link>
