@@ -79,7 +79,7 @@ function parseIndianExamDate(dateStr: string, fallbackMonth = "2026-11-15"): str
   if (monthYear) {
     const monthName = monthYear[1].toLowerCase();
     const year = parseInt(monthYear[2], 10);
-    const monthsMap: Record<string, number> = {
+    const monthsMap: Record<string, string> = {
       january: "01-15", february: "02-15", march: "03-15", april: "04-15",
       may: "05-15", june: "06-15", july: "07-15", august: "08-15",
       september: "09-15", october: "10-15", november: "11-15", december: "12-15"
