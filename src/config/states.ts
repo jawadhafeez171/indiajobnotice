@@ -496,16 +496,30 @@ export const STATES_REGISTRY: StateInfo[] = [
 ];
 
 export function getStateBySlug(slug: string): StateInfo | undefined {
-  return STATES_REGISTRY.find(
+  const found = STATES_REGISTRY.find(
     (s) => s.slug.toLowerCase() === slug.toLowerCase()
   );
+  if (!found) return undefined;
+  return {
+    ...found,
+    telegramGroup: found.telegramGroup?.includes("IndiaJobNotice_")
+      ? "https://t.me/Indiajobnotice1"
+      : found.telegramGroup || "https://t.me/Indiajobnotice1",
+  };
 }
 
 export function getStateBySlugOrCode(val: string): StateInfo | undefined {
   const q = val.toLowerCase();
-  return STATES_REGISTRY.find(
+  const found = STATES_REGISTRY.find(
     (s) => s.slug.toLowerCase() === q || s.code.toLowerCase() === q
   );
+  if (!found) return undefined;
+  return {
+    ...found,
+    telegramGroup: found.telegramGroup?.includes("IndiaJobNotice_")
+      ? "https://t.me/Indiajobnotice1"
+      : found.telegramGroup || "https://t.me/Indiajobnotice1",
+  };
 }
 
 export function isValidStateSlug(slug: string): boolean {
@@ -518,6 +532,7 @@ export const CENTRAL_INFO = {
   name: "All India Central Govt Jobs",
   shortName: "Central / All-India",
   domain: "indiajobnotice.com",
+  telegramGroup: "https://t.me/Indiajobnotice1",
   majorBodies: ["UPSC Civil Services", "SSC CGL/CHSL/GD", "Railway RRB NTPC/ALP", "IBPS Banking", "Defense (NDA/CDS/Agniveer)"],
   description: "Official notifications for Central Govt recruitments across India (UPSC, SSC, Railways, Banking, Defense, PSUs).",
 };

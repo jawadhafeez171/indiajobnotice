@@ -29,7 +29,7 @@ import { JobNotification } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
 import { JobLifecycleTracker } from "./JobLifecycleTracker";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
-import { WhatsAppLogo } from "@/components/common/SocialIcons";
+import { WhatsAppLogo, TelegramLogo } from "@/components/common/SocialIcons";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { getStateBySlug } from "@/config/states";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
@@ -248,10 +248,20 @@ export function JobDetailView({ job, stateSlug }: Props) {
           </button>
 
           <a
+            href="https://t.me/Indiajobnotice1"
+            target="_blank"
+            rel="noreferrer"
+            className="p-3 rounded-lg bg-[#24A1DE] text-white hover:bg-[#1D8FCA] transition-colors shadow-xs ml-auto"
+            title="Join Official Telegram Channel for Instant Alerts"
+          >
+            <TelegramLogo className="w-5 h-5" />
+          </a>
+
+          <a
             href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Check ${job.title} on IndiaJobNotice.com: ${job.applyOnlineUrl}`)}`}
             target="_blank"
             rel="noreferrer"
-            className="p-3 rounded-lg bg-[#25D366] text-white hover:bg-[#20BA5A] transition-colors shadow-xs ml-auto"
+            className="p-3 rounded-lg bg-[#25D366] text-white hover:bg-[#20BA5A] transition-colors shadow-xs"
             title="Share with Aspirants on WhatsApp"
           >
             <WhatsAppLogo className="w-5 h-5" />

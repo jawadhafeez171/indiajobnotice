@@ -33,7 +33,7 @@ export function Footer() {
 
             <div className="flex items-center gap-2 pt-1">
               <a
-                href="https://t.me/IndiaJobNotice"
+                href="https://t.me/Indiajobnotice1"
                 target="_blank"
                 rel="noreferrer"
                 className="p-2 rounded-lg bg-[#24A1DE] text-white hover:bg-[#1D8FCA] transition-colors shadow-xs"
