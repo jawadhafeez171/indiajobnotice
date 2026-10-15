@@ -6,7 +6,14 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/"],
+        disallow: [
+          "/api/",
+          "/*?search=*",
+          "/*?q=*",
+          "/*?filter=*",
+          "/*?category=*",
+          "/*?sort=*",
+        ],
       },
     ],
     sitemap: "https://www.indiajobnotice.com/sitemap.xml",

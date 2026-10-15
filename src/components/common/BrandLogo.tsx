@@ -16,8 +16,8 @@ interface BrandLogoProps {
 export function BrandLogo({
   className = "",
   variant = "default",
-  showDomain = true,
-  height = 36,
+  showDomain = false,
+  height = 34,
 }: BrandLogoProps) {
   const isLight = variant === "light";
   const logoSrc = isLight ? "/logo-white.png" : "/logo-transparent.png";

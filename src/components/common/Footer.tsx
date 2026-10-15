@@ -55,12 +55,12 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Col 2: Direct State Subdomains */}
+          {/* Col 2: State Gazette Hubs */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-3.5">
               <span className="w-2 h-2 rounded-full bg-[#E96B15]" />
               <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                Direct State Subdomains
+                State Gazette Hubs
               </h3>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
@@ -85,18 +85,29 @@ export function Footer() {
                 Central Recruitment
               </h3>
             </div>
-            <ul className="space-y-2 text-xs text-[#C4D0EC]">
-              <li><a href={getCentralPortalUrl()} className="hover:text-[#FFA666] font-medium">UPSC Civil Services & NDA</a></li>
-              <li><a href={getCentralPortalUrl()} className="hover:text-[#FFA666] font-medium">SSC CGL, CHSL, GD, MTS</a></li>
-              <li><a href={getCentralPortalUrl()} className="hover:text-[#FFA666] font-medium">Railway RRB NTPC, ALP, Group D</a></li>
-              <li><a href={getCentralPortalUrl()} className="hover:text-[#FFA666] font-medium">IBPS PO, Clerk, SO Banking</a></li>
-              <li>
+            <ul className="space-y-1.5 text-xs text-[#C4D0EC]">
+              <li><Link href="/organisations/upsc" className="hover:text-[#FFA666] font-medium">UPSC Civil Services & NDA</Link></li>
+              <li><Link href="/organisations/ssc" className="hover:text-[#FFA666] font-medium">SSC CGL, CHSL, GD, MTS</Link></li>
+              <li><Link href="/railway-jobs" className="hover:text-[#FFA666] font-medium">Railway RRB NTPC, ALP, Group D</Link></li>
+              <li><Link href="/banking-jobs" className="hover:text-[#FFA666] font-medium">Banking: SBI, IBPS, RBI</Link></li>
+              <li><Link href="/engineering-jobs" className="hover:text-[#FFA666] font-medium">Engineering (B.Tech & Diploma)</Link></li>
+              <li className="pt-2 border-t border-[#1E3799]/60 flex flex-wrap gap-x-2 gap-y-1 text-[11px] text-[#A9B8DE]">
+                <span className="font-bold text-white block w-full mb-0.5">By Qualification:</span>
+                <Link href="/qualification/10th-pass" className="hover:text-[#FFA666]">10th Pass</Link>
+                <span>·</span>
+                <Link href="/qualification/12th-pass" className="hover:text-[#FFA666]">12th Pass</Link>
+                <span>·</span>
+                <Link href="/qualification/diploma" className="hover:text-[#FFA666]">Diploma</Link>
+                <span>·</span>
+                <Link href="/qualification/graduate" className="hover:text-[#FFA666]">Graduate</Link>
+              </li>
+              <li className="pt-1.5">
                 <Link href="/calendar" className="text-[#A9B8DE] hover:text-[#FFA666] font-medium flex items-center gap-1">
                   <span>📅 Exam Calendar 2026</span>
                 </Link>
               </li>
               <li>
-                <Link href="/calculator" className="text-[#FFA666] hover:underline font-bold flex items-center gap-1 pt-1">
+                <Link href="/calculator" className="text-[#FFA666] hover:underline font-bold flex items-center gap-1 pt-0.5">
                   <span>🧮 Age & Eligibility Calculator</span>
                 </Link>
               </li>

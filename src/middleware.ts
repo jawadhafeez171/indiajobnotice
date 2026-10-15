@@ -24,7 +24,7 @@ export default function middleware(req: NextRequest) {
 
   let subdomain: string | null = null;
 
-  // 1. Check for localhost subdomains (e.g., karnataka.localhost, up.localhost, bihar.localhost)
+  // 1. Check for localhost subdomains (e.g., karnataka.localhost)
   if (hostWithoutPort.endsWith(".localhost")) {
     subdomain = hostWithoutPort.replace(".localhost", "");
   }
@@ -38,21 +38,27 @@ export default function middleware(req: NextRequest) {
     subdomain = null;
   }
 
-  // If a valid state slug or code is matched (e.g. 'karnataka', 'ka', 'bihar', 'up')
+  // If a user hits a legacy subdomain, redirect them to the canonical subdirectory /state/[state]
   if (subdomain) {
     const state = getStateBySlugOrCode(subdomain);
     if (state) {
-      // Avoid infinite loop if already on /state/...
-      if (!url.pathname.startsWith("/state/")) {
-        if (url.pathname === "/calculator") {
-          return NextResponse.next();
-        }
+      const targetPath = `/state/${state.slug}${url.pathname === "/" ? "" : url.pathname}`;
+      const targetBase = hostWithoutPort.includes("localhost")
+        ? `http://localhost:${url.port || 3000}`
+        : `https://www.${PROD_DOMAIN}`;
+      return NextResponse.redirect(new URL(targetPath, targetBase), 301);
+    }
+  }
 
-        // Rewrite internally to the state route handler while preserving the clean subdomain URL
-        // e.g. karnataka.indiajobnotice.com/ -> /state/karnataka
-        // e.g. karnataka.localhost:3001/ -> /state/karnataka
-        const targetPath = `/state/${state.slug}${url.pathname === "/" ? "" : url.pathname}`;
-        return NextResponse.rewrite(new URL(targetPath, req.url));
+  // If a user enters a short state path directly like /up, /bihar, /delhi, redirect to /state/[state]
+  const pathParts = url.pathname.split("/").filter(Boolean);
+  if (pathParts.length === 1) {
+    const firstSegment = pathParts[0].toLowerCase();
+    // Exclude known top-level routes
+    if (!["state", "calculator", "calendar", "jobs", "api"].includes(firstSegment)) {
+      const stateMatch = getStateBySlugOrCode(firstSegment);
+      if (stateMatch) {
+        return NextResponse.redirect(new URL(`/state/${stateMatch.slug}`, req.url), 301);
       }
     }
   }

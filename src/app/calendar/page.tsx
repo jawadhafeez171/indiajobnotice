@@ -6,8 +6,19 @@ import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 
 export const metadata = {
-  title: "Government Exam Schedule & Calendar 2026-2027 - IndiaJobNotice.com",
+  title: "Government Exam Schedule & Calendar 2026-2027 | IndiaJobNotice.com",
   description: "Official timeline and schedule of upcoming Central and State government recruitment exam dates, admit card releases, and application deadlines.",
+  alternates: {
+    canonical: "https://www.indiajobnotice.com/calendar",
+  },
+  openGraph: {
+    title: "Government Exam Calendar & Timeline 2026 - IndiaJobNotice",
+    description: "Export exam dates to Google Calendar and download .ics schedules for UPSC, SSC, Railways, and State PSCs.",
+    url: "https://www.indiajobnotice.com/calendar",
+    siteName: "India Job Notice",
+    locale: "en_IN",
+    type: "website",
+  },
 };
 
 export default function CalendarPage() {

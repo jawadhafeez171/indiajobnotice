@@ -1,51 +1,17 @@
 /**
- * Helper to construct direct subdomain URLs for state portals.
- * - In production: https://[state].indiajobnotice.com/[path]
- * - In local development: http://[state].localhost:[port]/[path]
- * - Server-side / fallback: /state/[state]/[path]
+ * Helper to construct direct subdirectory URLs for state portals.
+ * Subdirectory convention: /state/[state]/[path]
+ * (e.g. /state/up, /state/bihar, /state/rajasthan)
  */
-export function getStateSubdomainUrl(stateSlug: string, path: string = ""): string {
+export function getStateDirectoryUrl(stateSlug: string, path: string = ""): string {
   const normalizedPath = path.startsWith("/") ? path : path ? `/${path}` : "";
-
-  // Check if we are running in the browser
-  if (typeof window !== "undefined") {
-    const hostname = window.location.hostname.toLowerCase();
-    const port = window.location.port ? `:${window.location.port}` : "";
-    const protocol = window.location.protocol;
-
-    // Localhost development mode (e.g. up.localhost:3001)
-    if (hostname === "localhost" || hostname.endsWith(".localhost") || hostname === "127.0.0.1") {
-      return `${protocol}//${stateSlug}.localhost${port}${normalizedPath}`;
-    }
-
-    // Production mode (e.g. up.indiajobnotice.com)
-    const baseDomain = (process.env.NEXT_PUBLIC_BASE_DOMAIN || "indiajobnotice.com").toLowerCase();
-    if (hostname.includes(baseDomain)) {
-      return `${protocol}//${stateSlug}.${baseDomain}${normalizedPath}`;
-    }
-  }
-
-  // Fallback to internal path if SSR or raw IP
   return `/state/${stateSlug}${normalizedPath}`;
 }
 
+// Backwards-compatible alias for existing imports
+export const getStateSubdomainUrl = getStateDirectoryUrl;
+
 export function getCentralPortalUrl(path: string = ""): string {
   const normalizedPath = path.startsWith("/") ? path : path ? `/${path}` : "";
-
-  if (typeof window !== "undefined") {
-    const hostname = window.location.hostname.toLowerCase();
-    const port = window.location.port ? `:${window.location.port}` : "";
-    const protocol = window.location.protocol;
-
-    if (hostname.includes("localhost")) {
-      return `${protocol}//localhost${port}${normalizedPath}`;
-    }
-
-    const baseDomain = (process.env.NEXT_PUBLIC_BASE_DOMAIN || "indiajobnotice.com").toLowerCase();
-    if (hostname.includes(baseDomain)) {
-      return `${protocol}//www.${baseDomain}${normalizedPath}`;
-    }
-  }
-
-  return `/${normalizedPath}`;
+  return normalizedPath || "/";
 }

@@ -3,7 +3,8 @@ export type JobStatus =
   | "UPCOMING"
   | "LAST_DATE_NEAR"
   | "ADMIT_CARD_OUT"
-  | "RESULT_OUT";
+  | "RESULT_OUT"
+  | "APPLICATIONS_CLOSED";
 
 export type JobCategory =
   | "Police / Defense"
@@ -30,6 +31,7 @@ export interface JobNotification {
   minAge: number;
   maxAge: number;
   ageRelaxation: string;
+  ageCutoffDate?: string; // Official cutoff date for age determination, e.g., '2026-08-01'
   salary: string;
   applicationStartDate: string;
   applicationEndDate: string;
@@ -1349,6 +1351,64 @@ export function getJobBySlug(slug: string): JobNotification | undefined {
   return SAMPLE_JOBS.find(
     (job) => job.slug.toLowerCase() === slug.toLowerCase()
   );
+}
+
+export function isJobApplicationClosed(job: JobNotification): boolean {
+  if (job.status === "APPLICATIONS_CLOSED" || job.status === "ADMIT_CARD_OUT" || job.status === "RESULT_OUT") {
+    return true;
+  }
+  if (!job.applicationEndDate) return false;
+  const deadline = new Date(`${job.applicationEndDate}T23:59:59Z`).getTime();
+  return Date.now() > deadline;
+}
+
+export function getActiveOpportunities(
+  excludeJobId?: string,
+  category?: JobCategory,
+  stateSlug?: string,
+  limit: number = 4
+): JobNotification[] {
+  return SAMPLE_JOBS
+    .filter((j) => j.id !== excludeJobId && !isJobApplicationClosed(j))
+    .sort((a, b) => {
+      const aMatch = (category && a.category === category) || (stateSlug && a.stateSlug === stateSlug) ? 1 : 0;
+      const bMatch = (category && b.category === category) || (stateSlug && b.stateSlug === stateSlug) ? 1 : 0;
+      if (bMatch !== aMatch) return bMatch - aMatch;
+      return b.viewsCount - a.viewsCount;
+    })
+    .slice(0, limit);
+}
+
+export function getJobAgeCutoffDate(job: JobNotification): string {
+  if (job.ageCutoffDate) return job.ageCutoffDate;
+  const org = job.orgShortCode.toUpperCase();
+  if (org === "SSC" || org === "UPSC") return "2026-08-01";
+  if (org === "UPPRPB" || org === "CSBC" || org === "BSSC") return "2026-07-01";
+  if (org === "RRB" || org === "SBI" || org === "IBPS") return "2026-01-01";
+  return job.applicationEndDate || "2026-08-01";
+}
+
+export function calculateAgeAtDate(dob: string, targetDate: string): { years: number; months: number; days: number } {
+  if (!dob || !targetDate) return { years: 0, months: 0, days: 0 };
+  const birthDate = new Date(dob);
+  const target = new Date(targetDate);
+
+  let years = target.getFullYear() - birthDate.getFullYear();
+  let months = target.getMonth() - birthDate.getMonth();
+  let days = target.getDate() - birthDate.getDate();
+
+  if (days < 0) {
+    months -= 1;
+    const prevMonthLastDay = new Date(target.getFullYear(), target.getMonth(), 0).getDate();
+    days += prevMonthLastDay;
+  }
+
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  return { years: Math.max(0, years), months: Math.max(0, months), days: Math.max(0, days) };
 }
 
 export function getRecentJobAlerts(limit = 6): JobNotification[] {

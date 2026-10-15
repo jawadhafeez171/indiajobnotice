@@ -7,6 +7,7 @@ import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { EligibilityCalculator } from "@/components/eligibility/EligibilityCalculator";
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
+import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { SAMPLE_JOBS } from "@/data/jobs";
 import { STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
 import { getStateSubdomainUrl } from "@/lib/subdomains";
@@ -14,8 +15,24 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, FileCheck, Award, ShieldCheck, Sparkles } from "lucide-react";
 
 export const metadata = {
-  title: "India Job Notice - Central & State Government Employment Gazettes",
-  description: "Independent verified repository of Central and State government recruitment notifications, official circulars, admit cards, and results.",
+  title: "IndiaJobNotice.com - Official Govt Job Notifications, Gazettes & Admit Cards",
+  description: "India's dedicated government job notification portal. 100% verified official circulars, syllabus patterns, exam schedules, and results across Central & 36 State portals.",
+  alternates: {
+    canonical: "https://www.indiajobnotice.com",
+  },
+  openGraph: {
+    title: "IndiaJobNotice.com - Central & State Government Employment Gazettes",
+    description: "Verified official notifications, admit cards, and results across all 36 States & Union Territories.",
+    url: "https://www.indiajobnotice.com",
+    siteName: "India Job Notice",
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IndiaJobNotice.com - Official Govt Job Notifications",
+    description: "Official notifications, admit cards, exam schedules, and direct PDF downloads.",
+  },
 };
 
 export default function HomePage() {
@@ -28,68 +45,59 @@ export default function HomePage() {
     <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
       <Navbar currentStateSlug="central" />
 
-      {/* Editorial Hero Infused with Brand Identity */}
-      <section className="border-b border-[#EAE2D2] bg-[#FCFAF4] py-12 sm:py-16 px-4 sm:px-6 relative overflow-hidden">
-        {/* Subtle royal blue line at very top accentuating the header baseline */}
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="max-w-3xl">
-            {/* Signature Tricolor & Authority Tags */}
-            <div className="flex items-center gap-2.5 mb-4 flex-wrap">
-              <TricolorCapsule className="w-16 h-2" />
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#68635B] font-semibold">
-                Official Public Employment Gazettes
-              </span>
-              <span className="text-[#D8CFBF]">·</span>
-              <span className="text-[11px] font-mono text-[#1E3799] bg-[#EEF2FA] px-2 py-0.5 rounded font-bold border border-[#CCD8F0]">
-                Central Hub
-              </span>
-              <span className="text-[11px] font-mono text-[#E96B15] bg-[#FDF3EB] px-2 py-0.5 rounded font-bold border border-[#F9D9C3]">
-                36 State Subdomains
-              </span>
-              <span className="text-[11px] font-mono text-[#209948] bg-[#EDF7F0] px-2 py-0.5 rounded font-bold border border-[#C6E7D0]">
-                100% Verified
-              </span>
-            </div>
-
-            <h1 className="font-serif text-3xl sm:text-5xl font-bold text-[#1A1918] tracking-tight leading-tight">
-              Verified Government Job Circulars & Exam Schedules
-            </h1>
-
-            <p className="mt-3 text-sm sm:text-base text-[#524E48] leading-relaxed">
-              Direct access to official PDF notifications, syllabus patterns, and application dates for UPSC, SSC, Railways, Defense, and state public service commissions. Zero clickbait, zero third-party redirection.
-            </p>
-
-            {/* Quick State Subdomain Pills Harmonized with Brand Palette */}
-            <div className="mt-6 pt-5 border-t border-[#EAE2D2]">
-              <div className="text-xs text-[#68635B] mb-2.5 flex items-center justify-between">
-                <span className="font-medium">Jump directly to State Gazettes:</span>
-                <span className="font-mono text-[#1E3799] hidden sm:inline text-[11px] font-semibold">
-                  [state].indiajobnotice.com
+      {/* Short & Direct Gazette Hero */}
+      <section className="border-b border-[#EAE2D2] bg-[#FCFAF4] py-6 sm:py-7 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              {/* Status capsule */}
+              <div className="flex items-center gap-2 mb-2 flex-wrap text-xs">
+                <TricolorCapsule className="w-12 h-1.5" />
+                <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#1E3799]">
+                  Central & State Employment Gazettes
+                </span>
+                <span className="text-[#D8CFBF]">·</span>
+                <span className="text-[11px] font-mono text-[#209948] bg-[#EDF7F0] px-2 py-0.5 rounded font-bold border border-[#C6E7D0]">
+                  100% Official
                 </span>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {STATES_REGISTRY.slice(0, 8).map((st) => {
+
+              <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1A1918] tracking-tight">
+                Government Job Notifications & Exam Schedules
+              </h1>
+
+              <p className="mt-1.5 text-xs sm:text-sm text-[#524E48] max-w-2xl">
+                Direct official circulars, syllabus breakdown & deadlines for Central, Defense, Railways & 36 State portals.
+              </p>
+            </div>
+
+            {/* Quick State Gazette Switcher */}
+            <div className="flex flex-col sm:items-start lg:items-end gap-1.5 shrink-0 pt-2 lg:pt-0">
+              <span className="text-[11px] font-mono text-[#68635B] font-semibold">
+                Direct State Gazettes:
+              </span>
+              <div className="flex flex-wrap gap-1.5 max-w-md lg:justify-end">
+                {STATES_REGISTRY.slice(0, 6).map((st) => {
                   const badge = getStateBadgeColor(st.code);
                   return (
                     <a
                       key={st.slug}
                       href={getStateSubdomainUrl(st.slug)}
                       className={cn(
-                        "px-2.5 py-1 rounded text-xs font-semibold border transition-all flex items-center gap-1.5 shadow-2xs hover:shadow-xs",
+                        "px-2 py-0.5 rounded text-xs font-semibold border transition-all flex items-center gap-1 shadow-2xs hover:border-[#1E3799]",
                         badge.bg,
                         badge.text,
-                        badge.border,
-                        "hover:border-[#1E3799]"
+                        badge.border
                       )}
                     >
                       <span>{st.name}</span>
-                      <span className="text-[10px] font-mono opacity-80">{st.code}</span>
+                      <span className="text-[10px] font-mono opacity-70">{st.code}</span>
                     </a>
                   );
                 })}
                 <a
                   href="#all-states"
-                  className="px-2.5 py-1 text-xs text-[#E96B15] hover:text-[#D4590A] hover:underline font-bold flex items-center gap-0.5"
+                  className="px-2 py-0.5 text-xs text-[#E96B15] hover:text-[#D4590A] hover:underline font-bold flex items-center gap-0.5"
                 >
                   <span>All 36 States</span>
                   <span>→</span>
@@ -107,6 +115,9 @@ export default function HomePage() {
 
         {/* Major Open Recruitments with Interactive 4-Category Switcher & Views */}
         <MajorRecruitmentsSection jobs={SAMPLE_JOBS} currentStateSlug="central" />
+
+        {/* Reserved Ad Space (0.00 CLS Protected) */}
+        <ReservedAdSlot slotType="leaderboard" slotId="home-leaderboard" />
 
         {/* Age & Eligibility Calculator */}
         <section id="calculator">
@@ -214,7 +225,7 @@ export default function HomePage() {
           </section>
         </div>
 
-        {/* State Subdomain Directory - Distinct Regional Palettes */}
+        {/* State Subdirectory Directory - Distinct Regional Palettes */}
         <section id="all-states" className="bg-white rounded-lg border border-[#EAE2D2] p-6 shadow-2xs">
           <div className="mb-4 pb-2 border-b border-[#F2ECE1] flex items-baseline justify-between">
             <div>
@@ -225,10 +236,10 @@ export default function HomePage() {
                 </h2>
               </div>
               <p className="text-xs text-[#68635B] mt-0.5">
-                Each state operates on its dedicated subdomain with localized circulars and syllabus
+                Each state operates on its dedicated subfolder hub with localized circulars and syllabus
               </p>
             </div>
-            <span className="text-xs font-mono text-[#1E3799] font-bold">36 Subdomains Active</span>
+            <span className="text-xs font-mono text-[#1E3799] font-bold">36 State Hubs Active</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 text-xs">
@@ -244,7 +255,7 @@ export default function HomePage() {
                     <span className="font-bold text-[#1A1918] group-hover:text-[#1E3799] transition-colors block">
                       {st.name}
                     </span>
-                    <span className="text-[10px] text-[#68635B] font-mono group-hover:text-[#1E3799]/80">{st.slug}.indiajobnotice.com</span>
+                    <span className="text-[10px] text-[#68635B] font-mono group-hover:text-[#1E3799]/80">/state/{st.slug}</span>
                   </div>
                   <span
                     className={cn(

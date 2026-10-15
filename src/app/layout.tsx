@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   title: {
     template: "%s | IndiaJobNotice.com",
-    default: "IndiaJobNotice.com - Official Govt Job Notifications & State Subdomains",
+    default: "IndiaJobNotice.com - Official Govt Job Notifications & 36 State Gazettes",
   },
   description:
     "India's dedicated multi-state government job notification network. Official circulars, admit cards, answer keys, results, and eligibility calculator across all 28 states & UTs.",
@@ -43,6 +43,17 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "India Job Notice - Official Govt Employment Gazettes",
     description: "Verified Central & State Government job circulars, syllabus, admit cards, and results across all 36 states & UTs.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   icons: {
     icon: "/favicon.ico",

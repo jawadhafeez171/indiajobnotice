@@ -46,7 +46,7 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
               Select State or Union Territory Portal
             </h2>
             <p className="text-xs text-[#68635B]">
-              Each state operates on its dedicated subdomain with localized circulars and syllabus
+              Each state operates on its dedicated directory (/state/[state]) with localized circulars and syllabus
             </p>
           </div>
           <button
@@ -113,7 +113,7 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
                 </div>
 
                 <div className="mt-2.5 pt-2 border-t border-[#F2ECE1] flex items-center justify-between text-[11px] font-mono font-semibold">
-                  <span className="text-[#1E3799]">{state.slug}.indiajobnotice.com</span>
+                  <span className="text-[#1E3799]">/state/{state.slug}</span>
                   {isSelected && (
                     <span className="flex items-center gap-1 text-[10px] text-[#209948] font-bold">
                       <Check className="w-3 h-3" />

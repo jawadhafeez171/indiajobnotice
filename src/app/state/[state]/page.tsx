@@ -6,6 +6,7 @@ import { JobCard } from "@/components/jobs/JobCard";
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { EligibilityCalculator } from "@/components/eligibility/EligibilityCalculator";
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
+import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { getStateBySlug, STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
 import { getJobsByState } from "@/data/jobs";
@@ -25,11 +26,29 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps) {
   const { state: stateSlug } = await params;
   const state = getStateBySlug(stateSlug);
-  if (!state) return { title: "State Not Found" };
+  if (!state) return { title: "State Not Found | IndiaJobNotice.com" };
+
+  const canonicalUrl = `https://www.indiajobnotice.com/state/${state.slug}`;
 
   return {
-    title: `${state.name} Govt Job Notifications & Gazettes - ${state.slug}.indiajobnotice.com`,
-    description: `Official employment gazette notifications, exam patterns, admit cards, and results for ${state.name} (${state.nativeName}). Official commission links: ${state.majorExams.join(", ")}.`,
+    title: `${state.name} Govt Job Notifications 2026, Gazettes & Admit Cards | IndiaJobNotice.com`,
+    description: `Official public employment gazettes and notifications for ${state.name} (${state.nativeName}). Official commission updates: ${state.majorExams.join(", ")}. Capital: ${state.capital}.`,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${state.name} Government Recruitment Gazettes - IndiaJobNotice`,
+      description: `Official job alerts, exam schedules, and circulars for ${state.name}.`,
+      url: canonicalUrl,
+      siteName: "India Job Notice",
+      locale: "en_IN",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${state.name} Govt Job Notifications | IndiaJobNotice.com`,
+      description: `Official gazette notices for ${state.name}. Commissions: ${state.majorExams.join(", ")}.`,
+    },
   };
 }
 
@@ -49,7 +68,7 @@ export default async function StateHomePage({ params }: PageProps) {
       <Navbar currentStateSlug={state.slug} />
 
       {/* Editorial State Header with Regional Tint Accent */}
-      <section className="border-b border-[#EAE2D2] bg-[#FCFAF4] py-10 px-4 sm:px-6">
+      <section className="border-b border-[#EAE2D2] bg-[#FCFAF4] py-5 sm:py-6 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Breadcrumb with Tricolor Accent */}
           <div className="flex items-center gap-2 text-xs text-[#68635B] mb-3">
@@ -94,11 +113,11 @@ export default async function StateHomePage({ params }: PageProps) {
               </p>
             </div>
 
-            {/* Subdomain Context Pill */}
+            {/* Subdirectory Context Pill */}
             <div className="flex items-center gap-2 text-xs font-mono shrink-0">
-              <span className="text-[#68635B] font-medium">Direct Subdomain:</span>
+              <span className="text-[#68635B] font-medium">State Hub:</span>
               <span className={cn("px-2.5 py-1 rounded font-bold border", badgeStyle.bg, badgeStyle.text, badgeStyle.border)}>
-                {state.slug}.indiajobnotice.com
+                /state/{state.slug}
               </span>
             </div>
           </div>
@@ -113,19 +132,32 @@ export default async function StateHomePage({ params }: PageProps) {
         {/* Active Notifications Section with Interactive View Switcher */}
         <MajorRecruitmentsSection jobs={jobs} currentStateSlug={state.slug} />
 
+        {/* Reserved Ad Space (0.00 CLS Protected) */}
+        <ReservedAdSlot slotType="leaderboard" slotId={`state-${state.slug}-leaderboard`} />
+
         {/* Age & Eligibility Calculator */}
         <section id="calculator">
           <EligibilityCalculator currentStateSlug={state.slug} />
         </section>
 
-        {/* Authorized Recruitment Bodies */}
-        <section className="bg-white rounded-lg border border-[#EAE2D2] p-5 shadow-2xs">
-          <div className="flex items-center gap-2 mb-2.5">
-            <TricolorCapsule className="w-10 h-1.5" />
-            <h3 className="font-serif text-sm font-bold text-[#1A1918]">
-              Key Recruitment Boards & Commissions in {state.name}
-            </h3>
+        {/* Authorized Recruitment Bodies & Stream Navigation */}
+        <section className="bg-white rounded-lg border border-[#EAE2D2] p-5 shadow-2xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#F2ECE1] pb-3">
+            <div className="flex items-center gap-2">
+              <TricolorCapsule className="w-10 h-1.5" />
+              <h3 className="font-serif text-sm font-bold text-[#1A1918]">
+                Key Recruitment Boards & Commissions in {state.name}
+              </h3>
+            </div>
+            <a
+              href={`/government-jobs/${state.slug}`}
+              className="text-xs font-bold text-[#1E3799] hover:underline flex items-center gap-1"
+            >
+              <span>View Permanent {state.name} Hub</span>
+              <span aria-hidden="true">→</span>
+            </a>
           </div>
+
           <div className="flex flex-wrap gap-2 text-xs">
             {state.majorExams.map((exam) => (
               <span
@@ -140,6 +172,38 @@ export default async function StateHomePage({ params }: PageProps) {
                 {exam}
               </span>
             ))}
+          </div>
+
+          {/* Deliberate Pathway Links to Qualification & Sector Hubs */}
+          <div className="pt-2 border-t border-[#F2ECE1] grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <a
+              href="/engineering-jobs"
+              className="p-2.5 rounded bg-[#FCFAF4] border border-[#EAE2D2] hover:border-[#1E3799] transition-colors block text-center"
+            >
+              <span className="font-bold text-[#1A1918] block truncate">Engineering Jobs</span>
+              <span className="text-[10px] text-[#68635B]">B.Tech & Diploma</span>
+            </a>
+            <a
+              href="/police-defense-jobs"
+              className="p-2.5 rounded bg-[#FCFAF4] border border-[#EAE2D2] hover:border-[#E96B15] transition-colors block text-center"
+            >
+              <span className="font-bold text-[#1A1918] block truncate">Police & Defense</span>
+              <span className="text-[10px] text-[#68635B]">SI & Constable</span>
+            </a>
+            <a
+              href="/qualification/graduate"
+              className="p-2.5 rounded bg-[#FCFAF4] border border-[#EAE2D2] hover:border-[#1E3799] transition-colors block text-center"
+            >
+              <span className="font-bold text-[#1A1918] block truncate">Graduate Jobs</span>
+              <span className="text-[10px] text-[#68635B]">Any Degree</span>
+            </a>
+            <a
+              href="/qualification/12th-pass"
+              className="p-2.5 rounded bg-[#FCFAF4] border border-[#EAE2D2] hover:border-[#209948] transition-colors block text-center"
+            >
+              <span className="font-bold text-[#1A1918] block truncate">12th Pass Jobs</span>
+              <span className="text-[10px] text-[#68635B]">Clerk & Assistant</span>
+            </a>
           </div>
         </section>
       </main>

@@ -41,6 +41,47 @@ export interface SyllabusSubjectSection {
   topics: string[];
 }
 
+export interface PostVacancyBreakdown {
+  postName: string;
+  department: string;
+  vacancies: number | string;
+  qualification: string;
+  ageLimit: string;
+  payLevel: string;
+}
+
+export interface AgeReckoningInfo {
+  crucialDate: string;
+  minAge: number;
+  maxAge: number;
+  bornBetween: string;
+  specialClauses?: string;
+}
+
+export interface CategoryStatutoryMatrixItem {
+  category: string;
+  code: string;
+  fee: string;
+  ageRelaxation: string;
+  maxEligibleAge: string;
+  exemptionNote?: string;
+}
+
+export interface CorrigendumNotice {
+  noticeDate: string;
+  type: "Extension" | "Corrigendum" | "Correction Window" | "Vacancy Revision";
+  headline: string;
+  details: string;
+  officialGazetteRef?: string;
+}
+
+export interface PayBreakdown {
+  payLevel: string;
+  basicPay: string;
+  inHandEstimated: string;
+  allowances: string[];
+}
+
 // Curated data for major recruitment examinations
 const EXAM_DATA_REGISTRY: Record<
   string,
@@ -979,3 +1020,298 @@ export function getJobDetailedSyllabus(job: JobNotification): SyllabusSubjectSec
     },
   ];
 }
+
+// ==========================================
+// POST-WISE VACANCY & QUALIFICATION MATRIX
+// Answers: "Which qualifications qualify for which posts?"
+// ==========================================
+const POST_BREAKDOWN_REGISTRY: Record<string, PostVacancyBreakdown[]> = {
+  "upsc-cse-2026": [
+    { postName: "Indian Administrative Service (IAS)", department: "Department of Personnel & Training (DoPT)", vacancies: 180, qualification: "Bachelor's Degree in any discipline", ageLimit: "21 to 32 Years", payLevel: "Level 10 (₹56,100)" },
+    { postName: "Indian Police Service (IPS)", department: "Ministry of Home Affairs (MHA)", vacancies: 200, qualification: "Bachelor's Degree (subject to medical/height standards)", ageLimit: "21 to 32 Years", payLevel: "Level 10 (₹56,100)" },
+    { postName: "Indian Foreign Service (IFS)", department: "Ministry of External Affairs (MEA)", vacancies: 37, qualification: "Bachelor's Degree in any discipline", ageLimit: "21 to 32 Years", payLevel: "Level 10 (₹56,100)" },
+    { postName: "Indian Revenue Service (IRS - IT & Customs)", department: "Ministry of Finance", vacancies: 308, qualification: "Bachelor's Degree in any discipline", ageLimit: "21 to 32 Years", payLevel: "Level 10 (₹56,100)" },
+    { postName: "Central Group A & B Allied Services (DANICS, DANIPS, P&T)", department: "Various Central Ministries", vacancies: 380, qualification: "Bachelor's Degree in any discipline", ageLimit: "21 to 32 Years", payLevel: "Level 7 to Level 10" },
+  ],
+  "ssc-cgl-2026": [
+    { postName: "Assistant Section Officer (ASO)", department: "Central Secretariat Service (CSS) / MEA / IB", vacancies: 3450, qualification: "Bachelor's Degree in any discipline", ageLimit: "20 to 30 Years", payLevel: "Pay Level 7 (₹44,900 - ₹1,42,400)" },
+    { postName: "Inspector of Income Tax & Central Excise", department: "CBDT & CBIC (Ministry of Finance)", vacancies: 4890, qualification: "Bachelor's Degree in any discipline", ageLimit: "18 to 30 Years", payLevel: "Pay Level 7 (₹44,900 - ₹1,42,400)" },
+    { postName: "Sub Inspector (SI) - CBI & NIA", department: "Central Bureau of Investigation / NIA", vacancies: 180, qualification: "Bachelor's Degree (Height: 165 cm male, 150 cm female)", ageLimit: "20 to 30 Years", payLevel: "Pay Level 7 (₹44,900)" },
+    { postName: "Auditor & Accountant", department: "Comptroller & Auditor General of India (CAG)", vacancies: 4210, qualification: "Bachelor's Degree in any discipline", ageLimit: "18 to 27 Years", payLevel: "Pay Level 5 (₹29,200 - ₹92,300)" },
+    { postName: "Tax Assistant & Upper Division Clerk", department: "CBDT / CBIC / Central Bureau of Narcotics", vacancies: 4997, qualification: "Bachelor's Degree + Data Entry Speed (8,000 key depressions/hr)", ageLimit: "18 to 27 Years", payLevel: "Pay Level 4 (₹25,500 - ₹81,100)" },
+  ],
+  "rrb-ntpc-2026": [
+    { postName: "Station Master (SM)", department: "Operating & Traffic", vacancies: 2940, qualification: "Bachelor's Degree in any stream + CBAT Aptitude Test", ageLimit: "18 to 36 Years", payLevel: "Level 6 (₹35,400 Basic)" },
+    { postName: "Goods Train Manager (Goods Guard)", department: "Operating Department", vacancies: 3144, qualification: "Bachelor's Degree in any stream (A2 Medical Standard)", ageLimit: "18 to 36 Years", payLevel: "Level 5 (₹29,200 Basic)" },
+    { postName: "Senior Commercial cum Ticket Clerk", department: "Commercial Department", vacancies: 1736, qualification: "Bachelor's Degree in any discipline", ageLimit: "18 to 36 Years", payLevel: "Level 5 (₹29,200 Basic)" },
+    { postName: "Junior Clerk cum Typist", department: "Personnel & Accounts", vacancies: 2840, qualification: "12th Standard (10+2) with 50% Marks + English 30 wpm or Hindi 25 wpm Typing", ageLimit: "18 to 33 Years", payLevel: "Level 2 (₹19,900 Basic)" },
+    { postName: "Accounts Clerk cum Typist", department: "Accounts Department", vacancies: 898, qualification: "12th Standard (10+2) with 50% Marks + Computer Typing", ageLimit: "18 to 33 Years", payLevel: "Level 2 (₹19,900 Basic)" },
+  ],
+  "rrb-alp-technician-2026": [
+    { postName: "Assistant Loco Pilot (ALP - Electrical)", department: "Electrical Traction", vacancies: 10450, qualification: "10th Matric + ITI (Fitter/Electrician) OR 3-Yr Diploma in Mech/Elec/Auto", ageLimit: "18 to 33 Years", payLevel: "Level 2 (₹19,900 + Running Allowances)" },
+    { postName: "Assistant Loco Pilot (ALP - Mechanical)", department: "Mechanical (Diesel / Rolling Stock)", vacancies: 8349, qualification: "10th Matric + ITI (Fitter/Turner/Diesel Mech) OR Diploma in Mechanical", ageLimit: "18 to 33 Years", payLevel: "Level 2 (₹19,900 + Running Allowances)" },
+  ],
+  "rrb-je-2026": [
+    { postName: "Junior Engineer (Civil Engineering)", department: "P-Way, Works & Bridge Cadre", vacancies: 3120, qualification: "3-Year Diploma / B.E. / B.Tech in Civil Engineering", ageLimit: "18 to 36 Years", payLevel: "Level 6 (₹35,400 Basic)" },
+    { postName: "Junior Engineer (Electrical & Mechanical)", department: "Rolling Stock, Traction & Workshops", vacancies: 3450, qualification: "3-Year Diploma / B.E. in Electrical / Mechanical / Production", ageLimit: "18 to 36 Years", payLevel: "Level 6 (₹35,400 Basic)" },
+    { postName: "Junior Engineer (Signal & Telecommunication)", department: "S&T Department", vacancies: 1381, qualification: "3-Year Diploma / B.E. in Electronics / Electrical / CS / IT", ageLimit: "18 to 36 Years", payLevel: "Level 6 (₹35,400 Basic)" },
+  ],
+  "ssc-gd-constable-2026": [
+    { postName: "Constable (General Duty) - BSF", department: "Border Security Force", vacancies: 15654, qualification: "10th High School Matriculation Pass", ageLimit: "18 to 23 Years", payLevel: "Level 3 (₹21,700 - ₹69,100)" },
+    { postName: "Constable (General Duty) - CISF", department: "Central Industrial Security Force", vacancies: 13632, qualification: "10th High School Matriculation Pass", ageLimit: "18 to 23 Years", payLevel: "Level 3 (₹21,700 - ₹69,100)" },
+    { postName: "Constable (General Duty) - CRPF", department: "Central Reserve Police Force", vacancies: 9410, qualification: "10th High School Matriculation Pass", ageLimit: "18 to 23 Years", payLevel: "Level 3 (₹21,700 - ₹69,100)" },
+    { postName: "Constable (General Duty) - SSB, ITBP, AR, SSF", department: "Sashastra Seema Bal & Special Security Force", vacancies: 785, qualification: "10th High School Matriculation Pass", ageLimit: "18 to 23 Years", payLevel: "Level 3 (₹21,700 - ₹69,100)" },
+  ],
+  "up-police-constable-2026": [
+    { postName: "Civil Police Constable (Male)", department: "Uttar Pradesh Police", vacancies: 48200, qualification: "12th (Intermediate) Pass from recognized board (Height: 168 cm, Run: 4.8 km in 25 min)", ageLimit: "18 to 25 Years", payLevel: "Level 3 (₹21,700 - ₹69,100)" },
+    { postName: "Civil Police Constable (Female)", department: "Uttar Pradesh Police", vacancies: 12044, qualification: "12th (Intermediate) Pass from recognized board (Height: 152 cm, Run: 2.4 km in 14 min)", ageLimit: "18 to 28 Years", payLevel: "Level 3 (₹21,700 - ₹69,100)" },
+  ],
+  "up-police-constable-60244": [
+    { postName: "Civil Police Constable (Male)", department: "Uttar Pradesh Police", vacancies: 48200, qualification: "12th (Intermediate) Pass from recognized board (Height: 168 cm, Run: 4.8 km in 25 min)", ageLimit: "18 to 25 Years", payLevel: "Level 3 (₹21,700 - ₹69,100)" },
+    { postName: "Civil Police Constable (Female)", department: "Uttar Pradesh Police", vacancies: 12044, qualification: "12th (Intermediate) Pass from recognized board (Height: 152 cm, Run: 2.4 km in 14 min)", ageLimit: "18 to 28 Years", payLevel: "Level 3 (₹21,700 - ₹69,100)" },
+  ],
+  "bpsc-tre-3-teacher-result": [
+    { postName: "Primary Teacher (Class 1 to 5)", department: "Education Department, Bihar", vacancies: 28025, qualification: "Senior Secondary (12th with 50%) + D.El.Ed + CTET Paper-1 / BTET Paper-1", ageLimit: "18 to 37 Years", payLevel: "Basic ₹25,000 + DA + HRA" },
+    { postName: "Middle School Teacher (Class 6 to 8)", department: "Education Department, Bihar", vacancies: 19645, qualification: "Graduation + B.Ed / D.El.Ed + CTET Paper-2 / BTET Paper-2", ageLimit: "21 to 37 Years", payLevel: "Basic ₹28,000 + DA + HRA" },
+    { postName: "Secondary Teacher (Class 9 to 10)", department: "Education Department, Bihar", vacancies: 16970, qualification: "Graduation in relevant subject (50%) + B.Ed + Bihar STET Paper-1", ageLimit: "21 to 37 Years", payLevel: "Basic ₹31,000 + DA + HRA" },
+    { postName: "Higher Secondary Teacher (Class 11 to 12)", department: "Education Department, Bihar", vacancies: 22373, qualification: "Post Graduation in subject (50%) + B.Ed + Bihar STET Paper-2", ageLimit: "21 to 37 Years", payLevel: "Basic ₹32,000 + DA + HRA" },
+  ],
+  "bpsc-tre-3": [
+    { postName: "Primary Teacher (Class 1 to 5)", department: "Education Department, Bihar", vacancies: 28025, qualification: "Senior Secondary (12th with 50%) + D.El.Ed + CTET Paper-1 / BTET Paper-1", ageLimit: "18 to 37 Years", payLevel: "Basic ₹25,000 + DA + HRA" },
+    { postName: "Middle School Teacher (Class 6 to 8)", department: "Education Department, Bihar", vacancies: 19645, qualification: "Graduation + B.Ed / D.El.Ed + CTET Paper-2 / BTET Paper-2", ageLimit: "21 to 37 Years", payLevel: "Basic ₹28,000 + DA + HRA" },
+    { postName: "Secondary Teacher (Class 9 to 10)", department: "Education Department, Bihar", vacancies: 16970, qualification: "Graduation in relevant subject (50%) + B.Ed + Bihar STET Paper-1", ageLimit: "21 to 37 Years", payLevel: "Basic ₹31,000 + DA + HRA" },
+    { postName: "Higher Secondary Teacher (Class 11 to 12)", department: "Education Department, Bihar", vacancies: 22373, qualification: "Post Graduation in subject (50%) + B.Ed + Bihar STET Paper-2", ageLimit: "21 to 37 Years", payLevel: "Basic ₹32,000 + DA + HRA" },
+  ],
+  "rrb-group-d-2026": [
+    { postName: "Track Maintainer Grade-IV", department: "Civil Engineering Department", vacancies: 42150, qualification: "10th Pass (Matriculation) OR ITI from NCVT/SCVT", ageLimit: "18 to 33 Years", payLevel: "Level 1 (₹18,000 Basic + Risk Allowance)" },
+    { postName: "Pointsman / Shunting Master", department: "Traffic & Operating", vacancies: 24800, qualification: "10th Pass from recognized board (A2 Medical Standard)", ageLimit: "18 to 33 Years", payLevel: "Level 1 (₹18,000 Basic + Night Allowance)" },
+    { postName: "Assistant Workshop & Carriage/Wagon (C&W)", department: "Mechanical Department", vacancies: 28500, qualification: "10th Pass OR ITI in Fitter / Welder / Machinist", ageLimit: "18 to 33 Years", payLevel: "Level 1 (₹18,000 Basic)" },
+    { postName: "Assistant Signal & Telecommunication (S&T)", department: "Signal & Telecom Department", vacancies: 8319, qualification: "10th Pass OR ITI in Electrical / Wireman / Electronics", ageLimit: "18 to 33 Years", payLevel: "Level 1 (₹18,000 Basic)" },
+  ],
+  "ssc-mts-havaldar-2026": [
+    { postName: "Multi-Tasking Staff (MTS Non-Technical)", department: "Various Central Ministries & Attached Offices", vacancies: 6144, qualification: "10th Class (Matriculation) Pass from recognized Board", ageLimit: "18 to 25 Years (Select posts up to 27)", payLevel: "Pay Level 1 (₹18,000 - ₹56,900)" },
+    { postName: "Havaldar (Customs, Central Excise & Narcotics)", department: "CBIC & CBN (Department of Revenue)", vacancies: 3439, qualification: "10th Pass + Physical Walking (1600m in 15 min male / 1km in 20 min female)", ageLimit: "18 to 27 Years", payLevel: "Pay Level 1 (₹18,000 - ₹56,900)" },
+  ],
+  "ssc-chsl-tier1-admit-card": [
+    { postName: "Lower Division Clerk (LDC) / Junior Secretariat Assistant (JSA)", department: "Central Ministries, Armed Forces HQ, Election Commission", vacancies: 3210, qualification: "12th Standard Pass + English 35 wpm or Hindi 30 wpm Typing", ageLimit: "18 to 27 Years", payLevel: "Pay Level 2 (₹19,900 - ₹63,200)" },
+    { postName: "Data Entry Operator (DEO Grade A)", department: "Comptroller & Auditor General of India (CAG) / Ministry of Consumer Affairs", vacancies: 490, qualification: "12th Standard Pass in Science stream with Mathematics", ageLimit: "18 to 27 Years", payLevel: "Pay Level 4 (₹25,500 - ₹81,100)" },
+  ],
+  "sbi-po-2026": [
+    { postName: "Probationary Officer (PO)", department: "State Bank of India (All India Branches)", vacancies: 2000, qualification: "Graduation in any discipline from a recognized University", ageLimit: "21 to 30 Years", payLevel: "Junior Management Grade Scale-I (Basic ₹41,960)" },
+  ],
+  "sbi-clerk-2026": [
+    { postName: "Junior Associate (Customer Support & Sales)", department: "State Bank of India (State-wise Circles)", vacancies: 8283, qualification: "Graduation in any discipline + Proficiency in Official Local Language of the State", ageLimit: "20 to 28 Years", payLevel: "Clerical Cadre (Basic ₹19,900)" },
+  ],
+  "kea-major-recruitment-4744": [
+    { postName: "First Division Assistant (FDA) / Senior Assistant", department: "Various Karnataka State Government Boards & Corporations", vacancies: 1820, qualification: "Bachelor's Degree in any discipline with Kannada language proficiency", ageLimit: "18 to 35 Years (OBC 38y, SC/ST 40y)", payLevel: "State Pay Scale (₹27,650 - ₹52,650)" },
+    { postName: "Second Division Assistant (SDA) / Junior Assistant", department: "Various Karnataka State Government Boards & Corporations", vacancies: 2924, qualification: "12th Standard / 2nd PUC Pass or 3-Year Diploma", ageLimit: "18 to 35 Years (OBC 38y, SC/ST 40y)", payLevel: "State Pay Scale (₹21,400 - ₹42,000)" },
+  ],
+  "india-post-gds-2026": [
+    { postName: "Branch Postmaster (BPM)", department: "Department of Posts (Gramin Dak Sevak)", vacancies: 18450, qualification: "10th Class Secondary School Examination with Maths & English + Computer knowledge", ageLimit: "18 to 40 Years", payLevel: "TRCA Slab 1 (₹12,000 - ₹29,380)" },
+    { postName: "Assistant Branch Postmaster (ABPM) / Dak Sevak", department: "Department of Posts (Gramin Dak Sevak)", vacancies: 25778, qualification: "10th Class Secondary School Examination with Maths & English", ageLimit: "18 to 40 Years", payLevel: "TRCA Slab 2 (₹10,000 - ₹24,470)" },
+  ],
+};
+
+export function getJobPostBreakdown(job: JobNotification): PostVacancyBreakdown[] {
+  if (POST_BREAKDOWN_REGISTRY[job.id]) {
+    return POST_BREAKDOWN_REGISTRY[job.id];
+  }
+
+  // Fallback intelligent breakdown synthesized from job attributes
+  return [
+    {
+      postName: job.shortTitle,
+      department: job.organization,
+      vacancies: job.totalVacancies.toLocaleString("en-IN"),
+      qualification: job.qualifications.join("; "),
+      ageLimit: `${job.minAge} to ${job.maxAge} Years`,
+      payLevel: job.salary.split("(")[0].trim() || job.salary,
+    },
+  ];
+}
+
+// ==========================================
+// AGE RECKONING (CRUCIAL DATE FOR AGE CALCULATION)
+// ==========================================
+export function getJobAgeReckoning(job: JobNotification): AgeReckoningInfo {
+  // Most Indian notifications reckon age as of 01-08 or 01-01 of the recruitment year
+  const startYear = job.applicationStartDate ? new Date(job.applicationStartDate).getFullYear() : 2026;
+  
+  let crucialDate = `01 August ${startYear}`;
+  if (job.organization.toLowerCase().includes("bank") || job.orgShortCode === "SBI" || job.orgShortCode === "IBPS") {
+    crucialDate = `01 April ${startYear}`;
+  } else if (job.organization.toLowerCase().includes("railway") || job.orgShortCode === "RRB") {
+    crucialDate = `01 July ${startYear}`;
+  } else if (job.title.toLowerCase().includes("nda") || job.title.toLowerCase().includes("defense")) {
+    crucialDate = `01 January ${startYear + 1}`;
+  }
+
+  const birthYearStart = startYear - job.maxAge;
+  const birthYearEnd = startYear - job.minAge;
+
+  return {
+    crucialDate,
+    minAge: job.minAge,
+    maxAge: job.maxAge,
+    bornBetween: `Between 02-08-${birthYearStart} and 01-08-${birthYearEnd} (both dates inclusive)`,
+    specialClauses: job.ageRelaxation,
+  };
+}
+
+// ==========================================
+// CATEGORY-WISE STATUTORY MATRIX (FEES & RELAXATIONS)
+// ==========================================
+export function getJobCategoryMatrix(job: JobNotification): CategoryStatutoryMatrixItem[] {
+  const feeUR = job.applicationFee.ur_obc_ews;
+  const feeSC = job.applicationFee.sc_st;
+  const feeFemale = job.applicationFee.female_or_pwd ?? 0;
+
+  return [
+    {
+      category: "General / Unreserved",
+      code: "UR / GEN",
+      fee: feeUR === 0 ? "Exempted (₹0)" : `₹${feeUR}`,
+      ageRelaxation: "No Age Relaxation",
+      maxEligibleAge: `${job.maxAge} Years`,
+      exemptionNote: "Standard fee applies",
+    },
+    {
+      category: "Economically Weaker Sections",
+      code: "EWS",
+      fee: feeUR === 0 ? "Exempted (₹0)" : `₹${feeUR}`,
+      ageRelaxation: "No Age Relaxation (Merit Quota 10%)",
+      maxEligibleAge: `${job.maxAge} Years`,
+      exemptionNote: "Valid Income & Asset Certificate required",
+    },
+    {
+      category: "Other Backward Classes (Non-Creamy)",
+      code: "OBC-NCL",
+      fee: feeUR === 0 ? "Exempted (₹0)" : `₹${feeUR}`,
+      ageRelaxation: "+3 Years Upper Age Concession",
+      maxEligibleAge: `${job.maxAge + 3} Years`,
+      exemptionNote: "Central Government format certificate required",
+    },
+    {
+      category: "Scheduled Castes & Scheduled Tribes",
+      code: "SC / ST",
+      fee: feeSC === 0 ? "Exempted (₹0)" : `₹${feeSC}`,
+      ageRelaxation: "+5 Years Upper Age Concession",
+      maxEligibleAge: `${job.maxAge + 5} Years`,
+      exemptionNote: feeSC === 0 ? "100% Application Fee Exemption" : "Subsidized / Refundable Fee",
+    },
+    {
+      category: "Persons with Benchmark Disabilities",
+      code: "PwBD / Divyang",
+      fee: feeFemale === 0 ? "Exempted (₹0)" : `₹${feeFemale}`,
+      ageRelaxation: "+10 Years (PwBD-UR) / +13y (OBC) / +15y (SC/ST)",
+      maxEligibleAge: `${job.maxAge + 10} to ${job.maxAge + 15} Years`,
+      exemptionNote: "Disability Certificate (>40%) required",
+    },
+    {
+      category: "Female Candidates (All Categories)",
+      code: "Female",
+      fee: feeFemale === 0 ? "Exempted (₹0)" : `₹${feeFemale}`,
+      ageRelaxation: job.title.toLowerCase().includes("police") ? "+3 Years in select state drives" : "As per Category",
+      maxEligibleAge: `${job.maxAge} to ${job.maxAge + 5} Years`,
+      exemptionNote: feeFemale === 0 ? "Full Fee Waiver in Central Drives (UPSC/SSC)" : "Standard Subsidized Fee",
+    },
+  ];
+}
+
+// ==========================================
+// DATED CORRIGENDUM & EXTENSION NOTICES
+// ==========================================
+const CORRIGENDUM_REGISTRY: Record<string, CorrigendumNotice> = {
+  "rrb-alp-technician-2026": {
+    noticeDate: "12 October 2026",
+    type: "Vacancy Revision",
+    headline: "Official Gazette Notice: ALP Vacancies Revised to 18,799 Posts",
+    details: "Ministry of Railways has approved a major revision in Assistant Loco Pilot vacancies from the initial 5,696 to 18,799 posts across all 21 regional RRB boards to address operational requirements.",
+    officialGazetteRef: "Railway Board Gazette Circular No. RRB/CEN-01/2026-REV",
+  },
+  "ssc-cgl-2026": {
+    noticeDate: "05 October 2026",
+    type: "Extension",
+    headline: "Registration Deadline Extended by Staff Selection Commission",
+    details: "The closing date for submission of online applications for Combined Graduate Level Examination (CGL 2026) has been officially extended to 05 November 2026. The 2-day correction window will open on 08-09 November 2026.",
+    officialGazetteRef: "SSC Order F.No. 3/1/2026-P&P-I",
+  },
+  "rrb-ntpc-2026": {
+    noticeDate: "18 September 2026",
+    type: "Correction Window",
+    headline: "One-Time Special 3-Year Age Concession Notified",
+    details: "To provide relief to candidates affected by previous cycle postponements, an official 3-year age relaxation beyond the prescribed upper limit is granted across all categories for CEN 05/2026 & CEN 06/2026.",
+    officialGazetteRef: "Gazette of India Extraordinary No. CEN-05/2026",
+  },
+  "up-police-constable-2026": {
+    noticeDate: "28 January 2026",
+    type: "Corrigendum",
+    headline: "Chief Minister Notifies 3-Year Age Relaxation Across All Categories",
+    details: "Government of Uttar Pradesh has issued an official gazette notification relaxing the maximum age limit by 3 years for all male and female candidates for the 60,244 civil constable posts.",
+    officialGazetteRef: "UPPRPB Order No. 2026/CONST-01",
+  },
+  "up-police-constable-60244": {
+    noticeDate: "28 January 2026",
+    type: "Corrigendum",
+    headline: "Chief Minister Notifies 3-Year Age Relaxation Across All Categories",
+    details: "Government of Uttar Pradesh has issued an official gazette notification relaxing the maximum age limit by 3 years for all male and female candidates for the 60,244 civil constable posts.",
+    officialGazetteRef: "UPPRPB Order No. 2026/CONST-01",
+  },
+};
+
+export function getJobCorrigendum(job: JobNotification): CorrigendumNotice | null {
+  return CORRIGENDUM_REGISTRY[job.id] || null;
+}
+
+// ==========================================
+// IN-HAND ESTIMATED PAY BREAKDOWN
+// ==========================================
+export function getJobPayBreakdown(job: JobNotification): PayBreakdown {
+  const salaryStr = job.salary;
+  let basic = "₹25,500";
+  let inHand = "₹38,000 - ₹44,000 / month";
+  let level = "Pay Level 4";
+
+  if (salaryStr.includes("Level 10") || salaryStr.includes("56,100")) {
+    level = "Pay Level 10 (Gazetted Group A)";
+    basic = "₹56,100 Basic";
+    inHand = "₹85,000 - ₹1,05,000 / month";
+  } else if (salaryStr.includes("Level 7") || salaryStr.includes("44,900")) {
+    level = "Pay Level 7 (Non-Gazetted Group B)";
+    basic = "₹44,900 Basic";
+    inHand = "₹68,000 - ₹76,000 / month";
+  } else if (salaryStr.includes("Level 6") || salaryStr.includes("35,400")) {
+    level = "Pay Level 6 (Technical Group B/C)";
+    basic = "₹35,400 Basic";
+    inHand = "₹54,000 - ₹62,000 / month";
+  } else if (salaryStr.includes("Level 5") || salaryStr.includes("29,200")) {
+    level = "Pay Level 5";
+    basic = "₹29,200 Basic";
+    inHand = "₹44,000 - ₹51,000 / month";
+  } else if (salaryStr.includes("Level 3") || salaryStr.includes("21,700")) {
+    level = "Pay Level 3 (Constable Cadre)";
+    basic = "₹21,700 Basic";
+    inHand = "₹33,000 - ₹38,000 / month";
+  } else if (salaryStr.includes("Level 2") || salaryStr.includes("19,900")) {
+    level = "Pay Level 2 (Clerical / ALP)";
+    basic = "₹19,900 Basic";
+    inHand = "₹30,000 - ₹35,000 / month (ALP includes Running Allowances)";
+  } else if (salaryStr.includes("Level 1") || salaryStr.includes("18,000")) {
+    level = "Pay Level 1 (Track Maintainer / Pointsman)";
+    basic = "₹18,000 Basic";
+    inHand = "₹28,000 - ₹34,000 / month (includes Risk / Hardship allowances)";
+  }
+
+  return {
+    payLevel: level,
+    basicPay: basic,
+    inHandEstimated: inHand,
+    allowances: [
+      "Dearness Allowance (DA at central rates ~53%)",
+      "House Rent Allowance (HRA: 9% to 27% based on X/Y/Z city classification)",
+      "Transport Allowance (TA) with DA thereon",
+      "National Pension System (NPS) 14% government contribution + CGHS Medical",
+    ],
+  };
+}
+

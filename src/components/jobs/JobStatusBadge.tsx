@@ -42,6 +42,12 @@ export function JobStatusBadge({ status, className }: Props) {
       text: "text-[#209948]",
       border: "border-[#C6E7D0]",
     },
+    APPLICATIONS_CLOSED: {
+      label: "Applications Closed",
+      bg: "bg-[#F4F1EA]",
+      text: "text-[#68635B]",
+      border: "border-[#DDD5C7]",
+    },
   };
 
   const current = configs[status] || configs.UPCOMING;

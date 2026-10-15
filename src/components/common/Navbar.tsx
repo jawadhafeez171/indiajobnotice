@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Menu, X, Bookmark, Calendar } from "lucide-react";
+import { ChevronDown, Menu, X, Bookmark, Calendar, Send } from "lucide-react";
 import { BrandLogo } from "./BrandLogo";
 import { StateSelectorModal } from "./StateSelectorModal";
 import { WatchlistDrawer } from "./WatchlistDrawer";
@@ -26,40 +26,44 @@ export function Navbar({ currentStateSlug }: Props) {
 
   return (
     <>
-      {/* Header naturally anchored by the signature Royal Blue border from the logo */}
-      <header className="sticky top-0 z-40 bg-[#FCFAF4]/95 backdrop-blur-sm border-b-[3px] border-[#1E3799] shadow-2xs">
+      {/* Fixed Clean Header with Stable 64px Height */}
+      <header className="sticky top-0 z-40 bg-[#FCFAF4]/95 backdrop-blur-md border-b border-[#EAE2D2] shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-18 sm:h-20 py-2">
+          <div className="flex items-center justify-between h-16">
             
-            {/* Logo Brand Mark & Subdomain Switcher */}
-            <div className="flex items-center gap-4 sm:gap-6">
+            {/* Logo Brand Mark & State Switcher */}
+            <div className="flex items-center gap-3 sm:gap-4 shrink-0">
               <a href={getCentralPortalUrl()} className="block group transition-transform hover:opacity-95" title="India Job Notice Home">
-                <BrandLogo />
+                <BrandLogo height={32} />
               </a>
 
               {/* State Switcher Pill */}
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#EEF2FA] hover:bg-[#E0E9F8] text-[#1E3799] text-xs font-bold border border-[#CCD8F0] transition-colors"
+                className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EEF2FA] hover:bg-[#E0E9F8] text-[#1E3799] text-xs font-semibold border border-[#CCD8F0] transition-colors whitespace-nowrap"
+                title="Switch State Portal"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-[#E96B15]" />
-                <span>{currentState ? `${currentState.name} (${currentState.code})` : "All India / Central"}</span>
+                <span>{currentState ? `${currentState.name} (${currentState.code})` : "All India"}</span>
+                <span className="text-[10px] font-mono font-bold px-1 py-0.5 rounded bg-white text-[#1E3799] border border-[#CCD8F0] leading-none">
+                  36 States
+                </span>
                 <ChevronDown className="w-3 h-3 text-[#1E3799]/70" />
               </button>
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-5 text-sm text-[#3E3C38] font-medium">
+            <nav className="hidden lg:flex items-center gap-4 xl:gap-5 text-xs xl:text-sm text-[#3E3C38] font-medium shrink-0">
               <a
                 href={currentState ? getStateSubdomainUrl(currentState.slug) : getCentralPortalUrl()}
-                className="hover:text-[#1E3799] transition-colors font-semibold"
+                className="hover:text-[#1E3799] transition-colors font-semibold whitespace-nowrap"
               >
-                Gazette Notices
+                Gazettes
               </a>
 
               <Link
                 href="/calendar"
-                className="hover:text-[#1E3799] transition-colors font-semibold flex items-center gap-1.5"
+                className="hover:text-[#1E3799] transition-colors font-semibold flex items-center gap-1.5 whitespace-nowrap"
               >
                 <Calendar className="w-3.5 h-3.5 text-[#1E3799]" />
                 <span>Exam Calendar</span>
@@ -67,45 +71,47 @@ export function Navbar({ currentStateSlug }: Props) {
 
               <Link
                 href="/calculator"
-                className="text-[#E96B15] hover:text-[#D4590A] transition-colors font-bold flex items-center gap-1"
+                className="text-[#E96B15] hover:text-[#D4590A] transition-colors font-bold whitespace-nowrap"
               >
                 <span>Age Calculator</span>
               </Link>
 
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="hover:text-[#1E3799] transition-colors font-semibold flex items-center gap-1.5"
-              >
-                <span>State Portals</span>
-                <span className="text-[10px] font-mono font-black px-1.5 py-0.2 rounded bg-[#EEF2FA] text-[#1E3799] border border-[#CCD8F0]">
-                  36
-                </span>
-              </button>
-
               <a
                 href="#admit-cards"
-                className="hover:text-[#1E3799] transition-colors font-semibold"
+                className="hover:text-[#1E3799] transition-colors font-semibold whitespace-nowrap"
               >
                 Admit Cards
               </a>
 
               <a
                 href="#results"
-                className="hover:text-[#1E3799] transition-colors font-semibold"
+                className="hover:text-[#1E3799] transition-colors font-semibold whitespace-nowrap"
               >
                 Results
+              </a>
+
+              {/* Telegram Channel Quick Action */}
+              <a
+                href="https://t.me/Indiajobnotice1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#229ED9] hover:bg-[#1D88BC] text-white text-xs font-bold transition-colors whitespace-nowrap shadow-xs"
+                title="Join official Telegram channel for instant alerts"
+              >
+                <Send className="w-3 h-3" />
+                <span>Telegram</span>
               </a>
 
               {/* Watchlist Bookmark Trigger */}
               <button
                 onClick={() => setIsWatchlistOpen(true)}
-                className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-[#EAE2D2] hover:border-[#1E3799] text-[#1A1918] hover:text-[#1E3799] text-xs font-bold transition-all shadow-2xs hover:shadow-xs"
+                className="relative flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-[#EAE2D2] hover:border-[#1E3799] text-[#1A1918] hover:text-[#1E3799] text-xs font-bold transition-all shadow-xs whitespace-nowrap"
                 title="View your saved and pinned notifications"
               >
                 <Bookmark className={`w-3.5 h-3.5 ${savedCount > 0 ? "fill-[#E96B15] text-[#E96B15]" : "text-[#68635B]"}`} />
                 <span>Pinned</span>
                 {savedCount > 0 && (
-                  <span className="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black bg-[#E96B15] text-white">
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-mono font-black bg-[#E96B15] text-white leading-none">
                     {savedCount}
                   </span>
                 )}
@@ -129,16 +135,17 @@ export function Navbar({ currentStateSlug }: Props) {
 
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="px-2.5 py-1.5 rounded-md bg-[#EEF2FA] text-xs font-bold text-[#1E3799] border border-[#CCD8F0]"
+                className="px-2.5 py-1 rounded-md bg-[#EEF2FA] text-xs font-bold text-[#1E3799] border border-[#CCD8F0] whitespace-nowrap"
               >
                 {currentState ? currentState.code : "States"}
               </button>
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-1.5 text-[#1E3799]"
+                className="p-1.5 text-[#1E3799] hover:bg-[#EEF2FA] rounded-md transition-colors"
+                aria-label="Toggle Navigation Menu"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
             </div>
           </div>

@@ -33,6 +33,7 @@ import { WhatsAppLogo, TelegramLogo } from "@/components/common/SocialIcons";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { getStateBySlug } from "@/config/states";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
+import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { useWatchlist } from "@/lib/watchlist";
 import { generateGoogleCalendarUrl, downloadIcsFile } from "@/lib/calendar";
 import { 
@@ -41,6 +42,13 @@ import {
   getJobCutoffs, 
   getJobDetailedSyllabus 
 } from "@/lib/exam-details";
+import { ExecutiveNotificationDigest } from "./ExecutiveNotificationDigest";
+import { ExaminationLifecycleBar } from "./ExaminationLifecycleBar";
+import { ClosedRecruitmentAlert } from "./ClosedRecruitmentAlert";
+import { JobTaxonomyBar } from "./JobTaxonomyBar";
+import { RelatedOpportunitiesSection } from "./RelatedOpportunitiesSection";
+import { getJobTaxonomyLinks } from "@/lib/internal-links";
+import { isJobApplicationClosed } from "@/data/jobs";
 
 interface Props {
   job: JobNotification;
@@ -50,8 +58,10 @@ interface Props {
 type SyllabusTab = "pattern" | "topics" | "physical" | "cutoffs";
 
 export function JobDetailView({ job, stateSlug }: Props) {
+  const isClosed = isJobApplicationClosed(job);
   const daysLeft = getDaysRemaining(job.applicationEndDate);
   const stateInfo = job.stateSlug !== "central" ? getStateBySlug(job.stateSlug) : null;
+  const taxonomy = getJobTaxonomyLinks(job);
   
   // Watchlist
   const { isSaved, toggleSave } = useWatchlist();
@@ -81,77 +91,100 @@ export function JobDetailView({ job, stateSlug }: Props) {
     }
   };
 
+  const basePrefix = job.isCentral || !stateSlug || stateSlug === "central"
+    ? `/jobs/${job.slug}`
+    : `/state/${stateSlug}/jobs/${job.slug}`;
+
   // Google JobPosting JSON-LD Structured Data
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "JobPosting",
-    "title": job.title,
-    "description": `${job.organization} has released notification for ${job.totalVacancies} vacancies. ${job.keyHighlights.join(". ")}`,
-    "datePosted": job.applicationStartDate,
-    "validThrough": `${job.applicationEndDate}T23:59:59Z`,
-    "employmentType": "FULL_TIME",
-    "hiringOrganization": {
-      "@type": "Organization",
-      "name": job.organization,
-      "sameAs": job.officialPdfUrl,
-    },
-    "jobLocation": {
-      "@type": "Place",
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "IN",
-        "addressRegion": stateInfo ? stateInfo.name : "India",
-      },
-    },
-    "baseSalary": {
-      "@type": "MonetaryAmount",
-      "currency": "INR",
-      "value": {
-        "@type": "QuantitativeValue",
-        "unitText": "MONTH",
-      },
-    },
-    "qualifications": job.qualifications.join(", "),
-  };
+  // GOOGLE GUIDELINE: Expire / remove JobPosting structured data when applications close to prevent expired search penalties.
+  const jsonLd = !isClosed
+    ? {
+        "@context": "https://schema.org",
+        "@type": "JobPosting",
+        "title": job.title,
+        "description": `${job.organization} has released notification for ${job.totalVacancies} vacancies. ${job.keyHighlights.join(". ")}`,
+        "datePosted": job.applicationStartDate,
+        "validThrough": `${job.applicationEndDate}T23:59:59Z`,
+        "employmentType": "FULL_TIME",
+        "hiringOrganization": {
+          "@type": "Organization",
+          "name": job.organization,
+          "sameAs": job.officialPdfUrl,
+        },
+        "jobLocation": {
+          "@type": "Place",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "IN",
+            "addressRegion": stateInfo ? stateInfo.name : "India",
+          },
+        },
+        "baseSalary": {
+          "@type": "MonetaryAmount",
+          "currency": "INR",
+          "value": {
+            "@type": "QuantitativeValue",
+            "unitText": "MONTH",
+          },
+        },
+        "qualifications": job.qualifications.join(", "),
+      }
+    : {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": `${job.title} (Archived Recruitment Gazette)`,
+        "description": `Archived official circular, syllabus, exam pattern and historical cut-offs for ${job.title}. Applications closed on ${job.applicationEndDate}.`,
+        "dateModified": new Date().toISOString(),
+      };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 print:p-0 print:m-0 print:max-w-none">
-      {/* Google Jobs Structured Data Script */}
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-7 print:p-0 print:m-0 print:max-w-none">
+      {/* Structured Data Script (Compliant with Google Expired Job Guidelines) */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Breadcrumb Navigation - hidden on print */}
-      <nav className="flex items-center justify-between text-xs text-[#68635B] print:hidden">
-        <div className="flex items-center gap-2">
-          <a href={getCentralPortalUrl()} className="hover:text-[#1E3799] font-medium transition-colors">Home</a>
-          <span>/</span>
-          {stateInfo ? (
-            <>
-              <a href={getStateSubdomainUrl(stateInfo.slug)} className="hover:text-[#1E3799] font-medium transition-colors">
-                {stateInfo.name} Portal
-              </a>
-              <span>/</span>
-            </>
-          ) : (
-            <>
-              <a href={getCentralPortalUrl()} className="hover:text-[#1E3799] font-medium transition-colors">Central Jobs</a>
-              <span>/</span>
-            </>
-          )}
-          <span className="text-[#1A1918] font-bold line-clamp-1">{job.shortTitle}</span>
-        </div>
+      {/* Deliberate Hierarchical Breadcrumb Navigation */}
+      <nav aria-label="Breadcrumb" className="flex items-center justify-between text-xs text-[#68635B] print:hidden">
+        <ol className="flex items-center flex-wrap gap-1.5 list-none p-0 m-0">
+          {taxonomy.breadcrumbTrail.map((crumb, idx) => {
+            const isLast = idx === taxonomy.breadcrumbTrail.length - 1;
+            return (
+              <li key={idx} className="flex items-center gap-1.5">
+                {idx > 0 && <span className="text-[#A09B90]">/</span>}
+                {isLast ? (
+                  <span className="text-[#1A1918] font-bold line-clamp-1" aria-current="page">
+                    {crumb.label}
+                  </span>
+                ) : (
+                  <Link
+                    href={crumb.href}
+                    className="hover:text-[#1E3799] font-medium transition-colors"
+                  >
+                    {crumb.label}
+                  </Link>
+                )}
+              </li>
+            );
+          })}
+        </ol>
 
         {/* Quick Back to Gazette Directory */}
         <Link
           href="/"
-          className="text-[#1E3799] hover:underline font-bold flex items-center gap-1"
+          className="text-[#1E3799] hover:underline font-bold flex items-center gap-1 shrink-0 ml-2"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>All Gazettes</span>
         </Link>
       </nav>
+
+      {/* Examination Lifecycle Navigation Bar (Notification, Admit Card, Answer Key, Result) */}
+      <ExaminationLifecycleBar job={job} activeStage="notice" stateSlug={stateSlug} />
+
+      {/* Deliberate Category & Authority Hub Pathways (State, Qualification, Organisation, Sector) */}
+      <JobTaxonomyBar job={job} />
 
       {/* Main Job Banner Card */}
       <div className="bg-white rounded-xl border border-[#EAE2D2] border-t-4 border-t-[#1E3799] p-6 sm:p-8 shadow-2xs print:border-none print:shadow-none print:p-0">
@@ -176,7 +209,9 @@ export function JobDetailView({ job, stateSlug }: Props) {
           </div>
 
           <div className="flex items-center gap-2">
-            <JobStatusBadge status={job.status} />
+            <JobStatusBadge 
+              status={isClosed && job.status !== "RESULT_OUT" && job.status !== "ADMIT_CARD_OUT" ? "APPLICATIONS_CLOSED" : job.status} 
+            />
 
             {/* Pin to Watchlist Action */}
             <button
@@ -205,15 +240,21 @@ export function JobDetailView({ job, stateSlug }: Props) {
 
         {/* Action Buttons Bar - hidden on print */}
         <div className="mt-6 pt-6 border-t border-[#F2ECE1] flex flex-wrap items-center gap-3 print:hidden">
-          <a
-            href={job.applyOnlineUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#E96B15] hover:bg-[#D4590A] text-white font-bold text-sm shadow-xs transition-colors"
-          >
-            <ExternalLink className="w-4 h-4" />
-            <span>Apply Online (Official Portal)</span>
-          </a>
+          {isClosed ? (
+            <div className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-[#FAF7EF] border border-[#DDD5C7] text-[#68635B] font-bold text-sm">
+              <span>🚫 Applications Closed on {formatDate(job.applicationEndDate)}</span>
+            </div>
+          ) : (
+            <a
+              href={job.applyOnlineUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#E96B15] hover:bg-[#D4590A] text-white font-bold text-sm shadow-xs transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              <span>Apply Online (Official Portal)</span>
+            </a>
+          )}
 
           <a
             href={job.officialPdfUrl}
@@ -274,115 +315,16 @@ export function JobDetailView({ job, stateSlug }: Props) {
         <JobLifecycleTracker job={job} />
       </div>
 
-      {/* Quick Summary Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Important Dates */}
-        <div className="bg-white rounded-xl border border-[#EAE2D2] p-6 shadow-2xs">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-serif text-base font-bold text-[#1A1918] flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-[#1E3799]" />
-              Official Dates Schedule
-            </h3>
-            <span className="text-[11px] font-mono text-[#E96B15] font-bold">
-              {daysLeft > 0 ? `${daysLeft} days to apply` : "Dates finalized"}
-            </span>
-          </div>
+      {/* Closed Recruitment Notice & Active Opportunities Banner */}
+      {isClosed && (
+        <ClosedRecruitmentAlert job={job} stateSlug={stateSlug} />
+      )}
 
-          <dl className="space-y-3 text-sm">
-            <div className="flex justify-between py-2 border-b border-[#F2ECE1]">
-              <dt className="text-[#68635B]">Application Opening Date:</dt>
-              <dd className="font-bold text-[#1A1918]">{formatDate(job.applicationStartDate)}</dd>
-            </div>
-            <div className="flex justify-between py-2 border-b border-[#F2ECE1]">
-              <dt className="text-[#68635B]">Last Date to Apply:</dt>
-              <dd className="font-bold text-[#E96B15] flex items-center gap-1.5">
-                <span>{formatDate(job.applicationEndDate)}</span>
-                {daysLeft > 0 && daysLeft <= 7 && (
-                  <span className="text-[10px] bg-[#FDF3EB] text-[#E96B15] px-1.5 py-0.2 rounded font-mono font-bold">
-                    Urgent
-                  </span>
-                )}
-              </dd>
-            </div>
-            {job.admitCardDate && (
-              <div className="flex justify-between py-2 border-b border-[#F2ECE1]">
-                <dt className="text-[#68635B]">Admit Card Release:</dt>
-                <dd className="font-bold text-[#1E3799]">{job.admitCardDate}</dd>
-              </div>
-            )}
-            <div className="flex justify-between py-2">
-              <dt className="text-[#68635B]">Scheduled Exam Date:</dt>
-              <dd className="font-bold text-[#1A1918]">{job.examDate || "Will be notified by commission"}</dd>
-            </div>
-          </dl>
-        </div>
+      {/* Executive Candidate Notification Digest (Primary Facts Near Top) */}
+      <ExecutiveNotificationDigest job={job} />
 
-        {/* Application Fees */}
-        <div className="bg-white rounded-xl border border-[#EAE2D2] p-6 shadow-2xs">
-          <h3 className="font-serif text-base font-bold text-[#1A1918] mb-4 flex items-center gap-2">
-            <IndianRupee className="w-5 h-5 text-[#209948]" />
-            Statutory Application Fees
-          </h3>
-          <dl className="space-y-3 text-sm">
-            <div className="flex justify-between py-2 border-b border-[#F2ECE1]">
-              <dt className="text-[#68635B]">General / OBC / EWS:</dt>
-              <dd className="font-bold text-[#1A1918]">₹{job.applicationFee.ur_obc_ews}</dd>
-            </div>
-            <div className="flex justify-between py-2 border-b border-[#F2ECE1]">
-              <dt className="text-[#68635B]">SC / ST Candidates:</dt>
-              <dd className="font-bold text-[#1A1918]">
-                {job.applicationFee.sc_st === 0 ? "Exempted (₹0)" : `₹${job.applicationFee.sc_st}`}
-              </dd>
-            </div>
-            <div className="flex justify-between py-2">
-              <dt className="text-[#68635B]">Female / PwD Candidates:</dt>
-              <dd className="font-bold text-[#1A1918]">
-                {job.applicationFee.female_or_pwd === 0 ? "Exempted (₹0)" : `₹${job.applicationFee.female_or_pwd ?? 0}`}
-              </dd>
-            </div>
-          </dl>
-        </div>
-      </div>
-
-      {/* Eligibility & Age Criteria */}
-      <div className="bg-white rounded-xl border border-[#EAE2D2] p-6 sm:p-7 shadow-2xs">
-        <h3 className="font-serif text-base sm:text-lg font-bold text-[#1A1918] mb-4 flex items-center gap-2">
-          <GraduationCap className="w-5 h-5 text-[#1E3799]" />
-          Eligibility Criteria, Age Bracket & Pay Scale
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div className="p-4 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2]">
-            <span className="text-xs text-[#68635B] font-bold block uppercase font-mono">Total Posts</span>
-            <span className="text-xl font-serif font-bold text-[#1E3799] mt-1 block">
-              {job.totalVacancies.toLocaleString("en-IN")} Posts
-            </span>
-          </div>
-
-          <div className="p-4 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2]">
-            <span className="text-xs text-[#68635B] font-bold block uppercase font-mono">Age Bracket</span>
-            <span className="text-base font-bold text-[#1A1918] mt-1 block">
-              {job.minAge} to {job.maxAge} Years
-            </span>
-            <span className="text-xs text-[#209948] font-semibold mt-0.5 block">{job.ageRelaxation}</span>
-          </div>
-
-          <div className="p-4 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2]">
-            <span className="text-xs text-[#68635B] font-bold block uppercase font-mono">Pay Scale Matrix</span>
-            <span className="text-base font-bold text-[#209948] mt-1 block">
-              {job.salary}
-            </span>
-          </div>
-        </div>
-
-        <div className="mt-5 p-4 rounded-lg bg-[#EEF2FA] border border-[#CCD8F0]">
-          <h4 className="text-xs font-bold text-[#1E3799] uppercase tracking-wider font-mono">Educational Qualifications:</h4>
-          <ul className="mt-1.5 list-disc list-inside text-sm text-[#1A1918] space-y-1">
-            {job.qualifications.map((q, idx) => (
-              <li key={idx} className="font-medium">{q}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      {/* Reserved Ad Space in Job Details (CLS Protected) */}
+      <ReservedAdSlot slotType="leaderboard" slotId={`job-detail-${job.slug}`} className="print:hidden" />
 
       {/* ================= COMPREHENSIVE EXAM PATTERN & SYLLABUS SECTION ================= */}
       <section className="bg-white rounded-xl border border-[#EAE2D2] p-6 sm:p-7 shadow-2xs space-y-6">
@@ -665,36 +607,30 @@ export function JobDetailView({ job, stateSlug }: Props) {
         )}
       </section>
 
-      {/* Selection Process & Highlights */}
+      {/* Key Official Directives & Aspirants Guidance */}
       <div className="bg-white rounded-xl border border-[#EAE2D2] p-6 sm:p-7 shadow-2xs">
-        <h3 className="font-serif text-base sm:text-lg font-bold text-[#1A1918] mb-4 flex items-center gap-2">
-          <Scale className="w-5 h-5 text-[#E96B15]" />
-          Selection Stages Summary
+        <h3 className="font-serif text-base sm:text-lg font-bold text-[#1A1918] mb-3 flex items-center gap-2">
+          <CheckCircle2 className="w-5 h-5 text-[#209948]" />
+          Official Commission Directives & Candidate Instructions
         </h3>
+        <p className="text-xs text-[#68635B] mb-4">
+          Crucial conditions, verification rules, and examination hall mandates published in the official circular:
+        </p>
 
-        <div className="space-y-2.5 mb-6">
-          {job.selectionProcess.map((step, idx) => (
-            <div key={idx} className="flex items-center gap-3 p-3.5 rounded-lg bg-[#FCFAF4] text-sm font-semibold text-[#1A1918] border border-[#EAE2D2]">
-              <span className="w-6 h-6 rounded-full bg-[#1E3799] text-white font-bold text-xs flex items-center justify-center shrink-0">
-                {idx + 1}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {job.keyHighlights.map((hl, idx) => (
+            <div key={idx} className="flex items-start gap-2.5 p-3.5 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2] text-xs leading-relaxed text-[#3E3C38]">
+              <span className="w-5 h-5 rounded-full bg-[#EDF7F0] text-[#209948] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 border border-[#C6E7D0]">
+                ✓
               </span>
-              <span>{step}</span>
+              <span className="font-medium text-[#1A1918]">{hl}</span>
             </div>
           ))}
         </div>
-
-        <div className="border-t border-[#F2ECE1] pt-4">
-          <h4 className="text-xs font-bold uppercase font-mono text-[#68635B] mb-2.5">Official Aspirants Guidance:</h4>
-          <ul className="space-y-2 text-xs text-[#524E48]">
-            {job.keyHighlights.map((hl, idx) => (
-              <li key={idx} className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#209948] shrink-0 mt-0.5" />
-                <span>{hl}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
+
+      {/* Genuinely Related Opportunities & Alternate Drives (Internal Cross-Linking) */}
+      <RelatedOpportunitiesSection currentJob={job} />
 
       {/* Official PDF Warning & Verification Badge */}
       <div className="p-4 rounded-lg bg-[#FAF7EF] border border-[#EAE2D2] text-xs text-[#68635B] flex items-center justify-between">
