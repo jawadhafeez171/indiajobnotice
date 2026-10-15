@@ -47,7 +47,7 @@ export function generateGoogleCalendarUrl(event: CalendarEventParams): string {
     action: "TEMPLATE",
     text: event.title,
     dates: `${start}/${end}`,
-    details: `${event.description}\n\nOfficial Gazette: ${event.url || "https://indiajobnotice.com"}`,
+    details: `${event.description}\n\nOfficial Gazette: ${event.url || "https://www.indiajobnotice.com"}`,
     location: event.location || "National / India (Official Gazette)",
     sprop: "name:IndiaJobNotice",
   });
@@ -86,7 +86,7 @@ export function generateIcsContent(events: CalendarEventParams[]): string {
       `SUMMARY:${ev.title.replace(/[,;]/g, " ")}`,
       `DESCRIPTION:${ev.description.replace(/\n/g, "\\n")}`,
       `LOCATION:${(ev.location || "India").replace(/[,;]/g, " ")}`,
-      `URL:${ev.url || "https://indiajobnotice.com"}`,
+      `URL:${ev.url || "https://www.indiajobnotice.com"}`,
       "STATUS:CONFIRMED",
       "END:VEVENT"
     );

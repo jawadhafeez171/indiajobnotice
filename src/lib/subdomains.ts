@@ -43,7 +43,7 @@ export function getCentralPortalUrl(path: string = ""): string {
 
     const baseDomain = (process.env.NEXT_PUBLIC_BASE_DOMAIN || "indiajobnotice.com").toLowerCase();
     if (hostname.includes(baseDomain)) {
-      return `${protocol}//${baseDomain}${normalizedPath}`;
+      return `${protocol}//www.${baseDomain}${normalizedPath}`;
     }
   }
 
