@@ -28,12 +28,12 @@ import {
   ExternalLink
 } from "lucide-react";
 
+import { getStateReservationRules, StateReservationCategory } from "@/config/state-reservations";
+
 interface Props {
   currentStateSlug?: string;
   defaultJobId?: string;
 }
-
-type CategoryType = "UR" | "EWS" | "OBC" | "SC" | "ST" | "PWD";
 
 export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props) {
   const [calculationMode, setCalculationMode] = useState<"specific" | "scanner">(
@@ -43,7 +43,8 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
     defaultJobId || SAMPLE_JOBS[0].id
   );
   const [dob, setDob] = useState("2000-05-15");
-  const [category, setCategory] = useState<CategoryType>("UR");
+  const [category, setCategory] = useState<string>("UR");
+  const [isStateDomicile, setIsStateDomicile] = useState(true);
   const [qualification, setQualification] = useState<string>("Graduate");
   const [showEmbedModal, setShowEmbedModal] = useState(false);
   const [copiedSnippet, setCopiedSnippet] = useState(false);
@@ -53,22 +54,47 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
     return SAMPLE_JOBS.find((j) => j.id === selectedJobId) || SAMPLE_JOBS[0];
   }, [selectedJobId]);
 
-  // Category relaxation
-  const relaxationBonus = useMemo(() => {
-    switch (category) {
-      case "OBC":
-        return 3;
-      case "SC":
-      case "ST":
-        return 5;
-      case "PWD":
-        return 10;
-      case "EWS":
-      case "UR":
-      default:
-        return 0;
+  // Active state reservation ruleset (Central vs specific State)
+  const activeStateSlug = useMemo(() => {
+    if (calculationMode === "specific") {
+      return selectedJob.isCentral ? "central" : (selectedJob.stateSlug || "central");
     }
-  }, [category]);
+    return currentStateSlug || "central";
+  }, [calculationMode, selectedJob, currentStateSlug]);
+
+  const activeRuleset = useMemo(() => {
+    return getStateReservationRules(activeStateSlug);
+  }, [activeStateSlug]);
+
+  // Active category object from the state ruleset
+  const currentCategoryObj = useMemo(() => {
+    return (
+      activeRuleset.categories.find((c) => c.code === category) ||
+      activeRuleset.categories[0]
+    );
+  }, [activeRuleset, category]);
+
+  // Effective relaxation bonus (0 if out-of-state candidate on state recruitment)
+  const relaxationBonus = useMemo(() => {
+    if (activeRuleset.stateSlug === "central") {
+      return currentCategoryObj.defaultAgeRelaxationYears;
+    }
+    if (!isStateDomicile) {
+      return 0; // Out-of-state candidates must compete under General/UR without concession
+    }
+    return currentCategoryObj.defaultAgeRelaxationYears;
+  }, [activeRuleset, currentCategoryObj, isStateDomicile]);
+
+  // Effective upper age limit (accounts for state overrides such as Bihar 37/40/42 or Karnataka 35/38/40)
+  const effectiveMaxAllowedAge = useMemo(() => {
+    if (activeRuleset.stateSlug === "central" || !isStateDomicile) {
+      return selectedJob.maxAge + relaxationBonus;
+    }
+    if (currentCategoryObj.maxAgeOverride) {
+      return currentCategoryObj.maxAgeOverride;
+    }
+    return selectedJob.maxAge + relaxationBonus;
+  }, [activeRuleset, isStateDomicile, currentCategoryObj, selectedJob.maxAge, relaxationBonus]);
 
   // Cut-off date calculation for selected specific job
   const specificJobCutoffDate = useMemo(() => {
@@ -82,12 +108,10 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
   const specificEligibilityResult = useMemo(() => {
     if (!specificJobAge) return { isEligible: false, reason: "Invalid Date of Birth" };
 
-    const effectiveMaxAge = selectedJob.maxAge + relaxationBonus;
+    const effectiveMaxAge = effectiveMaxAllowedAge;
     const years = specificJobAge.years;
 
     if (years < selectedJob.minAge) {
-      const underYears = selectedJob.minAge - years - 1;
-      const underMonths = 12 - specificJobAge.months;
       return {
         isEligible: false,
         status: "UNDERAGE",
@@ -96,21 +120,19 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
     }
 
     if (years > effectiveMaxAge) {
-      const overYears = years - effectiveMaxAge;
       return {
         isEligible: false,
         status: "OVERAGE",
-        reason: `Overage: Maximum allowed age for ${category} category is ${effectiveMaxAge} years. You are ${years}y ${specificJobAge.months}m ${specificJobAge.days}d on ${formatDate(specificJobCutoffDate)}.`,
+        reason: `Overage: Maximum allowed age for ${currentCategoryObj.shortLabel} ${!isStateDomicile && activeRuleset.stateSlug !== "central" ? "(Evaluated as Out-of-State General)" : ""} is ${effectiveMaxAge} years. You are ${years}y ${specificJobAge.months}m ${specificJobAge.days}d on ${formatDate(specificJobCutoffDate)}.`,
       };
     }
 
-    const bufferYears = effectiveMaxAge - years;
     return {
       isEligible: true,
       status: "ELIGIBLE",
-      reason: `Eligible: Your age is ${years}y ${specificJobAge.months}m ${specificJobAge.days}d as of the official cut-off date (${formatDate(specificJobCutoffDate)}). Standard limit: ${selectedJob.minAge}–${selectedJob.maxAge} yrs (+${relaxationBonus}y for ${category}).`,
+      reason: `Eligible: Your age is ${years}y ${specificJobAge.months}m ${specificJobAge.days}d as of the official cut-off date (${formatDate(specificJobCutoffDate)}). Maximum allowed age ceiling: ${effectiveMaxAge} yrs for ${currentCategoryObj.shortLabel}${!isStateDomicile && activeRuleset.stateSlug !== "central" ? " (General merit rules apply due to out-of-state domicile)" : relaxationBonus > 0 ? ` (+${relaxationBonus}y relaxation)` : ""}.`,
     };
-  }, [specificJobAge, selectedJob, relaxationBonus, category, specificJobCutoffDate]);
+  }, [specificJobAge, selectedJob, effectiveMaxAllowedAge, currentCategoryObj, isStateDomicile, activeRuleset, relaxationBonus, specificJobCutoffDate]);
 
   // All-India Scanner: calculates eligibility for each job against ITS OWN individual cutoff date
   const scannerEligibleJobs = useMemo(() => {
@@ -248,23 +270,29 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
 
         {/* Social Reservation Category */}
         <div>
-          <label className="block text-xs font-bold text-[#423F3A] mb-1">
-            Reservation Category
-          </label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-xs font-bold text-[#423F3A]">
+              Reservation Category
+            </label>
+            <span className="text-[10px] font-mono text-[#1E3799] font-bold">
+              {activeRuleset.stateName}
+            </span>
+          </div>
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value as CategoryType)}
+            onChange={(e) => setCategory(e.target.value)}
             className="w-full px-3 py-2.5 sm:py-2 rounded-lg border border-[#EAE2D2] bg-white text-[15px] sm:text-xs min-h-[44px] font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs cursor-pointer"
           >
-            <option value="UR">UR / General (No Relaxation)</option>
-            <option value="EWS">EWS (Standard Upper Age)</option>
-            <option value="OBC">OBC Non-Creamy (+3 Years Relaxation)</option>
-            <option value="SC">SC (+5 Years Relaxation)</option>
-            <option value="ST">ST (+5 Years Relaxation)</option>
-            <option value="PWD">PwD / Divyangjan (+10 Years Relaxation)</option>
+            {activeRuleset.categories.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.name}
+              </option>
+            ))}
           </select>
           <p className="text-[11px] text-[#209948] mt-1 font-semibold">
-            {relaxationBonus > 0 ? `+${relaxationBonus} Years Statutory Relaxation` : "Standard Upper Age Limit"}
+            {relaxationBonus > 0
+              ? `+${relaxationBonus} Years Statutory Relaxation (${effectiveMaxAllowedAge} yrs ceiling)`
+              : `Upper Age Ceiling: ${effectiveMaxAllowedAge} Years`}
           </p>
         </div>
 
@@ -288,6 +316,77 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
           </p>
         </div>
       </div>
+
+      {/* State Statutory Domicile Notice & Permanent Resident Toggle */}
+      {activeRuleset.stateSlug !== "central" && (
+        <div className="p-3.5 rounded-lg bg-[#FAF7EF] border border-[#DDD5C7] space-y-2.5 text-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span className="font-bold text-[#1A1918] block">
+                {activeRuleset.stateName} State Domicile Status
+              </span>
+              <p className="text-[11px] text-[#68635B]">
+                Do you hold a valid domicile / permanent resident certificate of {activeRuleset.stateName}?
+              </p>
+            </div>
+
+            <div className="inline-flex rounded-md border border-[#DDD5C7] bg-white p-0.5 self-start sm:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsStateDomicile(true)}
+                className={cn(
+                  "px-3 py-1.5 rounded text-xs font-bold transition-colors",
+                  isStateDomicile
+                    ? "bg-[#1E3799] text-white"
+                    : "text-[#68635B] hover:text-[#1A1918]"
+                )}
+              >
+                Yes ({activeRuleset.stateName} Resident)
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsStateDomicile(false)}
+                className={cn(
+                  "px-3 py-1.5 rounded text-xs font-bold transition-colors",
+                  !isStateDomicile
+                    ? "bg-[#E96B15] text-white"
+                    : "text-[#68635B] hover:text-[#1A1918]"
+                )}
+              >
+                No (Out-of-State Candidate)
+              </button>
+            </div>
+          </div>
+
+          {/* Domicile Rule Warning if Out-of-State */}
+          {!isStateDomicile && (
+            <div className="p-2.5 rounded bg-[#FDF3EB] border border-[#F9D9C3] text-[11px] text-[#524E48] flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-[#E96B15] shrink-0 mt-0.5" />
+              <span>
+                <strong>Statutory Out-of-State Candidate Notice:</strong> {activeRuleset.domicileRule}
+              </span>
+            </div>
+          )}
+
+          {/* State Special Quotas Badges */}
+          {activeRuleset.specialQuotas.length > 0 && isStateDomicile && (
+            <div className="pt-2 border-t border-[#EAE2D2] flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] font-mono font-bold text-[#68635B] uppercase">
+                Active Special State Quotas:
+              </span>
+              {activeRuleset.specialQuotas.map((q) => (
+                <span
+                  key={q.id}
+                  className="px-2 py-0.5 rounded bg-white border border-[#CCD8F0] text-[#1E3799] text-[10px] font-bold"
+                  title={q.eligibilityCondition}
+                >
+                  {q.name} {q.percentage ? `(${q.percentage}%)` : ""}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* MODE 1: SPECIFIC NOTIFICATION CUT-OFF DATE VERDICT */}
       {calculationMode === "specific" && (

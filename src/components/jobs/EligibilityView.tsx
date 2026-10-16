@@ -21,6 +21,8 @@ import {
   Award,
   Users
 } from "lucide-react";
+import { getJobCategoryMatrix } from "@/lib/exam-details";
+import { getStateReservationRules } from "@/config/state-reservations";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 
 interface Props {
@@ -36,6 +38,8 @@ export function EligibilityView({ job, stateSlug }: Props) {
   const cutoffDate = getJobAgeCutoffDate(job);
   const isClosed = isJobApplicationClosed(job);
   const faqs = getJobFaqs(job);
+  const categoryMatrix = getJobCategoryMatrix(job);
+  const stateRules = getStateReservationRules(job.isCentral ? "central" : (job.stateSlug || "central"));
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-7">
@@ -126,21 +130,36 @@ export function EligibilityView({ job, stateSlug }: Props) {
         </div>
       </div>
 
-      {/* Category-Wise Age Relaxation Table */}
+      {/* Category-Wise Age Relaxation Table (State-Specific & Central) */}
       <section className="bg-white rounded-xl border border-[#EAE2D2] p-6 shadow-2xs space-y-4">
-        <div className="border-b border-[#F2ECE1] pb-3 flex items-center justify-between">
+        <div className="border-b border-[#F2ECE1] pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 className="font-serif text-lg font-bold text-[#1A1918]">
-              Category-Wise Statutory Age Relaxation Matrix
+              {stateRules.stateSlug === "central" 
+                ? "Central Statutory Age Relaxation Matrix" 
+                : `${stateRules.stateName} State Reservation & Age Relaxation Matrix`}
             </h2>
             <p className="text-xs text-[#68635B]">
               Calculated on the official cut-off date ({formatDate(cutoffDate)}) as mandated by the gazette
             </p>
           </div>
-          <span className="text-[11px] font-mono text-[#1E3799] font-bold hidden sm:inline">
-            Government of India Norms
+          <span className="text-[11px] font-mono text-[#1E3799] font-bold px-2.5 py-1 rounded bg-[#EEF2FA] border border-[#CCD8F0] shrink-0 self-start sm:self-auto">
+            {stateRules.stateSlug === "central" ? "Government of India Norms" : `${stateRules.stateName} Civil Services Rules`}
           </span>
         </div>
+
+        {/* Out-of-State Domicile Notice for State Recruitments */}
+        {stateRules.stateSlug !== "central" && (
+          <div className="p-3.5 rounded-lg bg-[#FAF7EF] border border-[#DDD5C7] text-xs text-[#524E48] space-y-1">
+            <span className="font-bold text-[#1A1918] flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-[#1E3799]" />
+              Official Domicile & Caste Reservation Policy:
+            </span>
+            <p className="leading-relaxed">
+              {stateRules.domicileRule}
+            </p>
+          </div>
+        )}
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border border-[#EAE2D2] rounded-lg overflow-hidden bg-white">
@@ -149,43 +168,50 @@ export function EligibilityView({ job, stateSlug }: Props) {
                 <th className="py-2.5 px-4 font-bold text-[#1E3799]">Social Category / Class</th>
                 <th className="py-2.5 px-4 font-bold text-center">Permissible Age Relaxation</th>
                 <th className="py-2.5 px-4 font-bold text-center">Effective Upper Age Limit</th>
-                <th className="py-2.5 px-4 font-semibold">Required Verification Certificate</th>
+                <th className="py-2.5 px-4 font-semibold">Statutory Rules & Exemption Note</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F2ECE1]">
-              <tr className="hover:bg-[#FCFAF4]">
-                <td className="py-3 px-4 font-bold text-[#1A1918]">Unreserved (UR) / General</td>
-                <td className="py-3 px-4 text-center font-mono">Nil (Standard Limit)</td>
-                <td className="py-3 px-4 text-center font-mono font-bold text-[#1E3799]">{job.maxAge} Years</td>
-                <td className="py-3 px-4 text-[#68635B]">10th Class Certificate (DOB proof)</td>
-              </tr>
-              <tr className="hover:bg-[#FCFAF4]">
-                <td className="py-3 px-4 font-bold text-[#1A1918]">Economically Weaker Section (EWS)</td>
-                <td className="py-3 px-4 text-center font-mono">Nil (Standard Upper Age)</td>
-                <td className="py-3 px-4 text-center font-mono font-bold text-[#1E3799]">{job.maxAge} Years</td>
-                <td className="py-3 px-4 text-[#68635B]">Valid EWS Income & Asset Certificate for current FY</td>
-              </tr>
-              <tr className="hover:bg-[#FCFAF4]">
-                <td className="py-3 px-4 font-bold text-[#1A1918]">Other Backward Classes (OBC - Non Creamy Layer)</td>
-                <td className="py-3 px-4 text-center font-mono font-bold text-[#209948]">+3 Years</td>
-                <td className="py-3 px-4 text-center font-mono font-bold text-[#209948]">{job.maxAge + 3} Years</td>
-                <td className="py-3 px-4 text-[#68635B]">OBC-NCL Certificate in prescribed Central/State format</td>
-              </tr>
-              <tr className="hover:bg-[#FCFAF4]">
-                <td className="py-3 px-4 font-bold text-[#1A1918]">Scheduled Caste (SC) / Scheduled Tribe (ST)</td>
-                <td className="py-3 px-4 text-center font-mono font-bold text-[#209948]">+5 Years</td>
-                <td className="py-3 px-4 text-center font-mono font-bold text-[#209948]">{job.maxAge + 5} Years</td>
-                <td className="py-3 px-4 text-[#68635B]">Permanent Caste / Tribe Certificate from Tehsildar/SDM</td>
-              </tr>
-              <tr className="hover:bg-[#FCFAF4]">
-                <td className="py-3 px-4 font-bold text-[#1A1918]">Persons with Benchmark Disabilities (PwBD)</td>
-                <td className="py-3 px-4 text-center font-mono font-bold text-[#209948]">+10 Years (Cumulative)</td>
-                <td className="py-3 px-4 text-center font-mono font-bold text-[#209948]">{job.maxAge + 10} Years</td>
-                <td className="py-3 px-4 text-[#68635B]">Disability Certificate (40%+ benchmark) from Medical Board</td>
-              </tr>
+              {categoryMatrix.map((item, idx) => (
+                <tr key={idx} className="hover:bg-[#FCFAF4] transition-colors">
+                  <td className="py-3 px-4 font-bold text-[#1A1918]">
+                    <span>{item.category}</span>
+                    <span className="font-mono text-[10px] text-[#68635B] block font-normal">
+                      Code: {item.code}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-center font-mono font-bold text-[#209948]">
+                    {item.ageRelaxation}
+                  </td>
+                  <td className="py-3 px-4 text-center font-mono font-bold text-[#1E3799]">
+                    {item.maxEligibleAge}
+                  </td>
+                  <td className="py-3 px-4 text-[#68635B]">
+                    {item.exemptionNote || "Standard verification requirements apply"}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
+
+        {/* Special Quotas Badges */}
+        {stateRules.specialQuotas.length > 0 && (
+          <div className="pt-2 flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] font-mono font-bold text-[#68635B] uppercase">
+              Special Quota Provisions:
+            </span>
+            {stateRules.specialQuotas.map((q) => (
+              <span
+                key={q.id}
+                className="px-2.5 py-1 rounded bg-[#EEF2FA] border border-[#CCD8F0] text-[#1E3799] text-[11px] font-semibold"
+                title={q.eligibilityCondition}
+              >
+                {q.name} {q.percentage ? `(${q.percentage}%)` : ""}
+              </span>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Post-Wise Educational Qualifications Section */}

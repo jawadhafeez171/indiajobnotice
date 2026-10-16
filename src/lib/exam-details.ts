@@ -1,4 +1,5 @@
 import { JobNotification } from "@/data/jobs";
+import { getStateReservationRules } from "@/config/state-reservations";
 
 export interface ExamStageSubject {
   name: string;
@@ -1165,6 +1166,38 @@ export function getJobCategoryMatrix(job: JobNotification): CategoryStatutoryMat
   const feeUR = job.applicationFee.ur_obc_ews;
   const feeSC = job.applicationFee.sc_st;
   const feeFemale = job.applicationFee.female_or_pwd ?? 0;
+
+  // If this is a state-specific recruitment notification, render authentic state categories
+  if (!job.isCentral && job.stateSlug) {
+    const stateRules = getStateReservationRules(job.stateSlug);
+    if (stateRules && stateRules.categories.length > 0) {
+      return stateRules.categories.map((cat) => {
+        let fee = feeUR === 0 ? "Exempted (₹0)" : `₹${feeUR}`;
+        if (cat.feeConcessionPercentage === 100) {
+          fee = "Exempted (₹0)";
+        } else if (cat.code.includes("SC") || cat.code.includes("ST")) {
+          fee = feeSC === 0 ? "Exempted (₹0)" : `₹${feeSC}`;
+        }
+
+        const ageRelax = cat.defaultAgeRelaxationYears > 0
+          ? `+${cat.defaultAgeRelaxationYears} Years Upper Age Concession`
+          : "No Age Relaxation (Standard Limit)";
+
+        const maxAge = cat.maxAgeOverride
+          ? `${cat.maxAgeOverride} Years`
+          : `${job.maxAge + cat.defaultAgeRelaxationYears} Years`;
+
+        return {
+          category: cat.name,
+          code: cat.shortLabel,
+          fee,
+          ageRelaxation: ageRelax,
+          maxEligibleAge: maxAge,
+          exemptionNote: cat.description,
+        };
+      });
+    }
+  }
 
   return [
     {
