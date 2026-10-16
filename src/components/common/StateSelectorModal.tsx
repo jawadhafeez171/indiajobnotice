@@ -44,21 +44,33 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0B153D]/60 backdrop-blur-xs">
-      <div className="relative w-full max-w-4xl max-h-[85vh] bg-[#FCFAF4] rounded-lg shadow-2xl flex flex-col overflow-hidden border border-[#EAE2D2]">
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#0B153D]/70 backdrop-blur-xs transition-opacity duration-200"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        className="relative w-full max-w-4xl max-h-[88vh] sm:max-h-[85vh] bg-[#FCFAF4] rounded-t-2xl sm:rounded-lg shadow-2xl flex flex-col overflow-hidden border-t sm:border border-[#EAE2D2] animate-in slide-in-from-bottom duration-200"
+      >
+        {/* Mobile Pull Handle */}
+        <div className="sm:hidden flex justify-center pt-2.5 pb-1 bg-white cursor-pointer" onClick={onClose}>
+          <div className="w-12 h-1.5 rounded-full bg-[#D4C8B5]" />
+        </div>
+
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-[#EAE2D2] flex items-center justify-between bg-white">
+        <div className="px-4 py-3 sm:p-5 border-b border-[#EAE2D2] flex items-center justify-between bg-white">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <TricolorCapsule className="w-12 h-1.5" />
+            <div className="flex items-center gap-2 mb-0.5">
+              <TricolorCapsule className="w-10 sm:w-12 h-1.5" />
               <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
                 Multi-Tenant Directory
               </span>
             </div>
-            <h2 className="font-serif text-lg font-bold text-[#1A1918]">
+            <h2 className="font-serif text-base sm:text-lg font-bold text-[#1A1918]">
               Select State or Union Territory Portal
             </h2>
-            <p className="text-xs text-[#68635B]">
+            <p className="text-[11px] sm:text-xs text-[#68635B] hidden sm:block">
               Each state operates on its dedicated directory (/state/[state]) with localized circulars and syllabus
             </p>
           </div>
@@ -148,7 +160,7 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
         </div>
 
         {/* List of States */}
-        <div className="flex-1 overflow-y-auto p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-2.5 text-xs overscroll-contain">
           {filteredStates.map((state: StateInfo) => {
             const isSelected = currentStateSlug === state.slug;
             const targetUrl = getStateSubdomainUrl(state.slug);
@@ -159,32 +171,32 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
                 href={targetUrl}
                 onClick={onClose}
                 className={cn(
-                  "p-3 rounded border transition-all flex flex-col justify-between shadow-2xs hover:shadow-xs",
+                  "p-2.5 sm:p-3 rounded-lg border transition-all flex flex-col justify-between shadow-2xs hover:shadow-xs min-h-[64px]",
                   isSelected
                     ? "bg-[#EEF2FA] border-[#1E3799] text-[#1E3799] ring-1 ring-[#1E3799]"
                     : "bg-white border-[#EAE2D2] hover:border-[#1E3799] hover:bg-[#EEF2FA]/30 text-[#1A1918]"
                 )}
               >
                 <div>
-                  <div className="flex items-baseline justify-between">
-                    <span className="font-serif font-bold text-sm text-[#1A1918]">
+                  <div className="flex items-start justify-between gap-1">
+                    <span className="font-serif font-bold text-xs sm:text-sm text-[#1A1918] leading-tight line-clamp-1">
                       {state.name}
                     </span>
-                    <span className="text-[10px] font-mono font-bold text-[#1E3799] bg-[#EEF2FA] px-1.5 py-0.2 rounded border border-[#CCD8F0]">
+                    <span className="text-[9px] sm:text-[10px] font-mono font-bold text-[#1E3799] bg-[#EEF2FA] px-1.5 py-0.2 rounded border border-[#CCD8F0] shrink-0">
                       {state.code}
                     </span>
                   </div>
-                  <div className="text-[11px] text-[#68635B] mt-0.5">
-                    {state.nativeName} · Capital: {state.capital}
+                  <div className="text-[10px] sm:text-[11px] text-[#68635B] mt-0.5 line-clamp-1">
+                    {state.capital}
                   </div>
                 </div>
 
-                <div className="mt-2.5 pt-2 border-t border-[#F2ECE1] flex items-center justify-between text-[11px] font-mono font-semibold">
+                <div className="mt-2 pt-1.5 border-t border-[#F2ECE1] flex items-center justify-between text-[10px] sm:text-[11px] font-mono font-semibold">
                   <span className="text-[#1E3799]">/state/{state.slug}</span>
                   {isSelected && (
-                    <span className="flex items-center gap-1 text-[10px] text-[#209948] font-bold">
+                    <span className="flex items-center gap-0.5 text-[9px] sm:text-[10px] text-[#209948] font-bold">
                       <Check className="w-3 h-3" />
-                      Current
+                      Active
                     </span>
                   )}
                 </div>
