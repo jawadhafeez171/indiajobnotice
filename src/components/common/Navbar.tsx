@@ -63,17 +63,6 @@ export function Navbar({ currentStateSlug }: Props) {
                 Gazettes
               </a>
 
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(true)}
-                className="hover:text-[#1E3799] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap cursor-pointer text-[#1E3799]"
-                title="Browse all 36 State & Union Territory Portals"
-              >
-                <MapPin className="w-3.5 h-3.5" />
-                <span>All 36 States</span>
-                <ChevronDown className="w-3 h-3 text-[#1E3799]/70" />
-              </button>
-
               <Link
                 href="/calendar"
                 className="hover:text-[#1E3799] transition-colors font-semibold flex items-center gap-1.5 whitespace-nowrap"
@@ -140,19 +129,10 @@ export function Navbar({ currentStateSlug }: Props) {
               >
                 <Bookmark className={`w-4 h-4 ${savedCount > 0 ? "fill-[#E96B15] text-[#E96B15]" : "text-[#68635B]"}`} />
                 {savedCount > 0 && (
-                  <span className="absolute 1 -top-1 -right-1 w-4 h-4 rounded-full bg-[#E96B15] text-white text-[9px] font-bold flex items-center justify-center font-mono">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#E96B15] text-white text-[9px] font-bold flex items-center justify-center font-mono">
                     {savedCount}
                   </span>
                 )}
-              </button>
-
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="px-3 min-h-[44px] flex items-center justify-center rounded-lg bg-[#EEF2FA] text-xs font-bold text-[#1E3799] border border-[#CCD8F0] active:bg-[#E0E9F8] transition-colors whitespace-nowrap"
-                aria-label="Select State Portal"
-              >
-                <span>{currentState ? currentState.code : "States"}</span>
-                <ChevronDown className="w-3 h-3 ml-1 text-[#1E3799]/70" />
               </button>
 
               <button
