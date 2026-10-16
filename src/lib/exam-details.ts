@@ -1137,13 +1137,13 @@ export function getJobAgeReckoning(job: JobNotification): AgeReckoningInfo {
   // Most Indian notifications reckon age as of 01-08 or 01-01 of the recruitment year
   const startYear = job.applicationStartDate ? new Date(job.applicationStartDate).getFullYear() : 2026;
   
-  let crucialDate = `01 August ${startYear}`;
+  let crucialDate = `01/08/${startYear}`;
   if (job.organization.toLowerCase().includes("bank") || job.orgShortCode === "SBI" || job.orgShortCode === "IBPS") {
-    crucialDate = `01 April ${startYear}`;
+    crucialDate = `01/04/${startYear}`;
   } else if (job.organization.toLowerCase().includes("railway") || job.orgShortCode === "RRB") {
-    crucialDate = `01 July ${startYear}`;
+    crucialDate = `01/07/${startYear}`;
   } else if (job.title.toLowerCase().includes("nda") || job.title.toLowerCase().includes("defense")) {
-    crucialDate = `01 January ${startYear + 1}`;
+    crucialDate = `01/01/${startYear + 1}`;
   }
 
   const birthYearStart = startYear - job.maxAge;
@@ -1153,7 +1153,7 @@ export function getJobAgeReckoning(job: JobNotification): AgeReckoningInfo {
     crucialDate,
     minAge: job.minAge,
     maxAge: job.maxAge,
-    bornBetween: `Between 02-08-${birthYearStart} and 01-08-${birthYearEnd} (both dates inclusive)`,
+    bornBetween: `Between 02/08/${birthYearStart} and 01/08/${birthYearEnd} (both dates inclusive)`,
     specialClauses: job.ageRelaxation,
   };
 }

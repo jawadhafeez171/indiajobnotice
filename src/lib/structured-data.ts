@@ -1,6 +1,7 @@
 import { JobNotification, isJobApplicationClosed, getJobAgeCutoffDate } from "@/data/jobs";
 import { getStateBySlug } from "@/config/states";
 import { getJobTaxonomyLinks } from "@/lib/internal-links";
+import { formatDate } from "@/lib/utils";
 
 export interface FAQItem {
   question: string;
@@ -23,7 +24,7 @@ export function getJobFaqs(job: JobNotification): FAQItem[] {
     },
     {
       question: `What is the age limit and cut-off date for ${job.shortTitle}?`,
-      answer: `The candidate must be between ${job.minAge} and ${job.maxAge} years of age as of the crucial cut-off date (${cutoffDate}). Age relaxation applies as per government norms: OBC +3 years, SC/ST +5 years, and PwD +10 years.`,
+      answer: `The candidate must be between ${job.minAge} and ${job.maxAge} years of age as of the crucial cut-off date (${formatDate(cutoffDate)}). Age relaxation applies as per government norms: OBC +3 years, SC/ST +5 years, and PwD +10 years.`,
     },
     {
       question: `What educational qualification is required to apply for ${job.shortTitle}?`,
@@ -39,7 +40,7 @@ export function getJobFaqs(job: JobNotification): FAQItem[] {
     },
     {
       question: `What is the last date to apply online for ${job.shortTitle}?`,
-      answer: `The online application portal accepts submissions up to ${job.applicationEndDate}. Candidates are advised to submit well before the closing date to avoid server congestion.`,
+      answer: `The online application portal accepts submissions up to ${formatDate(job.applicationEndDate)}. Candidates are advised to submit well before the closing date to avoid server congestion.`,
     },
   ];
 }
