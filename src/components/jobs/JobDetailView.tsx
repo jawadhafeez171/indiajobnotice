@@ -66,8 +66,8 @@ export function JobDetailView({ job, stateSlug }: Props) {
   const taxonomy = getJobTaxonomyLinks(job);
   
   // Watchlist
-  const { isSaved, toggleSave } = useWatchlist();
-  const saved = isSaved(job.id);
+  const { isSaved, toggleSave, isLoaded } = useWatchlist();
+  const saved = isLoaded ? isSaved(job.id) : false;
 
   // Exam Details Data
   const examStages = getJobExamStages(job);
