@@ -560,3 +560,52 @@ export function getStateBadgeColor(code: string) {
   return { bg: "bg-[#F4EFE6]", text: "text-[#3D3A36]", border: "border-[#DFD7C7]" };
 }
 
+export interface StateZone {
+  id: string;
+  name: string;
+  shortName: string;
+  slugs: string[];
+}
+
+export const STATE_ZONES: StateZone[] = [
+  {
+    id: "north",
+    name: "North India",
+    shortName: "North",
+    slugs: ["up", "rajasthan", "haryana", "punjab", "hp", "uttarakhand", "delhi", "jk", "ladakh", "chandigarh"],
+  },
+  {
+    id: "central_east",
+    name: "East & Central India",
+    shortName: "East & Central",
+    slugs: ["bihar", "jharkhand", "mp", "chhattisgarh", "wb", "odisha"],
+  },
+  {
+    id: "south",
+    name: "South India & Islands",
+    shortName: "South",
+    slugs: ["karnataka", "tn", "ap", "telangana", "kerala", "puducherry", "andaman", "lakshadweep"],
+  },
+  {
+    id: "west",
+    name: "West India",
+    shortName: "West",
+    slugs: ["maharashtra", "gujarat", "goa", "dadra"],
+  },
+  {
+    id: "northeast",
+    name: "North-East India",
+    shortName: "North-East",
+    slugs: ["assam", "arunachal", "manipur", "meghalaya", "mizoram", "nagaland", "sikkim", "tripura"],
+  },
+];
+
+export function getStatesByZone(zoneId: string): StateInfo[] {
+  const zone = STATE_ZONES.find((z) => z.id === zoneId);
+  if (!zone) return [];
+  return zone.slugs
+    .map((slug) => getStateBySlug(slug))
+    .filter((s): s is StateInfo => Boolean(s));
+}
+
+

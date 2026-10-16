@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { STATES_REGISTRY, StateInfo } from "@/config/states";
+import { STATES_REGISTRY, StateInfo, STATE_ZONES } from "@/config/states";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
 import { cn } from "@/lib/utils";
-import { Search, X, Check } from "lucide-react";
+import { Search, X, Check, MapPin } from "lucide-react";
 import { TricolorCapsule } from "./BrandLogo";
 
 interface Props {
@@ -15,18 +15,31 @@ interface Props {
 
 export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props) {
   const [search, setSearch] = useState("");
+  const [selectedZone, setSelectedZone] = useState<string>("all");
 
   const filteredStates = useMemo(() => {
-    if (!search.trim()) return STATES_REGISTRY;
+    let list = STATES_REGISTRY;
+
+    if (selectedZone === "ut") {
+      list = list.filter((s) => s.isUnionTerritory);
+    } else if (selectedZone !== "all") {
+      const zone = STATE_ZONES.find((z) => z.id === selectedZone);
+      if (zone) {
+        list = list.filter((s) => zone.slugs.includes(s.slug));
+      }
+    }
+
+    if (!search.trim()) return list;
     const q = search.toLowerCase();
-    return STATES_REGISTRY.filter(
+    return list.filter(
       (s) =>
         s.name.toLowerCase().includes(q) ||
         s.code.toLowerCase().includes(q) ||
         s.slug.toLowerCase().includes(q) ||
+        s.capital.toLowerCase().includes(q) ||
         s.majorExams.some((c: string) => c.toLowerCase().includes(q))
     );
-  }, [search]);
+  }, [search, selectedZone]);
 
   if (!isOpen) return null;
 
@@ -59,26 +72,79 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
         </div>
 
         {/* Search & Central Action */}
-        <div className="p-3 bg-[#FCFAF4] border-b border-[#EAE2D2] flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#68635B]" />
-            <input
-              type="text"
-              placeholder="Search state, code (UP, BR, RJ, MH), or commission..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2.5 sm:py-1.5 rounded-lg border border-[#EAE2D2] bg-white text-[15px] sm:text-xs text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 min-h-[44px] sm:min-h-0"
-              autoFocus
-            />
+        <div className="p-3 bg-[#FCFAF4] border-b border-[#EAE2D2] flex flex-col gap-2.5">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#68635B]" />
+              <input
+                type="text"
+                placeholder="Search state, code (UP, BR, RJ, MH), capital, or commission..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 sm:py-1.5 rounded-lg border border-[#EAE2D2] bg-white text-[15px] sm:text-xs text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 min-h-[44px] sm:min-h-0"
+                autoFocus
+              />
+            </div>
+
+            <a
+              href={getCentralPortalUrl()}
+              onClick={onClose}
+              className="px-3.5 py-2.5 sm:py-1.5 rounded-lg bg-[#EEF2FA] hover:bg-[#E0E9F8] text-xs font-bold text-[#1E3799] border border-[#CCD8F0] shrink-0 text-center min-h-[44px] sm:min-h-0 flex items-center justify-center gap-1.5"
+            >
+              <span>🇮🇳</span>
+              <span>All-India / Central Hub</span>
+            </a>
           </div>
 
-          <a
-            href={getCentralPortalUrl()}
-            onClick={onClose}
-            className="px-3.5 py-2.5 sm:py-1.5 rounded-lg bg-[#EEF2FA] hover:bg-[#E0E9F8] text-xs font-bold text-[#1E3799] border border-[#CCD8F0] shrink-0 text-center min-h-[44px] sm:min-h-0 flex items-center justify-center"
-          >
-            All-India / Central Hub
-          </a>
+          {/* Regional Zone Filter Tabs */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth pb-0.5 text-xs">
+            <span className="text-[10px] font-mono uppercase text-[#68635B] font-bold shrink-0 mr-1 flex items-center gap-1">
+              <MapPin className="w-3 h-3 text-[#1E3799]" />
+              Zone:
+            </span>
+
+            <button
+              type="button"
+              onClick={() => setSelectedZone("all")}
+              className={cn(
+                "px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors shrink-0 whitespace-nowrap min-h-[32px] sm:min-h-0",
+                selectedZone === "all"
+                  ? "bg-[#1E3799] text-white border-[#1E3799]"
+                  : "bg-white text-[#3E3C38] border-[#EAE2D2] hover:border-[#1E3799]"
+              )}
+            >
+              All (36)
+            </button>
+
+            {STATE_ZONES.map((zone) => (
+              <button
+                key={zone.id}
+                type="button"
+                onClick={() => setSelectedZone(zone.id)}
+                className={cn(
+                  "px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors shrink-0 whitespace-nowrap min-h-[32px] sm:min-h-0",
+                  selectedZone === zone.id
+                    ? "bg-[#1E3799] text-white border-[#1E3799] font-bold"
+                    : "bg-white text-[#3E3C38] border-[#EAE2D2] hover:border-[#1E3799]"
+                )}
+              >
+                {zone.shortName} ({zone.slugs.length})
+              </button>
+            ))}
+
+            <button
+              type="button"
+              onClick={() => setSelectedZone("ut")}
+              className={cn(
+                "px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors shrink-0 whitespace-nowrap min-h-[32px] sm:min-h-0",
+                selectedZone === "ut"
+                  ? "bg-[#1E3799] text-white border-[#1E3799] font-bold"
+                  : "bg-white text-[#3E3C38] border-[#EAE2D2] hover:border-[#1E3799]"
+              )}
+            >
+              UTs (8)
+            </button>
+          </div>
         </div>
 
         {/* List of States */}

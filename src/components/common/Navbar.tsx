@@ -2,13 +2,15 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Menu, X, Bookmark, Calendar, Send } from "lucide-react";
+import { ChevronDown, Menu, X, Bookmark, Calendar, Send, MapPin } from "lucide-react";
 import { BrandLogo } from "./BrandLogo";
 import { StateSelectorModal } from "./StateSelectorModal";
+import { StateQuickStrip } from "./StateQuickStrip";
 import { WatchlistDrawer } from "./WatchlistDrawer";
 import { useWatchlist } from "@/lib/watchlist";
-import { getStateBySlug } from "@/config/states";
+import { getStateBySlug, STATES_REGISTRY } from "@/config/states";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
+import { cn } from "@/lib/utils";
 
 interface Props {
   currentStateSlug?: string;
@@ -60,6 +62,17 @@ export function Navbar({ currentStateSlug }: Props) {
               >
                 Gazettes
               </a>
+
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(true)}
+                className="hover:text-[#1E3799] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap cursor-pointer text-[#1E3799]"
+                title="Browse all 36 State & Union Territory Portals"
+              >
+                <MapPin className="w-3.5 h-3.5" />
+                <span>All 36 States</span>
+                <ChevronDown className="w-3 h-3 text-[#1E3799]/70" />
+              </button>
 
               <Link
                 href="/calendar"
@@ -153,9 +166,15 @@ export function Navbar({ currentStateSlug }: Props) {
           </div>
         </div>
 
+        {/* Horizontal Quick-Scroll Pill Strip for all 36 States & UTs */}
+        <StateQuickStrip
+          currentStateSlug={currentStateSlug}
+          onOpenSelector={() => setIsModalOpen(true)}
+        />
+
         {/* Mobile Dropdown Drawer (Touch-Optimized for all phone screens) */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-[#EAE2D2] bg-[#FCFAF4] max-h-[calc(100vh-64px)] overflow-y-auto px-4 py-4 space-y-4 text-sm shadow-xl overscroll-contain">
+          <div className="lg:hidden border-t border-[#EAE2D2] bg-[#FCFAF4] max-h-[calc(100vh-104px)] overflow-y-auto px-4 py-4 space-y-4 text-sm shadow-xl overscroll-contain">
             {/* Active Portal Banner */}
             <div className="p-3 rounded-xl bg-white border border-[#EAE2D2] shadow-2xs space-y-2">
               <div className="flex items-center justify-between text-xs">
@@ -179,6 +198,66 @@ export function Navbar({ currentStateSlug }: Props) {
                 </div>
                 <span className="text-xs text-[#E96B15] font-semibold">Change State →</span>
               </button>
+            </div>
+
+            {/* All 36 States & UTs Direct Quick Grid */}
+            <div className="space-y-1.5 pt-1">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#68635B] font-bold flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-[#1E3799]" />
+                  Quick Access to All 36 States & UTs
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setIsModalOpen(true);
+                  }}
+                  className="text-[11px] font-bold text-[#1E3799] hover:underline"
+                >
+                  Zone Filter →
+                </button>
+              </div>
+
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 pt-1 max-h-56 overflow-y-auto p-1 border border-[#EAE2D2] rounded-lg bg-white">
+                <a
+                  href={getCentralPortalUrl()}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    "p-2 rounded border text-xs text-center flex flex-col items-center justify-center min-h-[44px] transition-colors",
+                    !currentStateSlug || currentStateSlug === "central"
+                      ? "bg-[#1E3799] text-white border-[#1E3799] font-bold"
+                      : "bg-[#EEF2FA] text-[#1E3799] border-[#CCD8F0] hover:bg-[#E0E9F8]"
+                  )}
+                >
+                  <span className="text-[11px] font-bold">🇮🇳 All-India</span>
+                  <span className="text-[9px] font-mono opacity-80">Central</span>
+                </a>
+
+                {STATES_REGISTRY.map((st) => {
+                  const isActive = currentStateSlug === st.slug;
+                  return (
+                    <a
+                      key={st.slug}
+                      href={getStateSubdomainUrl(st.slug)}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={cn(
+                        "p-2 rounded border text-xs text-center flex flex-col items-center justify-center min-h-[44px] transition-colors",
+                        isActive
+                          ? "bg-[#1E3799] text-white border-[#1E3799] font-bold"
+                          : "bg-white text-[#1A1918] border-[#EAE2D2] hover:border-[#1E3799] hover:bg-[#EEF2FA]"
+                      )}
+                    >
+                      <span className="font-bold text-[11px] leading-tight truncate w-full">
+                        {st.name}
+                      </span>
+                      <span className="text-[9px] font-mono opacity-75">
+                        {st.code}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Core Tools & Editorial Hubs */}
