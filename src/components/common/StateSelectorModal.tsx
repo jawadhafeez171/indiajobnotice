@@ -51,22 +51,23 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded text-[#68635B] hover:text-[#1A1918] hover:bg-[#EEF2FA] transition-colors"
+            className="p-2 sm:p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-[#68635B] hover:text-[#1A1918] hover:bg-[#EEF2FA] transition-colors"
+            aria-label="Close state selector dialog"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Search */}
-        <div className="p-3 bg-[#FCFAF4] border-b border-[#EAE2D2] flex items-center gap-2">
+        {/* Search & Central Action */}
+        <div className="p-3 bg-[#FCFAF4] border-b border-[#EAE2D2] flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-[#68635B]" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#68635B]" />
             <input
               type="text"
-              placeholder="Search state, code (UP, BR, RJ, MH), or commission (BPSC, UPPSC)..."
+              placeholder="Search state, code (UP, BR, RJ, MH), or commission..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 rounded border border-[#EAE2D2] bg-white text-xs text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30"
+              className="w-full pl-9 pr-3 py-2.5 sm:py-1.5 rounded-lg border border-[#EAE2D2] bg-white text-[15px] sm:text-xs text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 min-h-[44px] sm:min-h-0"
               autoFocus
             />
           </div>
@@ -74,7 +75,7 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
           <a
             href={getCentralPortalUrl()}
             onClick={onClose}
-            className="px-3 py-1.5 rounded bg-[#EEF2FA] hover:bg-[#E0E9F8] text-xs font-bold text-[#1E3799] border border-[#CCD8F0] shrink-0"
+            className="px-3.5 py-2.5 sm:py-1.5 rounded-lg bg-[#EEF2FA] hover:bg-[#E0E9F8] text-xs font-bold text-[#1E3799] border border-[#CCD8F0] shrink-0 text-center min-h-[44px] sm:min-h-0 flex items-center justify-center"
           >
             All-India / Central Hub
           </a>

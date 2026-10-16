@@ -239,7 +239,7 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
             type="date"
             value={dob}
             onChange={(e) => setDob(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-[#EAE2D2] bg-white text-xs font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs"
+            className="w-full px-3 py-2.5 sm:py-2 rounded-lg border border-[#EAE2D2] bg-white text-[15px] sm:text-xs min-h-[44px] font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs"
           />
           <p className="text-[11px] text-[#68635B] mt-1 font-mono">
             As stated on 10th Class Certificate
@@ -254,7 +254,7 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value as CategoryType)}
-            className="w-full px-3 py-2 rounded-lg border border-[#EAE2D2] bg-white text-xs font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs"
+            className="w-full px-3 py-2.5 sm:py-2 rounded-lg border border-[#EAE2D2] bg-white text-[15px] sm:text-xs min-h-[44px] font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs cursor-pointer"
           >
             <option value="UR">UR / General (No Relaxation)</option>
             <option value="EWS">EWS (Standard Upper Age)</option>
@@ -276,7 +276,7 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
           <select
             value={qualification}
             onChange={(e) => setQualification(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-[#EAE2D2] bg-white text-xs font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs"
+            className="w-full px-3 py-2.5 sm:py-2 rounded-lg border border-[#EAE2D2] bg-white text-[15px] sm:text-xs min-h-[44px] font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs cursor-pointer"
           >
             <option value="Graduate">Graduation Degree (BA, BSc, BTech, BCom, etc.)</option>
             <option value="Diploma">Diploma / Polytechnic</option>
@@ -299,7 +299,7 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
             <select
               value={selectedJobId}
               onChange={(e) => setSelectedJobId(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-lg border border-[#CCD8F0] bg-[#EEF2FA]/50 text-xs font-bold text-[#1E3799] focus:outline-none focus:border-[#1E3799] shadow-2xs"
+              className="w-full px-3.5 py-3 sm:py-2.5 rounded-lg border border-[#CCD8F0] bg-[#EEF2FA]/50 text-[14px] sm:text-xs min-h-[44px] font-bold text-[#1E3799] focus:outline-none focus:border-[#1E3799] shadow-2xs cursor-pointer"
             >
               {SAMPLE_JOBS.map((job) => {
                 const cutoff = getJobAgeCutoffDate(job);

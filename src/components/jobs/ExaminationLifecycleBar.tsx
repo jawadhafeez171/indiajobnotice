@@ -79,7 +79,8 @@ export function ExaminationLifecycleBar({ job, activeStage, stateSlug }: Props) 
               key={st.id}
               href={st.href}
               className={cn(
-                "p-2.5 rounded-lg border transition-all flex flex-col justify-between group",
+                "p-2.5 rounded-lg border transition-all flex flex-col justify-between group min-h-[56px]",
+                "[&:nth-child(5)]:col-span-2 sm:[&:nth-child(5)]:col-span-1",
                 isActive
                   ? "bg-[#1E3799] border-[#1E3799] text-white shadow-xs ring-2 ring-[#1E3799]/20"
                   : "bg-[#FCFAF4] border-[#EAE2D2] text-[#1A1918] hover:border-[#1E3799] hover:bg-white"

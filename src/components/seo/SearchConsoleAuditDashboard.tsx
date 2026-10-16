@@ -581,7 +581,7 @@ export function SearchConsoleAuditDashboard() {
             <select
               value={selectedJobId}
               onChange={(e) => setSelectedJobId(e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-[#CCD8F0] bg-[#EEF2FA] text-xs font-bold text-[#1E3799]"
+              className="w-full sm:w-auto px-3 py-2.5 sm:py-1.5 rounded-lg border border-[#CCD8F0] bg-[#EEF2FA] text-[14px] sm:text-xs min-h-[44px] sm:min-h-0 font-bold text-[#1E3799] cursor-pointer"
             >
               {SAMPLE_JOBS.map((j) => (
                 <option key={j.id} value={j.id}>

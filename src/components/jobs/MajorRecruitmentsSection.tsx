@@ -324,8 +324,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
       </div>
 
       {/* ================= UNIVERSAL LIVE SEARCH & MULTI-FACET FILTER BAR ================= */}
-      <div className="bg-white rounded-lg border border-[#EAE2D2] p-3.5 shadow-2xs space-y-3">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+      <div className="bg-white rounded-lg border border-[#EAE2D2] p-3 sm:p-3.5 shadow-2xs space-y-3">
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2.5">
           {/* Instant Search Input */}
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-[#8C8273] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -334,12 +334,12 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search circulars by exam name, commission (SSC, RRB, UPSC, BPSC), or post..."
-              className="w-full pl-9 pr-8 py-2 text-xs bg-[#FCFAF4] border border-[#DDD5C7] rounded-md focus:outline-none focus:border-[#1E3799] text-[#1A1918] placeholder-[#8C8273] transition-colors"
+              className="w-full pl-9 pr-8 py-2.5 sm:py-2 text-[15px] sm:text-xs min-h-[44px] sm:min-h-0 bg-[#FCFAF4] border border-[#DDD5C7] rounded-lg focus:outline-none focus:border-[#1E3799] text-[#1A1918] placeholder-[#8C8273] transition-colors"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8C8273] hover:text-[#1A1918]"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8C8273] hover:text-[#1A1918] p-1"
                 aria-label="Clear search"
               >
                 <X className="w-3.5 h-3.5" />
@@ -348,12 +348,12 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
           </div>
 
           {/* Filter Toggles / Selects */}
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex items-center gap-2">
             {/* Category Dropdown */}
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-2.5 py-2 text-xs bg-[#FCFAF4] border border-[#DDD5C7] rounded-md text-[#1A1918] font-medium focus:outline-none focus:border-[#1E3799] transition-colors cursor-pointer"
+              className="w-full lg:w-auto px-3 py-2.5 sm:py-2 text-[14px] sm:text-xs min-h-[44px] sm:min-h-0 bg-[#FCFAF4] border border-[#DDD5C7] rounded-lg text-[#1A1918] font-medium focus:outline-none focus:border-[#1E3799] transition-colors cursor-pointer"
             >
               <option value="ALL">All Categories / Sectors</option>
               {JOB_CATEGORIES.filter((c) => c !== "ALL").map((cat) => (
@@ -367,7 +367,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
             <select
               value={selectedQualification}
               onChange={(e) => setSelectedQualification(e.target.value)}
-              className="px-2.5 py-2 text-xs bg-[#FCFAF4] border border-[#DDD5C7] rounded-md text-[#1A1918] font-medium focus:outline-none focus:border-[#1E3799] transition-colors cursor-pointer"
+              className="w-full lg:w-auto px-3 py-2.5 sm:py-2 text-[14px] sm:text-xs min-h-[44px] sm:min-h-0 bg-[#FCFAF4] border border-[#DDD5C7] rounded-lg text-[#1A1918] font-medium focus:outline-none focus:border-[#1E3799] transition-colors cursor-pointer"
             >
               {QUALIFICATIONS.map((q) => (
                 <option key={q.value} value={q.value}>
@@ -377,11 +377,11 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
             </select>
 
             {/* Scope (Central / State) Toggle */}
-            <div className="inline-flex rounded-md border border-[#DDD5C7] bg-[#FCFAF4] p-0.5 text-xs font-semibold">
+            <div className="col-span-full sm:col-span-2 lg:col-span-1 flex rounded-lg border border-[#DDD5C7] bg-[#FCFAF4] p-0.5 text-xs font-semibold min-h-[44px] sm:min-h-0">
               <button
                 onClick={() => setSelectedScope("ALL")}
                 className={cn(
-                  "px-2 py-1 rounded text-[11px] transition-colors",
+                  "flex-1 px-3 py-1.5 sm:py-1 rounded-md text-xs sm:text-[11px] transition-colors flex items-center justify-center font-bold",
                   selectedScope === "ALL" ? "bg-[#1E3799] text-white" : "text-[#68635B] hover:text-[#1A1918]"
                 )}
               >
@@ -390,7 +390,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               <button
                 onClick={() => setSelectedScope("CENTRAL")}
                 className={cn(
-                  "px-2 py-1 rounded text-[11px] transition-colors",
+                  "flex-1 px-3 py-1.5 sm:py-1 rounded-md text-xs sm:text-[11px] transition-colors flex items-center justify-center font-bold",
                   selectedScope === "CENTRAL" ? "bg-[#1E3799] text-white" : "text-[#68635B] hover:text-[#1A1918]"
                 )}
               >
@@ -399,7 +399,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               <button
                 onClick={() => setSelectedScope("STATE")}
                 className={cn(
-                  "px-2 py-1 rounded text-[11px] transition-colors",
+                  "flex-1 px-3 py-1.5 sm:py-1 rounded-md text-xs sm:text-[11px] transition-colors flex items-center justify-center font-bold",
                   selectedScope === "STATE" ? "bg-[#1E3799] text-white" : "text-[#68635B] hover:text-[#1A1918]"
                 )}
               >
@@ -408,6 +408,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
             </div>
           </div>
         </div>
+
 
         {/* Results Counter & Active Filter Pills */}
         <div className="flex items-center justify-between text-xs pt-1 border-t border-[#F2ECE1] text-[#68635B]">

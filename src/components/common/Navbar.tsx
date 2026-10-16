@@ -118,16 +118,16 @@ export function Navbar({ currentStateSlug }: Props) {
               </button>
             </nav>
 
-            {/* Mobile Actions */}
-            <div className="flex items-center gap-2 lg:hidden">
+            {/* Mobile Actions (Optimized 44px Touch Targets) */}
+            <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden">
               <button
                 onClick={() => setIsWatchlistOpen(true)}
-                className="p-1.5 relative rounded-md bg-white border border-[#EAE2D2] text-[#1A1918]"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center relative rounded-lg bg-white border border-[#EAE2D2] text-[#1A1918] active:bg-[#FCFAF4] transition-colors"
                 aria-label="View Saved Circulars"
               >
                 <Bookmark className={`w-4 h-4 ${savedCount > 0 ? "fill-[#E96B15] text-[#E96B15]" : "text-[#68635B]"}`} />
                 {savedCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#E96B15] text-white text-[9px] font-bold flex items-center justify-center font-mono">
+                  <span className="absolute 1 -top-1 -right-1 w-4 h-4 rounded-full bg-[#E96B15] text-white text-[9px] font-bold flex items-center justify-center font-mono">
                     {savedCount}
                   </span>
                 )}
@@ -135,75 +135,178 @@ export function Navbar({ currentStateSlug }: Props) {
 
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="px-2.5 py-1 rounded-md bg-[#EEF2FA] text-xs font-bold text-[#1E3799] border border-[#CCD8F0] whitespace-nowrap"
+                className="px-3 min-h-[44px] flex items-center justify-center rounded-lg bg-[#EEF2FA] text-xs font-bold text-[#1E3799] border border-[#CCD8F0] active:bg-[#E0E9F8] transition-colors whitespace-nowrap"
+                aria-label="Select State Portal"
               >
-                {currentState ? currentState.code : "States"}
+                <span>{currentState ? currentState.code : "States"}</span>
+                <ChevronDown className="w-3 h-3 ml-1 text-[#1E3799]/70" />
               </button>
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-1.5 text-[#1E3799] hover:bg-[#EEF2FA] rounded-md transition-colors"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-[#1E3799] bg-white border border-[#EAE2D2] hover:bg-[#EEF2FA] rounded-lg active:scale-95 transition-all"
                 aria-label="Toggle Navigation Menu"
               >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {mobileMenuOpen ? <X className="w-5 h-5 text-[#E96B15]" /> : <Menu className="w-5 h-5 text-[#1E3799]" />}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Dropdown */}
+        {/* Mobile Dropdown Drawer (Touch-Optimized for all phone screens) */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-[#EAE2D2] bg-[#FCFAF4] px-4 py-4 space-y-3 text-sm">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setIsModalOpen(true);
-              }}
-              className="w-full text-left py-2.5 px-3 rounded-md bg-[#EEF2FA] font-bold text-[#1E3799] flex justify-between items-center border border-[#CCD8F0]"
-            >
-              <span>Current Portal: {currentState ? currentState.name : "All India"}</span>
-              <span className="text-xs text-[#E96B15]">Switch State →</span>
-            </button>
-            <div className="flex flex-col space-y-2 pt-1 font-semibold text-[#3E3C38]">
+          <div className="lg:hidden border-t border-[#EAE2D2] bg-[#FCFAF4] max-h-[calc(100vh-64px)] overflow-y-auto px-4 py-4 space-y-4 text-sm shadow-xl overscroll-contain">
+            {/* Active Portal Banner */}
+            <div className="p-3 rounded-xl bg-white border border-[#EAE2D2] shadow-2xs space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[10px] font-mono uppercase font-bold text-[#68635B] tracking-wider">
+                  Active Regional Portal
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-[#EDF7F0] text-[#209948] font-bold text-[10px] font-mono">
+                  Live
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setIsModalOpen(true);
+                }}
+                className="w-full text-left py-2.5 px-3 rounded-lg bg-[#EEF2FA] hover:bg-[#E0E9F8] font-bold text-[#1E3799] flex justify-between items-center border border-[#CCD8F0] min-h-[44px] transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#E96B15]" />
+                  <span>{currentState ? currentState.name : "All-India / Central"}</span>
+                </div>
+                <span className="text-xs text-[#E96B15] font-semibold">Change State →</span>
+              </button>
+            </div>
+
+            {/* Core Tools & Editorial Hubs */}
+            <div className="space-y-1">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#68635B] font-bold px-1 block">
+                Recruitment Tools & Portals
+              </span>
+              <div className="grid grid-cols-1 gap-1 pt-1 font-medium text-[#1A1918]">
+                <a
+                  href={currentState ? getStateSubdomainUrl(currentState.slug) : getCentralPortalUrl()}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white border border-[#EAE2D2] hover:border-[#1E3799] min-h-[44px] transition-colors"
+                >
+                  <span className="font-bold text-[#1E3799]">Gazette Notifications Archive</span>
+                  <span className="text-xs text-[#68635B]">Explore →</span>
+                </a>
+
+                <Link
+                  href="/calendar"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white border border-[#EAE2D2] hover:border-[#1E3799] min-h-[44px] transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Calendar className="w-4 h-4 text-[#1E3799]" />
+                    <span>Recruitment Calendar 2026</span>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#EEF2FA] text-[#1E3799]">
+                    Updated
+                  </span>
+                </Link>
+
+                <Link
+                  href="/calculator"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#FDF3EB] border border-[#F9D9C3] hover:border-[#E96B15] min-h-[44px] transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[#E96B15] font-bold">⚡</span>
+                    <span className="font-bold text-[#E96B15]">Crucial Cut-off Age Calculator</span>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#E96B15] text-white">
+                    Tool
+                  </span>
+                </Link>
+
+                <Link
+                  href="/vacancies"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white border border-[#EAE2D2] hover:border-[#1E3799] min-h-[44px] transition-colors"
+                >
+                  <span>Qualification Vacancy Tracker</span>
+                  <span className="text-xs text-[#68635B]">→</span>
+                </Link>
+
+                <Link
+                  href="/directory"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white border border-[#EAE2D2] hover:border-[#1E3799] min-h-[44px] transition-colors"
+                >
+                  <span>Public Service Commissions Directory</span>
+                  <span className="text-xs text-[#68635B]">→</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Quick Qualification & Sector Hubs */}
+            <div className="space-y-1 pt-1">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#68635B] font-bold px-1 block">
+                Qualification Direct Hubs
+              </span>
+              <div className="grid grid-cols-2 gap-1.5 pt-1">
+                <Link
+                  href="/qualification/12th-pass"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-lg bg-white border border-[#EAE2D2] hover:border-[#1E3799] text-xs font-semibold text-[#1A1918] min-h-[44px] flex items-center justify-center text-center transition-colors"
+                >
+                  12th Pass Jobs
+                </Link>
+                <Link
+                  href="/qualification/diploma"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-lg bg-white border border-[#EAE2D2] hover:border-[#1E3799] text-xs font-semibold text-[#1A1918] min-h-[44px] flex items-center justify-center text-center transition-colors"
+                >
+                  Diploma & Poly
+                </Link>
+                <Link
+                  href="/engineering-jobs"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-lg bg-white border border-[#EAE2D2] hover:border-[#1E3799] text-xs font-semibold text-[#1A1918] min-h-[44px] flex items-center justify-center text-center transition-colors"
+                >
+                  Engineering (AE/JE)
+                </Link>
+                <Link
+                  href="/qualification/graduate"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-lg bg-white border border-[#EAE2D2] hover:border-[#1E3799] text-xs font-semibold text-[#1A1918] min-h-[44px] flex items-center justify-center text-center transition-colors"
+                >
+                  Graduate Degree
+                </Link>
+                <Link
+                  href="/organisations/ssc"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-lg bg-[#EEF2FA] border border-[#CCD8F0] text-xs font-bold text-[#1E3799] min-h-[44px] flex items-center justify-center text-center transition-colors"
+                >
+                  SSC Recruitment
+                </Link>
+                <Link
+                  href="/railway-jobs"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2] text-xs font-semibold text-[#1A1918] min-h-[44px] flex items-center justify-center text-center transition-colors"
+                >
+                  Railway RRB
+                </Link>
+              </div>
+            </div>
+
+            {/* Telegram Instant Alert CTA */}
+            <div className="pt-2">
               <a
-                href={currentState ? getStateSubdomainUrl(currentState.slug) : getCentralPortalUrl()}
+                href="https://t.me/Indiajobnotice1"
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-1 hover:text-[#1E3799]"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#229ED9] hover:bg-[#1D88BC] text-white font-bold text-xs shadow-xs min-h-[44px] transition-colors"
               >
-                Latest Notifications
+                <Send className="w-4 h-4" />
+                <span>Join Official Telegram Channel for Free Alerts</span>
               </a>
-              <Link
-                href="/calendar"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-1 hover:text-[#1E3799] flex items-center gap-2"
-              >
-                <Calendar className="w-4 h-4 text-[#1E3799]" />
-                <span>Exam Schedule Calendar 2026</span>
-              </Link>
-              <Link
-                href="/vacancies"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-1 hover:text-[#1E3799]"
-              >
-                Qualification Vacancy Tracker
-              </Link>
-              <Link href="/calculator" onClick={() => setMobileMenuOpen(false)} className="py-1 text-[#E96B15] font-bold">
-                Cut-off Date Age Calculator
-              </Link>
-              <Link
-                href="/directory"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-1 hover:text-[#1E3799]"
-              >
-                State Commissions Directory
-              </Link>
-              <Link
-                href="/for-colleges-libraries"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-1 text-[#209948] font-bold"
-              >
-                🎓 For Colleges & Libraries
-              </Link>
             </div>
           </div>
         )}
