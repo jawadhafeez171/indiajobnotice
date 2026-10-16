@@ -15,7 +15,11 @@ import {
   AlertCircle,
   Bookmark,
   ArrowRight,
-  Filter
+  Filter,
+  Printer,
+  Code,
+  Copy,
+  Check
 } from "lucide-react";
 import { SAMPLE_JOBS, JobNotification, getCategoryColors } from "@/data/jobs";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
@@ -99,6 +103,8 @@ export function ExamCalendarView() {
   // Current calendar viewing month (e.g., year: 2026, month: 9 (0-indexed: October))
   const [calendarMonth, setCalendarMonth] = useState({ year: 2026, month: 9 });
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [showEmbedModal, setShowEmbedModal] = useState(false);
+  const [copiedSnippet, setCopiedSnippet] = useState(false);
 
   const { isSaved, toggleSave } = useWatchlist();
 
@@ -314,15 +320,35 @@ export function ExamCalendarView() {
             </div>
           </div>
 
-          {/* Export to Calendar (.ics) Action */}
-          <button
-            onClick={handleExportAllCalendar}
-            className="self-start md:self-auto px-3.5 py-1.5 bg-[#1E3799] hover:bg-[#162a75] text-white text-xs font-bold rounded-md transition-colors flex items-center gap-1.5 shadow-2xs"
-            title="Download .ics schedule for Google Calendar, Apple Calendar, or Outlook"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Sync All Dates to Phone (.ics)</span>
-          </button>
+          {/* Institutional Actions: Sync, Print, and Embed */}
+          <div className="flex items-center gap-2 flex-wrap self-start md:self-auto">
+            <button
+              onClick={() => setShowEmbedModal(true)}
+              className="px-3 py-1.5 border border-[#CCD8F0] bg-[#EEF2FA] hover:bg-[#DDE7F7] text-[#1E3799] text-xs font-bold rounded-md transition-colors flex items-center gap-1.5 shadow-2xs"
+              title="Embed calendar widget on college career portal"
+            >
+              <Code className="w-3.5 h-3.5" />
+              <span>Embed Widget</span>
+            </button>
+
+            <button
+              onClick={() => window.print()}
+              className="px-3 py-1.5 border border-[#EAE2D2] bg-white hover:bg-[#FAF7EF] text-[#423F3A] text-xs font-bold rounded-md transition-colors flex items-center gap-1.5 shadow-2xs"
+              title="Print Weekly Exam & Deadline Bulletin for Notice Boards"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>Print Campus Bulletin</span>
+            </button>
+
+            <button
+              onClick={handleExportAllCalendar}
+              className="px-3.5 py-1.5 bg-[#1E3799] hover:bg-[#162a75] text-white text-xs font-bold rounded-md transition-colors flex items-center gap-1.5 shadow-2xs"
+              title="Download .ics schedule for Google Calendar, Apple Calendar, or Outlook"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Sync (.ics)</span>
+            </button>
+          </div>
         </div>
 
         {/* Filter Chips Bar */}
@@ -687,6 +713,62 @@ export function ExamCalendarView() {
           </div>
         )}
       </div>
+
+      {/* EMBED MODAL FOR PLACEMENT CELLS & LIBRARIES */}
+      {showEmbedModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl max-w-lg w-full p-6 border border-[#EAE2D2] shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#EAE2D2] pb-3">
+              <div className="flex items-center gap-2">
+                <Code className="w-5 h-5 text-[#1E3799]" />
+                <h3 className="font-serif font-bold text-base text-[#1A1918]">
+                  Embed Deadline Calendar on College Portal
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowEmbedModal(false)}
+                className="text-[#68635B] hover:text-[#1A1918] font-mono text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-xs text-[#524E48] leading-relaxed">
+              Universities, student placement boards, training & placement cells (TPO), and library digital kiosks may freely embed this live recruitment deadline calendar.
+            </p>
+
+            <div>
+              <label className="block text-[11px] font-mono uppercase font-bold text-[#68635B] mb-1">
+                HTML Embed Code (Responsive Widget)
+              </label>
+              <div className="relative">
+                <textarea
+                  readOnly
+                  rows={3}
+                  value={`<iframe src="https://www.indiajobnotice.com/calendar" width="100%" height="750" frameborder="0" title="Government Recruitment Exam & Deadline Calendar"></iframe>`}
+                  className="w-full p-2.5 rounded bg-[#FAF7EF] border border-[#EAE2D2] text-xs font-mono text-[#1A1918] focus:outline-none"
+                />
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(`<iframe src="https://www.indiajobnotice.com/calendar" width="100%" height="750" frameborder="0" title="Government Recruitment Exam & Deadline Calendar"></iframe>`);
+                    setCopiedSnippet(true);
+                    setTimeout(() => setCopiedSnippet(false), 2000);
+                  }}
+                  className="absolute right-2 bottom-3 px-2.5 py-1 rounded bg-[#1E3799] text-white text-[11px] font-bold flex items-center gap-1 shadow-2xs hover:bg-[#15286D]"
+                >
+                  {copiedSnippet ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  <span>{copiedSnippet ? "Copied" : "Copy iFrame"}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="pt-2 text-[11px] text-[#68635B] bg-[#EDF7F0] p-3 rounded-lg border border-[#C6E7D0] flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#209948] shrink-0" />
+              <span>Public-interest resource. 100% ad-free embed frame for educational institutions.</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

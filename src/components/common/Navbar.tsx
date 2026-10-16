@@ -66,7 +66,14 @@ export function Navbar({ currentStateSlug }: Props) {
                 className="hover:text-[#1E3799] transition-colors font-semibold flex items-center gap-1.5 whitespace-nowrap"
               >
                 <Calendar className="w-3.5 h-3.5 text-[#1E3799]" />
-                <span>Exam Calendar</span>
+                <span>Calendar</span>
+              </Link>
+
+              <Link
+                href="/vacancies"
+                className="hover:text-[#1E3799] transition-colors font-semibold whitespace-nowrap"
+              >
+                <span>Vacancy Tracker</span>
               </Link>
 
               <Link
@@ -76,19 +83,12 @@ export function Navbar({ currentStateSlug }: Props) {
                 <span>Age Calculator</span>
               </Link>
 
-              <a
-                href="#admit-cards"
+              <Link
+                href="/directory"
                 className="hover:text-[#1E3799] transition-colors font-semibold whitespace-nowrap"
               >
-                Admit Cards
-              </a>
-
-              <a
-                href="#results"
-                className="hover:text-[#1E3799] transition-colors font-semibold whitespace-nowrap"
-              >
-                Results
-              </a>
+                <span>Directory</span>
+              </Link>
 
               {/* Telegram Channel Quick Action */}
               <a
@@ -180,32 +180,30 @@ export function Navbar({ currentStateSlug }: Props) {
                 <Calendar className="w-4 h-4 text-[#1E3799]" />
                 <span>Exam Schedule Calendar 2026</span>
               </Link>
-              <Link href="/calculator" onClick={() => setMobileMenuOpen(false)} className="py-1 text-[#E96B15] font-bold">
-                Age & Eligibility Calculator
-              </Link>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setIsWatchlistOpen(true);
-                }}
-                className="py-1 text-left hover:text-[#1E3799] flex items-center justify-between"
+              <Link
+                href="/vacancies"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-1 hover:text-[#1E3799]"
               >
-                <span className="flex items-center gap-2">
-                  <Bookmark className="w-4 h-4 text-[#E96B15]" />
-                  <span>My Pinned Circulars</span>
-                </span>
-                {savedCount > 0 && (
-                  <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[#E96B15] text-white">
-                    {savedCount}
-                  </span>
-                )}
-              </button>
-              <a href="#admit-cards" onClick={() => setMobileMenuOpen(false)} className="py-1 hover:text-[#1E3799]">
-                Admit Cards
-              </a>
-              <a href="#results" onClick={() => setMobileMenuOpen(false)} className="py-1 hover:text-[#1E3799]">
-                Results & Cutoffs
-              </a>
+                Qualification Vacancy Tracker
+              </Link>
+              <Link href="/calculator" onClick={() => setMobileMenuOpen(false)} className="py-1 text-[#E96B15] font-bold">
+                Cut-off Date Age Calculator
+              </Link>
+              <Link
+                href="/directory"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-1 hover:text-[#1E3799]"
+              >
+                State Commissions Directory
+              </Link>
+              <Link
+                href="/for-colleges-libraries"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-1 text-[#209948] font-bold"
+              >
+                🎓 For Colleges & Libraries
+              </Link>
             </div>
           </div>
         )}

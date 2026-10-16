@@ -29,7 +29,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/calculator`,
       lastModified: now,
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/vacancies`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/directory`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/for-colleges-libraries`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
     },
   ];
 

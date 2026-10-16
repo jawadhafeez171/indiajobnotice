@@ -107,8 +107,23 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/calculator" className="text-[#FFA666] hover:underline font-bold flex items-center gap-1 pt-0.5">
-                  <span>🧮 Age & Eligibility Calculator</span>
+                <Link href="/vacancies" className="text-[#A9B8DE] hover:text-[#FFA666] font-medium flex items-center gap-1">
+                  <span>📊 Qualification Vacancy Tracker</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/calculator" className="text-[#FFA666] hover:underline font-bold flex items-center gap-1">
+                  <span>🧮 Cut-off Date Age Calculator</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/directory" className="text-[#A9B8DE] hover:text-[#FFA666] font-medium flex items-center gap-1">
+                  <span>🏛️ State PSCs & Police Directory</span>
+                </Link>
+              </li>
+              <li className="pt-2 border-t border-[#1E3799]/60">
+                <Link href="/for-colleges-libraries" className="text-[#209948] hover:text-white font-bold flex items-center gap-1">
+                  <span>🎓 For Colleges, TPOs & Libraries</span>
                 </Link>
               </li>
             </ul>

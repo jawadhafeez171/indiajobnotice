@@ -1,42 +1,57 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { SAMPLE_JOBS } from "@/data/jobs";
+import Link from "next/link";
+import { 
+  SAMPLE_JOBS, 
+  JobNotification, 
+  getJobAgeCutoffDate, 
+  calculateAgeAtDate 
+} from "@/data/jobs";
 import { JobCard } from "@/components/jobs/JobCard";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
+import { formatDate, cn } from "@/lib/utils";
+import { 
+  Calendar, 
+  CheckCircle2, 
+  XCircle, 
+  AlertCircle, 
+  Clock, 
+  Building2, 
+  Share2, 
+  Code, 
+  Printer, 
+  Copy, 
+  Check, 
+  GraduationCap,
+  Sparkles,
+  ExternalLink
+} from "lucide-react";
 
 interface Props {
   currentStateSlug?: string;
+  defaultJobId?: string;
 }
 
-export function EligibilityCalculator({ currentStateSlug }: Props) {
-  const [dob, setDob] = useState("2000-01-15");
-  const [category, setCategory] = useState<"UR" | "OBC" | "SC" | "ST" | "EWS">("UR");
+type CategoryType = "UR" | "EWS" | "OBC" | "SC" | "ST" | "PWD";
+
+export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props) {
+  const [calculationMode, setCalculationMode] = useState<"specific" | "scanner">(
+    defaultJobId ? "specific" : "specific"
+  );
+  const [selectedJobId, setSelectedJobId] = useState<string>(
+    defaultJobId || SAMPLE_JOBS[0].id
+  );
+  const [dob, setDob] = useState("2000-05-15");
+  const [category, setCategory] = useState<CategoryType>("UR");
   const [qualification, setQualification] = useState<string>("Graduate");
+  const [showEmbedModal, setShowEmbedModal] = useState(false);
+  const [copiedSnippet, setCopiedSnippet] = useState(false);
 
-  // Calculate age as of today
-  const ageDetails = useMemo(() => {
-    if (!dob) return null;
-    const birthDate = new Date(dob);
-    const today = new Date();
-
-    let years = today.getFullYear() - birthDate.getFullYear();
-    let months = today.getMonth() - birthDate.getMonth();
-    let days = today.getDate() - birthDate.getDate();
-
-    if (days < 0) {
-      months -= 1;
-      const prevMonthLastDay = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
-      days += prevMonthLastDay;
-    }
-
-    if (months < 0) {
-      years -= 1;
-      months += 12;
-    }
-
-    return { years, months, days };
-  }, [dob]);
+  // Selected single job
+  const selectedJob = useMemo(() => {
+    return SAMPLE_JOBS.find((j) => j.id === selectedJobId) || SAMPLE_JOBS[0];
+  }, [selectedJobId]);
 
   // Category relaxation
   const relaxationBonus = useMemo(() => {
@@ -46,16 +61,59 @@ export function EligibilityCalculator({ currentStateSlug }: Props) {
       case "SC":
       case "ST":
         return 5;
+      case "PWD":
+        return 10;
+      case "EWS":
+      case "UR":
       default:
         return 0;
     }
   }, [category]);
 
-  // Filter eligible jobs
-  const matchingJobs = useMemo(() => {
-    if (!ageDetails) return [];
-    const effectiveAge = ageDetails.years;
+  // Cut-off date calculation for selected specific job
+  const specificJobCutoffDate = useMemo(() => {
+    return getJobAgeCutoffDate(selectedJob);
+  }, [selectedJob]);
 
+  const specificJobAge = useMemo(() => {
+    return calculateAgeAtDate(dob, specificJobCutoffDate);
+  }, [dob, specificJobCutoffDate]);
+
+  const specificEligibilityResult = useMemo(() => {
+    if (!specificJobAge) return { isEligible: false, reason: "Invalid Date of Birth" };
+
+    const effectiveMaxAge = selectedJob.maxAge + relaxationBonus;
+    const years = specificJobAge.years;
+
+    if (years < selectedJob.minAge) {
+      const underYears = selectedJob.minAge - years - 1;
+      const underMonths = 12 - specificJobAge.months;
+      return {
+        isEligible: false,
+        status: "UNDERAGE",
+        reason: `Underage: Requires minimum ${selectedJob.minAge} years on cut-off date (${formatDate(specificJobCutoffDate)}). You are ${years}y ${specificJobAge.months}m ${specificJobAge.days}d.`,
+      };
+    }
+
+    if (years > effectiveMaxAge) {
+      const overYears = years - effectiveMaxAge;
+      return {
+        isEligible: false,
+        status: "OVERAGE",
+        reason: `Overage: Maximum allowed age for ${category} category is ${effectiveMaxAge} years. You are ${years}y ${specificJobAge.months}m ${specificJobAge.days}d on ${formatDate(specificJobCutoffDate)}.`,
+      };
+    }
+
+    const bufferYears = effectiveMaxAge - years;
+    return {
+      isEligible: true,
+      status: "ELIGIBLE",
+      reason: `Eligible: Your age is ${years}y ${specificJobAge.months}m ${specificJobAge.days}d as of the official cut-off date (${formatDate(specificJobCutoffDate)}). Standard limit: ${selectedJob.minAge}–${selectedJob.maxAge} yrs (+${relaxationBonus}y for ${category}).`,
+    };
+  }, [specificJobAge, selectedJob, relaxationBonus, category, specificJobCutoffDate]);
+
+  // All-India Scanner: calculates eligibility for each job against ITS OWN individual cutoff date
+  const scannerEligibleJobs = useMemo(() => {
     return SAMPLE_JOBS.filter((job) => {
       if (currentStateSlug && currentStateSlug !== "central") {
         if (!job.isCentral && job.stateSlug !== currentStateSlug) {
@@ -63,134 +121,366 @@ export function EligibilityCalculator({ currentStateSlug }: Props) {
         }
       }
 
-      const maxAllowedAge = job.maxAge + relaxationBonus;
-      const isAgeEligible = effectiveAge >= job.minAge && effectiveAge <= maxAllowedAge;
+      // Check age against this job's actual official cutoff date
+      const cutoff = getJobAgeCutoffDate(job);
+      const ageAtCutoff = calculateAgeAtDate(dob, cutoff);
+      const maxAllowed = job.maxAge + relaxationBonus;
 
-      let isQualEligible = true;
+      const isAgeOk = ageAtCutoff.years >= job.minAge && ageAtCutoff.years <= maxAllowed;
+
+      let isQualOk = true;
       if (qualification === "10th Pass") {
-        isQualEligible = job.qualifications.some((q) => q.toLowerCase().includes("10th"));
+        isQualOk = job.qualifications.some((q) => q.toLowerCase().includes("10th"));
       } else if (qualification === "12th Pass") {
-        isQualEligible = job.qualifications.some(
+        isQualOk = job.qualifications.some(
           (q) => q.toLowerCase().includes("10th") || q.toLowerCase().includes("12th")
         );
-      } else if (qualification === "Graduate") {
-        isQualEligible = true;
+      } else if (qualification === "Diploma") {
+        isQualOk = job.qualifications.some(
+          (q) => q.toLowerCase().includes("diploma") || q.toLowerCase().includes("polytechnic") || q.toLowerCase().includes("12th")
+        );
       }
 
-      return isAgeEligible && isQualEligible;
+      return isAgeOk && isQualOk;
     });
-  }, [ageDetails, relaxationBonus, qualification, currentStateSlug]);
+  }, [dob, relaxationBonus, qualification, currentStateSlug]);
+
+  const handleCopySnippet = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedSnippet(true);
+    setTimeout(() => setCopiedSnippet(false), 2000);
+  };
+
+  const embedCode = `<iframe src="https://www.indiajobnotice.com/calculator" width="100%" height="700" frameborder="0" title="Government Job Age & Cutoff Date Calculator"></iframe>`;
+  const markdownBadge = `[![Govt Job Age Calculator](https://img.shields.io/badge/Govt_Job-Eligibility_Calculator-1E3799?style=for-the-badge&logo=gov)](https://www.indiajobnotice.com/calculator)`;
 
   return (
-    <div className="bg-white rounded-lg border border-[#EAE2D2] border-t-4 border-t-[#E96B15] p-6 shadow-2xs">
-      {/* Editorial Header */}
-      <div className="border-b border-[#F2ECE1] pb-4 mb-5">
-        <div className="flex items-center gap-2 mb-1">
-          <TricolorCapsule className="w-12 h-1.5" />
-          <span className="text-[10px] font-mono uppercase tracking-wider text-[#E96B15] font-bold">
-            Interactive Eligibility Tool
-          </span>
+    <div className="bg-white rounded-xl border border-[#EAE2D2] border-t-4 border-t-[#E96B15] p-6 sm:p-7 shadow-2xs space-y-6">
+      {/* Header & Tool Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#F2ECE1] pb-5">
+        <div>
+          <div className="flex items-center gap-2 mb-1.5">
+            <TricolorCapsule className="w-12 h-1.5" />
+            <span className="text-[10px] font-mono uppercase tracking-wider text-[#E96B15] font-bold">
+              Statutory Gazette Cutoff Engine
+            </span>
+          </div>
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1A1918]">
+            Government Job Age & Notification Cutoff Calculator
+          </h2>
+          <p className="text-xs text-[#68635B] mt-1 max-w-2xl leading-relaxed">
+            Calculates candidate age strictly against each commission’s statutory cut-off date (e.g. 1st August for UPSC/SSC or 1st July for State Police), applying official category age relaxations (OBC +3y, SC/ST +5y, PwD +10y).
+          </p>
         </div>
-        <h3 className="font-serif text-lg font-bold text-[#1A1918]">
-          Age & Educational Eligibility Checker
-        </h3>
-        <p className="text-xs text-[#68635B] mt-0.5">
-          Calculates your age as of today and automatically applies official category relaxations (OBC +3y, SC/ST +5y) to filter verified matching circulars.
-        </p>
+
+        {/* Action Buttons for Institutional / College Placement Desks */}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => setShowEmbedModal(true)}
+            className="px-3 py-1.5 rounded-md border border-[#CCD8F0] bg-[#EEF2FA] hover:bg-[#DDE7F7] text-[#1E3799] text-xs font-bold transition-colors flex items-center gap-1.5"
+            title="Embed tool on College Placement or Library Portal"
+          >
+            <Code className="w-3.5 h-3.5" />
+            <span>Embed on College Portal</span>
+          </button>
+          <button
+            onClick={() => window.print()}
+            className="p-1.5 rounded-md border border-[#EAE2D2] hover:bg-[#FAF7EF] text-[#68635B] transition-colors"
+            title="Print Eligibility Assessment"
+          >
+            <Printer className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
-      {/* Form Controls */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      {/* Mode Switcher */}
+      <div className="flex items-center gap-3 border-b border-[#EAE2D2] pb-px text-xs font-bold">
+        <button
+          onClick={() => setCalculationMode("specific")}
+          className={cn(
+            "pb-3 px-2 border-b-2 transition-all flex items-center gap-1.5",
+            calculationMode === "specific"
+              ? "border-[#E96B15] text-[#E96B15]"
+              : "border-transparent text-[#68635B] hover:text-[#1A1918]"
+          )}
+        >
+          <Clock className="w-4 h-4" />
+          <span>Notification Cut-off Date Calculator</span>
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#FDF3EB] text-[#E96B15]">
+            Precise
+          </span>
+        </button>
+
+        <button
+          onClick={() => setCalculationMode("scanner")}
+          className={cn(
+            "pb-3 px-2 border-b-2 transition-all flex items-center gap-1.5",
+            calculationMode === "scanner"
+              ? "border-[#1E3799] text-[#1E3799]"
+              : "border-transparent text-[#68635B] hover:text-[#1A1918]"
+          )}
+        >
+          <Sparkles className="w-4 h-4" />
+          <span>All-India Verified Scanner</span>
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#EEF2FA] text-[#1E3799]">
+            {scannerEligibleJobs.length} Matches
+          </span>
+        </button>
+      </div>
+
+      {/* Input Fields */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-[#FCFAF4] p-4 rounded-xl border border-[#EAE2D2]">
+        {/* Date of Birth */}
         <div>
           <label className="block text-xs font-bold text-[#423F3A] mb-1">
-            Date of Birth
+            Candidate Date of Birth (DOB)
           </label>
           <input
             type="date"
             value={dob}
             onChange={(e) => setDob(e.target.value)}
-            className="w-full px-3 py-2 rounded-md border border-[#EAE2D2] bg-[#FCFAF4] text-xs font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all"
+            className="w-full px-3 py-2 rounded-lg border border-[#EAE2D2] bg-white text-xs font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs"
           />
-          {ageDetails && (
-            <p className="text-[11px] text-[#1E3799] mt-1.5 font-mono font-bold">
-              Current Age: {ageDetails.years}y {ageDetails.months}m {ageDetails.days}d
-            </p>
-          )}
+          <p className="text-[11px] text-[#68635B] mt-1 font-mono">
+            As stated on 10th Class Certificate
+          </p>
         </div>
 
+        {/* Social Reservation Category */}
         <div>
           <label className="block text-xs font-bold text-[#423F3A] mb-1">
             Reservation Category
           </label>
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value as any)}
-            className="w-full px-3 py-2 rounded-md border border-[#EAE2D2] bg-[#FCFAF4] text-xs font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all"
+            onChange={(e) => setCategory(e.target.value as CategoryType)}
+            className="w-full px-3 py-2 rounded-lg border border-[#EAE2D2] bg-white text-xs font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs"
           >
-            <option value="UR">UR / General (No relaxation)</option>
-            <option value="EWS">EWS (Standard limit)</option>
-            <option value="OBC">OBC (+3 Years Relaxation)</option>
+            <option value="UR">UR / General (No Relaxation)</option>
+            <option value="EWS">EWS (Standard Upper Age)</option>
+            <option value="OBC">OBC Non-Creamy (+3 Years Relaxation)</option>
             <option value="SC">SC (+5 Years Relaxation)</option>
             <option value="ST">ST (+5 Years Relaxation)</option>
+            <option value="PWD">PwD / Divyangjan (+10 Years Relaxation)</option>
           </select>
-          <p className="text-[11px] text-[#68635B] mt-1.5">
-            {relaxationBonus > 0 ? (
-              <span className="text-[#209948] font-bold">+{relaxationBonus} years relaxation applied</span>
-            ) : (
-              "General standard upper age limit"
-            )}
+          <p className="text-[11px] text-[#209948] mt-1 font-semibold">
+            {relaxationBonus > 0 ? `+${relaxationBonus} Years Statutory Relaxation` : "Standard Upper Age Limit"}
           </p>
         </div>
 
+        {/* Highest Completed Qualification */}
         <div>
           <label className="block text-xs font-bold text-[#423F3A] mb-1">
-            Highest Completed Education
+            Highest Completed Qualification
           </label>
           <select
             value={qualification}
             onChange={(e) => setQualification(e.target.value)}
-            className="w-full px-3 py-2 rounded-md border border-[#EAE2D2] bg-[#FCFAF4] text-xs font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all"
+            className="w-full px-3 py-2 rounded-lg border border-[#EAE2D2] bg-white text-xs font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs"
           >
             <option value="Graduate">Graduation Degree (BA, BSc, BTech, BCom, etc.)</option>
+            <option value="Diploma">Diploma / Polytechnic</option>
             <option value="12th Pass">12th Intermediate / Higher Secondary</option>
             <option value="10th Pass">10th Matriculation / High School</option>
           </select>
-          <p className="text-[11px] text-[#68635B] mt-1.5">
-            Includes all UGC/AICTE equivalent streams
+          <p className="text-[11px] text-[#68635B] mt-1">
+            Valid recognition by UGC / AICTE / State Boards
           </p>
         </div>
       </div>
 
-      {/* Results Section */}
-      <div className="pt-4 border-t border-[#F2ECE1]">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#209948]" />
-            <span className="text-xs font-mono uppercase tracking-wider text-[#1E3799] font-bold">
-              Eligible Gazettes ({matchingJobs.length})
+      {/* MODE 1: SPECIFIC NOTIFICATION CUT-OFF DATE VERDICT */}
+      {calculationMode === "specific" && (
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold text-[#1A1918] mb-1.5">
+              Select Official Recruitment Gazette to Evaluate:
+            </label>
+            <select
+              value={selectedJobId}
+              onChange={(e) => setSelectedJobId(e.target.value)}
+              className="w-full px-3.5 py-2.5 rounded-lg border border-[#CCD8F0] bg-[#EEF2FA]/50 text-xs font-bold text-[#1E3799] focus:outline-none focus:border-[#1E3799] shadow-2xs"
+            >
+              {SAMPLE_JOBS.map((job) => {
+                const cutoff = getJobAgeCutoffDate(job);
+                return (
+                  <option key={job.id} value={job.id}>
+                    {job.orgShortCode} — {job.shortTitle} (Official Cutoff Date: {formatDate(cutoff)})
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+
+          {/* Detailed Statutory Age Assessment Card */}
+          <div
+            className={cn(
+              "p-5 rounded-xl border transition-all",
+              specificEligibilityResult.isEligible
+                ? "bg-[#EDF7F0] border-[#C6E7D0]"
+                : "bg-[#FDF3EB] border-[#F9D9C3]"
+            )}
+          >
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  {specificEligibilityResult.isEligible ? (
+                    <span className="px-3 py-1 rounded bg-[#209948] text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>ELIGIBLE TO APPLY</span>
+                    </span>
+                  ) : (
+                    <span className="px-3 py-1 rounded bg-[#E96B15] text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+                      <XCircle className="w-4 h-4" />
+                      <span>{specificEligibilityResult.status}</span>
+                    </span>
+                  )}
+                  <span className="font-mono text-xs text-[#1A1918] font-bold">
+                    Crucial Date: {formatDate(specificJobCutoffDate)}
+                  </span>
+                </div>
+
+                <p className="text-xs text-[#3E3C38] leading-relaxed pt-1">
+                  {specificEligibilityResult.reason}
+                </p>
+              </div>
+
+              {/* Age breakdown chips */}
+              <div className="grid grid-cols-3 gap-2 shrink-0 bg-white p-3 rounded-lg border border-[#EAE2D2] text-center">
+                <div>
+                  <span className="text-[10px] font-mono uppercase text-[#68635B] block font-semibold">Years</span>
+                  <span className="font-mono font-bold text-base text-[#1E3799]">{specificJobAge.years}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono uppercase text-[#68635B] block font-semibold">Months</span>
+                  <span className="font-mono font-bold text-base text-[#1E3799]">{specificJobAge.months}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono uppercase text-[#68635B] block font-semibold">Days</span>
+                  <span className="font-mono font-bold text-base text-[#1E3799]">{specificJobAge.days}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Link to selected job */}
+            <div className="mt-4 pt-3 border-t border-[#EAE2D2]/60 flex items-center justify-between text-xs">
+              <span className="text-[#68635B]">
+                Notification: <strong className="text-[#1A1918]">{selectedJob.title}</strong>
+              </span>
+              <Link
+                href={selectedJob.isCentral ? `/jobs/${selectedJob.slug}` : `/state/${selectedJob.stateSlug}/jobs/${selectedJob.slug}`}
+                className="font-bold text-[#1E3799] hover:underline flex items-center gap-1"
+              >
+                <span>View Full Gazette & Apply</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODE 2: ALL-INDIA SCANNER RESULT */}
+      {calculationMode === "scanner" && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between border-b border-[#EAE2D2] pb-2 text-xs">
+            <span className="font-bold text-[#1A1918]">
+              Verified Positions matching your DOB & Educational Stream ({scannerEligibleJobs.length})
+            </span>
+            <span className="font-mono text-[#68635B]">
+              Calculated using each gazette’s respective cutoff date
             </span>
           </div>
-          <span className="text-xs text-[#68635B] font-mono">
-            {ageDetails?.years} yrs · {category} · {qualification}
-          </span>
-        </div>
 
-        {matchingJobs.length === 0 ? (
-          <div className="text-center py-8 text-xs text-[#68635B] bg-[#FCFAF4] rounded-md border border-[#EAE2D2]">
-            No active positions match this exact criteria. Try adjusting category or education level.
+          {scannerEligibleJobs.length === 0 ? (
+            <div className="text-center py-8 text-xs text-[#68635B] bg-[#FCFAF4] rounded-lg border border-[#EAE2D2]">
+              No active circulars match this specific age on cutoff dates. Try selecting a different reservation category or qualification tier.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {scannerEligibleJobs.map((job) => (
+                <JobCard
+                  key={job.id}
+                  job={job}
+                  currentStateSlug={job.isCentral ? "central" : job.stateSlug}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* EMBED CODE MODAL FOR COLLEGE PLACEMENT CELLS & LIBRARIES */}
+      {showEmbedModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl max-w-lg w-full p-6 border border-[#EAE2D2] shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#EAE2D2] pb-3">
+              <div className="flex items-center gap-2">
+                <Code className="w-5 h-5 text-[#1E3799]" />
+                <h3 className="font-serif font-bold text-base text-[#1A1918]">
+                  Embed on College Placement Portal or Library Desk
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowEmbedModal(false)}
+                className="text-[#68635B] hover:text-[#1A1918] font-mono text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-xs text-[#524E48] leading-relaxed">
+              College career advisory centres, training & placement cells (TPO), coaching institutes, and district central libraries are welcome to freely integrate this statutory cut-off calculator for students.
+            </p>
+
+            <div>
+              <label className="block text-[11px] font-mono uppercase font-bold text-[#68635B] mb-1">
+                Responsive HTML iFrame Embed Code
+              </label>
+              <div className="relative">
+                <textarea
+                  readOnly
+                  rows={3}
+                  value={embedCode}
+                  className="w-full p-2.5 rounded bg-[#FAF7EF] border border-[#EAE2D2] text-xs font-mono text-[#1A1918] focus:outline-none"
+                />
+                <button
+                  onClick={() => handleCopySnippet(embedCode)}
+                  className="absolute right-2 bottom-3 px-2.5 py-1 rounded bg-[#1E3799] text-white text-[11px] font-bold flex items-center gap-1 shadow-2xs hover:bg-[#15286D]"
+                >
+                  {copiedSnippet ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  <span>{copiedSnippet ? "Copied" : "Copy iFrame"}</span>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-mono uppercase font-bold text-[#68635B] mb-1">
+                Markdown Link for College Placement Repositories & Blogs
+              </label>
+              <div className="relative">
+                <textarea
+                  readOnly
+                  rows={2}
+                  value={markdownBadge}
+                  className="w-full p-2.5 rounded bg-[#FAF7EF] border border-[#EAE2D2] text-xs font-mono text-[#1A1918] focus:outline-none"
+                />
+                <button
+                  onClick={() => handleCopySnippet(markdownBadge)}
+                  className="absolute right-2 bottom-3 px-2.5 py-1 rounded bg-[#E96B15] text-white text-[11px] font-bold flex items-center gap-1 shadow-2xs hover:bg-[#D4590A]"
+                >
+                  {copiedSnippet ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  <span>{copiedSnippet ? "Copied" : "Copy Markdown"}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="pt-2 text-[11px] text-[#68635B] bg-[#EDF7F0] p-3 rounded-lg border border-[#C6E7D0] flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#209948] shrink-0" />
+              <span>100% Free, zero advertisements in iframe, compliant with educational public-interest use.</span>
+            </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {matchingJobs.map((job) => (
-              <JobCard
-                key={job.id}
-                job={job}
-                currentStateSlug={currentStateSlug}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
