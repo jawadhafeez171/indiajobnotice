@@ -180,66 +180,6 @@ export function Navbar({ currentStateSlug }: Props) {
               </button>
             </div>
 
-            {/* All 36 States & UTs Direct Quick Grid */}
-            <div className="space-y-1.5 pt-1">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-[#68635B] font-bold flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-[#1E3799]" />
-                  Quick Access to All 36 States & UTs
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setIsModalOpen(true);
-                  }}
-                  className="text-[11px] font-bold text-[#1E3799] hover:underline"
-                >
-                  Zone Filter →
-                </button>
-              </div>
-
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 pt-1 max-h-56 overflow-y-auto p-1 border border-[#EAE2D2] rounded-lg bg-white">
-                <a
-                  href={getCentralPortalUrl()}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    "p-2 rounded border text-xs text-center flex flex-col items-center justify-center min-h-[44px] transition-colors",
-                    !currentStateSlug || currentStateSlug === "central"
-                      ? "bg-[#1E3799] text-white border-[#1E3799] font-bold"
-                      : "bg-[#EEF2FA] text-[#1E3799] border-[#CCD8F0] hover:bg-[#E0E9F8]"
-                  )}
-                >
-                  <span className="text-[11px] font-bold">🇮🇳 All-India</span>
-                  <span className="text-[9px] font-mono opacity-80">Central</span>
-                </a>
-
-                {STATES_REGISTRY.map((st) => {
-                  const isActive = currentStateSlug === st.slug;
-                  return (
-                    <a
-                      key={st.slug}
-                      href={getStateSubdomainUrl(st.slug)}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={cn(
-                        "p-2 rounded border text-xs text-center flex flex-col items-center justify-center min-h-[44px] transition-colors",
-                        isActive
-                          ? "bg-[#1E3799] text-white border-[#1E3799] font-bold"
-                          : "bg-white text-[#1A1918] border-[#EAE2D2] hover:border-[#1E3799] hover:bg-[#EEF2FA]"
-                      )}
-                    >
-                      <span className="font-bold text-[11px] leading-tight truncate w-full">
-                        {st.name}
-                      </span>
-                      <span className="text-[9px] font-mono opacity-75">
-                        {st.code}
-                      </span>
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-
             {/* Core Tools & Editorial Hubs */}
             <div className="space-y-1">
               <span className="text-[10px] font-mono uppercase tracking-wider text-[#68635B] font-bold px-1 block">
