@@ -1,0 +1,66 @@
+import React from "react";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Navbar } from "@/components/common/Navbar";
+import { Footer } from "@/components/common/Footer";
+import { EligibilityView } from "@/components/jobs/EligibilityView";
+import { getJobBySlug, SAMPLE_JOBS, getJobAgeCutoffDate } from "@/data/jobs";
+import { getStateBySlug } from "@/config/states";
+import { formatDate } from "@/lib/utils";
+
+interface Props {
+  params: Promise<{ state: string; slug: string }>;
+}
+
+export async function generateStaticParams() {
+  return SAMPLE_JOBS.filter((j) => !j.isCentral && j.stateSlug).map((job) => ({
+    state: job.stateSlug as string,
+    slug: job.slug,
+  }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const resolvedParams = await params;
+  const job = getJobBySlug(resolvedParams.slug);
+  const state = getStateBySlug(resolvedParams.state);
+  if (!job) return { title: "Eligibility Details Not Found | IndiaJobNotice.com" };
+
+  const stateName = state ? state.name : resolvedParams.state.toUpperCase();
+  const canonicalUrl = `https://www.indiajobnotice.com/state/${resolvedParams.state}/jobs/${job.slug}/eligibility`;
+  const cutoffDate = getJobAgeCutoffDate(job);
+
+  return {
+    title: `${job.shortTitle} 2026 (${stateName}) Age Limit, Cut-off Date & Qualification | IndiaJobNotice.com`,
+    description: `Official statutory eligibility criteria for ${job.shortTitle} (${stateName}). Age limit: ${job.minAge} to ${job.maxAge} years on cut-off date (${formatDate(cutoffDate)}). Category relaxation (OBC, SC/ST, domicile) and educational degree requirements.`,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${job.shortTitle} (${stateName}) Age Limit & Qualification 2026`,
+      description: `Official statutory eligibility, cut-off date, age relaxation, and educational qualifications for ${job.organization}.`,
+      url: canonicalUrl,
+      siteName: "India Job Notice",
+      locale: "en_IN",
+      type: "article",
+    },
+  };
+}
+
+export default async function StateJobEligibilityPage({ params }: Props) {
+  const resolvedParams = await params;
+  const job = getJobBySlug(resolvedParams.slug);
+
+  if (!job) {
+    notFound();
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
+      <Navbar currentStateSlug={resolvedParams.state} />
+      <main className="flex-1">
+        <EligibilityView job={job} stateSlug={resolvedParams.state} />
+      </main>
+      <Footer />
+    </div>
+  );
+}

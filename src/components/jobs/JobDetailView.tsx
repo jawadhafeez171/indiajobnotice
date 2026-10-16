@@ -43,11 +43,13 @@ import {
   getJobDetailedSyllabus 
 } from "@/lib/exam-details";
 import { ExecutiveNotificationDigest } from "./ExecutiveNotificationDigest";
+import { ApplicationDeadlineSection } from "./ApplicationDeadlineSection";
 import { ExaminationLifecycleBar } from "./ExaminationLifecycleBar";
 import { ClosedRecruitmentAlert } from "./ClosedRecruitmentAlert";
 import { JobTaxonomyBar } from "./JobTaxonomyBar";
 import { RelatedOpportunitiesSection } from "./RelatedOpportunitiesSection";
 import { getJobTaxonomyLinks } from "@/lib/internal-links";
+import { generateJobStructuredData, getJobFaqs } from "@/lib/structured-data";
 import { isJobApplicationClosed } from "@/data/jobs";
 
 interface Props {
@@ -95,54 +97,16 @@ export function JobDetailView({ job, stateSlug }: Props) {
     ? `/jobs/${job.slug}`
     : `/state/${stateSlug}/jobs/${job.slug}`;
 
-  // Google JobPosting JSON-LD Structured Data
-  // GOOGLE GUIDELINE: Expire / remove JobPosting structured data when applications close to prevent expired search penalties.
-  const jsonLd = !isClosed
-    ? {
-        "@context": "https://schema.org",
-        "@type": "JobPosting",
-        "title": job.title,
-        "description": `${job.organization} has released notification for ${job.totalVacancies} vacancies. ${job.keyHighlights.join(". ")}`,
-        "datePosted": job.applicationStartDate,
-        "validThrough": `${job.applicationEndDate}T23:59:59Z`,
-        "employmentType": "FULL_TIME",
-        "hiringOrganization": {
-          "@type": "Organization",
-          "name": job.organization,
-          "sameAs": job.officialPdfUrl,
-        },
-        "jobLocation": {
-          "@type": "Place",
-          "address": {
-            "@type": "PostalAddress",
-            "addressCountry": "IN",
-            "addressRegion": stateInfo ? stateInfo.name : "India",
-          },
-        },
-        "baseSalary": {
-          "@type": "MonetaryAmount",
-          "currency": "INR",
-          "value": {
-            "@type": "QuantitativeValue",
-            "unitText": "MONTH",
-          },
-        },
-        "qualifications": job.qualifications.join(", "),
-      }
-    : {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": `${job.title} (Archived Recruitment Gazette)`,
-        "description": `Archived official circular, syllabus, exam pattern and historical cut-offs for ${job.title}. Applications closed on ${job.applicationEndDate}.`,
-        "dateModified": new Date().toISOString(),
-      };
+  const canonicalUrl = `https://www.indiajobnotice.com${basePrefix}`;
+  const structuredData = generateJobStructuredData(job, canonicalUrl);
+  const faqs = getJobFaqs(job);
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-7 print:p-0 print:m-0 print:max-w-none">
-      {/* Structured Data Script (Compliant with Google Expired Job Guidelines) */}
+      {/* Schema.org Structured Data Graph (JobPosting / WebPage + BreadcrumbList + FAQPage) */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
       {/* Deliberate Hierarchical Breadcrumb Navigation */}
@@ -322,6 +286,9 @@ export function JobDetailView({ job, stateSlug }: Props) {
 
       {/* Executive Candidate Notification Digest (Primary Facts Near Top) */}
       <ExecutiveNotificationDigest job={job} />
+
+      {/* Application Deadline & Critical Timeline Section (Search Intent: [Recruitment] last date to apply) */}
+      <ApplicationDeadlineSection job={job} stateSlug={stateSlug} />
 
       {/* Reserved Ad Space in Job Details (CLS Protected) */}
       <ReservedAdSlot slotType="leaderboard" slotId={`job-detail-${job.slug}`} className="print:hidden" />
@@ -628,6 +595,43 @@ export function JobDetailView({ job, stateSlug }: Props) {
           ))}
         </div>
       </div>
+
+      {/* Frequently Asked Questions (Targets Striking Distance Queries & Rich Snippets) */}
+      <section className="bg-white rounded-xl border border-[#EAE2D2] p-6 sm:p-7 shadow-2xs space-y-4">
+        <div className="border-b border-[#F2ECE1] pb-3">
+          <div className="flex items-center gap-2 mb-1">
+            <TricolorCapsule className="w-10 h-1.5" />
+            <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
+              Official Aspirants Q&A
+            </span>
+          </div>
+          <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1A1918]">
+            Frequently Asked Questions — {job.shortTitle}
+          </h3>
+          <p className="text-xs text-[#68635B]">
+            Official answers regarding eligibility, age relaxation, cut-off date, and selection procedure
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          {faqs.map((faq, idx) => (
+            <details
+              key={idx}
+              className="group p-3.5 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2] text-xs transition-colors hover:border-[#1E3799]"
+            >
+              <summary className="font-serif font-bold text-[#1A1918] cursor-pointer flex items-center justify-between gap-3 select-none">
+                <span>{faq.question}</span>
+                <span className="text-sm font-mono text-[#1E3799] group-open:rotate-180 transition-transform">
+                  ▼
+                </span>
+              </summary>
+              <p className="mt-2.5 pt-2.5 border-t border-[#EAE2D2]/60 text-[#423F3A] leading-relaxed">
+                {faq.answer}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
 
       {/* Genuinely Related Opportunities & Alternate Drives (Internal Cross-Linking) */}
       <RelatedOpportunitiesSection currentJob={job} />

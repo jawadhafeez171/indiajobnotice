@@ -154,6 +154,7 @@ export function Footer() {
           <div className="flex items-center gap-6 text-[#A9B8DE]">
             <Link href="/" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="/" className="hover:text-white transition-colors">Terms of Gazette Use</Link>
+            <Link href="/seo-audit" className="hover:text-white text-[11px] font-mono transition-colors">GSC Audit Center</Link>
             <Link href="/" className="hover:text-white transition-colors">Student Helpdesk</Link>
           </div>
         </div>

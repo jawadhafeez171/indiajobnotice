@@ -6,6 +6,7 @@ import {
   SECTOR_HUBS, 
   ORGANISATION_HUBS 
 } from "@/data/permanent-categories";
+import { VERIFIED_STATE_QUAL_HUBS } from "@/data/state-qualification-hubs";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.indiajobnotice.com";
@@ -75,6 +76,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.88,
   }));
 
+  // Curated State + Qualification Hubs (/government-jobs/karnataka/12th-pass, etc.)
+  const stateQualificationRoutes: MetadataRoute.Sitemap = VERIFIED_STATE_QUAL_HUBS.map((hub) => ({
+    url: `${baseUrl}/government-jobs/${hub.stateSlug}/${hub.qualSlug}`,
+    lastModified: now,
+    changeFrequency: "daily",
+    priority: 0.86,
+  }));
+
   // 36 State Directory Hubs (/state/[state])
   const stateRoutes: MetadataRoute.Sitemap = STATES_REGISTRY.map((state) => ({
     url: `${baseUrl}/state/${state.slug}`,
@@ -101,13 +110,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: job.featured ? 0.9 : 0.75,
   }));
 
-  // Distinct lifecycle search routes (Admit Card, Answer Key, Result)
+  // Distinct lifecycle & intent search routes (Eligibility, Admit Card, Answer Key, Result)
   const lifecycleRoutes: MetadataRoute.Sitemap = SAMPLE_JOBS.flatMap((job) => {
     const base = job.isCentral 
       ? `${baseUrl}/jobs/${job.slug}` 
       : `${baseUrl}/state/${job.stateSlug}/jobs/${job.slug}`;
 
     return [
+      {
+        url: `${base}/eligibility`,
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority: 0.78,
+      },
       {
         url: `${base}/admit-card`,
         lastModified: now,
@@ -134,6 +149,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...sectorRoutes,
     ...qualificationRoutes,
     ...organisationRoutes,
+    ...stateQualificationRoutes,
     ...stateRoutes,
     ...governmentJobsRoutes,
     ...jobRoutes,

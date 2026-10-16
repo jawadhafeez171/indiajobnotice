@@ -28,14 +28,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalUrl = `https://www.indiajobnotice.com/state/${resolvedParams.state}/jobs/${job.slug}`;
 
   return {
-    title: `${job.title} 2026 Notification - ${stateName} Govt Jobs | IndiaJobNotice.com`,
-    description: `Official ${job.organization} ${job.title} recruitment notification for ${stateName}. ${job.totalVacancies ? `${job.totalVacancies.toLocaleString()} vacancies.` : ""} Check syllabus, eligibility, age limit, and official PDF link.`,
+    title: `${job.shortTitle} 2026 (${stateName}): Notification PDF, ${job.totalVacancies.toLocaleString("en-IN")} Posts, Eligibility & Apply Link | IndiaJobNotice.com`,
+    description: `Official ${job.organization} ${job.shortTitle} recruitment notification for ${stateName} candidates. ${job.totalVacancies.toLocaleString("en-IN")} vacancies. Download official PDF circular, verify crucial cut-off date, age limit, syllabus, and apply online.`,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${job.title} - ${stateName} Govt Recruitment`,
-      description: `Official ${job.organization} gazette circular. Application deadline: ${job.applicationEndDate || "Check Gazette"}.`,
+      title: `${job.shortTitle} 2026 (${stateName}) Notification PDF`,
+      description: `Official ${job.organization} gazette circular. ${job.totalVacancies.toLocaleString("en-IN")} vacancies. Application deadline: ${job.applicationEndDate || "Check Gazette"}.`,
       url: canonicalUrl,
       siteName: "India Job Notice",
       locale: "en_IN",
@@ -43,8 +43,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${job.title} (${stateName}) | IndiaJobNotice.com`,
-      description: `Official notification for ${job.organization}. Check eligibility & exam pattern.`,
+      title: `${job.shortTitle} (${stateName}) Notification PDF | IndiaJobNotice.com`,
+      description: `Official notification for ${job.organization}. Vacancies: ${job.totalVacancies.toLocaleString("en-IN")}.`,
     },
   };
 }
@@ -52,58 +52,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function StateJobPage({ params }: Props) {
   const resolvedParams = await params;
   const job = getJobBySlug(resolvedParams.slug);
-  const state = getStateBySlug(resolvedParams.state);
 
   if (!job) {
     notFound();
   }
 
-  const stateName = state ? state.name : "State";
-
-  const isClosed = isJobApplicationClosed(job);
-
-  // Google Search Structured Data (Complies with Expired JobPosting Guidelines)
-  // When applications close, remove JobPosting markup so Google does not index expired listings in Jobs search.
-  const jsonLd = !isClosed
-    ? {
-        "@context": "https://schema.org",
-        "@type": "JobPosting",
-        title: job.title,
-        description: job.syllabusSummary || `Official recruitment notification for ${job.title} by ${job.organization} in ${stateName}.`,
-        datePosted: job.applicationStartDate ? new Date(job.applicationStartDate).toISOString() : new Date().toISOString(),
-        validThrough: job.applicationEndDate ? new Date(job.applicationEndDate).toISOString() : undefined,
-        employmentType: "FULL_TIME",
-        hiringOrganization: {
-          "@type": "Organization",
-          name: job.organization,
-          sameAs: job.applyOnlineUrl || job.officialPdfUrl,
-        },
-        jobLocation: {
-          "@type": "Place",
-          address: {
-            "@type": "PostalAddress",
-            addressCountry: "IN",
-            addressRegion: stateName,
-          },
-        },
-        directApply: true,
-        url: `https://www.indiajobnotice.com/state/${resolvedParams.state}/jobs/${job.slug}`,
-      }
-    : {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        name: `${job.title} (Archived ${stateName} Recruitment)`,
-        description: `Official archive for ${job.title} by ${job.organization} in ${stateName}. Applications closed on ${job.applicationEndDate}. Master record of syllabus, exam pattern, eligibility and previous cut-offs.`,
-        url: `https://www.indiajobnotice.com/state/${resolvedParams.state}/jobs/${job.slug}`,
-      };
-
   return (
     <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
-      {/* Schema.org JobPosting Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       <Navbar currentStateSlug={resolvedParams.state} />
       <main className="flex-1">
         <JobDetailView job={job} stateSlug={resolvedParams.state} />

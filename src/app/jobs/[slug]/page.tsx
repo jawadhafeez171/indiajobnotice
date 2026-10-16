@@ -24,14 +24,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalUrl = `https://www.indiajobnotice.com/jobs/${job.slug}`;
 
   return {
-    title: `${job.title} 2026 Notification, Syllabus, Eligibility & Apply Online | IndiaJobNotice.com`,
-    description: `Official ${job.organization} ${job.title} notification. ${job.totalVacancies ? `${job.totalVacancies.toLocaleString()} vacancies.` : ""} Check exam dates, syllabus pattern, eligibility, age limit, and official PDF download.`,
+    title: `${job.shortTitle} 2026 Notification PDF: ${job.totalVacancies.toLocaleString("en-IN")} Vacancies, Eligibility, Last Date & Apply Link | IndiaJobNotice.com`,
+    description: `Official ${job.organization} ${job.shortTitle} recruitment notification. ${job.totalVacancies.toLocaleString("en-IN")} vacancies announced. Check official PDF circular, crucial cut-off date, age limit, syllabus, and online application portal.`,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${job.title} - ${job.organization}`,
-      description: `Official recruitment circular. Application deadline: ${job.applicationEndDate || "Check Gazette"}. Check eligibility & exam pattern.`,
+      title: `${job.shortTitle} 2026 Notification PDF - ${job.organization}`,
+      description: `Official recruitment circular. ${job.totalVacancies.toLocaleString("en-IN")} vacancies. Application deadline: ${job.applicationEndDate || "Check Gazette"}.`,
       url: canonicalUrl,
       siteName: "India Job Notice",
       locale: "en_IN",
@@ -39,8 +39,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${job.title} Notification | IndiaJobNotice.com`,
-      description: `Official ${job.organization} notification. Vacancies: ${job.totalVacancies ? job.totalVacancies.toLocaleString() : "Check PDF"}.`,
+      title: `${job.shortTitle} 2026 Notification PDF | IndiaJobNotice.com`,
+      description: `Official ${job.organization} notification. Vacancies: ${job.totalVacancies.toLocaleString("en-IN")}.`,
     },
   };
 }
@@ -53,50 +53,8 @@ export default async function JobPage({ params }: Props) {
     notFound();
   }
 
-  const isClosed = isJobApplicationClosed(job);
-
-  // Google Search Structured Data (Complies with Expired JobPosting Guidelines)
-  // When applications close, remove JobPosting markup so Google does not index expired listings in Jobs search.
-  const jsonLd = !isClosed
-    ? {
-        "@context": "https://schema.org",
-        "@type": "JobPosting",
-        title: job.title,
-        description: job.syllabusSummary || `Official recruitment notification for ${job.title} by ${job.organization}.`,
-        datePosted: job.applicationStartDate ? new Date(job.applicationStartDate).toISOString() : new Date().toISOString(),
-        validThrough: job.applicationEndDate ? new Date(job.applicationEndDate).toISOString() : undefined,
-        employmentType: "FULL_TIME",
-        hiringOrganization: {
-          "@type": "Organization",
-          name: job.organization,
-          sameAs: job.applyOnlineUrl || job.officialPdfUrl,
-        },
-        jobLocation: {
-          "@type": "Place",
-          address: {
-            "@type": "PostalAddress",
-            addressCountry: "IN",
-            addressRegion: "National / India",
-          },
-        },
-        directApply: true,
-        url: `https://www.indiajobnotice.com/jobs/${job.slug}`,
-      }
-    : {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        name: `${job.title} (Archived Recruitment Notification)`,
-        description: `Official archive for ${job.title} by ${job.organization}. Applications closed on ${job.applicationEndDate}. Master record of syllabus, exam pattern, eligibility and previous cut-offs.`,
-        url: `https://www.indiajobnotice.com/jobs/${job.slug}`,
-      };
-
   return (
     <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
-      {/* Schema.org JobPosting Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       <Navbar currentStateSlug="central" />
       <main className="flex-1">
         <JobDetailView job={job} stateSlug="central" />
