@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { 
   JobNotification, 
@@ -152,6 +152,27 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
   // Watchlist hook
   const { isSaved, toggleSave } = useWatchlist();
 
+  // Listen to hash changes (e.g., from hero counter clicks)
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.toLowerCase();
+      if (hash === "#admit-cards" || hash === "#admit-card") {
+        setActiveCategory("ADMIT_CARD");
+      } else if (hash === "#results" || hash === "#result") {
+        setActiveCategory("RESULT");
+      } else if (hash === "#closing-soon") {
+        setActiveCategory("CLOSING_SOON");
+      } else if (hash === "#apply-open") {
+        setActiveCategory("APPLY_OPEN");
+      } else if (hash === "#all-recruitments" || hash === "#major-recruitments") {
+        setActiveCategory("ALL");
+      }
+    };
+    handleHash();
+    window.addEventListener("hashchange", handleHash);
+    return () => window.removeEventListener("hashchange", handleHash);
+  }, []);
+
   // Helper to test if a job matches a status category
   const matchesStatus = (job: JobNotification, cat: StatusCategoryKey): boolean => {
     switch (cat) {
@@ -258,7 +279,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
   const sideJobs = filteredJobs.slice(1, 6);
 
   return (
-    <section className="space-y-4">
+    <section id="major-recruitments" className="space-y-4 scroll-mt-20">
       {/* Section Header with Live View Switcher */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#EAE2D2]">
         <div>

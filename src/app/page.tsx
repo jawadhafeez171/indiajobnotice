@@ -8,6 +8,7 @@ import { EligibilityCalculator } from "@/components/eligibility/EligibilityCalcu
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
+import { HeroCounterDeck } from "@/components/home/HeroCounterDeck";
 import { SAMPLE_JOBS } from "@/data/jobs";
 import { STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
 import { getStateSubdomainUrl } from "@/lib/subdomains";
@@ -40,6 +41,12 @@ export default function HomePage() {
   const featuredJobs = SAMPLE_JOBS.filter((j) => j.featured);
   const admitCards = SAMPLE_JOBS.filter((j) => j.status === "ADMIT_CARD_OUT");
   const results = SAMPLE_JOBS.filter((j) => j.status === "RESULT_OUT");
+
+  const totalVacancies = SAMPLE_JOBS.reduce((acc, j) => acc + (j.totalVacancies || 0), 0);
+  const openApplicationsCount = SAMPLE_JOBS.filter((j) => j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR").length;
+  const closingSoonCount = SAMPLE_JOBS.filter((j) => j.status === "LAST_DATE_NEAR").length;
+  const admitCardsCount = admitCards.length;
+  const resultsCount = results.length;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
@@ -105,6 +112,16 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+
+          {/* Live Gazette Counters */}
+          <HeroCounterDeck
+            totalVacancies={totalVacancies}
+            openApplicationsCount={openApplicationsCount}
+            closingSoonCount={closingSoonCount}
+            admitCardsCount={admitCardsCount}
+            resultsCount={resultsCount}
+            statesCount={36}
+          />
         </div>
       </section>
 
