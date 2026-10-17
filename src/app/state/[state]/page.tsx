@@ -8,6 +8,7 @@ import { EligibilityCalculator } from "@/components/eligibility/EligibilityCalcu
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
+import { DistrictSelectorBar } from "@/components/common/DistrictSelectorBar";
 import { getStateBySlug, STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
 import { getJobsByState } from "@/data/jobs";
 import { getCentralPortalUrl } from "@/lib/subdomains";
@@ -121,6 +122,9 @@ export default async function StateHomePage({ params }: PageProps) {
               </span>
             </div>
           </div>
+
+          {/* Interactive District Quick Selector */}
+          <DistrictSelectorBar stateSlug={state.slug} stateName={state.name} />
         </div>
       </section>
 

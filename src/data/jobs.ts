@@ -51,6 +51,17 @@ export interface JobNotification {
   syllabusSummary: string;
   viewsCount: number;
   featured?: boolean;
+  // District-wise Recruitment Extensions
+  isDistrictSpecific?: boolean;
+  districtSlug?: string;
+  districtName?: string;
+  districtWiseVacancies?: DistrictVacancyBreakout[];
+}
+
+export interface DistrictVacancyBreakout {
+  districtSlug: string;
+  districtName: string;
+  vacancies: number;
 }
 
 export const SAMPLE_JOBS: JobNotification[] = [
@@ -1073,6 +1084,50 @@ export const SAMPLE_JOBS: JobNotification[] = [
     syllabusSummary: "General Hindi (100 Marks), Law & Constitution / General Knowledge (100 Marks), Numerical & Mental Ability (100 Marks), Mental Aptitude / Reasoning (100 Marks). Total 400 marks, 2 hours.",
     viewsCount: 165000,
     featured: true,
+    districtWiseVacancies: [
+      { districtSlug: "lucknow", districtName: "Lucknow", vacancies: 420 },
+      { districtSlug: "varanasi", districtName: "Varanasi", vacancies: 310 },
+      { districtSlug: "prayagraj", districtName: "Prayagraj", vacancies: 380 },
+      { districtSlug: "kanpur-nagar", districtName: "Kanpur Nagar", vacancies: 390 },
+      { districtSlug: "gorakhpur", districtName: "Gorakhpur", vacancies: 280 },
+      { districtSlug: "gautam-buddha-nagar", districtName: "Gautam Buddha Nagar (Noida)", vacancies: 320 },
+    ],
+  },
+  {
+    id: "varanasi-cmo-nhm-staff-nurse-cho-2026",
+    slug: "varanasi-district-health-society-cmo-staff-nurse-cho-recruitment-2026",
+    title: "Varanasi District Health Society (NHM) Staff Nurse, CHO & Lab Technician (468 Posts)",
+    shortTitle: "Varanasi NHM Health 468 Posts",
+    organization: "Chief Medical Officer (CMO), Varanasi",
+    orgShortCode: "NHM-VNS",
+    stateSlug: "up",
+    isCentral: false,
+    category: "Medical & Nursing",
+    totalVacancies: 468,
+    qualifications: ["GNM / B.Sc Nursing with UP Nursing Council Registration, or DMLT for Lab Tech"],
+    minAge: 18,
+    maxAge: 40,
+    ageRelaxation: "OBC: 3 Years | SC/ST: 5 Years for UP Domicile",
+    salary: "Monthly Honorarium ₹20,500 - ₹35,000 + Performance Linked Incentive (PLI)",
+    applicationStartDate: "2026-10-05",
+    applicationEndDate: "2026-11-12",
+    examDate: "Merit & Document Verification in November 2026",
+    status: "APPLY_OPEN",
+    officialPdfUrl: "https://varanasi.nic.in",
+    applyOnlineUrl: "https://varanasi.nic.in",
+    applicationFee: { ur_obc_ews: 0, sc_st: 0, female_or_pwd: 0 },
+    selectionProcess: ["Academic Merit Screening (High School, Intermediate & Nursing Marks)", "Document Verification at CMO Office, Varanasi"],
+    keyHighlights: [
+      "468 Health and wellness center posts under National Health Mission (NHM) Varanasi",
+      "Zero application fee for all categories",
+      "Walk-in document verification scheduled at Swasthya Bhawan, Pandeypur, Varanasi",
+    ],
+    syllabusSummary: "Merit formulation based on 85% weightage for academic qualifying examinations and 15% for relevant state health service experience.",
+    viewsCount: 42300,
+    featured: true,
+    isDistrictSpecific: true,
+    districtSlug: "varanasi",
+    districtName: "Varanasi",
   },
   {
     id: "up-police-constable-2026",
@@ -1240,6 +1295,49 @@ export const SAMPLE_JOBS: JobNotification[] = [
     syllabusSummary: "General Studies (50 Qs), General Science & Mathematics (50 Qs), Mental Ability / Reasoning (50 Qs). Total 150 questions, 600 marks, 2 hours 15 minutes.",
     viewsCount: 132000,
     featured: true,
+    districtWiseVacancies: [
+      { districtSlug: "patna", districtName: "Patna", vacancies: 1240 },
+      { districtSlug: "gaya", districtName: "Gaya", vacancies: 890 },
+      { districtSlug: "muzaffarpur", districtName: "Muzaffarpur", vacancies: 810 },
+      { districtSlug: "bhagalpur", districtName: "Bhagalpur", vacancies: 680 },
+      { districtSlug: "darbhanga", districtName: "Darbhanga", vacancies: 650 },
+    ],
+  },
+  {
+    id: "patna-district-court-clerk-peon-2026",
+    slug: "patna-district-court-clerk-stenographer-peon-recruitment-2026",
+    title: "Patna District & Sessions Court Clerk, Stenographer & Peon Recruitment (1,840 Posts)",
+    shortTitle: "Patna District Court 1,840 Posts",
+    organization: "Office of the District & Sessions Judge, Patna",
+    orgShortCode: "PATNACOURT",
+    stateSlug: "bihar",
+    isCentral: false,
+    category: "Clerical / Stenographer",
+    totalVacancies: 1840,
+    qualifications: ["Clerk / Steno: Bachelor's Degree | Peon: 10th Matriculation Pass"],
+    minAge: 18,
+    maxAge: 37,
+    ageRelaxation: "BC/EBC: 40 Years | SC/ST: 42 Years | Female: 40 Years",
+    salary: "Clerk Pay Level 4 (₹25,500 - ₹81,100) | Peon Level 1 (₹18,000 - ₹56,900)",
+    applicationStartDate: "2026-10-01",
+    applicationEndDate: "2026-11-15",
+    examDate: "December 2026 (Preliminary Test)",
+    status: "APPLY_OPEN",
+    officialPdfUrl: "https://patna.dcourts.gov.in",
+    applyOnlineUrl: "https://patna.dcourts.gov.in",
+    applicationFee: { ur_obc_ews: 800, sc_st: 400 },
+    selectionProcess: ["Preliminary Screening Test", "Written Examination", "Interview & Typing/Steno Test"],
+    keyHighlights: [
+      "1,840 Vacancies across Patna judgeship for Clerk, Stenographer, Court Reader, and Peon",
+      "Direct judicial district employment under Patna High Court jurisdiction",
+      "Official notice and online application active on patna.dcourts.gov.in",
+    ],
+    syllabusSummary: "English (20 marks), Hindi (20 marks), General Knowledge (15 marks), Mathematics (10 marks), Reasoning (10 marks), Basic Computer (15 marks). Total 90 marks + 10 marks Interview.",
+    viewsCount: 84500,
+    featured: true,
+    isDistrictSpecific: true,
+    districtSlug: "patna",
+    districtName: "Patna",
   },
   {
     id: "bihar-police-csbc-2026",
@@ -1344,6 +1442,42 @@ export const SAMPLE_JOBS: JobNotification[] = [
     viewsCount: 65000,
     featured: true,
   },
+  {
+    id: "jaipur-district-court-clerk-stenographer-2026",
+    slug: "jaipur-metropolitan-district-sessions-court-clerk-recruitment-2026",
+    title: "Jaipur Metropolitan District & Sessions Court Junior Judicial Assistant & Clerk (412 Posts)",
+    shortTitle: "Jaipur District Court (412 Posts)",
+    organization: "District & Sessions Court, Jaipur Metropolitan",
+    orgShortCode: "JPRCOURT",
+    stateSlug: "rajasthan",
+    isCentral: false,
+    category: "Clerical / Stenographer",
+    totalVacancies: 412,
+    qualifications: ["Graduation Degree in any stream + Computer Diploma (RS-CIT or equivalent)"],
+    minAge: 18,
+    maxAge: 40,
+    ageRelaxation: "SC/ST/OBC/EWS (Rajasthan): 5 Years | Female: 10 Years",
+    salary: "Pay Matrix Level L-5 (₹20,800 - ₹65,900)",
+    applicationStartDate: "2026-10-04",
+    applicationEndDate: "2026-11-08",
+    examDate: "January 2027",
+    status: "APPLY_OPEN",
+    officialPdfUrl: "https://jaipur.dcourts.gov.in",
+    applyOnlineUrl: "https://sso.rajasthan.gov.in",
+    applicationFee: { ur_obc_ews: 500, sc_st: 250 },
+    selectionProcess: ["Written Competitive Examination (300 Marks)", "Computer Typing Test on Computer (Hindi & English)", "Document Verification"],
+    keyHighlights: [
+      "412 Junior Judicial Assistants and Lower Division Clerks in Jaipur Metropolitan Court",
+      "One Time Registration (OTR) through Rajasthan SSO portal",
+      "Speed of 8,000 key depressions per hour on computer required for typing test",
+    ],
+    syllabusSummary: "Hindi (100 Marks), English (100 Marks), General Knowledge including Rajasthan Culture & History (100 Marks). Total 150 MCQs, 300 marks, 2 hours.",
+    viewsCount: 46200,
+    featured: true,
+    isDistrictSpecific: true,
+    districtSlug: "jaipur",
+    districtName: "Jaipur",
+  },
 
   // MADHYA PRADESH (mp)
   {
@@ -1416,6 +1550,49 @@ export const SAMPLE_JOBS: JobNotification[] = [
     syllabusSummary: "Paper 1: General Knowledge, Computer Literacy, Reasoning, and Current Affairs (100 Marks). Paper 2: Post-specific Subject Knowledge / General Kannada & English.",
     viewsCount: 112000,
     featured: true,
+    districtWiseVacancies: [
+      { districtSlug: "bengaluru-urban", districtName: "Bengaluru Urban", vacancies: 1150 },
+      { districtSlug: "mysuru", districtName: "Mysuru", vacancies: 420 },
+      { districtSlug: "belagavi", districtName: "Belagavi", vacancies: 510 },
+      { districtSlug: "kalaburagi", districtName: "Kalaburagi", vacancies: 480 },
+      { districtSlug: "dakshina-kannada", districtName: "Dakshina Kannada (Mangaluru)", vacancies: 360 },
+    ],
+  },
+  {
+    id: "bengaluru-urban-district-court-stenographer-typist-2026",
+    slug: "bengaluru-urban-district-court-stenographer-typist-peon-recruitment-2026",
+    title: "Bengaluru Urban Principal City Civil & Sessions Court Stenographer & Peon (324 Posts)",
+    shortTitle: "Bengaluru Civil Court (324 Posts)",
+    organization: "Principal City Civil and Sessions Court, Bengaluru",
+    orgShortCode: "BLRCOURT",
+    stateSlug: "karnataka",
+    isCentral: false,
+    category: "Clerical / Stenographer",
+    totalVacancies: 324,
+    qualifications: ["10th (SSLC) / 12th (PUC) Pass with Kannada & English Senior Typewriting / Shorthand"],
+    minAge: 18,
+    maxAge: 35,
+    ageRelaxation: "2A/2B/3A/3B: 38 Years | SC/ST/Cat-1: 40 Years",
+    salary: "Stenographer Pay Scale ₹27,650 - ₹52,650 | Typist / Peon ₹19,950 - ₹37,900",
+    applicationStartDate: "2026-10-06",
+    applicationEndDate: "2026-11-10",
+    examDate: "December 2026",
+    status: "APPLY_OPEN",
+    officialPdfUrl: "https://bengaluru.dcourts.gov.in",
+    applyOnlineUrl: "https://bengaluru.dcourts.gov.in",
+    applicationFee: { ur_obc_ews: 300, sc_st: 150 },
+    selectionProcess: ["Qualifying SSLC/PUC Merit List", "Shorthand & Typewriting Skill Test", "Interview"],
+    keyHighlights: [
+      "City Civil Court complex, Bengaluru recruitment for Steno, Typist, and Process Server",
+      "Kannada language proficiency test mandatory",
+      "Direct judicial district appointment with state pension benefits",
+    ],
+    syllabusSummary: "Speed test in Kannada and English Typewriting/Shorthand followed by viva-voce assessing mental alertness and legal clerical understanding.",
+    viewsCount: 38900,
+    featured: true,
+    isDistrictSpecific: true,
+    districtSlug: "bengaluru-urban",
+    districtName: "Bengaluru Urban",
   },
   {
     id: "karnataka-jail-warder-835",
@@ -1946,4 +2123,58 @@ export function getCategoryColors(category: JobCategory) {
       };
   }
 }
+
+/**
+ * Helper to retrieve jobs for a specific district within a state.
+ * Returns district-specific jobs, statewide recruitments with quotas for this district,
+ * and general opportunities applicable to residents of this district.
+ */
+export function getJobsByDistrict(
+  stateSlug: string,
+  districtSlug: string,
+  includeStatewide: boolean = true
+): JobNotification[] {
+  const normState = stateSlug.toLowerCase();
+  const normDistrict = districtSlug.toLowerCase();
+
+  // 1. Direct district-exclusive jobs (e.g., District Court, NHM District Society)
+  const directDistrictJobs = SAMPLE_JOBS.filter(
+    (job) =>
+      job.stateSlug.toLowerCase() === normState &&
+      job.districtSlug &&
+      job.districtSlug.toLowerCase() === normDistrict
+  );
+
+  // 2. Statewide jobs with defined vacancy quota for this district
+  const quotaJobs = SAMPLE_JOBS.filter(
+    (job) =>
+      job.stateSlug.toLowerCase() === normState &&
+      !job.isDistrictSpecific &&
+      job.districtWiseVacancies?.some(
+        (dv) => dv.districtSlug.toLowerCase() === normDistrict
+      )
+  );
+
+  const primaryJobs = [...directDistrictJobs, ...quotaJobs];
+
+  if (!includeStatewide) {
+    return primaryJobs;
+  }
+
+  // 3. Statewide recruitments for the state (open to candidates residing in this district)
+  const statewideJobs = SAMPLE_JOBS.filter(
+    (job) =>
+      job.stateSlug.toLowerCase() === normState &&
+      !job.isDistrictSpecific &&
+      !job.districtWiseVacancies?.some(
+        (dv) => dv.districtSlug.toLowerCase() === normDistrict
+      )
+  );
+
+  // 4. Central government jobs (open pan-India)
+  const centralJobs = SAMPLE_JOBS.filter((job) => job.isCentral && job.featured);
+
+  return [...primaryJobs, ...statewideJobs, ...centralJobs];
+}
+
 

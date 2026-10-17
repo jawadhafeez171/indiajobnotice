@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { STATES_REGISTRY } from "@/config/states";
+import { DISTRICTS_REGISTRY } from "@/config/districts";
 import { SAMPLE_JOBS } from "@/data/jobs";
 import { 
   QUALIFICATION_HUBS, 
@@ -100,6 +101,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }));
 
+  // Dedicated District Hub Routes (/state/[state]/district/[district])
+  const districtRoutes: MetadataRoute.Sitemap = DISTRICTS_REGISTRY.map((district) => ({
+    url: `${baseUrl}/state/${district.stateSlug}/district/${district.slug}`,
+    lastModified: now,
+    changeFrequency: "daily",
+    priority: district.isMajorHub ? 0.82 : 0.75,
+  }));
+
   // Central and State Job detail pages
   const jobRoutes: MetadataRoute.Sitemap = SAMPLE_JOBS.map((job) => ({
     url: job.isCentral 
@@ -151,6 +160,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...organisationRoutes,
     ...stateQualificationRoutes,
     ...stateRoutes,
+    ...districtRoutes,
     ...governmentJobsRoutes,
     ...jobRoutes,
     ...lifecycleRoutes,

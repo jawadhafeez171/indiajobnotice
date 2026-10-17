@@ -11,9 +11,10 @@ import { useWatchlist } from "@/lib/watchlist";
 interface Props {
   job: JobNotification;
   currentStateSlug?: string;
+  currentDistrictSlug?: string;
 }
 
-export function JobCard({ job, currentStateSlug }: Props) {
+export function JobCard({ job, currentStateSlug, currentDistrictSlug }: Props) {
   const { isSaved, toggleSave } = useWatchlist();
   const saved = isSaved(job.id);
 
@@ -24,6 +25,10 @@ export function JobCard({ job, currentStateSlug }: Props) {
   const detailLink = job.isCentral
     ? `/jobs/${job.slug}`
     : `/state/${job.stateSlug}/jobs/${job.slug}`;
+
+  const districtQuota = currentDistrictSlug 
+    ? job.districtWiseVacancies?.find((v) => v.districtSlug.toLowerCase() === currentDistrictSlug.toLowerCase())
+    : null;
 
   return (
     <article className="group bg-white rounded-lg border border-[#EAE2D2] hover:border-[#1E3799]/50 transition-all p-5 flex flex-col justify-between relative overflow-hidden shadow-2xs hover:shadow-xs">
@@ -48,6 +53,18 @@ export function JobCard({ job, currentStateSlug }: Props) {
             <span className="text-[10px] font-mono uppercase text-[#706B62] font-semibold">
               {job.orgShortCode} · {job.isCentral ? "Central" : job.stateSlug.toUpperCase()}
             </span>
+
+            {job.isDistrictSpecific && job.districtName && (
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#FDF3EB] text-[#E96B15] border border-[#F9D7C0]">
+                📍 {job.districtName} Only
+              </span>
+            )}
+
+            {districtQuota && (
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#EBF7EE] text-[#1E7E34] border border-[#C3E6CB]">
+                🎯 {districtQuota.vacancies.toLocaleString("en-IN")} Local Posts
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5">
