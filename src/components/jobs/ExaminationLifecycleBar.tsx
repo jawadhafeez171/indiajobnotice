@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { JobNotification } from "@/data/jobs";
+import { JobNotification, getJobCanonicalPath } from "@/data/jobs";
 import { FileText, Ticket, KeyRound, Award, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -10,10 +10,8 @@ interface Props {
   stateSlug?: string;
 }
 
-export function ExaminationLifecycleBar({ job, activeStage, stateSlug }: Props) {
-  const basePrefix = job.isCentral || !stateSlug || stateSlug === "central"
-    ? `/jobs/${job.slug}`
-    : `/state/${stateSlug}/jobs/${job.slug}`;
+export function ExaminationLifecycleBar({ job, activeStage }: Props) {
+  const basePrefix = getJobCanonicalPath(job);
 
   const stages = [
     {

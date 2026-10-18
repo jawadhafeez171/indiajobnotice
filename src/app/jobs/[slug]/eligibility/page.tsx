@@ -1,10 +1,10 @@
 import React from "react";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { EligibilityView } from "@/components/jobs/EligibilityView";
-import { getJobBySlug, SAMPLE_JOBS, getJobAgeCutoffDate } from "@/data/jobs";
+import { getJobBySlug, SAMPLE_JOBS, getJobAgeCutoffDate, getJobCanonicalPath } from "@/data/jobs";
 import { formatDate } from "@/lib/utils";
 
 interface Props {
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const job = getJobBySlug(resolvedParams.slug);
   if (!job) return { title: "Eligibility Details Not Found | IndiaJobNotice.com" };
 
-  const canonicalUrl = `https://www.indiajobnotice.com/jobs/${job.slug}/eligibility`;
+  const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/eligibility`;
   const cutoffDate = getJobAgeCutoffDate(job);
 
   return {
@@ -48,6 +48,11 @@ export default async function CentralJobEligibilityPage({ params }: Props) {
 
   if (!job) {
     notFound();
+  }
+
+  // Enforce strict canonical hierarchy: state jobs must live under /state/[state]/jobs/
+  if (!job.isCentral && job.stateSlug && job.stateSlug.toLowerCase() !== "central") {
+    permanentRedirect(`/state/${job.stateSlug.toLowerCase()}/jobs/${job.slug}/eligibility`);
   }
 
   return (

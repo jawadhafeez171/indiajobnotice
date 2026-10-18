@@ -1,10 +1,10 @@
 import React from "react";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { ResultView } from "@/components/jobs/ResultView";
-import { getJobBySlug, SAMPLE_JOBS } from "@/data/jobs";
+import { getJobBySlug, SAMPLE_JOBS, getJobCanonicalPath } from "@/data/jobs";
 import { getStateBySlug } from "@/config/states";
 
 interface Props {
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!job) return { title: "Result Not Found | IndiaJobNotice.com" };
 
   const stateName = state ? state.name : resolvedParams.state.toUpperCase();
-  const canonicalUrl = `https://www.indiajobnotice.com/state/${resolvedParams.state}/jobs/${job.slug}/result`;
+  const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/result`;
 
   return {
     title: `${job.shortTitle} Result 2026 - ${stateName} Merit List PDF & Cut-Off | IndiaJobNotice.com`,
@@ -50,6 +50,15 @@ export default async function StateJobResultPage({ params }: Props) {
 
   if (!job) {
     notFound();
+  }
+
+  // Enforce strict canonical hierarchy:
+  if (job.isCentral || !job.stateSlug || job.stateSlug.toLowerCase() === "central") {
+    permanentRedirect(`/jobs/${job.slug}/result`);
+  }
+
+  if (job.stateSlug.toLowerCase() !== resolvedParams.state.toLowerCase()) {
+    permanentRedirect(`/state/${job.stateSlug.toLowerCase()}/jobs/${job.slug}/result`);
   }
 
   return (

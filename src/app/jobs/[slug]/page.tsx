@@ -1,10 +1,10 @@
 import React from "react";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { JobDetailView } from "@/components/jobs/JobDetailView";
-import { getJobBySlug, SAMPLE_JOBS, isJobApplicationClosed } from "@/data/jobs";
+import { getJobBySlug, SAMPLE_JOBS, getJobCanonicalPath } from "@/data/jobs";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const job = getJobBySlug(resolvedParams.slug);
   if (!job) return { title: "Job Notification Not Found | IndiaJobNotice.com" };
 
-  const canonicalUrl = `https://www.indiajobnotice.com/jobs/${job.slug}`;
+  const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}`;
 
   return {
     title: `${job.shortTitle} 2026 Notification PDF: ${job.totalVacancies.toLocaleString("en-IN")} Vacancies, Eligibility, Last Date & Apply Link | IndiaJobNotice.com`,
@@ -51,6 +51,11 @@ export default async function JobPage({ params }: Props) {
 
   if (!job) {
     notFound();
+  }
+
+  // Enforce strict canonical hierarchy: state jobs must live under /state/[state]/jobs/
+  if (!job.isCentral && job.stateSlug && job.stateSlug.toLowerCase() !== "central") {
+    permanentRedirect(`/state/${job.stateSlug.toLowerCase()}/jobs/${job.slug}`);
   }
 
   return (

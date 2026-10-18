@@ -2177,4 +2177,29 @@ export function getJobsByDistrict(
   return [...primaryJobs, ...statewideJobs, ...centralJobs];
 }
 
+/**
+ * Canonical URL path resolver for all recruitment notices across IndiaJobNotice.
+ * Guarantees a single, uniform URL architecture to prevent duplicate content & split rankings:
+ * - Central Jobs (UPSC, SSC, RRB, IBPS, Defence, etc.): `/jobs/[slug]`
+ * - State Jobs (UP Police, BPSC, BSSC, KEA, KPSC, etc.): `/state/[state]/jobs/[slug]`
+ */
+export function getJobCanonicalPath(job: { isCentral: boolean; stateSlug?: string; slug: string }): string {
+  if (job.isCentral || !job.stateSlug || job.stateSlug.toLowerCase() === "central") {
+    return `/jobs/${job.slug}`;
+  }
+  return `/state/${job.stateSlug.toLowerCase()}/jobs/${job.slug}`;
+}
+
+/**
+ * Canonical lifecycle path resolver for examination stages (eligibility, admit card, answer key, result)
+ */
+export function getJobLifecyclePath(
+  job: { isCentral: boolean; stateSlug?: string; slug: string },
+  stage: "notice" | "eligibility" | "admit-card" | "answer-key" | "result"
+): string {
+  const base = getJobCanonicalPath(job);
+  if (stage === "notice") return base;
+  return `${base}/${stage}`;
+}
+
 

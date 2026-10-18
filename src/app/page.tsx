@@ -9,7 +9,7 @@ import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSec
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { HeroCounterDeck } from "@/components/home/HeroCounterDeck";
-import { SAMPLE_JOBS } from "@/data/jobs";
+import { SAMPLE_JOBS, getJobCanonicalPath } from "@/data/jobs";
 import { STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
 import { getStateSubdomainUrl } from "@/lib/subdomains";
 import { cn } from "@/lib/utils";
@@ -187,9 +187,9 @@ export default function HomePage() {
               {admitCards.map((job) => (
                 <div key={job.id} className="flex items-baseline justify-between text-xs py-2 border-b border-[#FCFAF4] hover:bg-[#EEF2FA]/30 px-1 rounded transition-colors">
                   <div>
-                    <a href={`/jobs/${job.slug}`} className="font-semibold text-[#1A1918] hover:text-[#1E3799] block">
+                    <Link href={getJobCanonicalPath(job)} className="font-semibold text-[#1A1918] hover:text-[#1E3799] block">
                       {job.shortTitle}
-                    </a>
+                    </Link>
                     <span className="text-[11px] text-[#68635B]">{job.organization} · Exam: {job.examDate}</span>
                   </div>
                   <a
@@ -223,9 +223,9 @@ export default function HomePage() {
               {results.map((job) => (
                 <div key={job.id} className="flex items-baseline justify-between text-xs py-2 border-b border-[#FCFAF4] hover:bg-[#EDF7F0]/30 px-1 rounded transition-colors">
                   <div>
-                    <a href={`/state/${job.stateSlug}/jobs/${job.slug}`} className="font-semibold text-[#1A1918] hover:text-[#209948] block">
+                    <Link href={getJobCanonicalPath(job)} className="font-semibold text-[#1A1918] hover:text-[#209948] block">
                       {job.shortTitle}
-                    </a>
+                    </Link>
                     <span className="text-[11px] text-[#68635B]">{job.organization} · {job.totalVacancies.toLocaleString()} Posts</span>
                   </div>
                   <a

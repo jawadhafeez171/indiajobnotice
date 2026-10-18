@@ -50,6 +50,15 @@ export default function middleware(req: NextRequest) {
     }
   }
 
+  // Redirect legacy or mistaken /state/central/... paths to /jobs/... or /
+  if (url.pathname.startsWith("/state/central/jobs/")) {
+    const targetPath = url.pathname.replace("/state/central/jobs/", "/jobs/");
+    return NextResponse.redirect(new URL(targetPath, req.url), 301);
+  }
+  if (url.pathname === "/state/central" || url.pathname === "/state/central/") {
+    return NextResponse.redirect(new URL("/", req.url), 301);
+  }
+
   // If a user enters a short state path directly like /up, /bihar, /delhi, redirect to /state/[state]
   const pathParts = url.pathname.split("/").filter(Boolean);
   if (pathParts.length === 1) {

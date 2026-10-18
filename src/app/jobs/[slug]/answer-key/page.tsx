@@ -1,10 +1,10 @@
 import React from "react";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { AnswerKeyView } from "@/components/jobs/AnswerKeyView";
-import { getJobBySlug, SAMPLE_JOBS } from "@/data/jobs";
+import { getJobBySlug, SAMPLE_JOBS, getJobCanonicalPath } from "@/data/jobs";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const job = getJobBySlug(resolvedParams.slug);
   if (!job) return { title: "Answer Key Not Found | IndiaJobNotice.com" };
 
-  const canonicalUrl = `https://www.indiajobnotice.com/jobs/${job.slug}/answer-key`;
+  const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/answer-key`;
 
   return {
     title: `${job.shortTitle} Answer Key 2026 - Download Response Sheet & File Objections | IndiaJobNotice.com`,
@@ -46,6 +46,11 @@ export default async function CentralJobAnswerKeyPage({ params }: Props) {
 
   if (!job) {
     notFound();
+  }
+
+  // Enforce strict canonical hierarchy: state jobs must live under /state/[state]/jobs/
+  if (!job.isCentral && job.stateSlug && job.stateSlug.toLowerCase() !== "central") {
+    permanentRedirect(`/state/${job.stateSlug.toLowerCase()}/jobs/${job.slug}/answer-key`);
   }
 
   return (

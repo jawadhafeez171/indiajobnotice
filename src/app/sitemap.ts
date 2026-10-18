@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { STATES_REGISTRY } from "@/config/states";
 import { DISTRICTS_REGISTRY } from "@/config/districts";
-import { SAMPLE_JOBS } from "@/data/jobs";
+import { SAMPLE_JOBS, getJobCanonicalPath } from "@/data/jobs";
 import { 
   QUALIFICATION_HUBS, 
   SECTOR_HUBS, 
@@ -123,9 +123,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Central and State Job detail pages
   const jobRoutes: MetadataRoute.Sitemap = SAMPLE_JOBS.map((job) => ({
-    url: job.isCentral 
-      ? `${baseUrl}/jobs/${job.slug}` 
-      : `${baseUrl}/state/${job.stateSlug}/jobs/${job.slug}`,
+    url: `${baseUrl}${getJobCanonicalPath(job)}`,
     lastModified: new Date(job.applicationStartDate || now),
     changeFrequency: "weekly",
     priority: job.featured ? 0.9 : 0.75,
@@ -133,9 +131,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Distinct lifecycle & intent search routes (Eligibility, Admit Card, Answer Key, Result)
   const lifecycleRoutes: MetadataRoute.Sitemap = SAMPLE_JOBS.flatMap((job) => {
-    const base = job.isCentral 
-      ? `${baseUrl}/jobs/${job.slug}` 
-      : `${baseUrl}/state/${job.stateSlug}/jobs/${job.slug}`;
+    const base = `${baseUrl}${getJobCanonicalPath(job)}`;
 
     return [
       {
