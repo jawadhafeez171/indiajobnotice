@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { 
@@ -24,38 +24,6 @@ interface HeroCounterDeckProps {
   statesCount?: number;
 }
 
-/**
- * Animated counter hook using requestAnimationFrame with smooth easeOutExpo easing
- */
-function useAnimatedCounter(targetValue: number, duration: number = 1400) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let startTime: number | null = null;
-    let animationFrameId: number;
-
-    const step = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      // easeOutExpo curve for smooth finish
-      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      const current = Math.floor(easeProgress * targetValue);
-      setCount(current);
-
-      if (progress < 1) {
-        animationFrameId = requestAnimationFrame(step);
-      } else {
-        setCount(targetValue);
-      }
-    };
-
-    animationFrameId = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [targetValue, duration]);
-
-  return count;
-}
-
 export function HeroCounterDeck({
   totalVacancies,
   openApplicationsCount,
@@ -64,17 +32,12 @@ export function HeroCounterDeck({
   resultsCount,
   statesCount = 36,
 }: HeroCounterDeckProps) {
-  const animatedVacancies = useAnimatedCounter(totalVacancies, 1600);
-  const animatedOpen = useAnimatedCounter(openApplicationsCount, 1100);
-  const animatedAdmitCards = useAnimatedCounter(admitCardsCount, 1200);
-  const animatedResults = useAnimatedCounter(resultsCount, 1300);
-
   const stats = [
     {
       id: "vacancies",
       href: "#major-recruitments",
       badge: "National Total",
-      value: animatedVacancies.toLocaleString("en-IN") + "+",
+      value: totalVacancies.toLocaleString("en-IN") + "+",
       label: "Active Vacancies",
       subtext: "Central, Railways, PSC & Defense",
       icon: Briefcase,
@@ -88,7 +51,7 @@ export function HeroCounterDeck({
       id: "open-apps",
       href: "#apply-open",
       badge: "Apply Window Active",
-      value: `${animatedOpen} Drives`,
+      value: `${openApplicationsCount} Drives`,
       label: "Open Registrations",
       subtext: `${closingSoonCount} Closing Soon this week`,
       icon: Clock,
@@ -102,7 +65,7 @@ export function HeroCounterDeck({
       id: "admit-cards",
       href: "#admit-cards",
       badge: "Live Hall Tickets",
-      value: `${animatedAdmitCards} Released`,
+      value: `${admitCardsCount} Released`,
       label: "Admit Cards Out",
       subtext: "CBT & Physical test passes",
       icon: FileCheck,
@@ -116,7 +79,7 @@ export function HeroCounterDeck({
       id: "results",
       href: "#results",
       badge: "Merit Declared",
-      value: `${animatedResults} Published`,
+      value: `${resultsCount} Published`,
       label: "Results & Scorecards",
       subtext: "Cutoffs, keys & selection lists",
       icon: Award,

@@ -67,7 +67,62 @@ export interface DistrictVacancyBreakout {
   vacancies: number;
 }
 
-export const SAMPLE_JOBS: JobNotification[] = [
+/**
+ * Automatically computes and enforces the lifecycle status of a notification
+ * based on current date, application windows, and published milestones.
+ * Prevents expired jobs from ever showing as active or open.
+ */
+export function computeJobStatus(
+  job: {
+    status: JobStatus;
+    applicationStartDate?: string;
+    applicationEndDate?: string;
+    admitCardDate?: string;
+    examDate?: string;
+    resultDate?: string;
+  },
+  referenceDateStr: string = "2026-10-18"
+): JobStatus {
+  // If result is officially declared, preserve RESULT_OUT
+  if (job.status === "RESULT_OUT") return "RESULT_OUT";
+  // If admit card / exam city slip is out, preserve ADMIT_CARD_OUT
+  if (job.status === "ADMIT_CARD_OUT") return "ADMIT_CARD_OUT";
+
+  const todayStr = referenceDateStr;
+
+  if (job.applicationEndDate) {
+    if (job.applicationEndDate < todayStr) {
+      // The application deadline has passed. It cannot be open or upcoming.
+      return "APPLICATIONS_CLOSED";
+    }
+  }
+
+  if (job.applicationStartDate) {
+    if (job.applicationStartDate > todayStr) {
+      // Registration start date is in the future
+      return "UPCOMING";
+    }
+  }
+
+  // Application is currently active
+  if (job.applicationEndDate) {
+    const end = new Date(job.applicationEndDate + "T23:59:59Z").getTime();
+    const ref = new Date(todayStr + "T00:00:00Z").getTime();
+    const diffDays = Math.ceil((end - ref) / (1000 * 60 * 60 * 24));
+    if (diffDays <= 7 && diffDays >= 0) {
+      return "LAST_DATE_NEAR";
+    }
+    return "APPLY_OPEN";
+  }
+
+  return job.status;
+}
+
+export function getEffectiveJobStatus(job: JobNotification): JobStatus {
+  return computeJobStatus(job);
+}
+
+const RAW_SAMPLE_JOBS: JobNotification[] = [
   // ==========================================
   // CENTRAL GOVERNMENT RECRUITMENT NOTIFICATIONS
   // ==========================================
@@ -108,8 +163,8 @@ export const SAMPLE_JOBS: JobNotification[] = [
   {
     id: "ssc-cgl-2026",
     slug: "ssc-cgl-recruitment-2026",
-    title: "SSC CGL 2026 Combined Graduate Level Exam (17,727 Posts)",
-    shortTitle: "SSC CGL 2026 Group B & C",
+    title: "SSC CGL 2024-25 Combined Graduate Level Exam (17,727 Posts) - Tier 1 Result & Tier 2 Schedule",
+    shortTitle: "SSC CGL 2024-25 (17,727 Posts)",
     organization: "Staff Selection Commission",
     orgShortCode: "SSC",
     stateSlug: "central",
@@ -121,18 +176,20 @@ export const SAMPLE_JOBS: JobNotification[] = [
     maxAge: 32,
     ageRelaxation: "OBC: 3 Years | SC/ST: 5 Years | PwD: 10 Years",
     salary: "Pay Level 4 to Level 8 (₹25,500 to ₹1,51,100)",
-    applicationStartDate: "2026-10-01",
-    applicationEndDate: "2026-11-05",
-    examDate: "December 2026 (Tier-1 CBT)",
-    status: "APPLY_OPEN",
+    applicationStartDate: "2024-06-24",
+    applicationEndDate: "2024-07-27",
+    examDate: "Tier-2 CBT in January 2025",
+    admitCardDate: "December 2024",
+    resultDate: "Tier-1 Result Declared",
+    status: "RESULT_OUT",
     officialPdfUrl: "https://ssc.gov.in",
-    applyOnlineUrl: "https://ssc.gov.in/portal/apply",
+    applyOnlineUrl: "https://ssc.gov.in",
     applicationFee: { ur_obc_ews: 100, sc_st: 0, female_or_pwd: 0 },
     selectionProcess: ["Tier 1 CBT Exam", "Tier 2 Computer Exam", "Document Verification & Medical"],
     keyHighlights: [
-      "17,727 Vacancies across Income Tax Inspector, Central Excise, ASO in MEA, ED, and Auditor posts",
-      "Tier 1 qualifying in nature with negative marking of 0.50",
-      "One-Time Registration (OTR) mandatory on new SSC portal",
+      "Official 17,727 Vacancies under SSC CGL 2024 Notice F. No. HQ-PPI03/11/2024-PP_1",
+      "Tier-1 written scorecards and cut-off marks officially published on ssc.gov.in",
+      "Shortlisted candidates eligible for Tier-2 examination across Inspector, ASO and Auditor posts",
     ],
     syllabusSummary: "Tier-1: General Intelligence (50 marks), General Awareness (50 marks), Quantitative Aptitude (50 marks), English Comprehension (50 marks). Total 200 marks, 60 minutes.",
     viewsCount: 98400,
@@ -141,8 +198,8 @@ export const SAMPLE_JOBS: JobNotification[] = [
   {
     id: "ssc-gd-constable-2026",
     slug: "ssc-gd-constable-recruitment-2026",
-    title: "SSC GD Constable in BSF, CISF, CRPF, SSB, ITBP, AR & SSF (39,481 Posts)",
-    shortTitle: "SSC GD Constable 39,481 Posts",
+    title: "SSC GD Constable in CAPFs & Assam Rifles (2024-25 Drive - 39,481 Posts)",
+    shortTitle: "SSC GD Constable (39,481 Posts)",
     organization: "Staff Selection Commission",
     orgShortCode: "SSC",
     stateSlug: "central",
@@ -154,18 +211,18 @@ export const SAMPLE_JOBS: JobNotification[] = [
     maxAge: 23,
     ageRelaxation: "OBC: 3 Years | SC/ST: 5 Years | Ex-Servicemen: 3 Years after deduction of military service",
     salary: "Pay Level 3 (₹21,700 to ₹69,100) for all General Duty Constables",
-    applicationStartDate: "2026-09-05",
-    applicationEndDate: "2026-10-14",
-    examDate: "January - February 2027",
+    applicationStartDate: "2024-09-05",
+    applicationEndDate: "2024-10-14",
+    examDate: "January - February 2025 (CBT)",
     status: "APPLICATIONS_CLOSED",
     officialPdfUrl: "https://ssc.gov.in",
     applyOnlineUrl: "https://ssc.gov.in",
     applicationFee: { ur_obc_ews: 100, sc_st: 0, female_or_pwd: 0 },
     selectionProcess: ["Computer Based Examination (CBE 160 Marks)", "Physical Standard Test (PST)", "Physical Efficiency Test (PET Run)", "Detailed Medical Examination (DME)"],
     keyHighlights: [
-      "Online registration closed on 14 October 2026; Application correction window active on ssc.gov.in",
-      "39,481 Vacancies across 7 Central Armed Police Forces (CAPFs) & Assam Rifles",
-      "Computer Based Examination (CBE) scheduled for January - February 2027 in 13 languages",
+      "Official notification for 39,481 vacancies across BSF, CISF, CRPF, SSB, ITBP, AR & SSF",
+      "Online registration closed on 14 October 2024; CBT exam scheduled for early 2025 across national centers",
+      "Computer Based Examination (CBE) conducted in English, Hindi and 13 regional languages",
     ],
     syllabusSummary: "80 Questions, 160 Marks (60 minutes): General Intelligence & Reasoning (20 Qs, 40 M), General Knowledge (20 Qs, 40 M), Elementary Mathematics (20 Qs, 40 M), English/Hindi (20 Qs, 40 M). Negative marking: 0.25 marks.",
     viewsCount: 135000,
@@ -206,14 +263,14 @@ export const SAMPLE_JOBS: JobNotification[] = [
   {
     id: "rrb-group-d-2026",
     slug: "railway-rrb-group-d-level-1-recruitment-2026",
-    title: "Railway RRB Group D (Level-1 Track Maintainer & Pointsman) 1,03,769 Posts",
-    shortTitle: "RRB Group D (Level-1 Posts)",
+    title: "Railway RRB Group D (Level-1 Track Maintainer & Pointsman - 32,000+ Posts Expected)",
+    shortTitle: "RRB Group D (32,000+ Expected)",
     organization: "Railway Recruitment Boards",
     orgShortCode: "RRB",
     stateSlug: "central",
     isCentral: true,
     category: "Railways",
-    totalVacancies: 103769,
+    totalVacancies: 32000,
     qualifications: ["10th High School Pass OR ITI from NCVT/SCVT"],
     minAge: 18,
     maxAge: 33,
@@ -228,9 +285,9 @@ export const SAMPLE_JOBS: JobNotification[] = [
     applicationFee: { ur_obc_ews: 500, sc_st: 250, female_or_pwd: 250 },
     selectionProcess: ["Computer Based Test (CBT 100 Marks)", "Physical Efficiency Test (PET)", "Document Verification & Medical Examination"],
     keyHighlights: [
-      "1,03,769 Vacancies across 16 Railway Zonal divisions in India",
-      "PET Male: Carry 35 kg weight for 100m in 2 minutes + 1000m run in 4 min 15 sec",
-      "Fee Refund: ₹400 refunded to general candidates on appearing in CBT",
+      "Tentative ~32,000+ vacancies under the Ministry of Railways Annual Recruitment Calendar",
+      "Level-1 posts for Track Maintainer Grade IV, Pointsman, and Assistant Workshop across 16 Zonal Railways",
+      "Computer Based Test (CBT) followed by physical efficiency test (PET)",
     ],
     syllabusSummary: "General Science (25 Qs), Mathematics (25 Qs), General Intelligence & Reasoning (30 Qs), General Awareness & Current Affairs (20 Qs). Total 100 Qs, 90 mins.",
     viewsCount: 165000,
@@ -463,7 +520,7 @@ export const SAMPLE_JOBS: JobNotification[] = [
   {
     id: "upsc-capf-ac-2026",
     slug: "upsc-capf-assistant-commandant-recruitment-2026",
-    title: "UPSC Central Armed Police Forces Assistant Commandant (CAPF AC Exam 2026)",
+    title: "UPSC Central Armed Police Forces Assistant Commandant (CAPF AC Exam 2026 - Applications Closed)",
     shortTitle: "UPSC CAPF AC (506 Posts)",
     organization: "Union Public Service Commission",
     orgShortCode: "UPSC",
@@ -479,7 +536,7 @@ export const SAMPLE_JOBS: JobNotification[] = [
     applicationStartDate: "2026-04-24",
     applicationEndDate: "2026-05-14",
     examDate: "August 2026",
-    status: "UPCOMING",
+    status: "APPLICATIONS_CLOSED",
     officialPdfUrl: "https://upsc.gov.in",
     applyOnlineUrl: "https://upsconline.nic.in",
     applicationFee: { ur_obc_ews: 200, sc_st: 0, female_or_pwd: 0 },
@@ -591,8 +648,8 @@ export const SAMPLE_JOBS: JobNotification[] = [
   {
     id: "ibps-clerk-2026",
     slug: "ibps-clerk-crp-clerk-xiv-recruitment-2026",
-    title: "IBPS Clerk XIV Recruitment in 11 Public Sector Banks (6,128 Posts)",
-    shortTitle: "IBPS Clerk XIV Examination",
+    title: "IBPS Clerk XIV (CRP Clerks-XIV 2024-25) 6,128 Posts Mains Scorecard & Allotment",
+    shortTitle: "IBPS Clerk XIV (6,128 Posts)",
     organization: "Institute of Banking Personnel Selection",
     orgShortCode: "IBPS",
     stateSlug: "central",
@@ -614,8 +671,9 @@ export const SAMPLE_JOBS: JobNotification[] = [
     applicationFee: { ur_obc_ews: 850, sc_st: 175 },
     selectionProcess: ["Online Preliminary Examination (100 Marks)", "Online Main Examination (200 Marks)"],
     keyHighlights: [
-      "Provisional allotment to Bank of India, PNB, Central Bank, Union Bank, Indian Bank",
-      "Single common clerical exam for all national public sector banks",
+      "Official 6,128 Clerical Cadre vacancies across 11 Public Sector Banks under CRP Clerks-XIV",
+      "Provisional allotment and state-wise cutoffs published on ibps.in",
+      "Single national examination for clerical cadre across participating banks",
     ],
     syllabusSummary: "Mains: General/Financial Awareness (50 Qs, 50M), General English (40 Qs, 40M), Reasoning & Computer (50 Qs, 60M), Quantitative Aptitude (50 Qs, 50M). Total 190 Qs, 200 marks, 160 minutes.",
     viewsCount: 44200,
@@ -640,8 +698,8 @@ export const SAMPLE_JOBS: JobNotification[] = [
     applicationEndDate: "2026-08-16",
     examDate: "Phase-II: 19 October 2026",
     status: "ADMIT_CARD_OUT",
-    officialPdfUrl: "https://www.rbi.org.in",
-    applyOnlineUrl: "https://ibpsonline.ibps.in/rbiojul24/",
+    officialPdfUrl: "https://opportunities.rbi.org.in",
+    applyOnlineUrl: "https://opportunities.rbi.org.in",
     applicationFee: { ur_obc_ews: 850, sc_st: 100 },
     selectionProcess: ["Phase-I Online Examination (200 Marks)", "Phase-II Online Objective & Descriptive (300 Marks)", "Interview (75 Marks)"],
     keyHighlights: [
@@ -655,7 +713,7 @@ export const SAMPLE_JOBS: JobNotification[] = [
   {
     id: "india-post-gds-2026",
     slug: "india-post-gramin-dak-sevak-gds-recruitment-2026",
-    title: "India Post Gramin Dak Sevak (GDS) Branch Postmaster & ABPM (44,228 Posts)",
+    title: "India Post Gramin Dak Sevak (GDS July 2024 Schedule) 44,228 Posts Merit List & Result",
     shortTitle: "India Post GDS (44,228 Posts)",
     organization: "Department of Posts (India Post)",
     orgShortCode: "POST",
@@ -677,9 +735,9 @@ export const SAMPLE_JOBS: JobNotification[] = [
     applicationFee: { ur_obc_ews: 100, sc_st: 0, female_or_pwd: 0 },
     selectionProcess: ["No Written Exam - 100% Merit Based on 10th Standard Marks", "Document Verification & Biometric Match at Divisional Head Post Office"],
     keyHighlights: [
-      "44,228 Posts across all 23 Postal Circles in India",
+      "Official 44,228 Posts across all 23 Postal Circles under July 2024 Schedule",
       "Zero examination fee for SC, ST, Female, and Transgender candidates",
-      "Mandatory knowledge of cycling and local state dialect",
+      "100% merit-based selection formulated from Class 10th board marks",
     ],
     syllabusSummary: "Selection is strictly based on the system-generated merit list prepared on the basis of marks obtained in 10th class board examination.",
     viewsCount: 178000,
@@ -1023,8 +1081,8 @@ export const SAMPLE_JOBS: JobNotification[] = [
   {
     id: "bpsc-tre-3-teacher-result",
     slug: "bpsc-school-teacher-tre-3-result-cut-off-2026",
-    title: "BPSC School Teacher Recruitment (TRE 3.0) 87,774 Posts Final Scorecard & Cutoff",
-    shortTitle: "BPSC TRE 3.0 Teacher Results",
+    title: "BPSC School Teacher Recruitment (TRE 3.0 - Advt 22/2024) 87,774 Posts Final Scorecard & Cutoff",
+    shortTitle: "BPSC TRE 3.0 (Advt 22/2024)",
     organization: "Bihar Public Service Commission",
     orgShortCode: "BPSC",
     stateSlug: "bihar",
@@ -1046,6 +1104,7 @@ export const SAMPLE_JOBS: JobNotification[] = [
     applicationFee: { ur_obc_ews: 750, sc_st: 200 },
     selectionProcess: ["Written Objective Examination (150 Marks)", "Document Verification at District Headquarter"],
     keyHighlights: [
+      "Official 87,774 vacancies under BPSC Advt 22/2024 across Primary, Middle, Secondary & Higher Secondary schools",
       "Class 1-5, 6-8, 9-10, and 11-12 teacher category-wise cut-off marks released",
       "Merit PDF lists published along with roll-number wise district allocation",
     ],
@@ -1135,8 +1194,8 @@ export const SAMPLE_JOBS: JobNotification[] = [
   {
     id: "up-police-constable-2026",
     slug: "up-police-constable-60244-recruitment",
-    title: "UP Police Constable Recruitment (60,244 Posts) Re-Exam Final Answer Key & Result",
-    shortTitle: "UPPRPB Police Constable 60,244",
+    title: "UP Police Constable Recruitment (Advt 2023-24 - 60,244 Posts) Re-Exam Final Answer Key & Result",
+    shortTitle: "UP Police Constable (60,244 Posts)",
     organization: "UP Police Recruitment and Promotion Board",
     orgShortCode: "UPPRPB",
     stateSlug: "up",
@@ -1158,6 +1217,7 @@ export const SAMPLE_JOBS: JobNotification[] = [
     applicationFee: { ur_obc_ews: 400, sc_st: 400 },
     selectionProcess: ["OMR Written Exam (300 Marks)", "Document Verification & Physical Standard Test (PST)", "Physical Efficiency Test (Run)"],
     keyHighlights: [
+      "Official 60,244 Civil Police Constable drive under UPPRPB Advt Dec 2023 / Re-Exam August 2024",
       "Final Answer Keys and Scorecard release notification published",
       "Cut-off marks released category-wise for DV/PST round",
       "Running: 4.8 km in 25 mins for males, 2.4 km in 14 mins for females",
@@ -1169,7 +1229,7 @@ export const SAMPLE_JOBS: JobNotification[] = [
   {
     id: "uppsc-pcs-2026",
     slug: "uppsc-combined-state-upper-subordinate-pcs-2026",
-    title: "UPPSC Combined State / Upper Subordinate Services (PCS) Pre Exam 2026",
+    title: "UPPSC Combined State / Upper Subordinate Services (PCS Pre Exam 2026 - Applications Closed)",
     shortTitle: "UPPSC PCS Prelims 2026",
     organization: "Uttar Pradesh Public Service Commission",
     orgShortCode: "UPPSC",
@@ -1186,7 +1246,7 @@ export const SAMPLE_JOBS: JobNotification[] = [
     applicationEndDate: "2026-04-02",
     examDate: "December 2026",
     admitCardDate: "Expected 10 Days Before Exam",
-    status: "UPCOMING",
+    status: "APPLICATIONS_CLOSED",
     officialPdfUrl: "https://uppsc.up.nic.in",
     applyOnlineUrl: "https://uppsc.up.nic.in",
     applicationFee: { ur_obc_ews: 125, sc_st: 65, female_or_pwd: 25 },
@@ -1916,8 +1976,8 @@ export const SAMPLE_JOBS: JobNotification[] = [
     examDate: "Written Exam Completed",
     resultDate: "District-wise Provisional Selection List Out",
     status: "RESULT_OUT",
-    officialPdfUrl: "https://policerecruitment2024.mahait.org",
-    applyOnlineUrl: "https://policerecruitment2024.mahait.org",
+    officialPdfUrl: "https://www.mahapolice.gov.in",
+    applyOnlineUrl: "https://policerecruitment.mahait.org",
     applicationFee: { ur_obc_ews: 450, sc_st: 350 },
     selectionProcess: ["Physical Standard Test (PST) & Physical Test (50 Marks)", "Written Examination (100 Marks)", "Character Verification & Medical"],
     keyHighlights: [
@@ -1965,6 +2025,11 @@ export const SAMPLE_JOBS: JobNotification[] = [
     featured: true,
   },
 ];
+
+export const SAMPLE_JOBS: JobNotification[] = RAW_SAMPLE_JOBS.map((job) => ({
+  ...job,
+  status: computeJobStatus(job),
+}));
 
 export function getJobsByState(stateSlug: string, includeCentral = true): JobNotification[] {
   if (stateSlug === "central" || stateSlug === "all") {

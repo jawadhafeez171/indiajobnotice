@@ -177,11 +177,11 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
   const matchesStatus = (job: JobNotification, cat: StatusCategoryKey): boolean => {
     switch (cat) {
       case "APPLY_OPEN":
-        return job.status === "APPLY_OPEN" || job.status === "UPCOMING";
+        return job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
       case "CLOSING_SOON": {
         if (job.status === "LAST_DATE_NEAR") return true;
         const days = getDaysRemaining(job.applicationEndDate);
-        return days > 0 && days <= 10;
+        return days > 0 && days <= 7;
       }
       case "ADMIT_CARD":
         return job.status === "ADMIT_CARD_OUT";
