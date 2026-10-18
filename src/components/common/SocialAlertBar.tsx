@@ -24,7 +24,7 @@ export function SocialAlertBar({ state }: Props) {
           Instant Gazette Circulars for {stateLabel}
         </h4>
         <p className="text-xs text-[#524E48] mt-0.5 max-w-xl">
-          Get notified the moment official circulars, exam patterns, admit cards, or answer keys are gazetted. Scam-free and ad-free.
+          Get notified the moment official circulars, exam patterns, admit cards, or answer keys are gazetted. Verified and 100% free for all aspirants.
         </p>
       </div>
 

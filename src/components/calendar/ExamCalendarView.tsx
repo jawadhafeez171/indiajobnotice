@@ -764,7 +764,7 @@ export function ExamCalendarView() {
 
             <div className="pt-2 text-[11px] text-[#68635B] bg-[#EDF7F0] p-3 rounded-lg border border-[#C6E7D0] flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-[#209948] shrink-0" />
-              <span>Public-interest resource. 100% ad-free embed frame for educational institutions.</span>
+              <span>Public-interest career resource. Free embed frame for educational institutions.</span>
             </div>
           </div>
         </div>

@@ -210,12 +210,12 @@ export function Footer() {
           <div className="space-y-1 text-[11px] leading-relaxed">
             <p className="font-bold text-white flex items-center gap-2">
               <span>Authenticity Notice & Aspirants Reassurance</span>
-              <span className="text-[10px] font-mono text-[#209948] bg-[#209948]/20 px-1.5 py-0.2 rounded">
-                Non-Commercial
+              <span className="text-[10px] font-mono text-[#209948] bg-[#209948]/20 px-1.5 py-0.2 rounded font-bold">
+                100% Free Public Access
               </span>
             </p>
             <p>
-              <strong>indiajobnotice.com</strong> is an independent educational portal built for competitive examination aspirants. We aggregate verified circulars directly from official government gazettes and ministry commission portals. We never ask for payments, passwords, or personal credentials. Always verify original notification PDFs before submitting applications.
+              <strong>indiajobnotice.com</strong> is an independent educational notification portal built for competitive examination aspirants across India. We aggregate verified public employment notices directly from official government gazettes, state PSCs, and recruitment boards without subscription fees or paywalls. To sustain server infrastructure and continuous editorial updates, family-friendly display advertisements are hosted. We never ask for payments, banking details, or credentials. Always verify original notification PDFs before submitting applications.
             </p>
           </div>
         </div>
@@ -223,10 +223,9 @@ export function Footer() {
         {/* Bottom copyright */}
         <div className="mt-8 pt-6 border-t border-[#1E3799]/40 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A9BC7] gap-4">
           <p>© {new Date().getFullYear()} IndiaJobNotice.com • Satyameva Jayate.</p>
-          <div className="flex items-center gap-6 text-[#A9B8DE]">
-            <Link href="/" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/" className="hover:text-white transition-colors">Terms of Gazette Use</Link>
-            <Link href="/seo-audit" className="hover:text-white text-[11px] font-mono transition-colors">GSC Audit Center</Link>
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-[#A9B8DE]">
+            <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link>
             <Link href="/directory" className="hover:text-white transition-colors">State PSC Directory</Link>
           </div>
         </div>
