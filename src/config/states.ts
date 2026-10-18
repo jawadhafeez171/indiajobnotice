@@ -25,7 +25,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["UPPSC", "UPSSSC PET", "UP Police Constable/SI", "UP Super TET", "UP RVUNL"],
     description: "Welcome to UP Sarkari Portal. Verified circulars for UPPSC, UPSSSC, UP Police, and Shikshak Bharti.",
     telegramGroup: "https://t.me/IndiaJobNotice_UP",
-    whatsappGroup: "https://chat.whatsapp.com/demo-up",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-amber-900 via-orange-950 to-stone-900",
   },
   {
@@ -38,7 +38,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["BPSC CCE", "BSSC CGL", "Bihar Police CSBC", "BPSC TRE Teacher", "BPSSC SI"],
     description: "Welcome to Bihar Sarkari Portal. Official circulars for BPSC, Bihar Police, BSSC CGL, and Shikshak Bharti.",
     telegramGroup: "https://t.me/IndiaJobNotice_Bihar",
-    whatsappGroup: "https://chat.whatsapp.com/demo-bihar",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-amber-800 via-stone-900 to-orange-950",
   },
   {
@@ -51,7 +51,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["RPSC RAS", "RSMSSB CET", "Rajasthan Police", "REET Teacher", "Patwari"],
     description: "Welcome to Rajasthan Sarkari Portal. Official circulars for RPSC RAS, RSMSSB, Police, and REET.",
     telegramGroup: "https://t.me/IndiaJobNotice_Rajasthan",
-    whatsappGroup: "https://chat.whatsapp.com/demo-rj",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-rose-900 via-stone-900 to-amber-950",
   },
   {
@@ -64,7 +64,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["MPPSC", "MPESB (Vyapam)", "MP Police Constable", "MP Samvida Shikshak", "MP Patwari"],
     description: "Welcome to MP Sarkari Portal. Verified circulars for MPPSC, MPESB Vyapam, Police, and Shikshak Bharti.",
     telegramGroup: "https://t.me/IndiaJobNotice_MP",
-    whatsappGroup: "https://chat.whatsapp.com/demo-mp",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-emerald-900 via-stone-900 to-amber-950",
   },
   {
@@ -77,7 +77,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["HSSC CET", "HPSC HCS", "Haryana Police", "HTET", "Haryana Roadways"],
     description: "Welcome to Haryana Sarkari Portal. HSSC CET, HPSC, Police, and HTET official updates.",
     telegramGroup: "https://t.me/IndiaJobNotice_Haryana",
-    whatsappGroup: "https://chat.whatsapp.com/demo-haryana",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-cyan-900 via-stone-900 to-blue-950",
   },
   {
@@ -90,7 +90,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["MPSC Rajyaseva", "Maharashtra Police Bharti", "Talathi", "Zilla Parishad", "BMC"],
     description: "Welcome to Maharashtra Sarkari Portal. MPSC, Police Bharti, Talathi & Zilla Parishad updates.",
     telegramGroup: "https://t.me/IndiaJobNotice_MH",
-    whatsappGroup: "https://chat.whatsapp.com/demo-mh",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-amber-900 via-stone-900 to-orange-950",
   },
   {
@@ -103,7 +103,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["WBCS Exec", "WBPSC Clerkship", "WB Police WBP", "WB TET", "WB MSC"],
     description: "Welcome to West Bengal Portal. Official WBCS, WBPSC, WB Police & primary teacher updates.",
     telegramGroup: "https://t.me/IndiaJobNotice_WB",
-    whatsappGroup: "https://chat.whatsapp.com/demo-wb",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-teal-900 via-stone-900 to-emerald-950",
   },
   {
@@ -116,7 +116,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["TNPSC Group 1/2/4", "TNUSRB Police", "TRB Teacher", "TNEB TANGEDCO", "MRB Health"],
     description: "Welcome to Tamil Nadu Sarkari Portal. TNPSC, TNUSRB Police, TRB and Health Board alerts.",
     telegramGroup: "https://t.me/IndiaJobNotice_TN",
-    whatsappGroup: "https://chat.whatsapp.com/demo-tn",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-amber-900 via-stone-900 to-indigo-950",
   },
   {
@@ -129,7 +129,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["KPSC KAS", "KSP Police SI/Constable", "KARTET", "KEA Exams", "BESCOM/KPTCL"],
     description: "Welcome to Karnataka Sarkari Portal. KPSC, KSP Police, and KEA competitive exam updates.",
     telegramGroup: "https://t.me/IndiaJobNotice_KA",
-    whatsappGroup: "https://chat.whatsapp.com/demo-ka",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-yellow-900 via-stone-900 to-amber-950",
   },
   {
@@ -142,7 +142,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["PPSC PCS", "PSSSB Clerk/Patwari", "Punjab Police", "PSTET", "PSPCL"],
     description: "Welcome to Punjab Sarkari Portal. PPSC, PSSSB, Punjab Police & Power Corporation updates.",
     telegramGroup: "https://t.me/IndiaJobNotice_Punjab",
-    whatsappGroup: "https://chat.whatsapp.com/demo-punjab",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-amber-900 via-orange-950 to-stone-900",
   },
   {
@@ -155,7 +155,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["GPSC Class 1-2", "GSSSB CCE", "Gujarat Police LRB", "TET/TAT", "Talati Mantri"],
     description: "Welcome to Gujarat Portal. GPSC, GSSSB, Lokrakshak LRB Police and Panchayat recruitment.",
     telegramGroup: "https://t.me/IndiaJobNotice_GJ",
-    whatsappGroup: "https://chat.whatsapp.com/demo-gj",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-blue-900 via-stone-900 to-teal-950",
   },
   {
@@ -168,7 +168,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["JPSC CCE", "JSSC CGL", "Jharkhand Police JSSC", "JTET", "JSSC Excise"],
     description: "Welcome to Jharkhand Portal. JPSC, JSSC CGL & Constable recruitment circulars.",
     telegramGroup: "https://t.me/IndiaJobNotice_JH",
-    whatsappGroup: "https://chat.whatsapp.com/demo-jh",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-emerald-900 via-stone-900 to-green-950",
   },
   {
@@ -181,7 +181,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["UKPSC PCS", "UKSSSC VDO/Patwari", "Uttarakhand Police", "UTET", "UK Forest Guard"],
     description: "Welcome to Uttarakhand Portal. UKPSC, UKSSSC, Police and Revenue Inspector circulars.",
     telegramGroup: "https://t.me/IndiaJobNotice_UK",
-    whatsappGroup: "https://chat.whatsapp.com/demo-uk",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-teal-900 via-stone-900 to-cyan-950",
   },
   {
@@ -194,7 +194,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["CGPSC SSE", "CG Vyapam", "CG Police Constable", "CG TET", "CG Forest Guard"],
     description: "Welcome to Chhattisgarh Portal. CGPSC, CG Vyapam, Police and Teacher vacancy alerts.",
     telegramGroup: "https://t.me/IndiaJobNotice_CG",
-    whatsappGroup: "https://chat.whatsapp.com/demo-cg",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-amber-900 via-stone-900 to-orange-950",
   },
   {
@@ -207,7 +207,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["OPSC OAS", "OSSSC RI/AMIN", "OSSC CGL", "Odisha Police", "OTET"],
     description: "Welcome to Odisha Portal. OPSC, OSSSC, OSSC, and Odisha Police recruitment circulars.",
     telegramGroup: "https://t.me/IndiaJobNotice_OD",
-    whatsappGroup: "https://chat.whatsapp.com/demo-od",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-blue-900 via-stone-900 to-indigo-950",
   },
   {
@@ -220,7 +220,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["APSC CCE", "SLRC ADRE Grade 3 & 4", "Assam Police SLPRB", "Assam TET"],
     description: "Welcome to Assam Portal. APSC, ADRE Grade 3 & 4, SLPRB Police and Forest Battalion jobs.",
     telegramGroup: "https://t.me/IndiaJobNotice_Assam",
-    whatsappGroup: "https://chat.whatsapp.com/demo-as",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-green-900 via-stone-900 to-emerald-950",
   },
   {
@@ -233,7 +233,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["Kerala PSC KAS", "LDC (Lower Division Clerk)", "CPO Police", "KTET", "Fireman"],
     description: "Welcome to Kerala Portal. Kerala PSC Thulasi notifications, 10th/12th/Degree level alerts.",
     telegramGroup: "https://t.me/IndiaJobNotice_Kerala",
-    whatsappGroup: "https://chat.whatsapp.com/demo-kl",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-emerald-900 via-stone-900 to-teal-950",
   },
   {
@@ -246,7 +246,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["APPSC Group 1/2", "SLPRB AP Police", "AP DSC Mega DSC Teacher", "AP Grama Sachivalayam"],
     description: "Welcome to Andhra Pradesh Portal. APPSC, Mega DSC Teacher, AP Police SI/Constable alerts.",
     telegramGroup: "https://t.me/IndiaJobNotice_AP",
-    whatsappGroup: "https://chat.whatsapp.com/demo-ap",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-blue-900 via-stone-900 to-cyan-950",
   },
   {
@@ -259,7 +259,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["TGPSC Group 1/2/3/4", "TSSPDCL", "Telangana Police TSLPRB", "TG DSC Teacher"],
     description: "Welcome to Telangana Portal. TGPSC, Police TSLPRB, Gurukulam, and DSC notifications.",
     telegramGroup: "https://t.me/IndiaJobNotice_Telangana",
-    whatsappGroup: "https://chat.whatsapp.com/demo-tg",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-rose-900 via-stone-900 to-purple-950",
   },
   {
@@ -272,7 +272,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["HPPSC HAS", "HP Rajya Chayan Aayog (HPRCA)", "HP Police", "HPTET", "HP Forest Guard"],
     description: "Welcome to Himachal Portal. HPPSC, HPRCA, HP Police, Patwari & Education Department jobs.",
     telegramGroup: "https://t.me/IndiaJobNotice_HP",
-    whatsappGroup: "https://chat.whatsapp.com/demo-hp",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-cyan-900 via-stone-900 to-blue-950",
   },
   {
@@ -285,7 +285,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["GPSC Goa", "Goa Police", "Goa Staff Selection Commission (GSSC)"],
     description: "Welcome to Goa Portal. Goa PSC, GSSC, and state department job circulars.",
     telegramGroup: "https://t.me/IndiaJobNotice_Goa",
-    whatsappGroup: "https://chat.whatsapp.com/demo-ga",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-amber-900 via-stone-900 to-teal-950",
   },
   {
@@ -298,7 +298,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["APPSC Arunachal", "APSSB Combined Graduate Level"],
     description: "Welcome to Arunachal Portal. APPSC and APSSB Arunachal Pradesh recruitment notifications.",
     telegramGroup: "https://t.me/IndiaJobNotice_AR",
-    whatsappGroup: "https://chat.whatsapp.com/demo-ar",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-emerald-900 via-stone-900 to-blue-950",
   },
   {
@@ -311,7 +311,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["MPSC Manipur", "Manipur Police Recruitment"],
     description: "Welcome to Manipur Portal. Manipur Public Service Commission and Police alerts.",
     telegramGroup: "https://t.me/IndiaJobNotice_MN",
-    whatsappGroup: "https://chat.whatsapp.com/demo-mn",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-purple-900 via-stone-900 to-indigo-950",
   },
   {
@@ -324,7 +324,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["MPSC Meghalaya", "Central Recruitment Board (CRB) Police"],
     description: "Welcome to Meghalaya Portal. MPSC Meghalaya and Police recruitment notifications.",
     telegramGroup: "https://t.me/IndiaJobNotice_ML",
-    whatsappGroup: "https://chat.whatsapp.com/demo-ml",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-cyan-900 via-stone-900 to-blue-950",
   },
   {
@@ -337,7 +337,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["MPSC Mizoram", "Mizoram Subordinate Services Selection Board (MSSSB)"],
     description: "Welcome to Mizoram Portal. MPSC Mizoram, MSSSB, and state government jobs.",
     telegramGroup: "https://t.me/IndiaJobNotice_MZ",
-    whatsappGroup: "https://chat.whatsapp.com/demo-mz",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-rose-900 via-stone-900 to-amber-950",
   },
   {
@@ -350,7 +350,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["NPSC Nagaland", "NSSB Nagaland Staff Selection"],
     description: "Welcome to Nagaland Portal. NPSC Nagaland and NSSB recruitment notifications.",
     telegramGroup: "https://t.me/IndiaJobNotice_NL",
-    whatsappGroup: "https://chat.whatsapp.com/demo-nl",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-orange-900 via-stone-900 to-amber-950",
   },
   {
@@ -363,7 +363,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["SPSC Sikkim", "Sikkim Police"],
     description: "Welcome to Sikkim Portal. SPSC Sikkim and Government of Sikkim circulars.",
     telegramGroup: "https://t.me/IndiaJobNotice_SK",
-    whatsappGroup: "https://chat.whatsapp.com/demo-sk",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-teal-900 via-stone-900 to-blue-950",
   },
   {
@@ -376,7 +376,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["TPSC Tripura", "Tripura Police", "Joint Recruitment Board (JRBT)"],
     description: "Welcome to Tripura Portal. TPSC & JRBT recruitment circulars.",
     telegramGroup: "https://t.me/IndiaJobNotice_TR",
-    whatsappGroup: "https://chat.whatsapp.com/demo-tr",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-blue-900 via-stone-900 to-amber-950",
   },
 
@@ -392,7 +392,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["DSSSB", "Delhi Police SSC", "DDA", "Delhi High Court", "DMRC Metro"],
     description: "Welcome to Delhi Portal. DSSSB, Delhi Police, High Court, and NCT government job alerts.",
     telegramGroup: "https://t.me/IndiaJobNotice_Delhi",
-    whatsappGroup: "https://chat.whatsapp.com/demo-delhi",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-purple-900 via-stone-900 to-amber-950",
   },
   {
@@ -406,7 +406,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["JKSSB FAA", "JKPSC CCE", "JK Police Sub Inspector", "JKSSB Panchayat Secretary"],
     description: "Welcome to J&K Portal. JKSSB, JKPSC, JK Police, and Forest Department recruitment notifications.",
     telegramGroup: "https://t.me/IndiaJobNotice_JK",
-    whatsappGroup: "https://chat.whatsapp.com/demo-jk",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-stone-900 via-blue-950 to-amber-950",
   },
   {
@@ -420,7 +420,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["Chandigarh Police", "Chandigarh Administration Education Dept", "CTU"],
     description: "Welcome to Chandigarh Portal. Administration, Police, Teacher, and Transport department jobs.",
     telegramGroup: "https://t.me/IndiaJobNotice_CH",
-    whatsappGroup: "https://chat.whatsapp.com/demo-ch",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-blue-900 via-stone-900 to-amber-950",
   },
   {
@@ -434,7 +434,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["SSC Ladakh Selection Posts", "Ladakh Police", "LAHDC"],
     description: "Welcome to Ladakh Portal. SSC Ladakh Region & LAHDC District Cadre recruitments.",
     telegramGroup: "https://t.me/IndiaJobNotice_Ladakh",
-    whatsappGroup: "https://chat.whatsapp.com/demo-la",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-cyan-950 via-stone-900 to-amber-950",
   },
   {
@@ -448,7 +448,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["Puducherry Police", "Department of Personnel (DPAR Puducherry)"],
     description: "Welcome to Puducherry Portal. Government of Puducherry, DPAR, and Police recruitment circulars.",
     telegramGroup: "https://t.me/IndiaJobNotice_PY",
-    whatsappGroup: "https://chat.whatsapp.com/demo-py",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-sky-900 via-stone-900 to-amber-950",
   },
   {
@@ -462,7 +462,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["A&N Police", "Andaman Administration Secretariat"],
     description: "Welcome to Andaman Portal. Administration, Police, and District cadre jobs.",
     telegramGroup: "https://t.me/IndiaJobNotice_AN",
-    whatsappGroup: "https://chat.whatsapp.com/demo-an",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-teal-950 via-stone-900 to-emerald-950",
   },
   {
@@ -476,7 +476,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["Staff Selection Board Daman (SSB Daman)", "Police Dept"],
     description: "Welcome to DNH & DD Portal. Staff Selection Board recruitment notifications.",
     telegramGroup: "https://t.me/IndiaJobNotice_DD",
-    whatsappGroup: "https://chat.whatsapp.com/demo-dd",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-amber-900 via-stone-900 to-indigo-950",
   },
   {
@@ -490,7 +490,7 @@ export const STATES_REGISTRY: StateInfo[] = [
     majorExams: ["Lakshadweep Police", "Lakshadweep Administration"],
     description: "Welcome to Lakshadweep Portal. Union Territory employment notifications.",
     telegramGroup: "https://t.me/IndiaJobNotice_LD",
-    whatsappGroup: "https://chat.whatsapp.com/demo-ld",
+    whatsappGroup: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C",
     bannerGradient: "from-blue-950 via-stone-900 to-teal-950",
   },
 ];

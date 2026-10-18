@@ -42,7 +42,7 @@ export function SocialAlertBar({ state }: Props) {
 
         {/* WhatsApp Official Green Button */}
         <a
-          href={state?.whatsappGroup || "https://chat.whatsapp.com/demo"}
+          href="https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C"
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-[#25D366] hover:bg-[#20BA5A] text-white text-xs font-bold shadow-xs transition-colors"

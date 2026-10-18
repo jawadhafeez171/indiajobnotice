@@ -41,12 +41,12 @@ export function Footer() {
                 <TelegramLogo className="w-4 h-4" />
               </a>
               <a
-                href="https://chat.whatsapp.com/demo"
+                href="https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C"
                 target="_blank"
                 rel="noreferrer"
                 className="p-2 rounded-lg bg-[#25D366] text-white hover:bg-[#20BA5A] transition-colors shadow-xs"
-                aria-label="WhatsApp Group"
-                title="Join WhatsApp Alerts"
+                aria-label="WhatsApp Channel"
+                title="Follow IndiaJobNotice on WhatsApp Channel"
               >
                 <WhatsAppLogo className="w-4 h-4" />
               </a>
