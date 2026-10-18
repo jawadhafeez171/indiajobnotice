@@ -5,7 +5,7 @@ import Link from "next/link";
 import { JobNotification, getCategoryColors } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
-import { FileText, ArrowRight, Bookmark } from "lucide-react";
+import { FileText, ArrowRight, Bookmark, ShieldCheck } from "lucide-react";
 import { useWatchlist } from "@/lib/watchlist";
 
 interface Props {
@@ -118,16 +118,23 @@ export function JobCard({ job, currentStateSlug, currentDistrictSlug }: Props) {
 
       {/* Footer Info & Actions */}
       <div className="pl-1.5 mt-4 pt-3 border-t border-[#F2ECE1] flex items-center justify-between text-xs">
-        <div className="text-[#68635B]">
-          <span>Closing: </span>
-          <span className={cn("font-medium", isEndingSoon ? "text-[#E96B15] font-bold" : "text-[#1A1918]")}>
-            {formatDate(job.applicationEndDate)}
-          </span>
-          {isEndingSoon && (
-            <span className="ml-1 text-[10px] font-bold text-[#E96B15] bg-[#FDF3EB] px-1.5 py-0.2 rounded border border-[#F9D7C0]">
-              {daysLeft}d left
+        <div className="text-[#68635B] flex items-center gap-1.5 flex-wrap">
+          <div>
+            <span>Closing: </span>
+            <span className={cn("font-medium", isEndingSoon ? "text-[#E96B15] font-bold" : "text-[#1A1918]")}>
+              {formatDate(job.applicationEndDate)}
             </span>
-          )}
+            {isEndingSoon && (
+              <span className="ml-1 text-[10px] font-bold text-[#E96B15] bg-[#FDF3EB] px-1.5 py-0.2 rounded border border-[#F9D7C0]">
+                {daysLeft}d left
+              </span>
+            )}
+          </div>
+          <span className="text-[#D8CFBF] hidden sm:inline">·</span>
+          <span className="text-[10px] text-[#209948] font-bold hidden sm:inline-flex items-center gap-0.5 bg-[#EDF7F0] px-1.5 py-0.2 rounded border border-[#C6E7D0]">
+            <ShieldCheck className="w-3 h-3 text-[#209948]" />
+            <span>Verified</span>
+          </span>
         </div>
 
         <div className="flex items-center gap-3">

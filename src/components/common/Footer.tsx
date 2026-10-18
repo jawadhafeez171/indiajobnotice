@@ -224,6 +224,9 @@ export function Footer() {
         <div className="mt-8 pt-6 border-t border-[#1E3799]/40 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A9BC7] gap-4">
           <p>© {new Date().getFullYear()} IndiaJobNotice.com • Satyameva Jayate.</p>
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-[#A9B8DE]">
+            <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
+            <Link href="/editorial-policy" className="hover:text-white transition-colors">Editorial Policy</Link>
+            <Link href="/contact" className="hover:text-white transition-colors">Contact Desk</Link>
             <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link>
             <Link href="/directory" className="hover:text-white transition-colors">State PSC Directory</Link>

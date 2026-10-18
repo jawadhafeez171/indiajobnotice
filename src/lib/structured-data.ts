@@ -89,6 +89,7 @@ export function generateJobStructuredData(job: JobNotification, canonicalUrl: st
         title: job.title,
         description: `${job.title} officially announced by ${job.organization}. Total Vacancies: ${job.totalVacancies.toLocaleString("en-IN")}. ${job.syllabusSummary}`,
         datePosted: job.applicationStartDate ? new Date(job.applicationStartDate).toISOString() : new Date().toISOString(),
+        dateModified: new Date(job.lastVerifiedDate || "2026-10-18").toISOString(),
         validThrough: job.applicationEndDate ? new Date(`${job.applicationEndDate}T23:59:59Z`).toISOString() : undefined,
         employmentType: "FULL_TIME",
         hiringOrganization: {

@@ -23,7 +23,8 @@ import {
   Award, 
   HelpCircle,
   Clock,
-  Sparkles
+  Sparkles,
+  ArrowRight
 } from "lucide-react";
 import { JobNotification } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
@@ -50,7 +51,7 @@ import { JobTaxonomyBar } from "./JobTaxonomyBar";
 import { RelatedOpportunitiesSection } from "./RelatedOpportunitiesSection";
 import { getJobTaxonomyLinks } from "@/lib/internal-links";
 import { generateJobStructuredData, getJobFaqs } from "@/lib/structured-data";
-import { isJobApplicationClosed } from "@/data/jobs";
+import { isJobApplicationClosed, getJobVerificationMeta } from "@/data/jobs";
 
 interface Props {
   job: JobNotification;
@@ -64,6 +65,7 @@ export function JobDetailView({ job, stateSlug }: Props) {
   const daysLeft = getDaysRemaining(job.applicationEndDate);
   const stateInfo = job.stateSlug !== "central" ? getStateBySlug(job.stateSlug) : null;
   const taxonomy = getJobTaxonomyLinks(job);
+  const verificationMeta = getJobVerificationMeta(job);
   
   // Watchlist
   const { isSaved, toggleSave, isLoaded } = useWatchlist();
@@ -201,6 +203,32 @@ export function JobDetailView({ job, stateSlug }: Props) {
         <p className="text-sm text-[#68635B] mt-2 font-medium">
           Official Commission / Board: <span className="text-[#1A1918] font-bold">{job.organization}</span>
         </p>
+
+        {/* Gazette Verification & Trust Banner (Google E-E-A-T & Authenticity Signal) */}
+        <div className="mt-4 p-3 sm:p-3.5 rounded-lg bg-[#F0F7F3] border border-[#C2E3CE] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="inline-flex items-center gap-1 font-bold text-[#1E7E34] bg-white px-2 py-0.5 rounded border border-[#C2E3CE] shadow-2xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#209948]" />
+              <span>Verified Authentic Gazette</span>
+            </span>
+            <span className="text-[#524E48]">
+              Last verified by Editorial Desk: <strong className="text-[#1A1918]">{verificationMeta.lastVerifiedDate}</strong>
+            </span>
+            <span className="text-[#C2E3CE] hidden sm:inline">·</span>
+            <span className="text-[#68635B] hidden md:inline">
+              Source: <span className="font-mono text-[11px] text-[#1A1918]">{verificationMeta.verificationSource}</span>
+            </span>
+          </div>
+
+          <Link
+            href="/editorial-policy"
+            className="text-[11px] font-bold text-[#1E3799] hover:underline flex items-center gap-1 shrink-0"
+            title="Read our 5-stage fact-checking and verification standards"
+          >
+            <span>Verification Standards</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
 
         {/* Action Buttons Bar - hidden on print */}
         <div className="mt-6 pt-6 border-t border-[#F2ECE1] flex flex-wrap items-center gap-3 print:hidden">

@@ -92,6 +92,13 @@ export function Navbar({ currentStateSlug }: Props) {
                 <span>Directory</span>
               </Link>
 
+              <Link
+                href="/about"
+                className="hover:text-[#1E3799] transition-colors font-semibold whitespace-nowrap"
+              >
+                <span>About</span>
+              </Link>
+
               {/* Telegram Channel Quick Action */}
               <a
                 href="https://t.me/Indiajobnotice1"
@@ -290,6 +297,36 @@ export function Navbar({ currentStateSlug }: Props) {
                   className="p-2.5 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2] text-xs font-semibold text-[#1A1918] min-h-[44px] flex items-center justify-center text-center transition-colors"
                 >
                   Railway RRB
+                </Link>
+              </div>
+            </div>
+
+            {/* Trust & Editorial Policy */}
+            <div className="space-y-1 pt-1 border-t border-[#EAE2D2]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#68635B] font-bold px-1 block">
+                Editorial Desk & Trust
+              </span>
+              <div className="grid grid-cols-3 gap-1.5 pt-1 text-center text-xs">
+                <Link
+                  href="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-lg bg-white border border-[#EAE2D2] hover:border-[#1E3799] font-medium text-[#1A1918] flex items-center justify-center min-h-[44px]"
+                >
+                  About Us
+                </Link>
+                <Link
+                  href="/editorial-policy"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-lg bg-white border border-[#EAE2D2] hover:border-[#1E3799] font-medium text-[#1A1918] flex items-center justify-center min-h-[44px]"
+                >
+                  Verification
+                </Link>
+                <Link
+                  href="/contact"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-lg bg-white border border-[#EAE2D2] hover:border-[#1E3799] font-medium text-[#1A1918] flex items-center justify-center min-h-[44px]"
+                >
+                  Contact Desk
                 </Link>
               </div>
             </div>
