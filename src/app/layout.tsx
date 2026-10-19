@@ -65,6 +65,14 @@ export const metadata: Metadata = {
   },
 };
 
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "India Job Notice",
+  alternateName: ["IndiaJobNotice", "IndiaJobNotice.com"],
+  url: "https://www.indiajobnotice.com",
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -72,6 +80,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} h-full scroll-smooth`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema),
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col font-sans bg-slate-50 text-slate-900 antialiased">
         {children}
         <Analytics />
