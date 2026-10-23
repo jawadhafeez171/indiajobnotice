@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { ScrollToTop } from "@/components/common/ScrollToTop";
 import "./globals.css";
 
 const inter = Inter({
@@ -90,6 +91,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col font-sans bg-slate-50 text-slate-900 antialiased">
         {children}
+        <ScrollToTop />
         <Analytics />
       </body>
     </html>
