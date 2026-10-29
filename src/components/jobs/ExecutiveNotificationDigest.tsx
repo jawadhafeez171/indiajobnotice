@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { JobNotification, isJobApplicationClosed } from "@/data/jobs";
+import { JobNotification, isJobApplicationClosed, formatAgeRange } from "@/data/jobs";
 import { 
   getJobPostBreakdown, 
   getJobAgeReckoning, 
@@ -92,7 +92,7 @@ export function ExecutiveNotificationDigest({ job }: Props) {
             As on {ageReckoning.crucialDate}
           </span>
           <span className="text-[11px] text-[#209948] font-semibold mt-1 block">
-            Base: {job.minAge} to {job.maxAge} Years
+            Age: {formatAgeRange(job, "years")}
           </span>
           <span className="text-[10px] font-mono text-[#68635B] block mt-0.5 line-clamp-1" title={ageReckoning.bornBetween}>
             {ageReckoning.bornBetween}
@@ -164,7 +164,7 @@ export function ExecutiveNotificationDigest({ job }: Props) {
             </span>
           </div>
           <span className="font-serif text-base sm:text-lg font-bold text-[#1A1918] block">
-            {job.totalVacancies.toLocaleString("en-IN")} Posts
+            {job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} Posts` : "See notification"}
           </span>
           <span className="text-[11px] text-[#1E3799] font-semibold mt-1 block">
             {postBreakdowns.length} Distinct Cadres
@@ -187,9 +187,6 @@ export function ExecutiveNotificationDigest({ job }: Props) {
           </span>
           <span className="text-[11px] text-[#209948] font-bold mt-1 block">
             {payBreakdown.inHandEstimated}
-          </span>
-          <span className="text-[10px] font-mono text-[#68635B] block mt-0.5">
-            7th CPC 53% DA + HRA
           </span>
         </div>
       </div>
@@ -312,46 +309,50 @@ export function ExecutiveNotificationDigest({ job }: Props) {
         </div>
 
         {/* Matrix Grid / Table */}
-        <div className="overflow-x-auto rounded-lg border border-[#EAE2D2]">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-[#FAF7EF] border-b border-[#EAE2D2] font-mono text-[11px] uppercase tracking-wider text-[#68635B]">
-              <tr>
-                <th className="py-3 px-3.5 font-bold">Category</th>
-                <th className="py-3 px-3.5 font-bold">Code</th>
-                <th className="py-3 px-3.5 font-bold">Statutory Fee</th>
-                <th className="py-3 px-3.5 font-bold">Upper Age Relaxation</th>
-                <th className="py-3 px-3.5 font-bold">Maximum Age</th>
-                <th className="py-3 px-3.5 font-bold">Statutory Concession Note</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#F2ECE1] text-[#1A1918]">
-              {categoryMatrix.map((item: CategoryStatutoryMatrixItem, idx: number) => (
-                <tr key={idx} className="hover:bg-[#FCFAF4] transition-colors">
-                  <td className="py-3 px-3.5 font-bold text-[#1A1918]">
-                    {item.category}
-                  </td>
-                  <td className="py-3 px-3.5 font-mono text-[11px] font-bold text-[#1E3799]">
-                    <span className="px-1.5 py-0.5 rounded bg-[#EEF2FA] border border-[#CCD8F0]">
-                      {item.code}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3.5 font-mono font-bold text-[#209948]">
-                    {item.fee}
-                  </td>
-                  <td className="py-3 px-3.5 font-semibold text-[#E96B15]">
-                    {item.ageRelaxation}
-                  </td>
-                  <td className="py-3 px-3.5 font-mono font-bold text-[#1A1918]">
-                    {item.maxEligibleAge}
-                  </td>
-                  <td className="py-3 px-3.5 text-[#524E48] text-[11px]">
-                    {item.exemptionNote}
-                  </td>
+        {categoryMatrix.length > 0 ? (
+          <div className="overflow-x-auto rounded-lg border border-[#EAE2D2]">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead className="bg-[#FAF7EF] border-b border-[#EAE2D2] font-mono text-[11px] uppercase tracking-wider text-[#68635B]">
+                <tr>
+                  <th className="py-3 px-3.5 font-bold">Category</th>
+                  <th className="py-3 px-3.5 font-bold">Code</th>
+                  <th className="py-3 px-3.5 font-bold">Statutory Fee</th>
+                  <th className="py-3 px-3.5 font-bold">Upper Age Relaxation</th>
+                  <th className="py-3 px-3.5 font-bold">Maximum Age</th>
+                  <th className="py-3 px-3.5 font-bold">Statutory Concession Note</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-[#F2ECE1] text-[#1A1918]">
+                {categoryMatrix.map((item: CategoryStatutoryMatrixItem, idx: number) => (
+                  <tr key={idx} className="hover:bg-[#FCFAF4] transition-colors">
+                    <td className="py-3 px-3.5 font-bold text-[#1A1918]">
+                      {item.category}
+                    </td>
+                    <td className="py-3 px-3.5 font-mono text-[11px] font-bold text-[#1E3799]">
+                      <span className="px-1.5 py-0.5 rounded bg-[#EEF2FA] border border-[#CCD8F0]">
+                        {item.code}
+                      </span>
+                    </td>
+                    <td className="py-3 px-3.5 font-mono font-bold text-[#209948]">
+                      {item.fee}
+                    </td>
+                    <td className="py-3 px-3.5 font-semibold text-[#E96B15]">
+                      {item.ageRelaxation}
+                    </td>
+                    <td className="py-3 px-3.5 font-mono font-bold text-[#1A1918]">
+                      {item.maxEligibleAge}
+                    </td>
+                    <td className="py-3 px-3.5 text-[#524E48] text-[11px]">
+                      {item.exemptionNote}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-xs text-[#524E48]">Category-wise fees and age relaxations: see the official notification.</p>
+        )}
       </div>
 
       {/* 5. SELECTION PROCESS ROADMAP */}

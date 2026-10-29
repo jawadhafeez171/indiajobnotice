@@ -4,21 +4,23 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { JobDetailView } from "@/components/jobs/JobDetailView";
-import { getJobBySlug, SAMPLE_JOBS, getJobCanonicalPath } from "@/data/jobs";
+import { getJobBySlug, getJobCanonicalPath, getActiveOpportunities } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
+import { getGenuinelyRelatedOpportunities } from "@/lib/internal-links";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  return SAMPLE_JOBS.filter((j) => j.isCentral).map((job) => ({
+  return (await getAllJobs()).filter((j) => j.isCentral).map((job) => ({
     slug: job.slug,
   }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
-  const job = getJobBySlug(resolvedParams.slug);
+  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
   if (!job) return { title: "Job Notification Not Found | IndiaJobNotice.com" };
 
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}`;
@@ -47,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function JobPage({ params }: Props) {
   const resolvedParams = await params;
-  const job = getJobBySlug(resolvedParams.slug);
+  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
 
   if (!job) {
     notFound();
@@ -58,11 +60,18 @@ export default async function JobPage({ params }: Props) {
     permanentRedirect(`/state/${job.stateSlug.toLowerCase()}/jobs/${job.slug}`);
   }
 
+  const allJobs = await getAllJobs();
+
   return (
     <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
       <Navbar currentStateSlug="central" />
       <main className="flex-1">
-        <JobDetailView job={job} stateSlug="central" />
+        <JobDetailView
+          job={job}
+          stateSlug="central"
+          activeJobs={getActiveOpportunities(allJobs, job.id, job.category, job.stateSlug, 3)}
+          related={getGenuinelyRelatedOpportunities(allJobs, job, 4)}
+        />
       </main>
       <Footer />
     </div>

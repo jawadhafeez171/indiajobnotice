@@ -9,10 +9,8 @@ import {
   AlertTriangle, 
   CheckCircle2, 
   ExternalLink, 
-  FileText, 
   BellRing,
   ShieldAlert,
-  CalendarClock
 } from "lucide-react";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 
@@ -119,10 +117,10 @@ export function ApplicationDeadlineSection({ job }: Props) {
             <tr className={isClosed ? "bg-[#FAF7EF]" : "bg-[#FDF3EB]/60 font-semibold"}>
               <td className="py-3.5 px-4 text-[#1A1918] flex items-center gap-2">
                 <Clock className="w-4 h-4 text-[#E96B15] shrink-0" />
-                <span className="font-bold text-sm text-[#E96B15]">Last Date to Apply Online (Final Submission)</span>
+                <span className="font-bold text-sm text-[#E96B15]">{job.isWalkIn ? "Walk-in Interview Date" : "Last Date to Apply"}</span>
               </td>
               <td className="py-3.5 px-4 font-mono font-bold text-sm text-[#E96B15]">
-                {formatDate(job.applicationEndDate)} (23:59 IST)
+                {job.applicationEndDate ? formatDate(job.applicationEndDate) : "See notification"}
               </td>
               <td className="py-3.5 px-4 text-right">
                 {isClosed ? (
@@ -137,59 +135,17 @@ export function ApplicationDeadlineSection({ job }: Props) {
               </td>
             </tr>
 
-            <tr className="hover:bg-[#FCFAF4] transition-colors">
-              <td className="py-3 px-4 font-semibold text-[#1A1918] flex items-center gap-2">
-                <CalendarClock className="w-4 h-4 text-[#68635B] shrink-0" />
-                <span>Online Fee Payment Last Date</span>
-              </td>
-              <td className="py-3 px-4 font-mono font-bold text-[#1A1918]">
-                {formatDate(job.applicationEndDate)} (23:59 IST)
-              </td>
-              <td className="py-3 px-4 text-right text-[11px] text-[#68635B]">
-                Net Banking / UPI / Debit Card
-              </td>
-            </tr>
-
-            <tr className="hover:bg-[#FCFAF4] transition-colors">
-              <td className="py-3 px-4 font-semibold text-[#1A1918] flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[#68635B] shrink-0" />
-                <span>Application Form Correction Window</span>
-              </td>
-              <td className="py-3 px-4 font-mono text-[#524E48]">
-                3–5 Days Post-Deadline (As per Commission Notice)
-              </td>
-              <td className="py-3 px-4 text-right text-[11px] text-[#68635B]">
-                Subject to correction fees
-              </td>
-            </tr>
-
-            <tr className="hover:bg-[#FCFAF4] transition-colors">
-              <td className="py-3 px-4 font-semibold text-[#1A1918] flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[#1E3799] shrink-0" />
-                <span>Admit Card Release Window</span>
-              </td>
-              <td className="py-3 px-4 font-mono font-semibold text-[#1E3799]">
-                {job.admitCardDate || "7 to 10 Days Before Exam"}
-              </td>
-              <td className="py-3 px-4 text-right">
-                <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-[#EEF2FA] text-[#1E3799]">
-                  Pre-Exam Release
-                </span>
-              </td>
-            </tr>
-
-            <tr className="hover:bg-[#FCFAF4] transition-colors">
-              <td className="py-3 px-4 font-semibold text-[#1A1918] flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#209948] shrink-0" />
-                <span>Tentative Examination Date</span>
-              </td>
-              <td className="py-3 px-4 font-mono font-bold text-[#209948]">
-                {job.examDate || "To Be Announced via Gazette"}
-              </td>
-              <td className="py-3 px-4 text-right text-[11px] text-[#68635B]">
-                Computer Based Test (CBT)
-              </td>
-            </tr>
+            {/* Only dates the notification gives; fee, correction and admit-card windows vary and are not guessed */}
+            {job.examDate && (
+              <tr className="hover:bg-[#FCFAF4] transition-colors">
+                <td className="py-3 px-4 font-semibold text-[#1A1918] flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-[#209948] shrink-0" />
+                  <span>Examination Date</span>
+                </td>
+                <td className="py-3 px-4 font-mono font-bold text-[#209948]">{job.examDate}</td>
+                <td className="py-3 px-4 text-right text-[11px] text-[#68635B]">As per the notification</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

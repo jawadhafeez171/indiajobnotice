@@ -4,7 +4,8 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { ResultView } from "@/components/jobs/ResultView";
-import { getJobBySlug, SAMPLE_JOBS, getJobCanonicalPath } from "@/data/jobs";
+import { getJobBySlug, getJobCanonicalPath } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
 import { getStateBySlug } from "@/config/states";
 
 interface Props {
@@ -12,7 +13,7 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  return SAMPLE_JOBS.filter((j) => !j.isCentral && j.stateSlug).map((job) => ({
+  return (await getAllJobs()).filter((j) => !j.isCentral && j.stateSlug).map((job) => ({
     state: job.stateSlug as string,
     slug: job.slug,
   }));
@@ -20,7 +21,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
-  const job = getJobBySlug(resolvedParams.slug);
+  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
   const state = getStateBySlug(resolvedParams.state);
   if (!job) return { title: "Result Not Found | IndiaJobNotice.com" };
 
@@ -46,7 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function StateJobResultPage({ params }: Props) {
   const resolvedParams = await params;
-  const job = getJobBySlug(resolvedParams.slug);
+  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
 
   if (!job) {
     notFound();

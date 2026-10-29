@@ -9,7 +9,9 @@ import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSec
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { HeroCounterDeck } from "@/components/home/HeroCounterDeck";
-import { SAMPLE_JOBS, getJobCanonicalPath } from "@/data/jobs";
+import { getJobCanonicalPath, getListingJobs, getCalculatorJobs } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
+
 import { STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
 import { getStateSubdomainUrl } from "@/lib/subdomains";
 import { cn } from "@/lib/utils";
@@ -36,15 +38,17 @@ export const metadata = {
   },
 };
 
-export default function HomePage() {
-  const centralJobs = SAMPLE_JOBS.filter((j) => j.isCentral);
-  const featuredJobs = SAMPLE_JOBS.filter((j) => j.featured);
-  const admitCards = SAMPLE_JOBS.filter((j) => j.status === "ADMIT_CARD_OUT");
-  const results = SAMPLE_JOBS.filter((j) => j.status === "RESULT_OUT");
+export default async function HomePage() {
+  const allJobs = await getAllJobs();
+  const listedJobs = getListingJobs(allJobs);
+  const centralJobs = listedJobs.filter((j) => j.isCentral);
+  const featuredJobs = listedJobs.filter((j) => j.featured);
+  const admitCards = listedJobs.filter((j) => j.status === "ADMIT_CARD_OUT");
+  const results = listedJobs.filter((j) => j.status === "RESULT_OUT");
 
-  const totalVacancies = SAMPLE_JOBS.reduce((acc, j) => acc + (j.totalVacancies || 0), 0);
-  const openApplicationsCount = SAMPLE_JOBS.filter((j) => j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR").length;
-  const closingSoonCount = SAMPLE_JOBS.filter((j) => j.status === "LAST_DATE_NEAR").length;
+  const totalVacancies = listedJobs.reduce((acc, j) => acc + (j.totalVacancies || 0), 0);
+  const openApplicationsCount = listedJobs.filter((j) => j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR").length;
+  const closingSoonCount = listedJobs.filter((j) => j.status === "LAST_DATE_NEAR").length;
   const admitCardsCount = admitCards.length;
   const resultsCount = results.length;
 
@@ -131,14 +135,14 @@ export default function HomePage() {
         <SocialAlertBar />
 
         {/* Major Open Recruitments with Interactive 4-Category Switcher & Views */}
-        <MajorRecruitmentsSection jobs={SAMPLE_JOBS} currentStateSlug="central" />
+        <MajorRecruitmentsSection jobs={listedJobs} currentStateSlug="central" />
 
         {/* Reserved Ad Space (0.00 CLS Protected) */}
         <ReservedAdSlot slotType="leaderboard" slotId="home-leaderboard" />
 
         {/* Age & Eligibility Calculator */}
         <section id="calculator">
-          <EligibilityCalculator currentStateSlug="central" />
+          <EligibilityCalculator currentStateSlug="central" jobs={getCalculatorJobs(allJobs)} />
         </section>
 
         {/* Central Govt Circulars */}

@@ -4,21 +4,22 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { AdmitCardView } from "@/components/jobs/AdmitCardView";
-import { getJobBySlug, SAMPLE_JOBS, getJobCanonicalPath } from "@/data/jobs";
+import { getJobBySlug, getJobCanonicalPath } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  return SAMPLE_JOBS.filter((j) => j.isCentral).map((job) => ({
+  return (await getAllJobs()).filter((j) => j.isCentral).map((job) => ({
     slug: job.slug,
   }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
-  const job = getJobBySlug(resolvedParams.slug);
+  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
   if (!job) return { title: "Admit Card Not Found | IndiaJobNotice.com" };
 
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/admit-card`;
@@ -42,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CentralJobAdmitCardPage({ params }: Props) {
   const resolvedParams = await params;
-  const job = getJobBySlug(resolvedParams.slug);
+  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
 
   if (!job) {
     notFound();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { JobNotification, SAMPLE_JOBS, getJobBySlug } from "@/data/jobs";
+import { JobNotification } from "@/data/jobs";
 
 const STORAGE_KEY = "indiajobnotice_watchlist_ids";
 const WATCHLIST_EVENT = "indiajobnotice_watchlist_changed";
@@ -29,8 +29,10 @@ export function saveWatchlistIds(ids: string[]): void {
   }
 }
 
-export function useWatchlist() {
+/** withJobs: also load the saved jobs themselves (the watchlist drawer); other users need ids only. */
+export function useWatchlist({ withJobs = false }: { withJobs?: boolean } = {}) {
   const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [fetchedJobs, setFetchedJobs] = useState<JobNotification[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -82,9 +84,22 @@ export function useWatchlist() {
     saveWatchlistIds([]);
   }, []);
 
-  // Map IDs to actual JobNotification objects
-  const savedJobs: JobNotification[] = savedIds
-    .map((id) => SAMPLE_JOBS.find((j) => j.id === id || j.slug === id))
+  // Jobs live in the database, so the saved ones are fetched by id (a job taken down drops out)
+  useEffect(() => {
+    if (!withJobs || savedIds.length === 0) return;
+    let cancelled = false;
+    fetch(`/api/jobs?ids=${encodeURIComponent(savedIds.join(","))}`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((jobs: JobNotification[]) => {
+        if (!cancelled) setFetchedJobs(jobs);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [withJobs, savedIds]);
+  const savedJobs = savedIds
+    .map((id) => fetchedJobs.find((j) => j.id === id || j.slug === id))
     .filter((j): j is JobNotification => Boolean(j));
 
   return {

@@ -13,6 +13,7 @@ import {
   getStateQualHub, 
   getJobsForStateQualHub 
 } from "@/data/state-qualification-hubs";
+import { getAllJobs } from "@/lib/jobs-store";
 import { 
   Building2, 
   GraduationCap, 
@@ -73,7 +74,7 @@ export default async function StateQualificationPage({ params }: Props) {
     notFound();
   }
 
-  const jobs = getJobsForStateQualHub(hub);
+  const jobs = getJobsForStateQualHub(await getAllJobs(), hub);
   const badgeStyle = getStateBadgeColor(state.code);
   const totalPosts = jobs.reduce((sum, j) => sum + (j.totalVacancies || 0), 0);
 

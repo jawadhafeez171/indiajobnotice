@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { JobNotification, getCategoryColors } from "@/data/jobs";
+import { JobNotification, getCategoryColors, formatAgeRange } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
 import { FileText, ArrowRight, Bookmark, ShieldCheck } from "lucide-react";
@@ -101,12 +101,12 @@ export function JobCard({ job, currentStateSlug, currentDistrictSlug }: Props) {
         <div className="mt-4 pt-3 border-t border-[#F2ECE1] flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#423F3A]">
           <span>
             <span className="text-[#757067]">Posts: </span>
-            <b className="text-[#1E3799] font-mono font-bold">{job.totalVacancies.toLocaleString("en-IN")}</b>
+            <b className="text-[#1E3799] font-mono font-bold">{job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "—"}</b>
           </span>
           <span className="text-[#D8CFBF]">·</span>
           <span>
             <span className="text-[#757067]">Age: </span>
-            <b>{job.minAge}–{job.maxAge} yrs</b>
+            <b>{formatAgeRange(job)}</b>
           </span>
           <span className="text-[#D8CFBF]">·</span>
           <span className="truncate">

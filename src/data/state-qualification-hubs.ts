@@ -1,5 +1,5 @@
 import { STATES_REGISTRY, StateInfo, getStateBySlug } from "@/config/states";
-import { SAMPLE_JOBS, JobNotification } from "@/data/jobs";
+import { JobNotification } from "@/data/jobs";
 
 export interface StateQualificationHub {
   stateSlug: string;
@@ -176,6 +176,6 @@ export function getStateQualHub(stateSlug: string, qualSlug: string): StateQuali
   );
 }
 
-export function getJobsForStateQualHub(hub: StateQualificationHub): JobNotification[] {
-  return SAMPLE_JOBS.filter(hub.filterPredicate);
+export function getJobsForStateQualHub(jobs: JobNotification[], hub: StateQualificationHub): JobNotification[] {
+  return jobs.filter(hub.filterPredicate);
 }

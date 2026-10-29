@@ -2,6 +2,9 @@ import React from "react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { ExamCalendarView } from "@/components/calendar/ExamCalendarView";
+import { getListingJobs } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
+
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 
@@ -21,7 +24,7 @@ export const metadata = {
   },
 };
 
-export default function CalendarPage() {
+export default async function CalendarPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
       <Navbar currentStateSlug="central" />
@@ -48,7 +51,7 @@ export default function CalendarPage() {
 
       {/* Main Calendar Experience */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-10">
-        <ExamCalendarView />
+        <ExamCalendarView jobs={getListingJobs(await getAllJobs())} />
 
         <SocialAlertBar />
       </main>

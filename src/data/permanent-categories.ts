@@ -1,4 +1,4 @@
-import { JobNotification, SAMPLE_JOBS } from "./jobs";
+import { JobNotification } from "./jobs";
 import { STATES_REGISTRY, StateInfo, getStateBySlug } from "@/config/states";
 
 export interface CategoryHubInfo {
@@ -588,6 +588,6 @@ export function getOrganisationHubBySlug(slug: string): CategoryHubInfo | undefi
   return ORGANISATION_HUBS.find((h) => h.slug === slug);
 }
 
-export function getJobsForHub(hub: CategoryHubInfo): JobNotification[] {
-  return SAMPLE_JOBS.filter(hub.filterPredicate);
+export function getJobsForHub(jobs: JobNotification[], hub: CategoryHubInfo): JobNotification[] {
+  return jobs.filter(hub.filterPredicate);
 }

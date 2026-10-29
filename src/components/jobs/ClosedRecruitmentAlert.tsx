@@ -1,16 +1,16 @@
 import React from "react";
 import Link from "next/link";
-import { JobNotification, getActiveOpportunities } from "@/data/jobs";
+import { JobNotification } from "@/data/jobs";
 import { formatDate } from "@/lib/utils";
 import { AlertCircle, ArrowRight, Briefcase, ExternalLink, Calendar, Building2 } from "lucide-react";
 
 interface Props {
   job: JobNotification;
   stateSlug?: string;
+  activeJobs: JobNotification[];   // open recruitments to suggest instead (getActiveOpportunities)
 }
 
-export function ClosedRecruitmentAlert({ job, stateSlug }: Props) {
-  const activeJobs = getActiveOpportunities(job.id, job.category, job.stateSlug, 3);
+export function ClosedRecruitmentAlert({ job, stateSlug, activeJobs }: Props) {
 
   return (
     <div className="space-y-4 print:hidden" id="applications-closed-notice">

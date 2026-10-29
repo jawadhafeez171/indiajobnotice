@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { QualificationVacancyTracker } from "@/components/vacancies/QualificationVacancyTracker";
+import { getListingJobs } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
+
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
@@ -28,7 +31,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function VacanciesPage() {
+export default async function VacanciesPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -69,7 +72,7 @@ export default function VacanciesPage() {
 
       {/* Main Content Area */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-8">
-        <QualificationVacancyTracker />
+        <QualificationVacancyTracker jobs={getListingJobs(await getAllJobs())} />
 
         {/* Reserved Ad Slot (0.00 CLS Protection) */}
         <ReservedAdSlot slotType="leaderboard" slotId="vacancies-tracker-bottom" className="print:hidden" />

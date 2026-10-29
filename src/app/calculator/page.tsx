@@ -2,6 +2,9 @@ import React from "react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { EligibilityCalculator } from "@/components/eligibility/EligibilityCalculator";
+import { getCalculatorJobs } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
+
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 
@@ -21,7 +24,7 @@ export const metadata = {
   },
 };
 
-export default function CalculatorPage() {
+export default async function CalculatorPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
       <Navbar currentStateSlug="central" />
@@ -41,7 +44,7 @@ export default function CalculatorPage() {
           </p>
         </div>
 
-        <EligibilityCalculator currentStateSlug="central" />
+        <EligibilityCalculator currentStateSlug="central" jobs={getCalculatorJobs(await getAllJobs())} />
 
         <SocialAlertBar />
       </main>

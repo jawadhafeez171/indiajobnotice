@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { SAMPLE_JOBS, JobNotification, isJobApplicationClosed } from "@/data/jobs";
+import { JobNotification, isJobApplicationClosed, formatAgeRange } from "@/data/jobs";
 import { JobStatusBadge } from "@/components/jobs/JobStatusBadge";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
@@ -110,7 +110,7 @@ export const QUALIFICATION_TIERS: QualificationTier[] = [
   },
 ];
 
-export function QualificationVacancyTracker() {
+export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] }) {
   const [selectedTierId, setSelectedTierId] = useState<string>("all");
   const [activeOnly, setActiveOnly] = useState<boolean>(true);
 
@@ -121,7 +121,7 @@ export function QualificationVacancyTracker() {
   // Aggregate metrics across all tiers
   const tierStats = useMemo(() => {
     return QUALIFICATION_TIERS.map((tier) => {
-      const matching = SAMPLE_JOBS.filter((job) => {
+      const matching = jobs.filter((job) => {
         if (activeOnly && isJobApplicationClosed(job)) return false;
         return tier.matcher(job);
       });
@@ -132,15 +132,15 @@ export function QualificationVacancyTracker() {
         totalVacancies,
       };
     });
-  }, [activeOnly]);
+  }, [activeOnly, jobs]);
 
   // Jobs matching selected tier
   const filteredJobs = useMemo(() => {
-    return SAMPLE_JOBS.filter((job) => {
+    return jobs.filter((job) => {
       if (activeOnly && isJobApplicationClosed(job)) return false;
       return currentTier.matcher(job);
     }).sort((a, b) => b.totalVacancies - a.totalVacancies);
-  }, [currentTier, activeOnly]);
+  }, [currentTier, activeOnly, jobs]);
 
   const totalFilteredVacancies = useMemo(() => {
     return filteredJobs.reduce((sum, j) => sum + (j.totalVacancies || 0), 0);
@@ -324,14 +324,14 @@ export function QualificationVacancyTracker() {
                             {job.qualifications.join(", ")}
                           </span>
                           <span className="text-[10px] font-mono text-[#68635B] block">
-                            Age: {job.minAge}–{job.maxAge} Yrs (Relaxation: {job.ageRelaxation.split("|")[0]})
+                            Age: {formatAgeRange(job)}
                           </span>
                         </div>
                       </td>
 
                       {/* Pay Scale */}
                       <td className="py-3.5 px-4 font-mono font-bold text-xs text-[#209948]">
-                        {job.salary.split("(")[0]}
+                        {job.salary ? job.salary.split("(")[0] : "See notification"}
                       </td>
 
                       {/* Deadline */}

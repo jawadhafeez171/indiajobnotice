@@ -4,7 +4,9 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { EligibilityView } from "@/components/jobs/EligibilityView";
-import { getJobBySlug, SAMPLE_JOBS, getJobAgeCutoffDate, getJobCanonicalPath } from "@/data/jobs";
+import { getJobBySlug, getJobAgeCutoffDate, getJobCanonicalPath } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
+import { getCalculatorJobs, formatAgeRange } from "@/data/jobs";
 import { formatDate } from "@/lib/utils";
 
 interface Props {
@@ -12,14 +14,14 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  return SAMPLE_JOBS.filter((j) => j.isCentral).map((job) => ({
+  return (await getAllJobs()).filter((j) => j.isCentral).map((job) => ({
     slug: job.slug,
   }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
-  const job = getJobBySlug(resolvedParams.slug);
+  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
   if (!job) return { title: "Eligibility Details Not Found | IndiaJobNotice.com" };
 
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/eligibility`;
@@ -27,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${job.shortTitle} 2026 Age Limit, Cut-off Date & Qualification | IndiaJobNotice.com`,
-    description: `Complete eligibility criteria for ${job.shortTitle}. Age limit: ${job.minAge} to ${job.maxAge} years on crucial cut-off date (${formatDate(cutoffDate)}). Category relaxation (OBC +3y, SC/ST +5y) and educational degree requirements.`,
+    description: `Complete eligibility criteria for ${job.shortTitle}. Age limit: ${formatAgeRange(job, "years")} on crucial cut-off date (${formatDate(cutoffDate)}). Category relaxation (OBC +3y, SC/ST +5y) and educational degree requirements.`,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -44,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CentralJobEligibilityPage({ params }: Props) {
   const resolvedParams = await params;
-  const job = getJobBySlug(resolvedParams.slug);
+  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
 
   if (!job) {
     notFound();
@@ -59,7 +61,7 @@ export default async function CentralJobEligibilityPage({ params }: Props) {
     <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
       <Navbar currentStateSlug="central" />
       <main className="flex-1">
-        <EligibilityView job={job} stateSlug="central" />
+        <EligibilityView job={job} stateSlug="central" calculatorJobs={getCalculatorJobs(await getAllJobs())} />
       </main>
       <Footer />
     </div>

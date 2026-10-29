@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { JobNotification, getActiveOpportunities } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
 import { formatDate } from "@/lib/utils";
 import { ExaminationLifecycleBar } from "./ExaminationLifecycleBar";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
@@ -25,13 +26,13 @@ interface Props {
   stateSlug?: string;
 }
 
-export function AdmitCardView({ job, stateSlug }: Props) {
+export async function AdmitCardView({ job, stateSlug }: Props) {
   const parentUrl = job.isCentral || !stateSlug || stateSlug === "central"
     ? `/jobs/${job.slug}`
     : `/state/${stateSlug}/jobs/${job.slug}`;
 
   const isReleased = job.status === "ADMIT_CARD_OUT" || Boolean(job.admitCardDate && job.admitCardDate.toLowerCase().includes("released"));
-  const activeJobs = getActiveOpportunities(job.id, job.category, job.stateSlug, 3);
+  const activeJobs = getActiveOpportunities(await getAllJobs(), job.id, job.category, job.stateSlug, 3);
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-7">

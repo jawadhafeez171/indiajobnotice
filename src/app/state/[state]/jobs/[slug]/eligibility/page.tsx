@@ -4,7 +4,9 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { EligibilityView } from "@/components/jobs/EligibilityView";
-import { getJobBySlug, SAMPLE_JOBS, getJobAgeCutoffDate, getJobCanonicalPath } from "@/data/jobs";
+import { getJobBySlug, getJobAgeCutoffDate, getJobCanonicalPath } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
+import { getCalculatorJobs, formatAgeRange } from "@/data/jobs";
 import { getStateBySlug } from "@/config/states";
 import { formatDate } from "@/lib/utils";
 
@@ -13,7 +15,7 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  return SAMPLE_JOBS.filter((j) => !j.isCentral && j.stateSlug).map((job) => ({
+  return (await getAllJobs()).filter((j) => !j.isCentral && j.stateSlug).map((job) => ({
     state: job.stateSlug as string,
     slug: job.slug,
   }));
@@ -21,7 +23,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
-  const job = getJobBySlug(resolvedParams.slug);
+  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
   const state = getStateBySlug(resolvedParams.state);
   if (!job) return { title: "Eligibility Details Not Found | IndiaJobNotice.com" };
 
@@ -31,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${job.shortTitle} 2026 (${stateName}) Age Limit, Cut-off Date & Qualification | IndiaJobNotice.com`,
-    description: `Official statutory eligibility criteria for ${job.shortTitle} (${stateName}). Age limit: ${job.minAge} to ${job.maxAge} years on cut-off date (${formatDate(cutoffDate)}). Category relaxation (OBC, SC/ST, domicile) and educational degree requirements.`,
+    description: `Official statutory eligibility criteria for ${job.shortTitle} (${stateName}). Age limit: ${formatAgeRange(job, "years")} on cut-off date (${formatDate(cutoffDate)}). Category relaxation (OBC, SC/ST, domicile) and educational degree requirements.`,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -48,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function StateJobEligibilityPage({ params }: Props) {
   const resolvedParams = await params;
-  const job = getJobBySlug(resolvedParams.slug);
+  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
 
   if (!job) {
     notFound();
@@ -67,7 +69,7 @@ export default async function StateJobEligibilityPage({ params }: Props) {
     <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
       <Navbar currentStateSlug={resolvedParams.state} />
       <main className="flex-1">
-        <EligibilityView job={job} stateSlug={resolvedParams.state} />
+        <EligibilityView job={job} stateSlug={resolvedParams.state} calculatorJobs={getCalculatorJobs(await getAllJobs())} />
       </main>
       <Footer />
     </div>

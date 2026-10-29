@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { JobNotification, getActiveOpportunities } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
 import { getJobCutoffs } from "@/lib/exam-details";
 import { formatDate } from "@/lib/utils";
 import { ExaminationLifecycleBar } from "./ExaminationLifecycleBar";
@@ -23,14 +24,14 @@ interface Props {
   stateSlug?: string;
 }
 
-export function ResultView({ job, stateSlug }: Props) {
+export async function ResultView({ job, stateSlug }: Props) {
   const parentUrl = job.isCentral || !stateSlug || stateSlug === "central"
     ? `/jobs/${job.slug}`
     : `/state/${stateSlug}/jobs/${job.slug}`;
 
   const isDeclared = job.status === "RESULT_OUT" || Boolean(job.resultDate && job.resultDate.toLowerCase().includes("declared"));
   const cutoffs = getJobCutoffs(job);
-  const activeJobs = getActiveOpportunities(job.id, job.category, job.stateSlug, 3);
+  const activeJobs = getActiveOpportunities(await getAllJobs(), job.id, job.category, job.stateSlug, 3);
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-7">
@@ -162,36 +163,40 @@ export function ResultView({ job, stateSlug }: Props) {
           </span>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-[#EAE2D2]">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-[#FAF7EF] border-b border-[#EAE2D2] font-mono text-[11px] uppercase tracking-wider text-[#68635B]">
-              <tr>
-                <th className="py-3 px-3.5 font-bold">Recruitment Cycle / Stage</th>
-                <th className="py-3 px-3.5 font-bold">Social Category</th>
-                <th className="py-3 px-3.5 font-bold text-center">Qualifying Cut-off Score</th>
-                <th className="py-3 px-3.5 font-bold text-right">Maximum Marks</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#F2ECE1] text-[#1A1918]">
-              {cutoffs.map((item, idx) => (
-                <tr key={idx} className="hover:bg-[#FCFAF4] transition-colors">
-                  <td className="py-3 px-3.5 font-mono font-semibold text-[#1A1918]">
-                    {item.year}
-                  </td>
-                  <td className="py-3 px-3.5 font-bold text-[#1E3799]">
-                    {item.category}
-                  </td>
-                  <td className="py-3 px-3.5 font-mono font-bold text-center text-[#209948]">
-                    {item.score}
-                  </td>
-                  <td className="py-3 px-3.5 font-mono text-right text-[#68635B]">
-                    {item.maxMarks}
-                  </td>
+        {cutoffs.length > 0 ? (
+          <div className="overflow-x-auto rounded-lg border border-[#EAE2D2]">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead className="bg-[#FAF7EF] border-b border-[#EAE2D2] font-mono text-[11px] uppercase tracking-wider text-[#68635B]">
+                <tr>
+                  <th className="py-3 px-3.5 font-bold">Recruitment Cycle / Stage</th>
+                  <th className="py-3 px-3.5 font-bold">Social Category</th>
+                  <th className="py-3 px-3.5 font-bold text-center">Qualifying Cut-off Score</th>
+                  <th className="py-3 px-3.5 font-bold text-right">Maximum Marks</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-[#F2ECE1] text-[#1A1918]">
+                {cutoffs.map((item, idx) => (
+                  <tr key={idx} className="hover:bg-[#FCFAF4] transition-colors">
+                    <td className="py-3 px-3.5 font-mono font-semibold text-[#1A1918]">
+                      {item.year}
+                    </td>
+                    <td className="py-3 px-3.5 font-bold text-[#1E3799]">
+                      {item.category}
+                    </td>
+                    <td className="py-3 px-3.5 font-mono font-bold text-center text-[#209948]">
+                      {item.score}
+                    </td>
+                    <td className="py-3 px-3.5 font-mono text-right text-[#68635B]">
+                      {item.maxMarks}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-xs text-[#524E48]">Cut-off marks are published by the recruiting body with the result; see the official website.</p>
+        )}
       </div>
 
       {/* Next Stages & Document Verification Checklist */}

@@ -1,5 +1,4 @@
-import { JobNotification } from "@/data/jobs";
-import { getStateReservationRules } from "@/config/state-reservations";
+import { JobNotification, formatAgeRange } from "@/data/jobs";
 
 export interface ExamStageSubject {
   name: string;
@@ -870,156 +869,24 @@ const EXAM_DATA_REGISTRY: Record<
 
 // Automatic smart fallback generator for any job without explicit registry entry
 export function getJobExamStages(job: JobNotification): ExamStage[] {
-  const registered = EXAM_DATA_REGISTRY[job.id];
-  if (registered?.stages && registered.stages.length > 0) {
-    return registered.stages;
-  }
-
-  // Derive realistic stages from job.selectionProcess and syllabusSummary
-  const isPoliceOrDefense = job.category === "Police / Defense";
-  const isTeaching = job.category === "Teaching / Education";
-  const isTechnical = job.category === "Engineering / Technical";
-
-  const stages: ExamStage[] = [];
-
-  // Stage 1
-  stages.push({
-    stageName: job.selectionProcess[0] || "Stage 1: Written Examination / CBT",
-    mode: isPoliceOrDefense ? "Offline (OMR Sheet) / CBT" : "Online (CBT)",
-    totalQuestions: 100,
-    totalMarks: 100,
-    duration: "90 Minutes",
-    negativeMarking: "1/4th (0.25) or 1/3rd (0.33) per incorrect response",
-    qualifyingCriteria: "Standard qualifying marks: 40% for UR, 35% for OBC/SC/ST",
-    subjects: [
-      { name: "General Awareness & Current Affairs", questions: 30, marks: 30 },
-      { name: "Reasoning & Mental Ability", questions: 30, marks: 30 },
-      { name: isTechnical ? "Core Technical / Domain Subject" : "Quantitative Aptitude", questions: 40, marks: 40 },
-    ],
-  });
-
-  // Stage 2 if available
-  if (job.selectionProcess.length > 1) {
-    const stage2Name = job.selectionProcess[1];
-    const isPhysical = stage2Name.toLowerCase().includes("physical") || stage2Name.toLowerCase().includes("pet");
-
-    if (isPhysical) {
-      stages.push({
-        stageName: stage2Name,
-        mode: "Physical Field Evaluation",
-        totalQuestions: 0,
-        totalMarks: 0,
-        duration: "Standard on-ground test",
-        qualifyingCriteria: "Must qualify all physical norms (Running, Height, Chest measurements)",
-        subjects: [
-          { name: "Physical Standards Test (PST) Verification", questions: 1, marks: 0 },
-          { name: "Physical Efficiency Test (PET Race / Endurance)", questions: 1, marks: 0 },
-        ],
-      });
-    } else {
-      stages.push({
-        stageName: stage2Name,
-        mode: stage2Name.toLowerCase().includes("interview") ? "Interview / Viva-Voce" : "Written / Skill Test",
-        totalQuestions: stage2Name.toLowerCase().includes("interview") ? 0 : 100,
-        totalMarks: stage2Name.toLowerCase().includes("interview") ? 100 : 200,
-        duration: stage2Name.toLowerCase().includes("interview") ? "20 Minutes" : "120 Minutes",
-        qualifyingCriteria: "Merit compilation round",
-        subjects: [
-          { name: isTeaching ? "Pedagogy & Subject Specialization" : "Advanced Domain / Descriptive Evaluation", questions: 50, marks: 100 },
-        ],
-      });
-    }
-  }
-
-  // Final Stage: Document Verification
-  if (job.selectionProcess.length > 2) {
-    stages.push({
-      stageName: job.selectionProcess[2],
-      mode: "Document Verification & Medical Fitness",
-      totalQuestions: 0,
-      totalMarks: 0,
-      duration: "Designated Centers",
-      qualifyingCriteria: "Verification of original academic degrees, category certificates and biometric identity",
-      subjects: [],
-    });
-  }
-
-  return stages;
+  // No generated exam pattern (question counts, marks, negative marking): only one recorded for this
+  // exam. The notification's own selection process is shown from job.selectionProcess.
+  return EXAM_DATA_REGISTRY[job.id]?.stages ?? [];
 }
 
 export function getJobPhysicalStandards(job: JobNotification): PhysicalStandards | null {
-  const registered = EXAM_DATA_REGISTRY[job.id];
-  if (registered?.physical) {
-    return registered.physical;
-  }
-
-  if (job.category === "Police / Defense") {
-    return {
-      heightMale: "165 - 168 cm (Relaxable for ST / Hill areas)",
-      heightFemale: "152 - 155 cm",
-      chestMale: "79 - 84 cm (Minimum 5 cm expansion)",
-      runningMale: "4.8 km in 25 mins or 1.6 km in 6.5 mins",
-      runningFemale: "2.4 km in 14 mins or 800m in 4 mins",
-      otherCriteria: "Good visual acuity (6/6 or 6/9), no knock-knees or flat feet.",
-    };
-  }
-
-  return null;
+  // no generic physical standards: only ones recorded for this recruitment
+  return EXAM_DATA_REGISTRY[job.id]?.physical ?? null;
 }
 
 export function getJobCutoffs(job: JobNotification): CutoffBenchmark[] {
-  const registered = EXAM_DATA_REGISTRY[job.id];
-  if (registered?.cutoffs && registered.cutoffs.length > 0) {
-    return registered.cutoffs;
-  }
-
-  // Realistic estimates based on general trends
-  return [
-    { year: "Previous Cycle", category: "Unreserved (UR)", score: "72 - 78%", maxMarks: "100%" },
-    { year: "Previous Cycle", category: "OBC", score: "68 - 74%", maxMarks: "100%" },
-    { year: "Previous Cycle", category: "EWS", score: "66 - 72%", maxMarks: "100%" },
-    { year: "Previous Cycle", category: "SC", score: "58 - 65%", maxMarks: "100%" },
-    { year: "Previous Cycle", category: "ST", score: "52 - 60%", maxMarks: "100%" },
-  ];
+  // no estimated cut-offs: only ones recorded for this exam
+  return EXAM_DATA_REGISTRY[job.id]?.cutoffs ?? [];
 }
 
 export function getJobDetailedSyllabus(job: JobNotification): SyllabusSubjectSection[] {
-  const registered = EXAM_DATA_REGISTRY[job.id];
-  if (registered?.syllabus && registered.syllabus.length > 0) {
-    return registered.syllabus;
-  }
-
-  // Parse summary or provide structured standards
-  return [
-    {
-      subject: "General Knowledge & Current Affairs",
-      topics: [
-        "National & International Current Affairs (Last 6-12 Months)",
-        "Indian Constitution, Fundamental Rights, Directive Principles",
-        "Modern Indian History & Freedom Struggle",
-        "Geography of India, Rivers, National Parks & Agriculture",
-        "Everyday General Science, Environment & Technology Updates",
-      ],
-    },
-    {
-      subject: "Reasoning & Mental Ability",
-      topics: [
-        "Analogy, Number & Alphabetical Series, Classification",
-        "Coding-Decoding, Blood Relations, Direction Sense",
-        "Venn Diagrams, Syllogisms, Non-verbal series",
-        "Statement & Assumptions, Logical deduction",
-      ],
-    },
-    {
-      subject: "Quantitative Aptitude / Domain Specialization",
-      topics: [
-        "Percentages, Ratio & Proportion, Profit & Loss, Simple & Compound Interest",
-        "Time & Work, Speed, Time & Distance, Averages",
-        "Basic Algebra, Geometry, Mensuration & Data Interpretation",
-        "Department-specific statutory guidelines and job roles",
-      ],
-    },
-  ];
+  // no generic syllabus: only one recorded for this exam
+  return EXAM_DATA_REGISTRY[job.id]?.syllabus ?? [];
 }
 
 // ==========================================
@@ -1117,16 +984,24 @@ export function getJobPostBreakdown(job: JobNotification): PostVacancyBreakdown[
   if (POST_BREAKDOWN_REGISTRY[job.id]) {
     return POST_BREAKDOWN_REGISTRY[job.id];
   }
-
-  // Fallback intelligent breakdown synthesized from job attributes
+  if (job.posts && job.posts.length > 0) {
+    return job.posts.map((p) => ({
+      postName: p.postName,
+      department: job.organization,
+      vacancies: p.vacancies ? p.vacancies.toLocaleString("en-IN") : "See notification",
+      qualification: p.qualification || "See notification",
+      ageLimit: p.ageLimit || formatAgeRange(job, "Years"),
+      payLevel: p.pay || "See notification",
+    }));
+  }
   return [
     {
       postName: job.shortTitle,
       department: job.organization,
-      vacancies: job.totalVacancies.toLocaleString("en-IN"),
-      qualification: job.qualifications.join("; "),
-      ageLimit: `${job.minAge} to ${job.maxAge} Years`,
-      payLevel: job.salary.split("(")[0].trim() || job.salary,
+      vacancies: job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "See notification",
+      qualification: job.qualifications.join("; ") || "See notification",
+      ageLimit: formatAgeRange(job, "Years"),
+      payLevel: job.salary || "See notification",
     },
   ];
 }
@@ -1135,26 +1010,12 @@ export function getJobPostBreakdown(job: JobNotification): PostVacancyBreakdown[
 // AGE RECKONING (CRUCIAL DATE FOR AGE CALCULATION)
 // ==========================================
 export function getJobAgeReckoning(job: JobNotification): AgeReckoningInfo {
-  // Most Indian notifications reckon age as of 01-08 or 01-01 of the recruitment year
-  const startYear = job.applicationStartDate ? new Date(job.applicationStartDate).getFullYear() : 2026;
-  
-  let crucialDate = `01/08/${startYear}`;
-  if (job.organization.toLowerCase().includes("bank") || job.orgShortCode === "SBI" || job.orgShortCode === "IBPS") {
-    crucialDate = `01/04/${startYear}`;
-  } else if (job.organization.toLowerCase().includes("railway") || job.orgShortCode === "RRB") {
-    crucialDate = `01/07/${startYear}`;
-  } else if (job.title.toLowerCase().includes("nda") || job.title.toLowerCase().includes("defense")) {
-    crucialDate = `01/01/${startYear + 1}`;
-  }
-
-  const birthYearStart = startYear - job.maxAge;
-  const birthYearEnd = startYear - job.minAge;
-
+  // the reckoning date only when the notification gives one
   return {
-    crucialDate,
+    crucialDate: job.ageCutoffDate ? job.ageCutoffDate.split("-").reverse().join("/") : "the date in the notification",
     minAge: job.minAge,
     maxAge: job.maxAge,
-    bornBetween: `Between 02/08/${birthYearStart} and 01/08/${birthYearEnd} (both dates inclusive)`,
+    bornBetween: "",
     specialClauses: job.ageRelaxation,
   };
 }
@@ -1163,92 +1024,10 @@ export function getJobAgeReckoning(job: JobNotification): AgeReckoningInfo {
 // CATEGORY-WISE STATUTORY MATRIX (FEES & RELAXATIONS)
 // ==========================================
 export function getJobCategoryMatrix(job: JobNotification): CategoryStatutoryMatrixItem[] {
-  const feeUR = job.applicationFee.ur_obc_ews;
-  const feeSC = job.applicationFee.sc_st;
-  const feeFemale = job.applicationFee.female_or_pwd ?? 0;
-
-  // If this is a state-specific recruitment notification, render authentic state categories
-  if (!job.isCentral && job.stateSlug) {
-    const stateRules = getStateReservationRules(job.stateSlug);
-    if (stateRules && stateRules.categories.length > 0) {
-      return stateRules.categories.map((cat) => {
-        let fee = feeUR === 0 ? "Exempted (₹0)" : `₹${feeUR}`;
-        if (cat.feeConcessionPercentage === 100) {
-          fee = "Exempted (₹0)";
-        } else if (cat.code.includes("SC") || cat.code.includes("ST")) {
-          fee = feeSC === 0 ? "Exempted (₹0)" : `₹${feeSC}`;
-        }
-
-        const ageRelax = cat.defaultAgeRelaxationYears > 0
-          ? `+${cat.defaultAgeRelaxationYears} Years Upper Age Concession`
-          : "No Age Relaxation (Standard Limit)";
-
-        const maxAge = cat.maxAgeOverride
-          ? `${cat.maxAgeOverride} Years`
-          : `${job.maxAge + cat.defaultAgeRelaxationYears} Years`;
-
-        return {
-          category: cat.name,
-          code: cat.shortLabel,
-          fee,
-          ageRelaxation: ageRelax,
-          maxEligibleAge: maxAge,
-          exemptionNote: cat.description,
-        };
-      });
-    }
-  }
-
-  return [
-    {
-      category: "General / Unreserved",
-      code: "UR / GEN",
-      fee: feeUR === 0 ? "Exempted (₹0)" : `₹${feeUR}`,
-      ageRelaxation: "No Age Relaxation",
-      maxEligibleAge: `${job.maxAge} Years`,
-      exemptionNote: "Standard fee applies",
-    },
-    {
-      category: "Economically Weaker Sections",
-      code: "EWS",
-      fee: feeUR === 0 ? "Exempted (₹0)" : `₹${feeUR}`,
-      ageRelaxation: "No Age Relaxation (Merit Quota 10%)",
-      maxEligibleAge: `${job.maxAge} Years`,
-      exemptionNote: "Valid Income & Asset Certificate required",
-    },
-    {
-      category: "Other Backward Classes (Non-Creamy)",
-      code: "OBC-NCL",
-      fee: feeUR === 0 ? "Exempted (₹0)" : `₹${feeUR}`,
-      ageRelaxation: "+3 Years Upper Age Concession",
-      maxEligibleAge: `${job.maxAge + 3} Years`,
-      exemptionNote: "Central Government format certificate required",
-    },
-    {
-      category: "Scheduled Castes & Scheduled Tribes",
-      code: "SC / ST",
-      fee: feeSC === 0 ? "Exempted (₹0)" : `₹${feeSC}`,
-      ageRelaxation: "+5 Years Upper Age Concession",
-      maxEligibleAge: `${job.maxAge + 5} Years`,
-      exemptionNote: feeSC === 0 ? "100% Application Fee Exemption" : "Subsidized / Refundable Fee",
-    },
-    {
-      category: "Persons with Benchmark Disabilities",
-      code: "PwBD / Divyang",
-      fee: feeFemale === 0 ? "Exempted (₹0)" : `₹${feeFemale}`,
-      ageRelaxation: "+10 Years (PwBD-UR) / +13y (OBC) / +15y (SC/ST)",
-      maxEligibleAge: `${job.maxAge + 10} to ${job.maxAge + 15} Years`,
-      exemptionNote: "Disability Certificate (>40%) required",
-    },
-    {
-      category: "Female Candidates (All Categories)",
-      code: "Female",
-      fee: feeFemale === 0 ? "Exempted (₹0)" : `₹${feeFemale}`,
-      ageRelaxation: job.title.toLowerCase().includes("police") ? "+3 Years in select state drives" : "As per Category",
-      maxEligibleAge: `${job.maxAge} to ${job.maxAge + 5} Years`,
-      exemptionNote: feeFemale === 0 ? "Full Fee Waiver in Central Drives (UPSC/SSC)" : "Standard Subsidized Fee",
-    },
-  ];
+  // Category-wise fees and age relaxations differ by notification; the notice text is shown instead
+  // (formatFee, job.ageRelaxation) rather than a table built from general norms.
+  void job;
+  return [];
 }
 
 // ==========================================
@@ -1300,51 +1079,12 @@ export function getJobCorrigendum(job: JobNotification): CorrigendumNotice | nul
 // IN-HAND ESTIMATED PAY BREAKDOWN
 // ==========================================
 export function getJobPayBreakdown(job: JobNotification): PayBreakdown {
-  const salaryStr = job.salary;
-  let basic = "₹25,500";
-  let inHand = "₹38,000 - ₹44,000 / month";
-  let level = "Pay Level 4";
-
-  if (salaryStr.includes("Level 10") || salaryStr.includes("56,100")) {
-    level = "Pay Level 10 (Gazetted Group A)";
-    basic = "₹56,100 Basic";
-    inHand = "₹85,000 - ₹1,05,000 / month";
-  } else if (salaryStr.includes("Level 7") || salaryStr.includes("44,900")) {
-    level = "Pay Level 7 (Non-Gazetted Group B)";
-    basic = "₹44,900 Basic";
-    inHand = "₹68,000 - ₹76,000 / month";
-  } else if (salaryStr.includes("Level 6") || salaryStr.includes("35,400")) {
-    level = "Pay Level 6 (Technical Group B/C)";
-    basic = "₹35,400 Basic";
-    inHand = "₹54,000 - ₹62,000 / month";
-  } else if (salaryStr.includes("Level 5") || salaryStr.includes("29,200")) {
-    level = "Pay Level 5";
-    basic = "₹29,200 Basic";
-    inHand = "₹44,000 - ₹51,000 / month";
-  } else if (salaryStr.includes("Level 3") || salaryStr.includes("21,700")) {
-    level = "Pay Level 3 (Constable Cadre)";
-    basic = "₹21,700 Basic";
-    inHand = "₹33,000 - ₹38,000 / month";
-  } else if (salaryStr.includes("Level 2") || salaryStr.includes("19,900")) {
-    level = "Pay Level 2 (Clerical / ALP)";
-    basic = "₹19,900 Basic";
-    inHand = "₹30,000 - ₹35,000 / month (ALP includes Running Allowances)";
-  } else if (salaryStr.includes("Level 1") || salaryStr.includes("18,000")) {
-    level = "Pay Level 1 (Track Maintainer / Pointsman)";
-    basic = "₹18,000 Basic";
-    inHand = "₹28,000 - ₹34,000 / month (includes Risk / Hardship allowances)";
-  }
-
+  // Only the pay the notification states; no in-hand estimates (they would not be from the notice).
   return {
-    payLevel: level,
-    basicPay: basic,
-    inHandEstimated: inHand,
-    allowances: [
-      "Dearness Allowance (DA at central rates ~53%)",
-      "House Rent Allowance (HRA: 9% to 27% based on X/Y/Z city classification)",
-      "Transport Allowance (TA) with DA thereon",
-      "National Pension System (NPS) 14% government contribution + CGHS Medical",
-    ],
+    payLevel: job.salary || "See notification",
+    basicPay: job.salary || "See notification",
+    inHandEstimated: "",
+    allowances: [],
   };
 }
 

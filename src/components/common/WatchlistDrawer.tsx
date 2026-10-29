@@ -27,7 +27,7 @@ interface Props {
 }
 
 export function WatchlistDrawer({ isOpen, onClose }: Props) {
-  const { savedJobs, savedCount, removeJob, clearAll } = useWatchlist();
+  const { savedJobs, savedCount, removeJob, clearAll } = useWatchlist({ withJobs: true });
 
   // Close on Escape key
   useEffect(() => {

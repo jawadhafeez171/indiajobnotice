@@ -4,7 +4,8 @@ import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { 
   JobNotification, 
-  getCategoryColors, 
+  getCategoryColors,
+  formatAgeRange,
 } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
@@ -613,7 +614,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                         {/* Vacancy Column */}
                         <td className="py-3.5 px-4 font-mono whitespace-nowrap">
                           <span className="font-bold text-sm text-[#1E3799]">
-                            {job.totalVacancies.toLocaleString("en-IN")}
+                            {job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "—"}
                           </span>
                           <span className="text-[10px] text-[#68635B] block">
                             posts
@@ -789,13 +790,13 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                   <div>
                     <span className="text-[10px] text-[#68635B] uppercase font-mono block">Total Posts</span>
                     <span className="font-serif text-xl font-bold text-[#1E3799] mt-0.5 block">
-                      {heroJob.totalVacancies.toLocaleString("en-IN")}
+                      {heroJob.totalVacancies ? heroJob.totalVacancies.toLocaleString("en-IN") : "—"}
                     </span>
                   </div>
                   <div>
                     <span className="text-[10px] text-[#68635B] uppercase font-mono block">Age Bracket</span>
                     <span className="font-bold text-sm text-[#1A1918] mt-1 block">
-                      {heroJob.minAge}–{heroJob.maxAge} yrs
+                      {formatAgeRange(heroJob)}
                     </span>
                   </div>
                   <div>
@@ -966,10 +967,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
 
                     <div className="mt-3 pt-2.5 border-t border-[#F2ECE1] flex items-center justify-between text-xs font-mono">
                       <span className="text-[#1E3799] font-bold">
-                        {job.totalVacancies.toLocaleString("en-IN")} Posts
+                        {job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} Posts` : "Posts: see notice"}
                       </span>
                       <span className="text-[#68635B] text-[11px]">
-                        {job.minAge}–{job.maxAge} yrs
+                        {formatAgeRange(job)}
                       </span>
                     </div>
                   </div>

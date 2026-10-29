@@ -3,7 +3,6 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { 
-  SAMPLE_JOBS, 
   JobNotification, 
   getJobAgeCutoffDate, 
   calculateAgeAtDate 
@@ -33,14 +32,26 @@ import { getStateReservationRules, StateReservationCategory } from "@/config/sta
 interface Props {
   currentStateSlug?: string;
   defaultJobId?: string;
+  jobs: JobNotification[];   // open jobs with a stated age limit (getCalculatorJobs)
 }
 
-export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props) {
+export function EligibilityCalculator(props: Props) {
+  if (props.jobs.length === 0) {
+    return (
+      <div className="p-5 rounded-xl border border-[#DDD5C7] bg-[#FAF7EF] text-sm text-[#524E48]">
+        The eligibility calculator lists open recruitments that state an age limit. None are listed right now.
+      </div>
+    );
+  }
+  return <EligibilityCalculatorInner {...props} />;
+}
+
+function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Props) {
   const [calculationMode, setCalculationMode] = useState<"specific" | "scanner">(
     defaultJobId ? "specific" : "specific"
   );
   const [selectedJobId, setSelectedJobId] = useState<string>(
-    defaultJobId || SAMPLE_JOBS[0].id
+    (defaultJobId && jobs.some((j) => j.id === defaultJobId) ? defaultJobId : jobs[0].id)
   );
   const [dob, setDob] = useState("2000-05-15");
   const [category, setCategory] = useState<string>("UR");
@@ -51,8 +62,8 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
 
   // Selected single job
   const selectedJob = useMemo(() => {
-    return SAMPLE_JOBS.find((j) => j.id === selectedJobId) || SAMPLE_JOBS[0];
-  }, [selectedJobId]);
+    return jobs.find((j) => j.id === selectedJobId) || jobs[0];
+  }, [selectedJobId, jobs]);
 
   // Active state reservation ruleset (Central vs specific State)
   const activeStateSlug = useMemo(() => {
@@ -136,7 +147,7 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
 
   // All-India Scanner: calculates eligibility for each job against ITS OWN individual cutoff date
   const scannerEligibleJobs = useMemo(() => {
-    return SAMPLE_JOBS.filter((job) => {
+    return jobs.filter((job) => {
       if (currentStateSlug && currentStateSlug !== "central") {
         if (!job.isCentral && job.stateSlug !== currentStateSlug) {
           return false;
@@ -400,7 +411,7 @@ export function EligibilityCalculator({ currentStateSlug, defaultJobId }: Props)
               onChange={(e) => setSelectedJobId(e.target.value)}
               className="w-full px-3.5 py-3 sm:py-2.5 rounded-lg border border-[#CCD8F0] bg-[#EEF2FA]/50 text-[14px] sm:text-xs min-h-[44px] font-bold text-[#1E3799] focus:outline-none focus:border-[#1E3799] shadow-2xs cursor-pointer"
             >
-              {SAMPLE_JOBS.map((job) => {
+              {jobs.map((job) => {
                 const cutoff = getJobAgeCutoffDate(job);
                 return (
                   <option key={job.id} value={job.id}>

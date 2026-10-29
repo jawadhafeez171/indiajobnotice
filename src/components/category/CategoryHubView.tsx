@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { CategoryHubInfo, getJobsForHub } from "@/data/permanent-categories";
+import { getAllJobs } from "@/lib/jobs-store";
 import { JobCard } from "@/components/jobs/JobCard";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
@@ -22,8 +23,8 @@ interface Props {
   parentCrumb?: { label: string; href: string };
 }
 
-export function CategoryHubView({ hub, parentCrumb }: Props) {
-  const jobs = getJobsForHub(hub);
+export async function CategoryHubView({ hub, parentCrumb }: Props) {
+  const jobs = getJobsForHub(await getAllJobs(), hub);
   const totalPosts = jobs.reduce((acc, j) => acc + (j.totalVacancies || 0), 0);
   const activeDrives = jobs.filter((j) => j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR");
 

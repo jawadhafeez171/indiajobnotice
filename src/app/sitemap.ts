@@ -1,7 +1,9 @@
 import { MetadataRoute } from "next";
 import { STATES_REGISTRY } from "@/config/states";
 import { DISTRICTS_REGISTRY } from "@/config/districts";
-import { SAMPLE_JOBS, getJobCanonicalPath } from "@/data/jobs";
+import { getJobCanonicalPath } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
+
 import { 
   QUALIFICATION_HUBS, 
   SECTOR_HUBS, 
@@ -9,7 +11,8 @@ import {
 } from "@/data/permanent-categories";
 import { VERIFIED_STATE_QUAL_HUBS } from "@/data/state-qualification-hubs";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const jobs = await getAllJobs();
   const baseUrl = "https://www.indiajobnotice.com";
   const now = new Date();
 
@@ -140,7 +143,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Central and State Job detail pages
-  const jobRoutes: MetadataRoute.Sitemap = SAMPLE_JOBS.map((job) => ({
+  const jobRoutes: MetadataRoute.Sitemap = jobs.map((job) => ({
     url: `${baseUrl}${getJobCanonicalPath(job)}`,
     lastModified: new Date(job.applicationStartDate || now),
     changeFrequency: "weekly",
@@ -148,7 +151,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Distinct lifecycle & intent search routes (Eligibility, Admit Card, Answer Key, Result)
-  const lifecycleRoutes: MetadataRoute.Sitemap = SAMPLE_JOBS.flatMap((job) => {
+  const lifecycleRoutes: MetadataRoute.Sitemap = jobs.flatMap((job) => {
     const base = `${baseUrl}${getJobCanonicalPath(job)}`;
 
     return [

@@ -21,7 +21,7 @@ import {
   Copy,
   Check
 } from "lucide-react";
-import { SAMPLE_JOBS, JobNotification, getCategoryColors } from "@/data/jobs";
+import { JobNotification, getCategoryColors } from "@/data/jobs";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
 import { generateGoogleCalendarUrl, downloadIcsFile, downloadCombinedIcsFile, CalendarEventParams } from "@/lib/calendar";
 import { useWatchlist } from "@/lib/watchlist";
@@ -95,24 +95,27 @@ function parseIndianExamDate(dateStr: string, fallbackMonth = "2026-11-15"): str
   return fallbackMonth;
 }
 
-export function ExamCalendarView() {
+export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
   const [selectedType, setSelectedType] = useState<"ALL" | EventType>("ALL");
   const [selectedScope, setSelectedScope] = useState<"ALL" | "CENTRAL" | "STATE">("ALL");
   const [viewFormat, setViewFormat] = useState<"agenda" | "month">("agenda");
   
-  // Current calendar viewing month (e.g., year: 2026, month: 9 (0-indexed: October))
-  const [calendarMonth, setCalendarMonth] = useState({ year: 2026, month: 9 });
+  // Calendar month being viewed (month 0-indexed), starting at the current month
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() };
+  });
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [showEmbedModal, setShowEmbedModal] = useState(false);
   const [copiedSnippet, setCopiedSnippet] = useState(false);
 
   const { isSaved, toggleSave } = useWatchlist();
 
-  // Build unified calendar events list from SAMPLE_JOBS
+  // Build unified calendar events list from the published jobs
   const allEvents: CalendarEventItem[] = useMemo(() => {
     const events: CalendarEventItem[] = [];
 
-    SAMPLE_JOBS.forEach((job) => {
+    jobs.forEach((job) => {
       const noticeUrl = job.isCentral ? `/jobs/${job.slug}` : `/state/${job.stateSlug}/jobs/${job.slug}`;
 
       // 1. Application Deadline
@@ -132,8 +135,10 @@ export function ExamCalendarView() {
       }
 
       // 2. Exam Date
-      if (job.examDate && !job.examDate.toLowerCase().includes("done")) {
-        const parsedDate = parseIndianExamDate(job.examDate, "2026-12-15");
+      // an exam date that cannot be read as a date is left off the calendar, not given a made-up one
+      const examDate = job.examDate ?? "";
+      const parsedDate = examDate ? parseIndianExamDate(examDate, "") : "";
+      if (parsedDate && !examDate.toLowerCase().includes("done")) {
         events.push({
           id: `${job.id}-exam`,
           jobId: job.id,
@@ -142,8 +147,8 @@ export function ExamCalendarView() {
           title: `Exam Date: ${job.shortTitle}`,
           organization: job.organization,
           dateStr: parsedDate,
-          rawDateLabel: job.examDate,
-          isTentative: job.examDate.toLowerCase().includes("expected") || !/\d{1,2}\s+[A-Za-z]+/.test(job.examDate),
+          rawDateLabel: examDate,
+          isTentative: examDate.toLowerCase().includes("expected") || !/\d{1,2}\s+[A-Za-z]+/.test(examDate),
           applyUrl: job.applyOnlineUrl,
           noticeUrl,
         });
@@ -184,7 +189,7 @@ export function ExamCalendarView() {
 
     // Sort chronologically
     return events.sort((a, b) => new Date(a.dateStr).getTime() - new Date(b.dateStr).getTime());
-  }, []);
+  }, [jobs]);
 
   // Filter events by selected category, scope, and optional clicked calendar date
   const filteredEvents = useMemo(() => {

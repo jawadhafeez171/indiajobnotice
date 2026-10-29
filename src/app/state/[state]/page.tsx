@@ -10,7 +10,9 @@ import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { DistrictSelectorBar } from "@/components/common/DistrictSelectorBar";
 import { getStateBySlug, STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
-import { getJobsByState } from "@/data/jobs";
+import { getJobsByState, getListingJobs, getCalculatorJobs } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
+
 import { getCentralPortalUrl } from "@/lib/subdomains";
 import { cn } from "@/lib/utils";
 
@@ -61,7 +63,8 @@ export default async function StateHomePage({ params }: PageProps) {
     notFound();
   }
 
-  const jobs = getJobsByState(state.slug);
+  const allJobs = await getAllJobs();
+  const jobs = getJobsByState(getListingJobs(allJobs), state.slug);
   const badgeStyle = getStateBadgeColor(state.code);
 
   return (
@@ -141,7 +144,7 @@ export default async function StateHomePage({ params }: PageProps) {
 
         {/* Age & Eligibility Calculator */}
         <section id="calculator">
-          <EligibilityCalculator currentStateSlug={state.slug} />
+          <EligibilityCalculator currentStateSlug={state.slug} jobs={getCalculatorJobs(allJobs)} />
         </section>
 
         {/* Authorized Recruitment Bodies & Stream Navigation */}

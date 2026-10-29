@@ -13,16 +13,16 @@ import {
   GraduationCap
 } from "lucide-react";
 import { JobNotification } from "@/data/jobs";
-import { getGenuinelyRelatedOpportunities, RelatedOpportunity } from "@/lib/internal-links";
+import { RelatedOpportunity } from "@/lib/internal-links";
 import { JobStatusBadge } from "./JobStatusBadge";
 import { formatDate, getDaysRemaining } from "@/lib/utils";
 
 interface Props {
   currentJob: JobNotification;
+  related: RelatedOpportunity[];   // getGenuinelyRelatedOpportunities, worked out on the server
 }
 
-export function RelatedOpportunitiesSection({ currentJob }: Props) {
-  const related = getGenuinelyRelatedOpportunities(currentJob, 4);
+export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
 
   if (!related || related.length === 0) {
     return null;
@@ -118,7 +118,7 @@ export function RelatedOpportunitiesSection({ currentJob }: Props) {
                 <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                   <div className="p-2 rounded bg-white border border-[#EAE2D2]/80">
                     <span className="text-[10px] uppercase font-mono text-[#68635B] block font-semibold">Vacancies</span>
-                    <span className="font-mono font-bold text-sm text-[#1A1918]">{job.totalVacancies.toLocaleString("en-IN")}</span>
+                    <span className="font-mono font-bold text-sm text-[#1A1918]">{job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "—"}</span>
                   </div>
                   <div className="p-2 rounded bg-white border border-[#EAE2D2]/80">
                     <span className="text-[10px] uppercase font-mono text-[#68635B] block font-semibold">Pay Scale</span>

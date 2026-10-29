@@ -1,4 +1,4 @@
-import { JobNotification, isJobApplicationClosed, getJobAgeCutoffDate } from "@/data/jobs";
+import { JobNotification, isJobApplicationClosed, getJobAgeCutoffDate, formatAgeRange, formatFee } from "@/data/jobs";
 import { getStateBySlug } from "@/config/states";
 import { getJobTaxonomyLinks } from "@/lib/internal-links";
 import { formatDate } from "@/lib/utils";
@@ -20,27 +20,39 @@ export function getJobFaqs(job: JobNotification): FAQItem[] {
   return [
     {
       question: `What is the total vacancy and post name in ${job.shortTitle}?`,
-      answer: `${job.organization} has officially announced ${job.totalVacancies.toLocaleString("en-IN")} vacancies for ${job.title}. Category-wise distribution and department rosters are detailed in the official gazette.`,
+      answer: `${job.organization} has announced ${job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} vacancies` : "vacancies"} for ${job.title}. Category-wise vacancies are given in the official notification.`,
     },
     {
       question: `What is the age limit and cut-off date for ${job.shortTitle}?`,
-      answer: `The candidate must be between ${job.minAge} and ${job.maxAge} years of age as of the crucial cut-off date (${formatDate(cutoffDate)}). Age relaxation applies as per government norms: OBC +3 years, SC/ST +5 years, and PwD +10 years.`,
+      answer: job.ageKnown === false || !job.maxAge
+        ? `The age limit is given in the official notification of ${job.organization}.`
+        : `Age limit: ${formatAgeRange(job, "years")} as on ${formatDate(cutoffDate)}.${job.ageRelaxation ? ` ${job.ageRelaxation}` : " Relaxation for reserved categories is as per the notification."}`,
     },
     {
       question: `What educational qualification is required to apply for ${job.shortTitle}?`,
-      answer: `Applicants must hold: ${job.qualifications.join(" or ")} from a recognized Board or University recognized by UGC/AICTE.`,
+      answer: job.qualifications.length
+        ? `As stated in the notification: ${job.qualifications.join("; ")}.`
+        : "The educational qualification is given in the official notification.",
     },
     {
       question: `What is the selection process and exam pattern?`,
-      answer: `The selection procedure consists of: ${job.selectionProcess.join(" → ")}. Detailed stage-wise marks breakdown and negative marking rules are published in the official syllabus.`,
+      answer: job.selectionProcess.length
+        ? `As stated in the notification: ${job.selectionProcess.join(" → ")}.`
+        : "The selection process is given in the official notification.",
     },
     {
       question: `What is the application fee for ${job.shortTitle}?`,
-      answer: `The application fee is ₹${job.applicationFee.ur_obc_ews} for UR / OBC / EWS candidates, and ₹${job.applicationFee.sc_st} for SC / ST candidates. Female/PwD fee concession is provided as per commission rules.`,
+      answer: job.feeKnown === false
+        ? job.applicationFeeText || "The application fee, if any, is given in the official notification."
+        : `Application fee: ${formatFee(job)}.`,
     },
     {
       question: `What is the last date to apply online for ${job.shortTitle}?`,
-      answer: `The online application portal accepts submissions up to ${formatDate(job.applicationEndDate)}. Candidates are advised to submit well before the closing date to avoid server congestion.`,
+      answer: !job.applicationEndDate
+        ? "The last date is given in the official notification."
+        : job.isWalkIn
+        ? `This is a walk-in interview on ${formatDate(job.applicationEndDate)}; see the notification for the time and venue.`
+        : `The last date to apply is ${formatDate(job.applicationEndDate)}.`,
     },
   ];
 }

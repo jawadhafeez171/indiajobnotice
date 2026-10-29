@@ -1,4 +1,4 @@
-import { JobNotification, SAMPLE_JOBS } from "@/data/jobs";
+import { JobNotification } from "@/data/jobs";
 import { getStateBySlug, StateInfo } from "@/config/states";
 import { 
   QUALIFICATION_HUBS, 
@@ -274,12 +274,13 @@ export function getJobTaxonomyLinks(job: JobNotification): {
  * 4. Same qualification tier (Tier 4)
  */
 export function getGenuinelyRelatedOpportunities(
+  jobs: JobNotification[],
   currentJob: JobNotification,
   limit: number = 4
 ): RelatedOpportunity[] {
   const scored: Array<{ job: JobNotification; score: number; reason: string; type: RelatedOpportunity["relationshipType"] }> = [];
 
-  for (const candidate of SAMPLE_JOBS) {
+  for (const candidate of jobs) {
     if (candidate.id === currentJob.id) continue;
 
     let score = 0;

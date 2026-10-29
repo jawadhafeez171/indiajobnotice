@@ -28,9 +28,10 @@ import { TricolorCapsule } from "@/components/common/BrandLogo";
 interface Props {
   job: JobNotification;
   stateSlug?: string;
+  calculatorJobs: JobNotification[];
 }
 
-export function EligibilityView({ job, stateSlug }: Props) {
+export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
   const basePrefix = job.isCentral || !stateSlug || stateSlug === "central"
     ? `/jobs/${job.slug}`
     : `/state/${stateSlug}/jobs/${job.slug}`;
@@ -110,12 +111,12 @@ export function EligibilityView({ job, stateSlug }: Props) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-[#F2ECE1] text-xs">
           <div className="p-3 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2]">
             <span className="text-[10px] font-mono uppercase text-[#68635B] block font-semibold">Minimum Age</span>
-            <span className="font-mono font-bold text-lg text-[#1A1918]">{job.minAge} Years</span>
+            <span className="font-mono font-bold text-lg text-[#1A1918]">{job.ageKnown !== false && job.minAge ? `${job.minAge} Years` : "See notification"}</span>
           </div>
 
           <div className="p-3 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2]">
             <span className="text-[10px] font-mono uppercase text-[#68635B] block font-semibold">Max Age (General / UR)</span>
-            <span className="font-mono font-bold text-lg text-[#1A1918]">{job.maxAge} Years</span>
+            <span className="font-mono font-bold text-lg text-[#1A1918]">{job.ageKnown !== false && job.maxAge ? `${job.maxAge} Years` : "See notification"}</span>
           </div>
 
           <div className="p-3 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2]">
@@ -161,39 +162,43 @@ export function EligibilityView({ job, stateSlug }: Props) {
           </div>
         )}
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border border-[#EAE2D2] rounded-lg overflow-hidden bg-white">
-            <thead>
-              <tr className="bg-[#FAF7EC] border-b border-[#EAE2D2] font-mono text-[11px] text-[#68635B] uppercase">
-                <th className="py-2.5 px-4 font-bold text-[#1E3799]">Social Category / Class</th>
-                <th className="py-2.5 px-4 font-bold text-center">Permissible Age Relaxation</th>
-                <th className="py-2.5 px-4 font-bold text-center">Effective Upper Age Limit</th>
-                <th className="py-2.5 px-4 font-semibold">Statutory Rules & Exemption Note</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#F2ECE1]">
-              {categoryMatrix.map((item, idx) => (
-                <tr key={idx} className="hover:bg-[#FCFAF4] transition-colors">
-                  <td className="py-3 px-4 font-bold text-[#1A1918]">
-                    <span>{item.category}</span>
-                    <span className="font-mono text-[10px] text-[#68635B] block font-normal">
-                      Code: {item.code}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-center font-mono font-bold text-[#209948]">
-                    {item.ageRelaxation}
-                  </td>
-                  <td className="py-3 px-4 text-center font-mono font-bold text-[#1E3799]">
-                    {item.maxEligibleAge}
-                  </td>
-                  <td className="py-3 px-4 text-[#68635B]">
-                    {item.exemptionNote || "Standard verification requirements apply"}
-                  </td>
+        {categoryMatrix.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border border-[#EAE2D2] rounded-lg overflow-hidden bg-white">
+              <thead>
+                <tr className="bg-[#FAF7EC] border-b border-[#EAE2D2] font-mono text-[11px] text-[#68635B] uppercase">
+                  <th className="py-2.5 px-4 font-bold text-[#1E3799]">Social Category / Class</th>
+                  <th className="py-2.5 px-4 font-bold text-center">Permissible Age Relaxation</th>
+                  <th className="py-2.5 px-4 font-bold text-center">Effective Upper Age Limit</th>
+                  <th className="py-2.5 px-4 font-semibold">Statutory Rules & Exemption Note</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-[#F2ECE1]">
+                {categoryMatrix.map((item, idx) => (
+                  <tr key={idx} className="hover:bg-[#FCFAF4] transition-colors">
+                    <td className="py-3 px-4 font-bold text-[#1A1918]">
+                      <span>{item.category}</span>
+                      <span className="font-mono text-[10px] text-[#68635B] block font-normal">
+                        Code: {item.code}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center font-mono font-bold text-[#209948]">
+                      {item.ageRelaxation}
+                    </td>
+                    <td className="py-3 px-4 text-center font-mono font-bold text-[#1E3799]">
+                      {item.maxEligibleAge}
+                    </td>
+                    <td className="py-3 px-4 text-[#68635B]">
+                      {item.exemptionNote || "Standard verification requirements apply"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-xs text-[#524E48]">Category-wise fees and age relaxations: see the official notification.</p>
+        )}
 
         {/* Special Quotas Badges */}
         {stateRules.specialQuotas.length > 0 && (
@@ -255,7 +260,7 @@ export function EligibilityView({ job, stateSlug }: Props) {
 
       {/* Pre-Configured Interactive Eligibility Calculator */}
       <div>
-        <EligibilityCalculator defaultJobId={job.id} />
+        <EligibilityCalculator defaultJobId={job.id} jobs={calculatorJobs} />
       </div>
 
       {/* Aspirants Q&A FAQ Accordion */}

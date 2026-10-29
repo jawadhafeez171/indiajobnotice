@@ -8,7 +8,9 @@ import { JobCard } from "@/components/jobs/JobCard";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { STATES_REGISTRY, getStateBySlug, getStateBadgeColor } from "@/config/states";
-import { getJobsByState, SAMPLE_JOBS } from "@/data/jobs";
+import { getJobsByState, getListingJobs } from "@/data/jobs";
+import { getAllJobs } from "@/lib/jobs-store";
+
 import { 
   Building2, 
   MapPin, 
@@ -69,8 +71,9 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
   }
 
   // Get state specific circulars + national central drives valid in this state
-  const stateJobs = getJobsByState(state.slug);
-  const centralJobs = SAMPLE_JOBS.filter((j) => j.isCentral);
+  const jobs = getListingJobs(await getAllJobs());
+  const stateJobs = getJobsByState(jobs, state.slug, false);
+  const centralJobs = jobs.filter((j) => j.isCentral);
   const allAvailableJobs = [...stateJobs, ...centralJobs];
   const badgeStyle = getStateBadgeColor(state.code);
 
