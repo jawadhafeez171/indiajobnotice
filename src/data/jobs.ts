@@ -97,9 +97,16 @@ export function computeJobStatus(
     examDate?: string;
     resultDate?: string;
     inProgress?: boolean;
+    stages?: JobStage[];
   },
   referenceDateStr: string = todayIST()
 ): JobStatus {
+  // Applications closed and the official documents show where it stands: an admit card or schedule
+  // with the exam still ahead, or a result in the last 45 days
+  if (!(job.applicationEndDate && job.applicationEndDate >= referenceDateStr)) {
+    const fromStages = stageStatus(job.stages || [], referenceDateStr);
+    if (fromStages) return fromStages;
+  }
   // A recruitment under way has no open application, whatever dates it carries
   if (job.inProgress) return "APPLICATIONS_CLOSED";
   // If result is officially declared, preserve RESULT_OUT
@@ -142,6 +149,18 @@ export function getEffectiveJobStatus(job: JobNotification): JobStatus {
 }
 
 /** Today's date in India (YYYY-MM-DD): application windows close by Indian dates. */
+/** ADMIT_CARD_OUT while an announced exam is ahead, RESULT_OUT for 45 days after a result. */
+export function stageStatus(stages: JobStage[], today: string): JobStatus | null {
+  if (stages.some((s) => (s.kind === "admit_card" || s.kind === "schedule") && s.examDates?.some((d) => d >= today))) {
+    return "ADMIT_CARD_OUT";
+  }
+  const cutoff = new Date(Date.parse(today) - 45 * 86400 * 1000).toISOString().slice(0, 10);
+  if (stages.some((s) => (s.kind === "result" || s.kind === "final_result") && s.date && s.date >= cutoff && s.date <= today)) {
+    return "RESULT_OUT";
+  }
+  return null;
+}
+
 export type StageKind = "schedule" | "admit_card" | "answer_key" | "result" | "final_result";
 
 export interface JobStage {
@@ -266,7 +285,11 @@ export function getActiveOpportunities(
 /** Jobs for listing pages: open ones plus those closed in the last 45 days (older pages stay reachable by URL). */
 export function getListingJobs(jobs: JobNotification[]): JobNotification[] {
   const cutoff = new Date(Date.now() - 45 * 86400 * 1000).toISOString().slice(0, 10);
-  return jobs.filter((j) => !j.inProgress && (!j.applicationEndDate || j.applicationEndDate >= cutoff));
+  // recruitments under way join the main list while an admit card or a recent result is out
+  return jobs.filter((j) =>
+    j.inProgress
+      ? j.status === "ADMIT_CARD_OUT" || j.status === "RESULT_OUT"
+      : !j.applicationEndDate || j.applicationEndDate >= cutoff);
 }
 
 /** Recruitments with exams or results under way, latest document first. One whose final result is

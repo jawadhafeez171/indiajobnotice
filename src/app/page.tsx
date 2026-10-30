@@ -191,7 +191,7 @@ export default async function HomePage() {
                 </h3>
               </div>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EEF2FA] text-[#1E3799] font-bold border border-[#CCD8F0]">
-                CBT & Written
+                Exam ahead
               </span>
             </div>
 
