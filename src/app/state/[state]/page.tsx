@@ -10,7 +10,8 @@ import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { DistrictSelectorBar } from "@/components/common/DistrictSelectorBar";
 import { getStateBySlug, STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
-import { getJobsByState, getListingJobs, getCalculatorJobs } from "@/data/jobs";
+import { getJobsByState, getListingJobs, getCalculatorJobs, getExamsInProgress } from "@/data/jobs";
+import { ExamsInProgressSection } from "@/components/jobs/ExamsInProgressSection";
 import { getAllJobs } from "@/lib/jobs-store";
 
 import { getCentralPortalUrl } from "@/lib/subdomains";
@@ -138,6 +139,8 @@ export default async function StateHomePage({ params }: PageProps) {
 
         {/* Active Notifications Section with Interactive View Switcher */}
         <MajorRecruitmentsSection jobs={jobs} currentStateSlug={state.slug} />
+
+        <ExamsInProgressSection jobs={getJobsByState(getExamsInProgress(allJobs), state.slug, false)} limit={20} />
 
         {/* Reserved Ad Space (0.00 CLS Protected) */}
         <ReservedAdSlot slotType="leaderboard" slotId={`state-${state.slug}-leaderboard`} />

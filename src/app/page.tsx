@@ -9,7 +9,8 @@ import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSec
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { HeroCounterDeck } from "@/components/home/HeroCounterDeck";
-import { getJobCanonicalPath, getListingJobs, getCalculatorJobs } from "@/data/jobs";
+import { getJobCanonicalPath, getListingJobs, getCalculatorJobs, getExamsInProgress } from "@/data/jobs";
+import { ExamsInProgressSection } from "@/components/jobs/ExamsInProgressSection";
 import { getAllJobs } from "@/lib/jobs-store";
 
 import { STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
@@ -136,6 +137,9 @@ export default async function HomePage() {
 
         {/* Major Open Recruitments with Interactive 4-Category Switcher & Views */}
         <MajorRecruitmentsSection jobs={listedJobs} currentStateSlug="central" />
+
+        {/* Applications closed, exams or results under way */}
+        <ExamsInProgressSection jobs={getExamsInProgress(allJobs)} />
 
         {/* Reserved Ad Space (0.00 CLS Protected) */}
         <ReservedAdSlot slotType="leaderboard" slotId="home-leaderboard" />

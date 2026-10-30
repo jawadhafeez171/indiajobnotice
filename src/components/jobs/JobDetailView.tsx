@@ -45,6 +45,7 @@ import {
 } from "@/lib/exam-details";
 import { ExecutiveNotificationDigest } from "./ExecutiveNotificationDigest";
 import { ApplicationDeadlineSection } from "./ApplicationDeadlineSection";
+import { StageDocumentsPanel } from "./StageDocumentsPanel";
 import { ExaminationLifecycleBar } from "./ExaminationLifecycleBar";
 import { ClosedRecruitmentAlert } from "./ClosedRecruitmentAlert";
 import { JobTaxonomyBar } from "./JobTaxonomyBar";
@@ -236,7 +237,9 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
         <div className="mt-6 pt-6 border-t border-[#F2ECE1] flex flex-wrap items-center gap-3 print:hidden">
           {isClosed ? (
             <div className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-[#FAF7EF] border border-[#DDD5C7] text-[#68635B] font-bold text-sm">
-              <span>🚫 Applications Closed on {formatDate(job.applicationEndDate)}</span>
+              <span>
+                🚫 Applications closed{job.applicationEndDate ? ` on ${formatDate(job.applicationEndDate)}` : ""}
+              </span>
             </div>
           ) : (
             <a
@@ -309,16 +312,24 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
         <JobLifecycleTracker job={job} />
       </div>
 
-      {/* Closed Recruitment Notice & Active Opportunities Banner */}
-      {isClosed && (
+      {/* Admit cards, answer keys and results found on the official site */}
+      <StageDocumentsPanel job={job} />
+
+      {/* Closed Recruitment Notice & Active Opportunities Banner (not for exams under way) */}
+      {isClosed && !job.inProgress && (
         <ClosedRecruitmentAlert job={job} stateSlug={stateSlug} activeJobs={activeJobs} />
       )}
 
       {/* Executive Candidate Notification Digest (Primary Facts Near Top) */}
-      <ExecutiveNotificationDigest job={job} />
+      {/* Built from the documents alone (advertisement no longer listed): no notice facts to show */}
+      {!(job.inProgress && !job.posts?.length) && (
+        <>
+          <ExecutiveNotificationDigest job={job} />
 
-      {/* Application Deadline & Critical Timeline Section (Search Intent: [Recruitment] last date to apply) */}
-      <ApplicationDeadlineSection job={job} stateSlug={stateSlug} />
+          {/* Application Deadline & Critical Timeline Section (Search Intent: [Recruitment] last date to apply) */}
+          <ApplicationDeadlineSection job={job} stateSlug={stateSlug} />
+        </>
+      )}
 
       {/* Reserved Ad Space in Job Details (CLS Protected) */}
       <ReservedAdSlot slotType="leaderboard" slotId={`job-detail-${job.slug}`} className="print:hidden" />

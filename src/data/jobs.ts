@@ -71,8 +71,10 @@ export interface JobNotification {
   /** Later documents of this recruitment found on the official site (admit cards, answer keys,
    * results, exam schedules), oldest first; set by the notice agent. */
   stages?: JobStage[];
-  /** One line on where the recruitment stands, e.g. "Prelims held 14 Sep 2026 · result awaited". */
+  /** One line on where the recruitment stands, e.g. "Answer key out · result awaited (14 Sep 2026)". */
   currentStage?: string;
+  /** Applications closed, exams or results under way: listed under "Exams in progress". */
+  inProgress?: boolean;
 }
 
 export interface DistrictVacancyBreakout {
@@ -94,9 +96,12 @@ export function computeJobStatus(
     admitCardDate?: string;
     examDate?: string;
     resultDate?: string;
+    inProgress?: boolean;
   },
   referenceDateStr: string = todayIST()
 ): JobStatus {
+  // A recruitment under way has no open application, whatever dates it carries
+  if (job.inProgress) return "APPLICATIONS_CLOSED";
   // If result is officially declared, preserve RESULT_OUT
   if (job.status === "RESULT_OUT") return "RESULT_OUT";
   // If admit card / exam city slip is out, preserve ADMIT_CARD_OUT
@@ -226,7 +231,24 @@ export function getActiveOpportunities(
 /** Jobs for listing pages: open ones plus those closed in the last 45 days (older pages stay reachable by URL). */
 export function getListingJobs(jobs: JobNotification[]): JobNotification[] {
   const cutoff = new Date(Date.now() - 45 * 86400 * 1000).toISOString().slice(0, 10);
-  return jobs.filter((j) => !j.applicationEndDate || j.applicationEndDate >= cutoff);
+  return jobs.filter((j) => !j.inProgress && (!j.applicationEndDate || j.applicationEndDate >= cutoff));
+}
+
+/** Recruitments with exams or results under way, latest document first. One whose final result is
+ * out stays 45 days, then drops off. */
+export function getExamsInProgress(jobs: JobNotification[]): JobNotification[] {
+  const cutoff = new Date(Date.now() - 45 * 86400 * 1000).toISOString().slice(0, 10);
+  const lastDate = (j: JobNotification) => {
+    const s = j.stages || [];
+    return s.length ? s[s.length - 1].date || "" : "";
+  };
+  return jobs
+    .filter((j) => j.inProgress)
+    .filter((j) => {
+      const fin = (j.stages || []).filter((s) => s.kind === "final_result");
+      return !fin.length || (fin[fin.length - 1].date || "9999") >= cutoff;
+    })
+    .sort((a, b) => lastDate(b).localeCompare(lastDate(a)));
 }
 
 /** Open jobs with a stated age limit: the ones the eligibility calculator can check. */
