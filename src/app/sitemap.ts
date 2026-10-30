@@ -11,6 +11,9 @@ import {
 } from "@/data/permanent-categories";
 import { VERIFIED_STATE_QUAL_HUBS } from "@/data/state-qualification-hubs";
 
+// Route handlers are cached at build time; refresh hourly so newly published jobs are listed.
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const jobs = await getAllJobs();
   const baseUrl = "https://www.indiajobnotice.com";
