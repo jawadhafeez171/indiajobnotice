@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Contact & Grievance Redressal | IndiaJobNotice.com",
+  title: "Contact & Grievance Redressal",
   description: "Official contact details for IndiaJobNotice.com. Reach our editorial desk, grievance officer, report notification errata, or connect with our verified career alert channels.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/contact",

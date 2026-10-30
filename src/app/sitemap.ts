@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { STATES_REGISTRY } from "@/config/states";
 import { DISTRICTS_REGISTRY } from "@/config/districts";
-import { getJobCanonicalPath } from "@/data/jobs";
+import { getJobCanonicalPath, getStages, StageKind } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
 
 import { 
@@ -164,24 +164,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: "weekly" as const,
         priority: 0.78,
       },
-      {
-        url: `${base}/admit-card`,
-        lastModified: now,
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      },
-      {
-        url: `${base}/answer-key`,
-        lastModified: now,
-        changeFrequency: "weekly" as const,
-        priority: 0.65,
-      },
-      {
-        url: `${base}/result`,
-        lastModified: now,
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      },
+      // stage pages only once the official document is out (until then they are noindex)
+      ...(["admit-card", "answer-key", "result"] as const)
+        .filter((path) => getStages(job, path.replace("-", "_") as StageKind).length > 0)
+        .map((path) => ({ url: `${base}/${path}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 })),
     ];
   });
 

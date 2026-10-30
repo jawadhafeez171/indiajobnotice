@@ -7,7 +7,7 @@ import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { AlertTriangle, FileText, Scale, CheckCircle2, ShieldAlert, Mail } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Terms of Service & Gazette Disclaimer | IndiaJobNotice.com",
+  title: "Terms of Service & Gazette Disclaimer",
   description: "Official Terms of Service for IndiaJobNotice.com. Non-affiliation disclaimer with government bodies, educational fair use, non-liability, and acceptable user conduct.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/terms",

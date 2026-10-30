@@ -7,7 +7,7 @@ import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
 
 export const metadata: Metadata = {
-  title: "Bank Jobs 2026 - SBI, IBPS PO, Clerk & RBI Grade B Recruitment | IndiaJobNotice.com",
+  title: "Bank Jobs 2026 - SBI, IBPS PO, Clerk & RBI Grade B Recruitment",
   description: "Apply for Bank Jobs 2026. SBI PO, SBI Clerk, IBPS PO, IBPS Clerk, RRB Office Assistant, and RBI Grade B notifications with vacancy tables, syllabus, and exam dates.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/banking-jobs",

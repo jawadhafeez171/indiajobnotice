@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About Us | IndiaJobNotice.com - Independent Public Employment Gazette",
+  title: "About Us - Independent Public Employment Gazette",
   description: "Learn about IndiaJobNotice.com, our mission to democratize public career intelligence for competitive exam aspirants across India, our editorial standards, and our verification methodology.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/about",

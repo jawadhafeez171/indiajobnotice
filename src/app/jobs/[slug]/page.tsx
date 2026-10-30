@@ -21,12 +21,12 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
-  if (!job) return { title: "Job Notification Not Found | IndiaJobNotice.com" };
+  if (!job) return { title: "Job Notification Not Found" };
 
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}`;
 
   return {
-    title: `${job.shortTitle} 2026 Notification PDF: ${job.totalVacancies.toLocaleString("en-IN")} Vacancies, Eligibility, Last Date & Apply Link | IndiaJobNotice.com`,
+    title: `${job.shortTitle} 2026 Notification PDF: ${job.totalVacancies.toLocaleString("en-IN")} Vacancies, Eligibility, Last Date & Apply Link`,
     description: `Official ${job.organization} ${job.shortTitle} recruitment notification. ${job.totalVacancies.toLocaleString("en-IN")} vacancies announced. Check official PDF circular, crucial cut-off date, age limit, syllabus, and online application portal.`,
     alternates: {
       canonical: canonicalUrl,
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${job.shortTitle} 2026 Notification PDF | IndiaJobNotice.com`,
+      title: `${job.shortTitle} 2026 Notification PDF`,
       description: `Official ${job.organization} notification. Vacancies: ${job.totalVacancies.toLocaleString("en-IN")}.`,
     },
   };

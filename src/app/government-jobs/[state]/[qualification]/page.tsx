@@ -39,7 +39,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { state: stateSlug, qualification: qualSlug } = await params;
   const hub = getStateQualHub(stateSlug, qualSlug);
-  if (!hub) return { title: "Category Not Found | IndiaJobNotice.com" };
+  if (!hub) return { title: "Category Not Found" };
 
   const canonicalUrl = `https://www.indiajobnotice.com/government-jobs/${hub.stateSlug}/${hub.qualSlug}`;
 

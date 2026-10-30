@@ -11,7 +11,7 @@ import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 
 export const metadata: Metadata = {
-  title: "Qualification-Wise Government Job Vacancy Tracker 2026 | IndiaJobNotice.com",
+  title: "Qualification-Wise Government Job Vacancy Tracker 2026",
   description: "Live cross-sector tracker of government job vacancies by qualification (10th Pass, 12th Pass, Diploma, Graduate Degree, B.Tech Engineering). Campus bulletin printout for college placement cells and libraries.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/vacancies",

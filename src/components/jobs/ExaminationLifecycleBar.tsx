@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { JobNotification, getJobCanonicalPath } from "@/data/jobs";
+import { JobNotification, getJobCanonicalPath, getStages } from "@/data/jobs";
 import { FileText, Ticket, KeyRound, Award, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +12,15 @@ interface Props {
 
 export function ExaminationLifecycleBar({ job, activeStage }: Props) {
   const basePrefix = getJobCanonicalPath(job);
+  // Released only when the agent found the official document; otherwise say so plainly.
+  const tile = (kind: "admit_card" | "answer_key" | "result") => {
+    const docs = getStages(job, kind);
+    const last = docs[docs.length - 1];
+    return docs.length
+      ? { subLabel: last.date ? `Out ${last.date.split("-").reverse().join("/")}` : "Released",
+          badge: "Out", badgeColor: "bg-[#EDF7F0] text-[#209948]" }
+      : { subLabel: "Not released yet", badge: "Awaited", badgeColor: "bg-[#FAF7EF] text-[#68635B]" };
+  };
 
   const stages = [
     {
@@ -26,7 +35,7 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
     {
       id: "eligibility",
       label: "Eligibility & Age",
-      subLabel: "Cut-off & Relaxations",
+      subLabel: "Age & qualifications",
       href: `${basePrefix}/eligibility`,
       icon: GraduationCap,
       badge: "Rule Guide",
@@ -35,37 +44,30 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
     {
       id: "admit-card",
       label: "Admit Card",
-      subLabel: job.admitCardDate || "Hall Ticket & City",
       href: `${basePrefix}/admit-card`,
       icon: Ticket,
-      badge: job.status === "ADMIT_CARD_OUT" ? "Out Now" : "Portal Link",
-      badgeColor: job.status === "ADMIT_CARD_OUT" ? "bg-[#EDF7F0] text-[#209948]" : "bg-[#FAF7EF] text-[#68635B]",
+      ...tile("admit_card"),
     },
     {
       id: "answer-key",
       label: "Answer Key",
-      subLabel: "Response & Keys",
       href: `${basePrefix}/answer-key`,
       icon: KeyRound,
-      badge: "Objections",
-      badgeColor: "bg-[#FAF7EF] text-[#68635B]",
+      ...tile("answer_key"),
     },
     {
       id: "result",
-      label: "Result & Cut-Off",
-      subLabel: job.resultDate || "Merit List PDF",
+      label: "Result",
       href: `${basePrefix}/result`,
       icon: Award,
-      badge: job.status === "RESULT_OUT" ? "Declared" : "Post-Exam",
-      badgeColor: job.status === "RESULT_OUT" ? "bg-[#EDF7F0] text-[#209948]" : "bg-[#FAF7EF] text-[#68635B]",
+      ...tile("result"),
     },
   ];
 
   return (
     <div className="bg-white rounded-xl border border-[#EAE2D2] p-2.5 shadow-2xs print:hidden">
       <div className="flex items-center justify-between mb-2 px-2 text-[10px] font-mono uppercase tracking-wider text-[#68635B] font-bold">
-        <span>Recruitment Cycle Lifecycle Navigation</span>
-        <span className="hidden sm:inline">Direct Intent Hubs</span>
+        <span>This recruitment</span>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
         {stages.map((st) => {

@@ -52,14 +52,14 @@ export async function generateMetadata({ params }: PageProps) {
   const district = getDistrictBySlug(stateSlug, districtSlug);
 
   if (!state || !district) {
-    return { title: "District Not Found | IndiaJobNotice.com" };
+    return { title: "District Not Found" };
   }
 
   const canonicalUrl = `https://www.indiajobnotice.com/state/${state.slug}/district/${district.slug}`;
   const nativeSuffix = district.nativeName ? ` (${district.nativeName})` : "";
 
   return {
-    title: `${district.name} Govt Job Notifications 2026, District Court & Collectorate Gazettes | IndiaJobNotice.com`,
+    title: `${district.name} Govt Job Notifications 2026, District Court & Collectorate Gazettes`,
     description: `Official public recruitment gazettes for ${district.name}${nativeSuffix}, ${state.name}. Verified circulars for District & Sessions Court, CMO Health Society (NHM), Collectorate, and state commission posts with ${district.name} posting.`,
     alternates: {
       canonical: canonicalUrl,
@@ -74,7 +74,7 @@ export async function generateMetadata({ params }: PageProps) {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${district.name} Govt Job Notifications | IndiaJobNotice.com`,
+      title: `${district.name} Govt Job Notifications`,
       description: `Official recruitment gazettes for ${district.name}, ${state.name}. District Court, CMO & Collectorate posts.`,
     },
   };

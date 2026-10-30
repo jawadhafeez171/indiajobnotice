@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Free Resources for College Placement Cells, Libraries & Coaching Centres | IndiaJobNotice.com",
+  title: "Free Resources for College Placement Cells, Libraries & Coaching Centres",
   description: "Free, embeddable, and printable public-interest recruitment resources: Deadline Calendar, Qualification Vacancy Tracker, Cutoff Date Age Calculator, and State Commission Directory for campus notice boards.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/for-colleges-libraries",

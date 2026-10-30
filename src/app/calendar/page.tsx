@@ -9,7 +9,7 @@ import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 
 export const metadata = {
-  title: "Government Exam Schedule & Calendar 2026-2027 | IndiaJobNotice.com",
+  title: "Government Exam Schedule & Calendar 2026-2027",
   description: "Official timeline and schedule of upcoming Central and State government recruitment exam dates, admit card releases, and application deadlines.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/calendar",

@@ -68,6 +68,11 @@ export interface JobNotification {
   isWalkIn?: boolean;
   updates?: { date: string; text: string; url: string }[];
   posts?: { postName: string; vacancies: number; qualification: string; ageLimit: string; pay: string }[];
+  /** Later documents of this recruitment found on the official site (admit cards, answer keys,
+   * results, exam schedules), oldest first; set by the notice agent. */
+  stages?: JobStage[];
+  /** One line on where the recruitment stands, e.g. "Prelims held 14 Sep 2026 · result awaited". */
+  currentStage?: string;
 }
 
 export interface DistrictVacancyBreakout {
@@ -132,6 +137,22 @@ export function getEffectiveJobStatus(job: JobNotification): JobStatus {
 }
 
 /** Today's date in India (YYYY-MM-DD): application windows close by Indian dates. */
+export type StageKind = "schedule" | "admit_card" | "answer_key" | "result" | "final_result";
+
+export interface JobStage {
+  kind: StageKind;
+  /** The document's title as the official site lists it. */
+  title: string;
+  /** ISO date of the document or of the event it announces, when known. */
+  date?: string;
+  url: string;
+}
+
+/** Official documents of one kind for this job; a final result counts as a result. */
+export function getStages(job: JobNotification, kind: StageKind): JobStage[] {
+  return (job.stages || []).filter((s) => s.kind === kind || (kind === "result" && s.kind === "final_result"));
+}
+
 export function todayIST(): string {
   return new Date(Date.now() + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
 }

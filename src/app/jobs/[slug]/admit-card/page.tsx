@@ -6,6 +6,7 @@ import { Footer } from "@/components/common/Footer";
 import { AdmitCardView } from "@/components/jobs/AdmitCardView";
 import { getJobBySlug, getJobCanonicalPath } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
+import { stageMetadata } from "@/lib/stage-meta";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -20,25 +21,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
-  if (!job) return { title: "Admit Card Not Found | IndiaJobNotice.com" };
+  if (!job) return { title: "Admit Card Not Found" };
 
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/admit-card`;
-
-  return {
-    title: `${job.shortTitle} Admit Card 2026 - Download Hall Ticket & Exam City Slip | IndiaJobNotice.com`,
-    description: `Download official ${job.shortTitle} admit card, hall ticket and check exam city intimation slip. Direct login link, exam shift timings, and mandatory exam day document checklist.`,
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    openGraph: {
-      title: `${job.shortTitle} Admit Card 2026 Download`,
-      description: `Official admit card & hall ticket link for ${job.organization}. Check exam dates & reporting timings.`,
-      url: canonicalUrl,
-      siteName: "India Job Notice",
-      locale: "en_IN",
-      type: "article",
-    },
-  };
+  return stageMetadata(job, "admit_card", canonicalUrl);
 }
 
 export default async function CentralJobAdmitCardPage({ params }: Props) {

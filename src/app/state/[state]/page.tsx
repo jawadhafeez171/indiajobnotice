@@ -29,12 +29,12 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps) {
   const { state: stateSlug } = await params;
   const state = getStateBySlug(stateSlug);
-  if (!state) return { title: "State Not Found | IndiaJobNotice.com" };
+  if (!state) return { title: "State Not Found" };
 
   const canonicalUrl = `https://www.indiajobnotice.com/state/${state.slug}`;
 
   return {
-    title: `${state.name} Govt Job Notifications 2026, Gazettes & Admit Cards | IndiaJobNotice.com`,
+    title: `${state.name} Govt Job Notifications 2026, Gazettes & Admit Cards`,
     description: `Official public employment gazettes and notifications for ${state.name} (${state.nativeName}). Official commission updates: ${state.majorExams.join(", ")}. Capital: ${state.capital}.`,
     alternates: {
       canonical: canonicalUrl,
@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: PageProps) {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${state.name} Govt Job Notifications | IndiaJobNotice.com`,
+      title: `${state.name} Govt Job Notifications`,
       description: `Official gazette notices for ${state.name}. Commissions: ${state.majorExams.join(", ")}.`,
     },
   };

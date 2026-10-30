@@ -22,12 +22,12 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const hub = getQualificationHubBySlug(slug);
-  if (!hub) return { title: "Qualification Category Not Found | IndiaJobNotice.com" };
+  if (!hub) return { title: "Qualification Category Not Found" };
 
   const canonicalUrl = `https://www.indiajobnotice.com${hub.canonicalPath}`;
 
   return {
-    title: `${hub.title} | IndiaJobNotice.com`,
+    title: `${hub.title}`,
     description: hub.metaDescription,
     alternates: {
       canonical: canonicalUrl,

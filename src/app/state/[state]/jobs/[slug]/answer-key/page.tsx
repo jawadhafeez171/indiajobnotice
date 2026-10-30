@@ -6,7 +6,7 @@ import { Footer } from "@/components/common/Footer";
 import { AnswerKeyView } from "@/components/jobs/AnswerKeyView";
 import { getJobBySlug, getJobCanonicalPath } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
-import { getStateBySlug } from "@/config/states";
+import { stageMetadata } from "@/lib/stage-meta";
 
 interface Props {
   params: Promise<{ state: string; slug: string }>;
@@ -22,27 +22,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
-  const state = getStateBySlug(resolvedParams.state);
-  if (!job) return { title: "Answer Key Not Found | IndiaJobNotice.com" };
+  if (!job) return { title: "Answer Key Not Found" };
 
-  const stateName = state ? state.name : resolvedParams.state.toUpperCase();
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/answer-key`;
-
-  return {
-    title: `${job.shortTitle} Answer Key 2026 - ${stateName} Response Sheet & Objections | IndiaJobNotice.com`,
-    description: `Official ${job.shortTitle} answer key and candidate response sheet for ${stateName}. Direct portal link, objection challenge fee, and marking scheme.`,
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    openGraph: {
-      title: `${job.shortTitle} Answer Key 2026 (${stateName})`,
-      description: `Official provisional answer key link for ${job.organization} in ${stateName}. File objections.`,
-      url: canonicalUrl,
-      siteName: "India Job Notice",
-      locale: "en_IN",
-      type: "article",
-    },
-  };
+  return stageMetadata(job, "answer_key", canonicalUrl);
 }
 
 export default async function StateJobAnswerKeyPage({ params }: Props) {

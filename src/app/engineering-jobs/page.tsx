@@ -7,7 +7,7 @@ import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
 
 export const metadata: Metadata = {
-  title: "Government Engineering Jobs 2026 - B.Tech, B.E. & Diploma Vacancies | IndiaJobNotice.com",
+  title: "Government Engineering Jobs 2026 - B.Tech, B.E. & Diploma Vacancies",
   description: "Explore Government Engineering Jobs in 2026. Railway RRB JE, State PSC Assistant Engineers, PSUs (IOCL, NTPC, BHEL), Defense DRDO & ISRO notifications with branch eligibility and exam patterns.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/engineering-jobs",

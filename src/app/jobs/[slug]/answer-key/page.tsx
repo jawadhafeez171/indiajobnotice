@@ -6,6 +6,7 @@ import { Footer } from "@/components/common/Footer";
 import { AnswerKeyView } from "@/components/jobs/AnswerKeyView";
 import { getJobBySlug, getJobCanonicalPath } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
+import { stageMetadata } from "@/lib/stage-meta";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -20,25 +21,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
-  if (!job) return { title: "Answer Key Not Found | IndiaJobNotice.com" };
+  if (!job) return { title: "Answer Key Not Found" };
 
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/answer-key`;
-
-  return {
-    title: `${job.shortTitle} Answer Key 2026 - Download Response Sheet & File Objections | IndiaJobNotice.com`,
-    description: `Official ${job.shortTitle} provisional answer key and candidate response sheet download. Check official objection submission window, fee per challenge, and question paper PDF.`,
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    openGraph: {
-      title: `${job.shortTitle} Answer Key 2026 Download`,
-      description: `Official provisional answer key & response sheet for ${job.organization}. Check challenge dates.`,
-      url: canonicalUrl,
-      siteName: "India Job Notice",
-      locale: "en_IN",
-      type: "article",
-    },
-  };
+  return stageMetadata(job, "answer_key", canonicalUrl);
 }
 
 export default async function CentralJobAnswerKeyPage({ params }: Props) {

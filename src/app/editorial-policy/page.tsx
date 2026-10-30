@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Editorial & Verification Policy | IndiaJobNotice.com",
+  title: "Editorial & Verification Policy",
   description: "Our comprehensive 5-stage fact-checking methodology, gazette verification standards, crucial date reckoning algorithms, and errata correction protocol.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/editorial-policy",

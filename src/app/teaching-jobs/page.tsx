@@ -7,7 +7,7 @@ import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
 
 export const metadata: Metadata = {
-  title: "Government Teaching Jobs 2026 - CTET, KVS, DSSSB & State TET Vacancies | IndiaJobNotice.com",
+  title: "Government Teaching Jobs 2026 - CTET, KVS, DSSSB & State TET Vacancies",
   description: "Find Government Teaching Jobs in 2026. Central Teacher Eligibility Test (CTET), Kendriya Vidyalaya (KVS), Navodaya (NVS), DSSSB, and State PSC Lecturer circulars.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/teaching-jobs",

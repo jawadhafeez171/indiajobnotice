@@ -8,7 +8,7 @@ import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 
 export const metadata: Metadata = {
-  title: "All-India State Public Service Commissions & Police Boards Directory 2026 | IndiaJobNotice.com",
+  title: "All-India State Public Service Commissions & Police Boards Directory 2026",
   description: "Verified master directory of official State Public Service Commissions (KPSC, UPPSC, BPSC, MPSC, TNPSC, GPSC), Staff Selection Boards, and State Police Recruitment portals across India.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/directory",

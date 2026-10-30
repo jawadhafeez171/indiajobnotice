@@ -6,7 +6,7 @@ import { Footer } from "@/components/common/Footer";
 import { ResultView } from "@/components/jobs/ResultView";
 import { getJobBySlug, getJobCanonicalPath } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
-import { getStateBySlug } from "@/config/states";
+import { stageMetadata } from "@/lib/stage-meta";
 
 interface Props {
   params: Promise<{ state: string; slug: string }>;
@@ -22,27 +22,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
-  const state = getStateBySlug(resolvedParams.state);
-  if (!job) return { title: "Result Not Found | IndiaJobNotice.com" };
+  if (!job) return { title: "Result Not Found" };
 
-  const stateName = state ? state.name : resolvedParams.state.toUpperCase();
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/result`;
-
-  return {
-    title: `${job.shortTitle} Result 2026 - ${stateName} Merit List PDF & Cut-Off | IndiaJobNotice.com`,
-    description: `Official ${job.shortTitle} exam result declared for ${stateName}. Download selected candidates merit list PDF, check category cut-off marks, and document verification directives.`,
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    openGraph: {
-      title: `${job.shortTitle} Result 2026 Declared (${stateName})`,
-      description: `Official merit list & category cut-offs for ${job.organization} in ${stateName}. Download selection list.`,
-      url: canonicalUrl,
-      siteName: "India Job Notice",
-      locale: "en_IN",
-      type: "article",
-    },
-  };
+  return stageMetadata(job, "result", canonicalUrl);
 }
 
 export default async function StateJobResultPage({ params }: Props) {

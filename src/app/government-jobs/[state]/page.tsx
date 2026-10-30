@@ -36,12 +36,12 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { state: stateSlug } = await params;
   const state = getStateBySlug(stateSlug);
-  if (!state) return { title: "State Government Jobs Not Found | IndiaJobNotice.com" };
+  if (!state) return { title: "State Government Jobs Not Found" };
 
   const canonicalUrl = `https://www.indiajobnotice.com/government-jobs/${state.slug}`;
 
   return {
-    title: `Government Jobs in ${state.name} 2026 - Latest Notifications & Vacancies | IndiaJobNotice.com`,
+    title: `Government Jobs in ${state.name} 2026 - Latest Notifications & Vacancies`,
     description: `Explore all Government Jobs in ${state.name} (${state.nativeName}) for 2026. Official public service commission notifications (${state.majorExams.join(", ")}), eligibility rules, age limit, and direct application links.`,
     alternates: {
       canonical: canonicalUrl,
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `Government Jobs in ${state.name} 2026 | IndiaJobNotice.com`,
+      title: `Government Jobs in ${state.name} 2026`,
       description: `Official notifications for ${state.name} (${state.majorExams.join(", ")}).`,
     },
   };

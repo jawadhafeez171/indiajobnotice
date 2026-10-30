@@ -7,7 +7,7 @@ import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
 
 export const metadata: Metadata = {
-  title: "Railway Recruitment 2026 - RRB NTPC, Group D, ALP & JE Notifications | IndiaJobNotice.com",
+  title: "Railway Recruitment 2026 - RRB NTPC, Group D, ALP & JE Notifications",
   description: "Check all Railway RRB jobs in 2026. RRB NTPC (11,558 posts), Group D (1,03,769 posts), Assistant Loco Pilot (ALP 18,799 posts), and Junior Engineer with syllabus and application dates.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/railway-jobs",

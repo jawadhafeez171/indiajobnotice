@@ -22,13 +22,13 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
-  if (!job) return { title: "Eligibility Details Not Found | IndiaJobNotice.com" };
+  if (!job) return { title: "Eligibility Details Not Found" };
 
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/eligibility`;
   const cutoffDate = getJobAgeCutoffDate(job);
 
   return {
-    title: `${job.shortTitle} 2026 Age Limit, Cut-off Date & Qualification | IndiaJobNotice.com`,
+    title: `${job.shortTitle} 2026 Age Limit, Cut-off Date & Qualification`,
     description: `Complete eligibility criteria for ${job.shortTitle}. Age limit: ${formatAgeRange(job, "years")} on crucial cut-off date (${formatDate(cutoffDate)}). Category relaxation (OBC +3y, SC/ST +5y) and educational degree requirements.`,
     alternates: {
       canonical: canonicalUrl,

@@ -25,14 +25,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
   const state = getStateBySlug(resolvedParams.state);
-  if (!job) return { title: "Eligibility Details Not Found | IndiaJobNotice.com" };
+  if (!job) return { title: "Eligibility Details Not Found" };
 
   const stateName = state ? state.name : resolvedParams.state.toUpperCase();
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/eligibility`;
   const cutoffDate = getJobAgeCutoffDate(job);
 
   return {
-    title: `${job.shortTitle} 2026 (${stateName}) Age Limit, Cut-off Date & Qualification | IndiaJobNotice.com`,
+    title: `${job.shortTitle} 2026 (${stateName}) Age Limit, Cut-off Date & Qualification`,
     description: `Official statutory eligibility criteria for ${job.shortTitle} (${stateName}). Age limit: ${formatAgeRange(job, "years")} on cut-off date (${formatDate(cutoffDate)}). Category relaxation (OBC, SC/ST, domicile) and educational degree requirements.`,
     alternates: {
       canonical: canonicalUrl,

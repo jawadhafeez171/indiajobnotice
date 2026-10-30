@@ -7,7 +7,7 @@ import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
 
 export const metadata: Metadata = {
-  title: "Police & Defense Govt Jobs 2026 - Army, Navy, Air Force & Police Constables | IndiaJobNotice.com",
+  title: "Police & Defense Govt Jobs 2026 - Army, Navy, Air Force & Police Constables",
   description: "All Police and Defense jobs 2026. SSC GD Constable, NDA, CDS, CAPF AC, UP Police Constable, and Indian Coast Guard notifications with PET/PST criteria and physical standards.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/police-defense-jobs",

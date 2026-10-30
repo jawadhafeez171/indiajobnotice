@@ -7,7 +7,7 @@ import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { ShieldCheck, Lock, Eye, FileText, ExternalLink, Mail } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | IndiaJobNotice.com",
+  title: "Privacy Policy",
   description: "Official privacy policy for IndiaJobNotice.com. Explains data protection practices, log files, cookie policies, Google AdSense & DoubleClick DART cookies, and user rights.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/privacy-policy",
