@@ -30,6 +30,11 @@ export function StageDocumentsPanel({ job }: { job: JobNotification }) {
                 {d.date ? ` · ${formatDate(d.date)}` : ""}
               </span>
               <p className="text-sm font-bold text-[#1A1918] break-words">{d.title}</p>
+              {d.examDates && d.examDates.length > 0 && (
+                <p className="text-xs font-bold text-[#E96B15] mt-0.5">
+                  Exam / test: {d.examDates.map((x) => formatDate(x)).join(", ")}
+                </p>
+              )}
             </div>
             <a
               href={d.url}

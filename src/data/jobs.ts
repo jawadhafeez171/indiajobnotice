@@ -151,6 +151,41 @@ export interface JobStage {
   /** ISO date of the document or of the event it announces, when known. */
   date?: string;
   url: string;
+  /** Exam / interview / test dates the document announces (ISO), when it was read. */
+  examDates?: string[];
+}
+
+export interface UpcomingExam {
+  job: JobNotification;
+  stage: JobStage;
+  /** The next exam date on or after today. */
+  nextDate: string;
+}
+
+/** Admit cards and schedules out with an exam still ahead, soonest first. */
+export function getUpcomingExams(jobs: JobNotification[], today = todayIST()): UpcomingExam[] {
+  const out: UpcomingExam[] = [];
+  for (const job of jobs) {
+    const ahead = (job.stages || [])
+      .filter((s) => (s.kind === "admit_card" || s.kind === "schedule") && s.examDates?.some((d) => d >= today))
+      .map((s) => ({ stage: s, nextDate: s.examDates!.filter((d) => d >= today).sort()[0] }))
+      .sort((a, b) => a.nextDate.localeCompare(b.nextDate));
+    if (ahead.length) out.push({ job, ...ahead[0] });
+  }
+  return out.sort((a, b) => a.nextDate.localeCompare(b.nextDate));
+}
+
+/** Results (any stage) dated within the last `days` days, newest first. */
+export function getLatestResults(jobs: JobNotification[], days = 45, today = todayIST()): { job: JobNotification; stage: JobStage }[] {
+  const cutoff = new Date(Date.parse(today) - days * 86400 * 1000).toISOString().slice(0, 10);
+  const out: { job: JobNotification; stage: JobStage }[] = [];
+  for (const job of jobs) {
+    const recent = (job.stages || [])
+      .filter((s) => (s.kind === "result" || s.kind === "final_result") && s.date && s.date >= cutoff && s.date <= today)
+      .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    if (recent.length) out.push({ job, stage: recent[0] });
+  }
+  return out.sort((a, b) => (b.stage.date || "").localeCompare(a.stage.date || ""));
 }
 
 /** Official documents of one kind for this job; a final result counts as a result. */

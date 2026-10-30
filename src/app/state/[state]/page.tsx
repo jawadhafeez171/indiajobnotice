@@ -12,6 +12,7 @@ import { DistrictSelectorBar } from "@/components/common/DistrictSelectorBar";
 import { getStateBySlug, STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
 import { getJobsByState, getListingJobs, getCalculatorJobs, getExamsInProgress } from "@/data/jobs";
 import { ExamsInProgressSection } from "@/components/jobs/ExamsInProgressSection";
+import { ExamCalendarSections } from "@/components/jobs/ExamCalendarSections";
 import { getAllJobs } from "@/lib/jobs-store";
 
 import { getCentralPortalUrl } from "@/lib/subdomains";
@@ -139,6 +140,8 @@ export default async function StateHomePage({ params }: PageProps) {
 
         {/* Active Notifications Section with Interactive View Switcher */}
         <MajorRecruitmentsSection jobs={jobs} currentStateSlug={state.slug} />
+
+        <ExamCalendarSections jobs={getJobsByState(allJobs, state.slug, false)} limit={15} />
 
         <ExamsInProgressSection jobs={getJobsByState(getExamsInProgress(allJobs), state.slug, false)} limit={20} />
 
