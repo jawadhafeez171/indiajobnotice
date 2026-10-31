@@ -80,7 +80,7 @@ export default async function HomePage() {
               </h1>
 
               <p className="mt-1.5 text-xs sm:text-sm text-[#524E48] max-w-2xl">
-                Direct official circulars, syllabus breakdown & deadlines for Central, Defense, Railways & 36 State portals.
+                Last dates, eligibility, admit cards and results, taken from official notifications.
               </p>
             </div>
 
@@ -119,7 +119,8 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Counters */}
+          {/* Counters (desktop only: on a phone they push the first job a screen down) */}
+          <div className="hidden md:block">
           <HeroCounterDeck
             totalVacancies={totalVacancies}
             openApplicationsCount={openApplicationsCount}
@@ -128,16 +129,17 @@ export default async function HomePage() {
             resultsCount={resultsCount}
             statesCount={36}
           />
+          </div>
         </div>
       </section>
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-12">
-        {/* Notice Alert Bar */}
-        <SocialAlertBar />
-
-        {/* Major Open Recruitments with Interactive 4-Category Switcher & Views */}
+        {/* Jobs: search, filters and the list come first */}
         <MajorRecruitmentsSection jobs={listedJobs} currentStateSlug="central" />
+
+        {/* Alerts */}
+        <SocialAlertBar />
 
         {/* Exams coming (admit cards out) and latest results, from the official documents */}
         <ExamCalendarSections jobs={allJobs} />

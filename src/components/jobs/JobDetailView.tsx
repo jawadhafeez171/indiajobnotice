@@ -182,6 +182,20 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
 
         <p className="text-sm text-[#1A1918] mt-2 font-semibold">{job.organization}</p>
 
+        {/* The deadline at a glance, before any scrolling */}
+        {(job.applicationEndDate || job.totalVacancies > 0) && (
+          <p className="mt-2 text-sm text-[#1A1918]">
+            {job.applicationEndDate && (
+              <strong className={isClosed ? "text-[#68635B]" : "text-[#E96B15]"}>
+                {job.isWalkIn ? "Walk-in" : "Last date"} {formatDate(job.applicationEndDate)}
+                {isClosed ? " (closed)" : ""}
+              </strong>
+            )}
+            {job.applicationEndDate && job.totalVacancies > 0 && <span className="text-[#A09B90]"> · </span>}
+            {job.totalVacancies > 0 && <span>{job.totalVacancies.toLocaleString("en-IN")} posts</span>}
+          </p>
+        )}
+
         {/* Where the facts come from */}
         <p className="mt-3 text-xs text-[#68635B] flex items-center gap-1.5 flex-wrap">
           <ShieldCheck className="w-3.5 h-3.5 text-[#209948]" />

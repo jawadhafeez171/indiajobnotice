@@ -149,6 +149,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
   const [selectedQualification, setSelectedQualification] = useState("ALL");
   const [selectedScope, setSelectedScope] = useState<"ALL" | "CENTRAL" | "STATE">("ALL");
   const [showFilters, setShowFilters] = useState(false);
+  // a page of jobs at a time: the full list made the home page 40 phone screens long
+  const [visible, setVisible] = useState(20);
 
   // Watchlist hook
   const { isSaved, toggleSave } = useWatchlist();
@@ -238,7 +240,14 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
       if (selectedScope === "STATE" && j.isCentral) return false;
 
       return true;
-    }).sort((a, b) => b.totalVacancies - a.totalVacancies);
+    }).sort((a, b) => {
+      const rank = (j: JobNotification) =>
+        j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR" ? 0
+          : j.status === "ADMIT_CARD_OUT" || j.status === "RESULT_OUT" ? 1 : 2;
+      return rank(a) - rank(b)
+        || (a.applicationEndDate || "9999").localeCompare(b.applicationEndDate || "9999")
+        || b.totalVacancies - a.totalVacancies;
+    });
   }, [jobs, activeCategory, searchQuery, selectedCategory, selectedQualification, selectedScope]);
 
   // Counts for each status category (respecting text search and facet filters)
@@ -355,7 +364,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search circulars by exam name, commission (SSC, RRB, UPSC, BPSC), or post..."
+              placeholder="Search by post, exam or organisation (e.g. SSC, KEA, BPSC)"
               className="w-full pl-9 pr-8 py-2.5 sm:py-2 text-[15px] sm:text-xs min-h-[44px] sm:min-h-0 bg-[#FCFAF4] border border-[#DDD5C7] rounded-lg focus:outline-none focus:border-[#1E3799] text-[#1A1918] placeholder-[#8C8273] transition-colors"
             />
             {searchQuery && (
@@ -561,18 +570,55 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
         </div>
       </div>
 
-      {/* ================= OPTION 1: THE GAZETTE LEDGER (TABLE) ================= */}
+      {/* ================= LIST VIEW: cards on phones, a table on wider screens ================= */}
       {viewMode === "ledger" && (
-        <div className="bg-white rounded-lg border border-[#EAE2D2] overflow-hidden shadow-2xs">
+        <ul className="md:hidden space-y-2.5">
+          {filteredJobs.length === 0 && (
+            <li className="py-8 text-center text-sm text-[#68635B]">
+              No jobs match these filters.{" "}
+              <button onClick={resetAllFilters} className="font-bold text-[#1E3799] underline">Clear filters</button>
+            </li>
+          )}
+          {filteredJobs.slice(0, visible).map((job) => {
+            const daysLeft = getDaysRemaining(job.applicationEndDate);
+            const open = job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
+            const detailLink = job.isCentral ? `/jobs/${job.slug}` : `/state/${job.stateSlug}/jobs/${job.slug}`;
+            return (
+              <li key={job.id}>
+                <Link href={detailLink} className="block p-3.5 rounded-lg bg-white border border-[#EAE2D2] active:border-[#1E3799]">
+                  <span className="text-[11px] font-bold text-[#1E3799]">
+                    {job.orgShortCode} · {job.isCentral ? "Central" : job.stateSlug.toUpperCase()}
+                  </span>
+                  <p className="mt-0.5 font-serif font-bold text-[15px] leading-snug text-[#1A1918] line-clamp-2">{job.shortTitle}</p>
+                  <div className="mt-1.5 flex items-center justify-between gap-2 text-xs">
+                    <span className="text-[#524E48]">
+                      {job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} posts` : "Posts: see notification"}
+                    </span>
+                    <span className={cn("font-bold", open && daysLeft <= 7 ? "text-[#E96B15]" : "text-[#1A1918]")}>
+                      {job.status === "ADMIT_CARD_OUT" ? "Admit card out"
+                        : job.status === "RESULT_OUT" ? "Result out"
+                        : job.applicationEndDate
+                          ? `${job.isWalkIn ? "Walk-in" : "Last date"} ${formatDate(job.applicationEndDate)}${open && daysLeft >= 0 ? ` · ${daysLeft}d left` : ""}`
+                          : "See notification"}
+                    </span>
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      {viewMode === "ledger" && (
+        <div className="hidden md:block bg-white rounded-lg border border-[#EAE2D2] overflow-hidden shadow-2xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#FAF7EC] border-b border-[#EAE2D2] text-[#68635B] font-mono text-[11px] uppercase tracking-wider">
-                  <th className="py-3 px-4 font-bold text-[#1E3799]">Vacancies</th>
+                  <th className="py-3 px-4 font-bold text-[#1E3799]">Posts</th>
                   <th className="py-3 px-4 font-bold text-[#1A1918]">Recruitment</th>
                   <th className="py-3 px-4 font-semibold hidden md:table-cell">Sector</th>
-                  <th className="py-3 px-4 font-semibold hidden lg:table-cell">Stage Status</th>
-                  <th className="py-3 px-4 font-semibold">Important Date</th>
+                  <th className="py-3 px-4 font-semibold hidden lg:table-cell">Status</th>
+                  <th className="py-3 px-4 font-semibold">Last date</th>
                   <th className="py-3 px-4 text-right font-semibold">Actions</th>
                 </tr>
               </thead>
@@ -582,7 +628,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                     <td colSpan={6} className="py-12 text-center text-xs text-[#68635B]">
                       <div className="max-w-sm mx-auto space-y-2">
                         <p className="font-serif text-base font-bold text-[#1A1918]">
-                          No gazette circulars match your active filters
+                          No jobs match these filters
                         </p>
                         <p className="text-xs text-[#68635B]">
                           Try adjusting your search keyword or resetting category/qualification filters.
@@ -591,13 +637,13 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                           onClick={resetAllFilters}
                           className="mt-2 px-3 py-1.5 rounded bg-[#1E3799] text-white font-bold text-xs shadow-2xs hover:bg-[#162a75] transition-colors"
                         >
-                          Clear All Filters
+                          Clear filters
                         </button>
                       </div>
                     </td>
                   </tr>
                 ) : (
-                  filteredJobs.map((job) => {
+                  filteredJobs.slice(0, visible).map((job) => {
                     const daysLeft = getDaysRemaining(job.applicationEndDate);
                     const isEndingSoon = daysLeft > 0 && daysLeft <= 10;
                     const catColors = getCategoryColors(job.category);
@@ -634,9 +680,9 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                           </div>
                           <Link
                             href={detailLink}
-                            className="font-serif font-bold text-sm text-[#1A1918] group-hover:text-[#1E3799] transition-colors leading-snug line-clamp-1"
+                            className="font-serif font-bold text-sm text-[#1A1918] group-hover:text-[#1E3799] transition-colors leading-snug line-clamp-2"
                           >
-                            {job.title}
+                            {job.shortTitle}
                           </Link>
                           <p className="text-[11px] text-[#68635B] line-clamp-1 mt-0.5 font-medium">
                             {job.organization}
@@ -671,8 +717,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                             </div>
                           ) : job.status === "RESULT_OUT" ? (
                             <div>
-                              <span className="text-[10px] font-mono text-[#209948] font-bold block">Merit Out</span>
-                              <span className="font-bold text-xs text-[#209948]">Scorecards Live</span>
+                              <span className="font-bold text-xs text-[#209948]">Result out</span>
                             </div>
                           ) : (
                             <div>
@@ -700,8 +745,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                                   ? "text-[#E96B15] hover:text-[#D4590A] bg-[#FDF3EB]"
                                   : "text-[#8C8273] hover:text-[#1E3799] hover:bg-[#EEF2FA]"
                               )}
-                              title={saved ? "Remove from Pinned Notices" : "Pin notice to Watchlist"}
-                              aria-label={saved ? "Unpin notice" : "Pin notice"}
+                              title={saved ? "Remove from saved jobs" : "Save this job"}
+                              aria-label={saved ? "Remove from saved jobs" : "Save this job"}
                             >
                               <Bookmark className={cn("w-3.5 h-3.5", saved && "fill-[#E96B15]")} />
                             </button>
@@ -711,7 +756,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                               target="_blank"
                               rel="noreferrer"
                               className="p-1.5 rounded hover:bg-[#EEF2FA] text-[#68635B] hover:text-[#1E3799] transition-colors"
-                              title="Download Official Notification PDF"
+                              title="Official notification"
                             >
                               <FileText className="w-3.5 h-3.5" />
                             </a>
@@ -732,6 +777,17 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {viewMode === "ledger" && filteredJobs.length > visible && (
+        <div className="text-center">
+          <button
+            onClick={() => setVisible((v) => v + 20)}
+            className="px-4 py-2.5 rounded-lg border border-[#CCD8F0] bg-white text-sm font-bold text-[#1E3799] hover:border-[#1E3799]"
+          >
+            Show more ({filteredJobs.length - visible} more)
+          </button>
         </div>
       )}
 

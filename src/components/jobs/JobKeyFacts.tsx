@@ -23,6 +23,9 @@ export function JobKeyFacts({ job }: Props) {
   const daysLeft = getDaysRemaining(job.applicationEndDate);
   const end = job.applicationEndDate ? formatDate(job.applicationEndDate) : "";
   const qualifications = (job.qualifications || []).filter(Boolean);
+  const manyPosts = (job.posts || []).length > 1;
+  const clip = (t: string) => (t.length > 170 ? `${t.slice(0, 167).trimEnd()}…` : t);
+  const iso = /^\d{4}-\d{2}-\d{2}$/;
   const latestUpdate = (job.updates || [])[(job.updates || []).length - 1];
 
   return (
@@ -60,14 +63,21 @@ export function JobKeyFacts({ job }: Props) {
         </Fact>
         <Fact label="Age limit">{formatAgeRange(job, "years")}</Fact>
         <Fact label="Qualification" wide>
-          {qualifications.length ? qualifications.slice(0, 2).join("; ") : "See notification"}
+          {qualifications.length
+            ? <>
+                {clip(qualifications[0])}
+                {(manyPosts || qualifications.length > 1) && (
+                  <span className="block text-xs font-normal text-[#68635B] mt-0.5">Varies by post: see the table below.</span>
+                )}
+              </>
+            : "See notification"}
         </Fact>
         <Fact label="Application fee">{formatFee(job)}</Fact>
         {job.salary && <Fact label="Pay">{job.salary}</Fact>}
         {job.applicationStartDate && !job.isWalkIn && (
           <Fact label="Applications open">{formatDate(job.applicationStartDate)}</Fact>
         )}
-        {job.examDate && <Fact label="Exam date">{job.examDate}</Fact>}
+        {job.examDate && <Fact label="Exam date">{iso.test(job.examDate) ? formatDate(job.examDate) : job.examDate}</Fact>}
         {job.advtNo && <Fact label="Advertisement no.">{job.advtNo}</Fact>}
       </dl>
     </section>

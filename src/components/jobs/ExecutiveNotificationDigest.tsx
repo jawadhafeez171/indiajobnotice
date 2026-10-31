@@ -21,7 +21,7 @@ const th = "py-2.5 px-3.5 font-bold";
 export function ExecutiveNotificationDigest({ job }: Props) {
   const posts = getJobPostBreakdown(job);
   const categories = getJobCategoryMatrix(job);
-  const steps = (job.selectionProcess || []).filter(Boolean);
+  const steps = (job.selectionProcess || []).filter(Boolean).map((t) => t.charAt(0).toUpperCase() + t.slice(1));
 
   return (
     <section className="space-y-6" id="details">
@@ -31,7 +31,20 @@ export function ExecutiveNotificationDigest({ job }: Props) {
             <GraduationCap className="w-5 h-5 text-[#1E3799]" />
             Posts and eligibility
           </h2>
-          <div className="overflow-x-auto rounded-lg border border-[#EAE2D2]">
+          <ul className="md:hidden space-y-2.5">
+            {posts.map((post: PostVacancyBreakdown, idx: number) => (
+              <li key={idx} className="p-3.5 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2] text-xs space-y-1.5">
+                <p className="font-bold text-sm text-[#1E3799]">
+                  {post.postName}
+                  {typeof post.vacancies === "number" ? (post.vacancies ? ` · ${post.vacancies} posts` : "") : ` · ${post.vacancies}`}
+                </p>
+                <p><span className="font-bold text-[#68635B]">Qualification: </span>{post.qualification}</p>
+                <p><span className="font-bold text-[#68635B]">Age: </span>{post.ageLimit}</p>
+                <p><span className="font-bold text-[#68635B]">Pay: </span>{post.payLevel}</p>
+              </li>
+            ))}
+          </ul>
+          <div className="hidden md:block overflow-x-auto rounded-lg border border-[#EAE2D2]">
             <table className="w-full text-left text-xs border-collapse">
               <thead className="bg-[#FAF7EF] border-b border-[#EAE2D2] text-[11px] uppercase tracking-wide text-[#68635B]">
                 <tr>
