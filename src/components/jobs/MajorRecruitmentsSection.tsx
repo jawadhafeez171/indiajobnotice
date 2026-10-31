@@ -296,16 +296,16 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#1E3799]" />
             <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1A1918]">
-              Major Recruitment Notifications
+              Latest government jobs
             </h2>
           </div>
           <p className="text-xs text-[#68635B] mt-0.5">
-            Verified circulars categorized across the 4 key stages of public employment
+            Open jobs closing soonest first, then admit cards and results
           </p>
         </div>
 
         {/* View Mode Switcher Toggle */}
-        <div className="flex items-center gap-1 p-1 rounded-md bg-[#EEF2FA] border border-[#CCD8F0] self-start sm:self-auto text-xs">
+        <div className="hidden md:flex items-center gap-1 p-1 rounded-md bg-[#EEF2FA] border border-[#CCD8F0] self-start sm:self-auto text-xs">
           <span className="text-[10px] uppercase font-mono text-[#1E3799] font-bold px-2 hidden md:inline">
             Layout:
           </span>
@@ -318,10 +318,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                 ? "bg-[#1E3799] text-white shadow-2xs"
                 : "text-[#1E3799] hover:bg-white/60"
             )}
-            title="Dense, print-editorial table layout"
+            title="Compact list"
           >
             <Table className="w-3.5 h-3.5" />
-            <span>Ledger Table</span>
+            <span>List</span>
           </button>
 
           <button
@@ -332,10 +332,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                 ? "bg-[#1E3799] text-white shadow-2xs"
                 : "text-[#1E3799] hover:bg-white/60"
             )}
-            title="Spotlight hero card + compact feed"
+            title="One featured job and a short list"
           >
             <LayoutTemplate className="w-3.5 h-3.5" />
-            <span>Spotlight Split</span>
+            <span>Featured</span>
           </button>
 
           <button
@@ -349,7 +349,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
             title="Card grid layout"
           >
             <LayoutGrid className="w-3.5 h-3.5" />
-            <span>Bulletin Cards</span>
+            <span>Cards</span>
           </button>
         </div>
       </div>
