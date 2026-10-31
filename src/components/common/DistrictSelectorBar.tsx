@@ -44,7 +44,7 @@ export function DistrictSelectorBar({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div className="flex items-center gap-1.5 text-xs text-[#68635B] font-mono">
           <MapPin className="w-3.5 h-3.5 text-[#E96B15]" />
-          <span className="font-bold text-[#1A1918]">Direct District Gazettes:</span>
+          <span className="font-bold text-[#1A1918]">Jobs by district:</span>
           <span className="text-[#8C827A]">({allDistricts.length} Districts in {stateName})</span>
         </div>
 

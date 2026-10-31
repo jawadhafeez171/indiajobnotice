@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Hourglass, ArrowRight } from "lucide-react";
-import { JobNotification, getJobCanonicalPath } from "@/data/jobs";
+import { JobNotification, getJobCanonicalPath, stageText } from "@/data/jobs";
 
 interface Props {
   jobs: JobNotification[];
@@ -44,7 +44,7 @@ export function ExamsInProgressSection({ jobs, limit = 12 }: Props) {
                 {job.currentStage && (
                   <p className="mt-1.5 text-xs font-bold text-[#E96B15]">{job.currentStage}</p>
                 )}
-                {last && <p className="mt-1 text-xs text-[#68635B] line-clamp-1">Latest: {last.title}</p>}
+                {last && <p className="mt-1 text-xs text-[#68635B] line-clamp-1">Latest: {stageText(last).main}</p>}
                 <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[#1E3799]">
                   Stages & documents <ArrowRight className="w-3 h-3" />
                 </span>

@@ -569,7 +569,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               <thead>
                 <tr className="bg-[#FAF7EC] border-b border-[#EAE2D2] text-[#68635B] font-mono text-[11px] uppercase tracking-wider">
                   <th className="py-3 px-4 font-bold text-[#1E3799]">Vacancies</th>
-                  <th className="py-3 px-4 font-bold text-[#1A1918]">Recruitment Circular</th>
+                  <th className="py-3 px-4 font-bold text-[#1A1918]">Recruitment</th>
                   <th className="py-3 px-4 font-semibold hidden md:table-cell">Sector</th>
                   <th className="py-3 px-4 font-semibold hidden lg:table-cell">Stage Status</th>
                   <th className="py-3 px-4 font-semibold">Important Date</th>
@@ -824,7 +824,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                   href={heroJob.isCentral ? `/jobs/${heroJob.slug}` : `/state/${heroJob.stateSlug}/jobs/${heroJob.slug}`}
                   className="flex-1 py-2.5 px-4 rounded-md bg-[#E96B15] hover:bg-[#D4590A] text-white text-xs font-bold text-center flex items-center justify-center gap-1.5 transition-colors shadow-xs"
                 >
-                  <span>Read Full Circular & Syllabus</span>
+                  <span>Full details</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
 

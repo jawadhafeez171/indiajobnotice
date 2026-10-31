@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, FileText, Clock, Building2 } from "lucide-react";
-import { JobNotification, StageKind, getStages, getJobCanonicalPath } from "@/data/jobs";
+import { JobNotification, StageKind, getStages, getJobCanonicalPath, stageText } from "@/data/jobs";
 import { formatDate } from "@/lib/utils";
 import { ExaminationLifecycleBar } from "./ExaminationLifecycleBar";
 
@@ -67,7 +67,10 @@ export function StageView({ job, kind, stateSlug }: Props) {
             {[...docs, ...schedules].map((d) => (
               <li key={d.url} className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-[#1A1918] break-words">{d.title}</p>
+                  <p className="text-sm font-bold text-[#1A1918] break-words">{stageText(d).main}</p>
+                  {stageText(d).original && (
+                    <p className="text-xs text-[#68635B] break-words mt-0.5">{stageText(d).original}</p>
+                  )}
                   {d.date && <p className="text-xs text-[#68635B] mt-0.5">{formatDate(d.date)}</p>}
                 </div>
                 <a

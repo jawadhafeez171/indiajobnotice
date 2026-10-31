@@ -144,13 +144,13 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Complete 36 States & Union Territories Regional Gazette Links Matrix */}
+        {/* Jobs by state */}
         <div className="mt-12 pt-8 border-t border-[#1E3799]/80">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-2">
             <div className="flex items-center gap-2">
               <Landmark className="w-4 h-4 text-[#E96B15]" />
               <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
-                Official Employment Gazettes for All 36 States & Union Territories
+                Government jobs in all 36 states and union territories
               </h3>
             </div>
             <span className="text-xs font-mono text-[#4EE278] font-bold bg-[#122055] px-2.5 py-1 rounded border border-[#1E3799]">
@@ -184,7 +184,7 @@ export function Footer() {
                         <a
                           href={getStateSubdomainUrl(st.slug)}
                           className="hover:text-[#FFA666] transition-colors flex items-center justify-between py-0.5 text-[#C4D0EC] group font-medium"
-                          title={`${st.name} Govt Jobs Gazette (/state/${st.slug})`}
+                          title={`${st.name} government jobs`}
                         >
                           <span className="group-hover:translate-x-0.5 transition-transform">
                             {st.name}
@@ -203,30 +203,30 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Aspirants Reassurance Banner */}
+      {/* About this site */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <div className="rounded-xl bg-[#122055] p-5 border border-[#1E3799] text-xs text-[#A9B8DE] flex flex-col md:flex-row gap-4 items-start md:items-center">
           <ShieldCheck className="w-8 h-8 text-[#209948] shrink-0" />
           <div className="space-y-1 text-[11px] leading-relaxed">
             <p className="font-bold text-white flex items-center gap-2">
-              <span>Authenticity Notice & Aspirants Reassurance</span>
+              <span>About IndiaJobNotice</span>
               <span className="text-[10px] font-mono text-[#209948] bg-[#209948]/20 px-1.5 py-0.2 rounded font-bold">
-                100% Free Public Access
+                Free
               </span>
             </p>
             <p>
-              <strong>indiajobnotice.com</strong> is an independent educational notification portal built for competitive examination aspirants across India. We aggregate verified public employment notices directly from official government gazettes, state PSCs, and recruitment boards without subscription fees or paywalls. To sustain server infrastructure and continuous editorial updates, family-friendly display advertisements are hosted. We never ask for payments, banking details, or credentials. Always verify original notification PDFs before submitting applications.
+              <strong>IndiaJobNotice</strong> is not a government website. We list recruitments from the official websites of commissions, boards and departments, with a link to each official notification. The site is free and paid for by advertisements. We never ask for money, bank details or passwords. Always check the official notification before you apply.
             </p>
           </div>
         </div>
 
         {/* Bottom copyright */}
         <div className="mt-8 pt-6 border-t border-[#1E3799]/40 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A9BC7] gap-4">
-          <p>© {new Date().getFullYear()} IndiaJobNotice.com • Satyameva Jayate.</p>
+          <p>© {new Date().getFullYear()} IndiaJobNotice.com</p>
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-[#A9B8DE]">
             <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
             <Link href="/editorial-policy" className="hover:text-white transition-colors">Editorial Policy</Link>
-            <Link href="/contact" className="hover:text-white transition-colors">Contact Desk</Link>
+            <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
             <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link>
             <Link href="/directory" className="hover:text-white transition-colors">State PSC Directory</Link>

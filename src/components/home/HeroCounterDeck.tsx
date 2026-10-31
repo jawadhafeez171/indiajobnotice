@@ -95,7 +95,7 @@ export function HeroCounterDeck({
       badge: "Pan-India Hub",
       value: `${statesCount} States & UTs`,
       label: "Official State Portals",
-      subtext: "Direct State Gazettes linked",
+      subtext: "Official websites linked",
       icon: MapPin,
       color: "text-[#8A5F19]",
       bg: "bg-[#FAF5EC]/70 hover:bg-[#FAF5EC]",
@@ -118,12 +118,12 @@ export function HeroCounterDeck({
             Live Recruitment Counter
           </span>
           <span className="text-[#D8CFBF]">·</span>
-          <span>Verified Gazette Data Across India</span>
+          <span>From official notifications across India</span>
         </div>
 
         <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#209948] font-bold">
           <ShieldCheck className="w-3.5 h-3.5 text-[#209948]" />
-          <span className="hidden sm:inline">100% Official Notifications Only</span>
+          <span className="hidden sm:inline">Official notifications only</span>
         </div>
       </div>
 

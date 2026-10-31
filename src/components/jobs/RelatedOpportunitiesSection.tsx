@@ -63,15 +63,15 @@ export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-[#E96B15]" />
             <h3 className="font-serif text-lg font-bold text-[#1A1918]">
-              Genuinely Related Opportunities & Alternate Drives
+              Similar jobs
             </h3>
           </div>
           <p className="text-xs text-[#68635B] mt-0.5">
-            Recruitments matching candidate eligibility, commissioning authority, and cadre stream
+            Same qualification, organisation or kind of post
           </p>
         </div>
         <span className="text-[11px] font-mono font-bold text-[#1E3799] bg-[#EEF2FA] px-2.5 py-1 rounded border border-[#CCD8F0] self-start sm:self-auto">
-          {related.length} Peer Gazettes Linked
+          {related.length} similar
         </span>
       </div>
 
@@ -114,16 +114,20 @@ export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
                   <span className="truncate">{job.organization}</span>
                 </p>
 
-                {/* Vacancy and Pay details */}
+                {/* Posts and last date */}
                 <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                   <div className="p-2 rounded bg-white border border-[#EAE2D2]/80">
-                    <span className="text-[10px] uppercase font-mono text-[#68635B] block font-semibold">Vacancies</span>
-                    <span className="font-mono font-bold text-sm text-[#1A1918]">{job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "—"}</span>
+                    <span className="text-[10px] uppercase text-[#68635B] block font-semibold">Posts</span>
+                    <span className="font-bold text-sm text-[#1A1918]">
+                      {job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "See notification"}
+                    </span>
                   </div>
                   <div className="p-2 rounded bg-white border border-[#EAE2D2]/80">
-                    <span className="text-[10px] uppercase font-mono text-[#68635B] block font-semibold">Pay Scale</span>
-                    <span className="font-mono font-bold text-xs text-[#209948] truncate block" title={job.salary}>
-                      {job.salary ? job.salary.split("(")[0].trim() : "Standard Pay Matrix"}
+                    <span className="text-[10px] uppercase text-[#68635B] block font-semibold">
+                      {job.isWalkIn ? "Walk-in" : "Last date"}
+                    </span>
+                    <span className="font-bold text-xs text-[#1A1918] block">
+                      {job.applicationEndDate ? formatDate(job.applicationEndDate) : job.currentStage || "See notification"}
                     </span>
                   </div>
                 </div>
@@ -171,7 +175,7 @@ export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
                   href={jobHref}
                   className="font-bold text-xs text-[#1E3799] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
                 >
-                  <span>View Gazette</span>
+                  <span>View job</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

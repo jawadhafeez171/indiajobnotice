@@ -3,40 +3,30 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { 
-  Building2, 
-  Users, 
-  GraduationCap, 
-  Calendar, 
-  IndianRupee, 
+  Building2,   
+  Calendar,  
   FileText, 
   ExternalLink, 
   ArrowLeft, 
   CheckCircle2, 
-  BookOpen, 
-  Scale, 
-  ShieldCheck, 
-  Printer, 
-  Bookmark, 
-  Download, 
+  BookOpen,  
+  ShieldCheck,  
+  Bookmark,  
   Layers, 
   Activity, 
   Award, 
-  HelpCircle,
-  Clock,
-  Sparkles,
-  ArrowRight
+  Sparkles
 } from "lucide-react";
 import { JobNotification } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
 import { JobLifecycleTracker } from "./JobLifecycleTracker";
-import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
+import { formatDate, cn } from "@/lib/utils";
 import { WhatsAppLogo, TelegramLogo } from "@/components/common/SocialIcons";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { getStateBySlug } from "@/config/states";
-import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { useWatchlist } from "@/lib/watchlist";
-import { generateGoogleCalendarUrl, downloadIcsFile } from "@/lib/calendar";
+import { generateGoogleCalendarUrl } from "@/lib/calendar";
 import { 
   getJobExamStages, 
   getJobPhysicalStandards, 
@@ -44,7 +34,7 @@ import {
   getJobDetailedSyllabus 
 } from "@/lib/exam-details";
 import { ExecutiveNotificationDigest } from "./ExecutiveNotificationDigest";
-import { ApplicationDeadlineSection } from "./ApplicationDeadlineSection";
+import { JobKeyFacts } from "./JobKeyFacts";
 import { StageDocumentsPanel } from "./StageDocumentsPanel";
 import { ExaminationLifecycleBar } from "./ExaminationLifecycleBar";
 import { ClosedRecruitmentAlert } from "./ClosedRecruitmentAlert";
@@ -65,7 +55,6 @@ type SyllabusTab = "pattern" | "topics" | "physical" | "cutoffs";
 
 export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
   const isClosed = isJobApplicationClosed(job);
-  const daysLeft = getDaysRemaining(job.applicationEndDate);
   const stateInfo = job.stateSlug !== "central" ? getStateBySlug(job.stateSlug) : null;
   const taxonomy = getJobTaxonomyLinks(job);
   const verificationMeta = getJobVerificationMeta(job);
@@ -92,12 +81,6 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
     url: job.applyOnlineUrl,
   });
 
-  const handlePrint = () => {
-    if (typeof window !== "undefined") {
-      window.print();
-    }
-  };
-
   const basePrefix = job.isCentral || !stateSlug || stateSlug === "central"
     ? `/jobs/${job.slug}`
     : `/state/${stateSlug}/jobs/${job.slug}`;
@@ -114,7 +97,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      {/* Deliberate Hierarchical Breadcrumb Navigation */}
+      {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="flex items-center justify-between text-xs text-[#68635B] print:hidden">
         <ol className="flex items-center flex-wrap gap-1.5 list-none p-0 m-0">
           {taxonomy.breadcrumbTrail.map((crumb, idx) => {
@@ -139,23 +122,17 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
           })}
         </ol>
 
-        {/* Quick Back to Gazette Directory */}
+        {/* Back to the job list */}
         <Link
           href="/"
           className="text-[#1E3799] hover:underline font-bold flex items-center gap-1 shrink-0 ml-2"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>All Gazettes</span>
+          <span>All jobs</span>
         </Link>
       </nav>
 
-      {/* Examination Lifecycle Navigation Bar (Notification, Admit Card, Answer Key, Result) */}
-      <ExaminationLifecycleBar job={job} activeStage="notice" stateSlug={stateSlug} />
-
-      {/* Deliberate Category & Authority Hub Pathways (State, Qualification, Organisation, Sector) */}
-      <JobTaxonomyBar job={job} />
-
-      {/* Main Job Banner Card */}
+      {/* Header: what, who, and the actions */}
       <div className="bg-white rounded-xl border border-[#EAE2D2] border-t-4 border-t-[#1E3799] p-6 sm:p-8 shadow-2xs print:border-none print:shadow-none print:p-0">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2 flex-wrap">
@@ -165,11 +142,11 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
             </span>
             {job.isCentral ? (
               <span className="text-xs bg-[#EEF2FA] text-[#1E3799] font-bold px-2.5 py-1 rounded border border-[#CCD8F0]">
-                All-India Central Circular
+                Central government
               </span>
             ) : (
               <span className="text-xs bg-[#FDF3EB] text-[#E96B15] font-bold px-2.5 py-1 rounded border border-[#F9D9C3]">
-                {stateInfo?.name} State Circular
+                {stateInfo?.name}
               </span>
             )}
             <span className="text-xs font-mono text-[#68635B] px-2 py-0.5 rounded bg-[#FAF7EF] border border-[#EAE2D2]">
@@ -191,10 +168,10 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
                   ? "bg-[#FDF3EB] text-[#E96B15] border-[#F9D7C0] ring-1 ring-[#E96B15]/20"
                   : "bg-white text-[#68635B] border-[#DDD5C7] hover:border-[#1E3799] hover:text-[#1E3799]"
               )}
-              title={saved ? "Remove from Pinned Watchlist" : "Pin notice to Watchlist"}
+              title={saved ? "Remove from saved jobs" : "Save this job"}
             >
               <Bookmark className={cn("w-3.5 h-3.5", saved && "fill-[#E96B15]")} />
-              <span>{saved ? "Pinned to Watchlist" : "Pin Notice"}</span>
+              <span>{saved ? "Saved" : "Save"}</span>
             </button>
           </div>
         </div>
@@ -203,37 +180,16 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
           {job.title}
         </h1>
 
-        <p className="text-sm text-[#68635B] mt-2 font-medium">
-          Official Commission / Board: <span className="text-[#1A1918] font-bold">{job.organization}</span>
+        <p className="text-sm text-[#1A1918] mt-2 font-semibold">{job.organization}</p>
+
+        {/* Where the facts come from */}
+        <p className="mt-3 text-xs text-[#68635B] flex items-center gap-1.5 flex-wrap">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#209948]" />
+          <span>From the official notification</span>
+          {verificationMeta.lastVerifiedDate && <span>· Added {verificationMeta.lastVerifiedDate}</span>}
         </p>
 
-        {/* Gazette Verification & Trust Banner (Google E-E-A-T & Authenticity Signal) */}
-        <div className="mt-4 p-3 sm:p-3.5 rounded-lg bg-[#F0F7F3] border border-[#C2E3CE] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="inline-flex items-center gap-1 font-bold text-[#1E7E34] bg-white px-2 py-0.5 rounded border border-[#C2E3CE] shadow-2xs">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#209948]" />
-              <span>From the official notification</span>
-            </span>
-            <span className="text-[#524E48]">
-              Published: <strong className="text-[#1A1918]">{verificationMeta.lastVerifiedDate}</strong>
-            </span>
-            <span className="text-[#C2E3CE] hidden sm:inline">·</span>
-            <span className="text-[#68635B] hidden md:inline">
-              Source: <span className="font-mono text-[11px] text-[#1A1918]">{verificationMeta.verificationSource}</span>
-            </span>
-          </div>
-
-          <Link
-            href="/editorial-policy"
-            className="text-[11px] font-bold text-[#1E3799] hover:underline flex items-center gap-1 shrink-0"
-            title="Read our 5-stage fact-checking and verification standards"
-          >
-            <span>Verification Standards</span>
-            <ArrowRight className="w-3 h-3" />
-          </Link>
-        </div>
-
-        {/* Action Buttons Bar - hidden on print */}
+        {/* Actions */}
         <div className="mt-6 pt-6 border-t border-[#F2ECE1] flex flex-wrap items-center gap-3 print:hidden">
           {isClosed ? (
             <div className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-[#FAF7EF] border border-[#DDD5C7] text-[#68635B] font-bold text-sm">
@@ -249,7 +205,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
               className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#E96B15] hover:bg-[#D4590A] text-white font-bold text-sm shadow-xs transition-colors"
             >
               <ExternalLink className="w-4 h-4" />
-              <span>Apply Online (Official Portal)</span>
+              <span>Apply online</span>
             </a>
           )}
 
@@ -260,37 +216,28 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
             className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg border border-[#CCD8F0] hover:border-[#1E3799] bg-[#EEF2FA] hover:bg-[#E0E9F8] text-[#1E3799] font-bold text-sm transition-colors"
           >
             <FileText className="w-4 h-4 text-[#1E3799]" />
-            <span>Download Official PDF</span>
+            <span>Official notification</span>
           </a>
 
-          {/* Add to Calendar Button */}
-          <a
-            href={deadlineCalendarUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-lg border border-[#EAE2D2] hover:border-[#1E3799] bg-[#FAF7EF] hover:bg-[#EEF2FA] text-[#1A1918] font-semibold text-xs transition-colors"
-            title="Set reminder for application deadline in Google Calendar"
-          >
-            <Calendar className="w-4 h-4 text-[#1E3799]" />
-            <span>Remind Me</span>
-          </a>
-
-          {/* Print Gazette Digest */}
-          <button
-            onClick={handlePrint}
-            className="inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-lg border border-[#EAE2D2] hover:border-[#1E3799] bg-[#FAF7EF] hover:bg-[#EEF2FA] text-[#1A1918] font-semibold text-xs transition-colors"
-            title="Print a clean 1-page gazette digest or save as PDF"
-          >
-            <Printer className="w-4 h-4 text-[#68635B]" />
-            <span>Print Digest</span>
-          </button>
+          {!isClosed && job.applicationEndDate && (
+            <a
+              href={deadlineCalendarUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-lg border border-[#EAE2D2] hover:border-[#1E3799] bg-[#FAF7EF] hover:bg-[#EEF2FA] text-[#1A1918] font-semibold text-xs transition-colors"
+              title="Add the last date to Google Calendar"
+            >
+              <Calendar className="w-4 h-4 text-[#1E3799]" />
+              <span>Add last date to calendar</span>
+            </a>
+          )}
 
           <a
             href="https://t.me/Indiajobnotice1"
             target="_blank"
             rel="noreferrer"
             className="p-3 rounded-lg bg-[#24A1DE] text-white hover:bg-[#1D8FCA] transition-colors shadow-xs ml-auto"
-            title="Join Official Telegram Channel for Instant Alerts"
+            title="Get new jobs on our Telegram channel"
           >
             <TelegramLogo className="w-5 h-5" />
           </a>
@@ -300,36 +247,30 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
             target="_blank"
             rel="noreferrer"
             className="p-3 rounded-lg bg-[#25D366] text-white hover:bg-[#20BA5A] transition-colors shadow-xs"
-            title="Share with Aspirants on WhatsApp"
+            title="Share on WhatsApp"
           >
             <WhatsAppLogo className="w-5 h-5" />
           </a>
         </div>
       </div>
 
-      {/* Exam Progression Tracker */}
+      {/* Last date, posts, eligibility, fee */}
+      <JobKeyFacts job={job} />
+
+      {/* Where the recruitment stands, and its official documents */}
       <div className="print:hidden">
         <JobLifecycleTracker job={job} />
       </div>
-
-      {/* Admit cards, answer keys and results found on the official site */}
       <StageDocumentsPanel job={job} />
+      <ExaminationLifecycleBar job={job} activeStage="notice" stateSlug={stateSlug} />
 
       {/* Closed Recruitment Notice & Active Opportunities Banner (not for exams under way) */}
       {isClosed && !job.inProgress && (
         <ClosedRecruitmentAlert job={job} stateSlug={stateSlug} activeJobs={activeJobs} />
       )}
 
-      {/* Executive Candidate Notification Digest (Primary Facts Near Top) */}
-      {/* Built from the documents alone (advertisement no longer listed): no notice facts to show */}
-      {!(job.inProgress && !job.posts?.length) && (
-        <>
-          <ExecutiveNotificationDigest job={job} />
-
-          {/* Application Deadline & Critical Timeline Section (Search Intent: [Recruitment] last date to apply) */}
-          <ApplicationDeadlineSection job={job} stateSlug={stateSlug} />
-        </>
-      )}
+      {/* Posts, category-wise fees and relaxations, selection process (when the notice gives them) */}
+      <ExecutiveNotificationDigest job={job} />
 
       {/* Reserved Ad Space in Job Details (CLS Protected) */}
       <ReservedAdSlot slotType="leaderboard" slotId={`job-detail-${job.slug}`} className="print:hidden" />
@@ -617,15 +558,13 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
         </section>
       ) : null}
 
-      {/* Key Official Directives & Aspirants Guidance */}
+      {/* Key points from the notification */}
+      {job.keyHighlights.length > 0 && (
       <div className="bg-white rounded-xl border border-[#EAE2D2] p-6 sm:p-7 shadow-2xs">
         <h3 className="font-serif text-base sm:text-lg font-bold text-[#1A1918] mb-3 flex items-center gap-2">
           <CheckCircle2 className="w-5 h-5 text-[#209948]" />
-          Official Commission Directives & Candidate Instructions
+          Key points from the notification
         </h3>
-        <p className="text-xs text-[#68635B] mb-4">
-          Crucial conditions, verification rules, and examination hall mandates published in the official circular:
-        </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {job.keyHighlights.map((hl, idx) => (
@@ -638,22 +577,14 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
           ))}
         </div>
       </div>
+      )}
 
-      {/* Frequently Asked Questions (Targets Striking Distance Queries & Rich Snippets) */}
+      {/* Common questions (also given to search engines as FAQ data) */}
       <section className="bg-white rounded-xl border border-[#EAE2D2] p-6 sm:p-7 shadow-2xs space-y-4">
         <div className="border-b border-[#F2ECE1] pb-3">
-          <div className="flex items-center gap-2 mb-1">
-            <TricolorCapsule className="w-10 h-1.5" />
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
-              Official Aspirants Q&A
-            </span>
-          </div>
           <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1A1918]">
-            Frequently Asked Questions — {job.shortTitle}
+            Questions about {job.shortTitle}
           </h3>
-          <p className="text-xs text-[#68635B]">
-            Official answers regarding eligibility, age relaxation, cut-off date, and selection procedure
-          </p>
         </div>
 
         <div className="space-y-3">
@@ -676,17 +607,17 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
         </div>
       </section>
 
-      {/* Genuinely Related Opportunities & Alternate Drives (Internal Cross-Linking) */}
+      {/* Similar jobs, then more jobs by state, qualification and organisation */}
       <RelatedOpportunitiesSection currentJob={job} related={related} />
+      <JobTaxonomyBar job={job} />
 
-      {/* Official PDF Warning & Verification Badge */}
-      <div className="p-4 rounded-lg bg-[#FAF7EF] border border-[#EAE2D2] text-xs text-[#68635B] flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-[#209948]" />
-          <span>IndiaJobNotice is an independent editorial gazette archive. Please verify circulars against official commission gazettes.</span>
-        </div>
-        <span className="font-mono text-[10px] text-[#1E3799] font-bold">100% Direct Links</span>
-      </div>
+      <p className="p-4 rounded-lg bg-[#FAF7EF] border border-[#EAE2D2] text-xs text-[#68635B] flex items-start gap-2">
+        <ShieldCheck className="w-4 h-4 text-[#209948] shrink-0" />
+        <span>
+          IndiaJobNotice is not a government website. These details are taken from the official
+          notification; check the notification itself before you apply.
+        </span>
+      </p>
     </div>
   );
 }

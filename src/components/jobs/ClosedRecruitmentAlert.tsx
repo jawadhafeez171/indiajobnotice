@@ -53,7 +53,7 @@ export function ClosedRecruitmentAlert({ job, stateSlug, activeJobs }: Props) {
               href="/"
               className="text-xs font-bold text-[#1E3799] hover:underline flex items-center gap-1"
             >
-              <span>View All Active Gazettes</span>
+              <span>See open jobs</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>

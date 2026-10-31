@@ -1,6 +1,6 @@
 import React from "react";
 import { ExternalLink, FileText } from "lucide-react";
-import { JobNotification, StageKind } from "@/data/jobs";
+import { JobNotification, StageKind, stageText } from "@/data/jobs";
 import { formatDate } from "@/lib/utils";
 
 const LABEL: Record<StageKind, string> = {
@@ -29,7 +29,10 @@ export function StageDocumentsPanel({ job }: { job: JobNotification }) {
                 {LABEL[d.kind]}
                 {d.date ? ` · ${formatDate(d.date)}` : ""}
               </span>
-              <p className="text-sm font-bold text-[#1A1918] break-words">{d.title}</p>
+              <p className="text-sm font-bold text-[#1A1918] break-words">{stageText(d).main}</p>
+              {stageText(d).original && (
+                <p className="text-xs text-[#68635B] break-words mt-0.5">{stageText(d).original}</p>
+              )}
               {d.examDates && d.examDates.length > 0 && (
                 <p className="text-xs font-bold text-[#E96B15] mt-0.5">
                   Exam / test: {d.examDates.map((x) => formatDate(x)).join(", ")}

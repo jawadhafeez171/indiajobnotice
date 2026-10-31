@@ -105,12 +105,12 @@ export function WatchlistDrawer({ isOpen, onClose }: Props) {
             <div className="flex items-center gap-2 mb-1">
               <TricolorCapsule className="w-10 h-1" />
               <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
-                Personal Aspirant Watchlist
+                Your list
               </span>
             </div>
             <div className="flex items-center gap-2">
               <h2 className="font-serif text-lg font-bold text-[#1A1918]">
-                Pinned Circulars
+                Saved jobs
               </h2>
               <span className="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-[#EEF2FA] text-[#1E3799] border border-[#CCD8F0]">
                 {savedCount}

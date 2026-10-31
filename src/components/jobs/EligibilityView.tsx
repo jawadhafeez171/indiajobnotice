@@ -59,7 +59,7 @@ export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
           className="text-[#1E3799] hover:underline font-bold flex items-center gap-1"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Gazette Notice</span>
+          <span>Back to the notification</span>
         </Link>
       </nav>
 
@@ -75,7 +75,7 @@ export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
           href={basePrefix}
           className="px-3 py-1.5 rounded-md bg-[#1E3799] text-white font-bold hover:bg-[#15286D] transition-colors shrink-0 self-start sm:self-auto text-center"
         >
-          View Full Gazette & Syllabus →
+          Full notification details →
         </Link>
       </div>
 
@@ -263,7 +263,7 @@ export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
         <EligibilityCalculator defaultJobId={job.id} jobs={calculatorJobs} />
       </div>
 
-      {/* Aspirants Q&A FAQ Accordion */}
+      {/* Questions */}
       <section className="bg-white rounded-xl border border-[#EAE2D2] p-6 sm:p-7 shadow-2xs space-y-4">
         <div className="border-b border-[#F2ECE1] pb-3">
           <h3 className="font-serif text-lg font-bold text-[#1A1918]">

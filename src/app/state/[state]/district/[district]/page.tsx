@@ -59,13 +59,13 @@ export async function generateMetadata({ params }: PageProps) {
   const nativeSuffix = district.nativeName ? ` (${district.nativeName})` : "";
 
   return {
-    title: `${district.name} Govt Job Notifications 2026, District Court & Collectorate Gazettes`,
+    title: `${district.name} Govt Job Notifications 2026, District Court & Collectorate Jobs`,
     description: `Official public recruitment gazettes for ${district.name}${nativeSuffix}, ${state.name}. Verified circulars for District & Sessions Court, CMO Health Society (NHM), Collectorate, and state commission posts with ${district.name} posting.`,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${district.name} Government Recruitment Gazettes - IndiaJobNotice`,
+      title: `${district.name} Government Jobs - IndiaJobNotice`,
       description: `Official job alerts, exam schedules, and circulars for ${district.name}, ${state.name}.`,
       url: canonicalUrl,
       siteName: "India Job Notice",
@@ -132,7 +132,7 @@ export default async function DistrictPage({ params }: PageProps) {
       {
         "@type": "ListItem",
         position: 2,
-        name: `${state.name} Gazettes`,
+        name: `${state.name} jobs`,
         item: `https://www.indiajobnotice.com/state/${state.slug}`,
       },
       {
@@ -153,7 +153,7 @@ export default async function DistrictPage({ params }: PageProps) {
       
       <Navbar currentStateSlug={state.slug} />
 
-      {/* Editorial District Gazette Header */}
+      {/* District header */}
       <section className="border-b border-[#EAE2D2] bg-[#FCFAF4] py-6 sm:py-8 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto space-y-4">
           {/* Breadcrumb Hierarchy */}
@@ -324,7 +324,7 @@ export default async function DistrictPage({ params }: PageProps) {
           <div className="flex items-center justify-between border-b border-[#EAE2D2] pb-3">
             <div className="flex items-center gap-2">
               <h2 className="font-serif text-xl font-bold text-[#1A1918]">
-                All {state.name} State Opportunities Open to {district.name} Aspirants
+                All {state.name} jobs open to candidates from {district.name}
               </h2>
               <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-[#EAE2D2] text-[#423F3A]">
                 {statewideGeneralJobs.length} Notice{statewideGeneralJobs.length > 1 ? "s" : ""}
@@ -334,7 +334,7 @@ export default async function DistrictPage({ params }: PageProps) {
               href={`/state/${state.slug}`} 
               className="text-xs font-bold text-[#1E3799] hover:underline flex items-center gap-1"
             >
-              <span>View Full {state.name} Gazette</span>
+              <span>All {state.name} jobs</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -361,7 +361,7 @@ export default async function DistrictPage({ params }: PageProps) {
               </h3>
             </div>
             <p className="text-xs text-[#68635B]">
-              Aspirants in {district.name} should monitor these four constitutional and departmental offices for direct local circulars, contract recruitments, and walk-in interviews:
+              Candidates in {district.name} should watch these four constitutional and departmental offices for local notices, contract recruitments, and walk-in interviews:
             </p>
           </div>
 

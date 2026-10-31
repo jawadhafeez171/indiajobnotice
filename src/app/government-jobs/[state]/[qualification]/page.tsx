@@ -203,7 +203,7 @@ export default async function StateQualificationPage({ params }: Props) {
               <ShieldCheck className="w-5 h-5 text-[#1E3799] shrink-0 mt-0.5" />
               <div>
                 <span className="font-serif font-bold text-xs text-[#1A1918] block">
-                  {state.name} Statutory Domicile & Eligibility Rules for {hub.qualLabel} Aspirants:
+                  {state.name} domicile and eligibility rules for {hub.qualLabel} candidates:
                 </span>
                 <p className="text-xs text-[#524E48] mt-1 leading-relaxed">
                   {hub.stateDomicileNote}
@@ -222,7 +222,7 @@ export default async function StateQualificationPage({ params }: Props) {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#1E3799]" />
               <h2 className="font-serif text-xl font-bold text-[#1A1918]">
-                Verified Recruitment Circulars ({jobs.length})
+                Recruitments ({jobs.length})
               </h2>
             </div>
             <span className="text-xs text-[#68635B] font-mono">
@@ -265,7 +265,7 @@ export default async function StateQualificationPage({ params }: Props) {
               href={`/government-jobs/${state.slug}`}
               className="px-3.5 py-2 rounded-lg bg-[#FAF7EF] border border-[#DDD5C7] text-[#1E3799] font-bold hover:bg-[#EEF2FA] transition-colors"
             >
-              All {state.name} Gazettes →
+              All {state.name} jobs →
             </Link>
             <Link
               href={hub.qualSlug === "engineering" ? "/engineering-jobs" : `/qualification/${hub.qualSlug}`}

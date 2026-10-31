@@ -994,16 +994,8 @@ export function getJobPostBreakdown(job: JobNotification): PostVacancyBreakdown[
       payLevel: p.pay || "See notification",
     }));
   }
-  return [
-    {
-      postName: job.shortTitle,
-      department: job.organization,
-      vacancies: job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "See notification",
-      qualification: job.qualifications.join("; ") || "See notification",
-      ageLimit: formatAgeRange(job, "Years"),
-      payLevel: job.salary || "See notification",
-    },
-  ];
+  // no post-wise list in the notice: the key facts above already say all there is
+  return [];
 }
 
 // ==========================================

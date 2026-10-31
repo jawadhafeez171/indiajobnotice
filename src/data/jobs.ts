@@ -172,6 +172,15 @@ export interface JobStage {
   url: string;
   /** Exam / interview / test dates the document announces (ISO), when it was read. */
   examDates?: string[];
+  /** One English sentence on what the document is (the agent read it); titles are often not English. */
+  summary?: string;
+}
+
+/** The text to show for a stage document: its English summary when the title is in another script. */
+export function stageText(s: JobStage): { main: string; original?: string } {
+  // Devanagari to Sinhala: Hindi, Bengali, Gurmukhi, Gujarati, Odia, Tamil, Telugu, Kannada, Malayalam
+  const notEnglish = /[ऀ-෿]/.test(s.title);
+  return notEnglish && s.summary ? { main: s.summary, original: s.title } : { main: s.title };
 }
 
 export interface UpcomingExam {

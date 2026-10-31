@@ -60,7 +60,7 @@ export function Navbar({ currentStateSlug }: Props) {
                 href={currentState ? getStateSubdomainUrl(currentState.slug) : getCentralPortalUrl()}
                 className="hover:text-[#1E3799] transition-colors font-semibold whitespace-nowrap"
               >
-                Gazettes
+                Jobs
               </a>
 
               <Link
@@ -132,7 +132,7 @@ export function Navbar({ currentStateSlug }: Props) {
               <button
                 onClick={() => setIsWatchlistOpen(true)}
                 className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center relative rounded-lg bg-white border border-[#EAE2D2] text-[#1A1918] active:bg-[#FCFAF4] transition-colors"
-                aria-label="View Saved Circulars"
+                aria-label="View saved jobs"
               >
                 <Bookmark className={`w-4 h-4 ${savedCount > 0 ? "fill-[#E96B15] text-[#E96B15]" : "text-[#68635B]"}`} />
                 {savedCount > 0 && (
@@ -198,7 +198,7 @@ export function Navbar({ currentStateSlug }: Props) {
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white border border-[#EAE2D2] hover:border-[#1E3799] min-h-[44px] transition-colors"
                 >
-                  <span className="font-bold text-[#1E3799]">Gazette Notifications Archive</span>
+                  <span className="font-bold text-[#1E3799]">All job notifications</span>
                   <span className="text-xs text-[#68635B]">Explore →</span>
                 </a>
 
@@ -355,7 +355,7 @@ export function Navbar({ currentStateSlug }: Props) {
         currentStateSlug={currentStateSlug}
       />
 
-      {/* Aspirant Watchlist Drawer */}
+      {/* Saved jobs drawer */}
       <WatchlistDrawer
         isOpen={isWatchlistOpen}
         onClose={() => setIsWatchlistOpen(false)}

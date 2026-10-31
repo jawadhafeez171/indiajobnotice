@@ -36,13 +36,13 @@ export async function generateMetadata({ params }: PageProps) {
   const canonicalUrl = `https://www.indiajobnotice.com/state/${state.slug}`;
 
   return {
-    title: `${state.name} Govt Job Notifications 2026, Gazettes & Admit Cards`,
+    title: `${state.name} Govt Jobs 2026: Notifications, Admit Cards & Results`,
     description: `Official public employment gazettes and notifications for ${state.name} (${state.nativeName}). Official commission updates: ${state.majorExams.join(", ")}. Capital: ${state.capital}.`,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${state.name} Government Recruitment Gazettes - IndiaJobNotice`,
+      title: `${state.name} Government Jobs - IndiaJobNotice`,
       description: `Official job alerts, exam schedules, and circulars for ${state.name}.`,
       url: canonicalUrl,
       siteName: "India Job Notice",
@@ -79,7 +79,7 @@ export default async function StateHomePage({ params }: PageProps) {
           {/* Breadcrumb with Tricolor Accent */}
           <div className="flex items-center gap-2 text-xs text-[#68635B] mb-3">
             <a href={getCentralPortalUrl()} className="hover:text-[#1E3799] font-medium transition-colors">
-              All-India Gazettes
+              All-India jobs
             </a>
             <span>/</span>
             <span className="text-[#1A1918] font-bold">{state.name}</span>
@@ -187,7 +187,7 @@ export default async function StateHomePage({ params }: PageProps) {
             ))}
           </div>
 
-          {/* Deliberate Pathway Links to Qualification & Sector Hubs */}
+          {/* Links to qualification and sector pages */}
           <div className="pt-2 border-t border-[#F2ECE1] grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
             <a
               href="/engineering-jobs"

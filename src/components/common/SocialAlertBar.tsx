@@ -9,7 +9,7 @@ interface Props {
 
 export function SocialAlertBar({ state }: Props) {
   const telegramLink = "https://t.me/Indiajobnotice1";
-  const stateLabel = state ? `${state.name} Gazettes` : "All-India Gazettes";
+  const stateLabel = state ? state.name : "all of India";
 
   return (
     <div className="bg-white rounded-lg border border-[#EAE2D2] border-l-4 border-l-[#1E3799] p-4 sm:p-5 my-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">
@@ -21,10 +21,10 @@ export function SocialAlertBar({ state }: Props) {
           </span>
         </div>
         <h4 className="font-serif text-base font-bold text-[#1A1918]">
-          Instant Gazette Circulars for {stateLabel}
+          New job alerts for {stateLabel}
         </h4>
         <p className="text-xs text-[#524E48] mt-0.5 max-w-xl">
-          Get notified the moment official circulars, exam patterns, admit cards, or answer keys are gazetted. Verified and 100% free for all aspirants.
+          Get new notifications, admit cards, answer keys and results as soon as they are published. Free.
         </p>
       </div>
 

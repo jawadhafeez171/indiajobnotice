@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     openGraph: {
       title: `${job.shortTitle} 2026 Notification PDF - ${job.organization}`,
-      description: `Official recruitment circular. ${job.totalVacancies.toLocaleString("en-IN")} vacancies. Application deadline: ${job.applicationEndDate || "Check Gazette"}.`,
+      description: `${job.organization}: ${job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} posts. ` : ""}${job.isWalkIn ? "Walk-in" : "Last date"}: ${job.applicationEndDate || "see the notification"}. Eligibility, fee and the official notification link.`,
       url: canonicalUrl,
       siteName: "India Job Notice",
       locale: "en_IN",

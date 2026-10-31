@@ -116,7 +116,7 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
           </Link>
           <span>/</span>
           <Link href="/#all-states" className="hover:text-[#1E3799] font-medium transition-colors">
-            State Gazettes
+            State jobs
           </Link>
           <span>/</span>
           <span className="text-[#1A1918] font-bold">{state.name}</span>
@@ -129,7 +129,7 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
               <div className="flex items-center gap-2.5 mb-2.5 flex-wrap">
                 <TricolorCapsule className="w-12 h-1.5" />
                 <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
-                  Permanent State Gazette Hub
+                  All government jobs in the state
                 </span>
                 <span className="text-[#D8CFBF]">·</span>
                 <span className={cn("text-xs font-mono px-2 py-0.5 rounded font-bold border", badgeStyle.bg, badgeStyle.text, badgeStyle.border)}>
@@ -232,13 +232,13 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
         {/* Reserved Ad Slot (0.00 CLS Protection) */}
         <ReservedAdSlot slotType="leaderboard" slotId={`gov-jobs-${state.slug}-top`} />
 
-        {/* State Circulars */}
+        {/* State jobs */}
         <section className="space-y-4">
           <div className="flex items-baseline justify-between border-b border-[#EAE2D2] pb-2">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#E96B15]" />
               <h2 className="font-serif text-xl font-bold text-[#1A1918]">
-                {state.name} State Gazette Circulars ({stateJobs.length})
+                {state.name} jobs ({stateJobs.length})
               </h2>
             </div>
             <Link 
@@ -264,7 +264,7 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
           )}
         </section>
 
-        {/* Deliberate Domain & Qualification Pathways for Candidates in this State */}
+        {/* Sector and qualification pages for this state */}
         <section className="bg-white rounded-xl border border-[#EAE2D2] p-6 shadow-2xs space-y-4">
           <div className="flex items-center justify-between border-b border-[#F2ECE1] pb-3">
             <div className="flex items-center gap-2">
@@ -297,7 +297,7 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
                 </p>
               </div>
               <span className="text-[11px] font-bold text-[#1E3799] mt-3 flex items-center gap-1">
-                <span>View Engineering Gazettes</span>
+                <span>Engineering jobs</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
               </span>
             </Link>
@@ -318,7 +318,7 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
                 </p>
               </div>
               <span className="text-[11px] font-bold text-[#1E3799] mt-3 flex items-center gap-1">
-                <span>View Police Gazettes</span>
+                <span>Police jobs</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
               </span>
             </Link>

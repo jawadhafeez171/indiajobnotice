@@ -25,11 +25,11 @@ export function JobTaxonomyBar({ job }: Props) {
         <div className="flex items-center gap-2">
           <Compass className="w-4 h-4 text-[#1E3799]" />
           <span className="font-serif font-bold text-sm text-[#1A1918]">
-            Deliberate Category & Authority Hub Pathways
+            More jobs like this
           </span>
         </div>
         <span className="text-[10px] font-mono text-[#68635B] uppercase font-bold hidden sm:inline">
-          Permanent Gazette Archives
+          Browse
         </span>
       </div>
 
@@ -50,7 +50,7 @@ export function JobTaxonomyBar({ job }: Props) {
               </span>
             </div>
             <span className="text-[10px] font-semibold text-[#1E3799] mt-2 flex items-center gap-1">
-              <span>View All Circulars</span>
+              <span>See all jobs</span>
               <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
             </span>
           </Link>

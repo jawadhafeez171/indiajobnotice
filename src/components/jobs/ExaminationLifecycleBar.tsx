@@ -29,7 +29,7 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
       subLabel: "Vacancies & PDF",
       href: basePrefix,
       icon: FileText,
-      badge: "Master Circular",
+      badge: "Notice",
       badgeColor: "bg-[#EEF2FA] text-[#1E3799]",
     },
     {

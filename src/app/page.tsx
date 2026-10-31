@@ -20,13 +20,13 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, FileCheck, Award, ShieldCheck, Sparkles } from "lucide-react";
 
 export const metadata = {
-  title: "IndiaJobNotice.com - Official Govt Job Notifications, Gazettes & Admit Cards",
-  description: "India's dedicated government job notification portal. 100% verified official circulars, syllabus patterns, exam schedules, and results across Central & 36 State portals.",
+  title: "IndiaJobNotice.com - Government Job Notifications, Admit Cards & Results",
+  description: "Government job notifications from official sources across India: last dates, eligibility, admit cards and results for central and state recruitments.",
   alternates: {
     canonical: "https://www.indiajobnotice.com",
   },
   openGraph: {
-    title: "IndiaJobNotice.com - Central & State Government Employment Gazettes",
+    title: "IndiaJobNotice.com - Central & State Government Jobs",
     description: "Verified official notifications, admit cards, and results across all 36 States & Union Territories.",
     url: "https://www.indiajobnotice.com",
     siteName: "India Job Notice",
@@ -58,7 +58,7 @@ export default async function HomePage() {
     <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
       <Navbar currentStateSlug="central" />
 
-      {/* Short & Direct Gazette Hero */}
+      {/* Hero */}
       <section className="border-b border-[#EAE2D2] bg-[#FCFAF4] py-6 sm:py-7 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -67,11 +67,11 @@ export default async function HomePage() {
               <div className="flex items-center gap-2 mb-2 flex-wrap text-xs">
                 <TricolorCapsule className="w-12 h-1.5" />
                 <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#1E3799]">
-                  Central & State Employment Gazettes
+                  Central & state government jobs
                 </span>
                 <span className="text-[#D8CFBF]">·</span>
                 <span className="text-[11px] font-mono text-[#209948] bg-[#EDF7F0] px-2 py-0.5 rounded font-bold border border-[#C6E7D0]">
-                  100% Official
+                  Official sources
                 </span>
               </div>
 
@@ -84,10 +84,10 @@ export default async function HomePage() {
               </p>
             </div>
 
-            {/* Quick State Gazette Switcher */}
+            {/* Jobs by state */}
             <div className="flex flex-col sm:items-start lg:items-end gap-1.5 shrink-0 pt-2 lg:pt-0">
               <span className="text-[11px] font-mono text-[#68635B] font-semibold">
-                Direct State Gazettes:
+                Jobs by state:
               </span>
               <div className="flex flex-wrap gap-1.5 max-w-md lg:justify-end">
                 {STATES_REGISTRY.slice(0, 6).map((st) => {
@@ -119,7 +119,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Live Gazette Counters */}
+          {/* Counters */}
           <HeroCounterDeck
             totalVacancies={totalVacancies}
             openApplicationsCount={openApplicationsCount}
@@ -153,14 +153,14 @@ export default async function HomePage() {
           <EligibilityCalculator currentStateSlug="central" jobs={getCalculatorJobs(allJobs)} />
         </section>
 
-        {/* Central Govt Circulars */}
+        {/* Central government jobs */}
         <section id="central-jobs">
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 mb-4 border-b border-[#EAE2D2] pb-2">
             <div className="flex items-center gap-2.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#1E3799]" />
               <div>
                 <h2 className="font-serif text-xl font-bold text-[#1A1918]">
-                  Central Government Gazette Circulars
+                  Central government jobs
                 </h2>
                 <p className="text-xs text-[#68635B]">
                   Complete coverage across UPSC (CSE, NDA, CDS, CAPF), SSC (CGL, CHSL, GD, MTS, CPO), Railways (NTPC, Group D, ALP, JE), Banking (SBI, IBPS, RBI), Teaching & Postal
@@ -168,7 +168,7 @@ export default async function HomePage() {
               </div>
             </div>
             <span className="text-xs font-mono font-bold text-[#1E3799] bg-[#EEF2FA] px-2.5 py-1 rounded border border-[#CCD8F0] self-start sm:self-auto shrink-0">
-              {centralJobs.length} Central Gazettes Active
+              {centralJobs.length} jobs
             </span>
           </div>
 
@@ -261,7 +261,7 @@ export default async function HomePage() {
               <div className="flex items-center gap-2">
                 <TricolorCapsule className="w-12 h-1.5" />
                 <h2 className="font-serif text-lg font-bold text-[#1A1918]">
-                  State & Union Territory Gazettes Directory
+                  Jobs by state and union territory
                 </h2>
               </div>
               <p className="text-xs text-[#68635B] mt-0.5">
