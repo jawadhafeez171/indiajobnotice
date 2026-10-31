@@ -56,7 +56,7 @@ export default async function VacanciesPage() {
           <div className="flex items-center gap-2 mb-2">
             <TricolorCapsule className="w-14 h-1.5" />
             <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
-              Official Public Gazette Intelligence
+              Vacancies by qualification
             </span>
           </div>
 

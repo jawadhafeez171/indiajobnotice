@@ -33,7 +33,7 @@ export default async function CalculatorPage() {
           <div className="flex items-center gap-2 mb-2">
             <TricolorCapsule className="w-14 h-1.5" />
             <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
-              Official Statutory Calculator
+              Age eligibility calculator
             </span>
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1918] tracking-tight">

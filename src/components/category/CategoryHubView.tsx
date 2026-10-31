@@ -80,7 +80,7 @@ export async function CategoryHubView({ hub, parentCrumb }: Props) {
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <TricolorCapsule className="w-12 h-1.5" />
               <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
-                Permanent Public Gazette Hub
+                All jobs in this category
               </span>
               <span className="text-[#D8CFBF]">·</span>
               <span className="text-[11px] font-mono text-[#E96B15] bg-[#FDF3EB] px-2 py-0.5 rounded font-bold border border-[#F9D9C3]">
@@ -130,7 +130,7 @@ export async function CategoryHubView({ hub, parentCrumb }: Props) {
           <ShieldCheck className="w-5 h-5 text-[#1E3799]" />
           <div>
             <h2 className="font-serif text-lg font-bold text-[#1A1918]">
-              Statutory Eligibility, Age Limits & Application Checklist
+              Eligibility, age limits and how to apply
             </h2>
             <p className="text-xs text-[#68635B]">
               Standard recruitment rules, category concessions, and verification requirements
@@ -152,7 +152,7 @@ export async function CategoryHubView({ hub, parentCrumb }: Props) {
 
             <div className="p-3.5 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2]">
               <span className="font-bold text-[#1E3799] block mb-1 uppercase font-mono text-[10px]">
-                Age Limits & Statutory Relaxations
+                Age limits and relaxations
               </span>
               <p className="text-xs text-[#1A1918] font-medium">
                 Standard Age: {hub.eligibilityGuidance.typicalAgeLimit}
@@ -197,7 +197,7 @@ export async function CategoryHubView({ hub, parentCrumb }: Props) {
 
             <div className="p-3.5 rounded-lg bg-[#FDF3EB] border border-[#F9D9C3]">
               <span className="font-bold text-[#E96B15] block mb-1 uppercase font-mono text-[10px]">
-                Gazette Aspirant Advice
+                Tips for candidates
               </span>
               <ul className="space-y-1">
                 {hub.eligibilityGuidance.expertTips.map((tip, idx) => (
@@ -220,11 +220,11 @@ export async function CategoryHubView({ hub, parentCrumb }: Props) {
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#1E3799]" />
             <h2 className="font-serif text-xl font-bold text-[#1A1918]">
-              Verified Recruitment Circulars ({jobs.length})
+              Recruitments ({jobs.length})
             </h2>
           </div>
           <span className="text-xs text-[#68635B] font-mono">
-            Sorted by Gazette Priority
+            Latest first
           </span>
         </div>
 

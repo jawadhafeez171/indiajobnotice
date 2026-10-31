@@ -195,7 +195,7 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
           <div className="flex items-center gap-2 mb-1.5">
             <TricolorCapsule className="w-12 h-1.5" />
             <span className="text-[10px] font-mono uppercase tracking-wider text-[#E96B15] font-bold">
-              Statutory Gazette Cutoff Engine
+              Age eligibility check
             </span>
           </div>
           <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1A1918]">
@@ -302,7 +302,7 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
           </select>
           <p className="text-[11px] text-[#209948] mt-1 font-semibold">
             {relaxationBonus > 0
-              ? `+${relaxationBonus} Years Statutory Relaxation (${effectiveMaxAllowedAge} yrs ceiling)`
+              ? `+${relaxationBonus} years relaxation (${effectiveMaxAllowedAge} yrs ceiling)`
               : `Upper Age Ceiling: ${effectiveMaxAllowedAge} Years`}
           </p>
         </div>
@@ -374,7 +374,7 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
             <div className="p-2.5 rounded bg-[#FDF3EB] border border-[#F9D9C3] text-[11px] text-[#524E48] flex items-start gap-2">
               <AlertCircle className="w-4 h-4 text-[#E96B15] shrink-0 mt-0.5" />
               <span>
-                <strong>Statutory Out-of-State Candidate Notice:</strong> {activeRuleset.domicileRule}
+                <strong>Candidates from other states:</strong> {activeRuleset.domicileRule}
               </span>
             </div>
           )}
@@ -404,7 +404,7 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
         <div className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-[#1A1918] mb-1.5">
-              Select Official Recruitment Gazette to Evaluate:
+              Choose a recruitment to check:
             </label>
             <select
               value={selectedJobId}
@@ -481,7 +481,7 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
                 href={selectedJob.isCentral ? `/jobs/${selectedJob.slug}` : `/state/${selectedJob.stateSlug}/jobs/${selectedJob.slug}`}
                 className="font-bold text-[#1E3799] hover:underline flex items-center gap-1"
               >
-                <span>View Full Gazette & Apply</span>
+                <span>View job and apply</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </Link>
             </div>

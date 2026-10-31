@@ -47,8 +47,8 @@ export function generateGoogleCalendarUrl(event: CalendarEventParams): string {
     action: "TEMPLATE",
     text: event.title,
     dates: `${start}/${end}`,
-    details: `${event.description}\n\nOfficial Gazette: ${event.url || "https://www.indiajobnotice.com"}`,
-    location: event.location || "National / India (Official Gazette)",
+    details: `${event.description}\n\nOfficial website: ${event.url || "https://www.indiajobnotice.com"}`,
+    location: event.location || "India",
     sprop: "name:IndiaJobNotice",
   });
 

@@ -229,7 +229,7 @@ export function StateDirectoryView() {
                   href={`/government-jobs/${rec.state.slug}`}
                   className="font-bold text-[#1E3799] hover:underline flex items-center gap-1"
                 >
-                  <span>{rec.state.name} Govt Gazettes</span>
+                  <span>{rec.state.name} government jobs</span>
                   <ArrowRight className="w-3 h-3" />
                 </Link>
 

@@ -153,7 +153,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F2ECE1] pb-4">
           <div>
             <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E3799] font-bold block mb-1">
-              Real-Time Gazette Data
+              From official notifications
             </span>
             <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1A1918]">
               Qualification-Wise Vacancy Breakdown
@@ -206,7 +206,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
 
                 <div className="mt-2.5 pt-2 border-t border-[#EAE2D2]/60 flex items-center justify-between text-[10px] font-bold">
                   <span className={isSelected ? "text-[#1E3799]" : "text-[#524E48]"}>
-                    {tier.jobCount} Gazettes
+                    {tier.jobCount} jobs
                   </span>
                   <ArrowRight className={cn(
                     "w-3 h-3 transition-transform",
@@ -280,7 +280,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                   <th className="py-3 px-4 font-semibold">Eligibility Details</th>
                   <th className="py-3 px-4 font-semibold">Pay Scale</th>
                   <th className="py-3 px-4 font-semibold">Deadline</th>
-                  <th className="py-3 px-4 font-bold text-right print:hidden">Direct Gazette</th>
+                  <th className="py-3 px-4 font-bold text-right print:hidden">Notification</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F2ECE1]">
@@ -352,7 +352,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                           href={jobHref}
                           className="px-3 py-1.5 rounded bg-[#FAF7EF] border border-[#DDD5C7] hover:border-[#1E3799] hover:text-[#1E3799] text-xs font-bold transition-all inline-flex items-center gap-1"
                         >
-                          <span>Gazette</span>
+                          <span>Notification</span>
                           <ArrowRight className="w-3 h-3" />
                         </Link>
                       </td>
