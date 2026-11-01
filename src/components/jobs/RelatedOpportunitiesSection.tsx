@@ -33,12 +33,12 @@ export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
       case "organisation":
         return "bg-[#EEF2FA] text-[#1E3799] border-[#CCD8F0]";
       case "state":
-        return "bg-[#FDF3EB] text-[#E96B15] border-[#F9D9C3]";
+        return "bg-[#FDF3EB] text-[#B84D0A] border-[#F9D9C3]";
       case "sector":
-        return "bg-[#EDF7F0] text-[#209948] border-[#C6E7D0]";
+        return "bg-[#EDF7F0] text-[#17803A] border-[#C6E7D0]";
       case "qualification":
       default:
-        return "bg-[#FAF7EF] text-[#68635B] border-[#EAE2D2]";
+        return "bg-[#FAF7EF] text-[#4F4A43] border-[#D5CAB5]";
     }
   };
 
@@ -47,30 +47,30 @@ export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
       case "organisation":
         return <Building2 className="w-3 h-3 text-[#1E3799]" />;
       case "state":
-        return <MapPin className="w-3 h-3 text-[#E96B15]" />;
+        return <MapPin className="w-3 h-3 text-[#B84D0A]" />;
       case "sector":
-        return <Briefcase className="w-3 h-3 text-[#209948]" />;
+        return <Briefcase className="w-3 h-3 text-[#17803A]" />;
       case "qualification":
       default:
-        return <GraduationCap className="w-3 h-3 text-[#68635B]" />;
+        return <GraduationCap className="w-3 h-3 text-[#4F4A43]" />;
     }
   };
 
   return (
-    <section className="bg-white rounded-xl border border-[#EAE2D2] p-6 sm:p-7 shadow-2xs print:hidden space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#EAE2D2] pb-4">
+    <section className="bg-white rounded-xl border border-[#D5CAB5] p-6 sm:p-7 shadow-2xs print:hidden space-y-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#D5CAB5] pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[#E96B15]" />
+            <Sparkles className="w-5 h-5 text-[#B84D0A]" />
             <h3 className="font-serif text-lg font-bold text-[#1A1918]">
               Similar jobs
             </h3>
           </div>
-          <p className="text-xs text-[#68635B] mt-0.5">
+          <p className="text-xs text-[#4F4A43] mt-0.5">
             Same qualification, organisation or kind of post
           </p>
         </div>
-        <span className="text-[11px] font-mono font-bold text-[#1E3799] bg-[#EEF2FA] px-2.5 py-1 rounded border border-[#CCD8F0] self-start sm:self-auto">
+        <span className="text-[12px] font-mono font-bold text-[#1E3799] bg-[#EEF2FA] px-2.5 py-1 rounded border border-[#CCD8F0] self-start sm:self-auto">
           {related.length} similar
         </span>
       </div>
@@ -86,13 +86,13 @@ export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
           return (
             <div
               key={job.id}
-              className="p-4 rounded-xl border border-[#EAE2D2] bg-[#FCFAF4] hover:bg-white hover:border-[#1E3799] hover:shadow-2xs transition-all flex flex-col justify-between group"
+              className="p-4 rounded-xl border border-[#D5CAB5] bg-[#FCFAF4] hover:bg-white hover:border-[#1E3799] hover:shadow-2xs transition-all flex flex-col justify-between group"
             >
               <div>
                 {/* Relationship Reason Chip */}
                 <div className="flex items-center justify-between gap-2 mb-2.5">
                   <span
-                    className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-bold border ${getReasonBadgeStyle(
+                    className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[12px] font-bold border ${getReasonBadgeStyle(
                       relationshipType
                     )}`}
                   >
@@ -109,21 +109,21 @@ export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
                   </h4>
                 </Link>
 
-                <p className="text-xs text-[#68635B] mt-1 font-medium flex items-center gap-1.5">
+                <p className="text-xs text-[#4F4A43] mt-1 font-medium flex items-center gap-1.5">
                   <Building2 className="w-3.5 h-3.5 text-[#1E3799] shrink-0" />
                   <span className="truncate">{job.organization}</span>
                 </p>
 
                 {/* Posts and last date */}
                 <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                  <div className="p-2 rounded bg-white border border-[#EAE2D2]/80">
-                    <span className="text-[10px] uppercase text-[#68635B] block font-semibold">Posts</span>
+                  <div className="p-2 rounded bg-white border border-[#D5CAB5]/80">
+                    <span className="text-[11px] uppercase text-[#4F4A43] block font-semibold">Posts</span>
                     <span className="font-bold text-sm text-[#1A1918]">
                       {job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "See notification"}
                     </span>
                   </div>
-                  <div className="p-2 rounded bg-white border border-[#EAE2D2]/80">
-                    <span className="text-[10px] uppercase text-[#68635B] block font-semibold">
+                  <div className="p-2 rounded bg-white border border-[#D5CAB5]/80">
+                    <span className="text-[11px] uppercase text-[#4F4A43] block font-semibold">
                       {job.isWalkIn ? "Walk-in" : "Last date"}
                     </span>
                     <span className="font-bold text-xs text-[#1A1918] block">
@@ -137,13 +137,13 @@ export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
                   {job.qualifications.slice(0, 2).map((q, idx) => (
                     <span
                       key={idx}
-                      className="text-[10px] px-2 py-0.5 rounded bg-white border border-[#EAE2D2] text-[#524E48] font-medium"
+                      className="text-[11px] px-2 py-0.5 rounded bg-white border border-[#D5CAB5] text-[#3F3B35] font-medium"
                     >
                       {q}
                     </span>
                   ))}
                   {job.qualifications.length > 2 && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-white border border-[#EAE2D2] text-[#68635B]">
+                    <span className="text-[11px] px-1.5 py-0.5 rounded bg-white border border-[#D5CAB5] text-[#4F4A43]">
                       +{job.qualifications.length - 2} more
                     </span>
                   )}
@@ -151,9 +151,9 @@ export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
               </div>
 
               {/* Bottom Actions & Deep Internal Links */}
-              <div className="mt-4 pt-3 border-t border-[#EAE2D2] flex items-center justify-between gap-2 text-xs">
+              <div className="mt-4 pt-3 border-t border-[#D5CAB5] flex items-center justify-between gap-2 text-xs">
                 {/* Secondary Sub-page links for crawlers & candidates */}
-                <div className="flex items-center gap-2 text-[11px] font-medium text-[#68635B]">
+                <div className="flex items-center gap-2 text-[12px] font-medium text-[#4F4A43]">
                   <Link
                     href={`${jobHref}/admit-card`}
                     className="hover:text-[#1E3799] hover:underline"
@@ -164,7 +164,7 @@ export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
                   <span>•</span>
                   <Link
                     href={`${jobHref}/result`}
-                    className="hover:text-[#209948] hover:underline"
+                    className="hover:text-[#17803A] hover:underline"
                     title={`Merit List & Result for ${job.shortTitle}`}
                   >
                     Result

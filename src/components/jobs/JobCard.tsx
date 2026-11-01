@@ -31,7 +31,7 @@ export function JobCard({ job, currentStateSlug, currentDistrictSlug }: Props) {
     : null;
 
   return (
-    <article className="group bg-white rounded-lg border border-[#EAE2D2] hover:border-[#1E3799]/50 transition-all p-5 flex flex-col justify-between relative overflow-hidden shadow-2xs hover:shadow-xs">
+    <article className="group bg-white rounded-lg border border-[#D5CAB5] hover:border-[#1E3799]/50 transition-all p-5 flex flex-col justify-between relative overflow-hidden shadow-2xs hover:shadow-xs">
       {/* Subtle brand color accent line on left */}
       <div className={cn("absolute left-0 top-0 bottom-0 w-1", categoryColors.stripe)} />
 
@@ -41,7 +41,7 @@ export function JobCard({ job, currentStateSlug, currentDistrictSlug }: Props) {
           <div className="flex items-center gap-1.5 flex-wrap">
             <span
               className={cn(
-                "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold tracking-wide border",
+                "inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold tracking-wide border",
                 categoryColors.bg,
                 categoryColors.text,
                 categoryColors.border
@@ -50,18 +50,18 @@ export function JobCard({ job, currentStateSlug, currentDistrictSlug }: Props) {
               {categoryColors.label}
             </span>
 
-            <span className="text-[10px] font-mono uppercase text-[#706B62] font-semibold">
+            <span className="text-[11px] font-mono uppercase text-[#706B62] font-semibold">
               {job.orgShortCode} · {job.isCentral ? "Central" : job.stateSlug.toUpperCase()}
             </span>
 
             {job.isDistrictSpecific && job.districtName && (
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#FDF3EB] text-[#E96B15] border border-[#F9D7C0]">
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold bg-[#FDF3EB] text-[#B84D0A] border border-[#F9D7C0]">
                 📍 {job.districtName} Only
               </span>
             )}
 
             {districtQuota && (
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#EBF7EE] text-[#1E7E34] border border-[#C3E6CB]">
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold bg-[#EBF7EE] text-[#1E7E34] border border-[#C3E6CB]">
                 🎯 {districtQuota.vacancies.toLocaleString("en-IN")} Local Posts
               </span>
             )}
@@ -74,7 +74,7 @@ export function JobCard({ job, currentStateSlug, currentDistrictSlug }: Props) {
               className={cn(
                 "p-1 rounded transition-colors",
                 saved
-                  ? "text-[#E96B15] hover:text-[#D4590A]"
+                  ? "text-[#B84D0A] hover:text-[#D4590A]"
                   : "text-[#B8B0A2] hover:text-[#1E3799]"
               )}
               title={saved ? "Remove from Pinned Notices" : "Pin notice to Watchlist"}
@@ -93,12 +93,12 @@ export function JobCard({ job, currentStateSlug, currentDistrictSlug }: Props) {
         </Link>
 
         {/* Organization Name */}
-        <p className="text-xs text-[#68635B] mt-1 line-clamp-1 font-medium">
+        <p className="text-xs text-[#4F4A43] mt-1 line-clamp-1 font-medium">
           {job.organization}
         </p>
 
         {/* Essential Specs Row */}
-        <div className="mt-4 pt-3 border-t border-[#F2ECE1] flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#423F3A]">
+        <div className="mt-4 pt-3 border-t border-[#E2D8C6] flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#423F3A]">
           <span>
             <span className="text-[#757067]">Posts: </span>
             <b className="text-[#1E3799] font-mono font-bold">{job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "—"}</b>
@@ -117,22 +117,22 @@ export function JobCard({ job, currentStateSlug, currentDistrictSlug }: Props) {
       </div>
 
       {/* Footer Info & Actions */}
-      <div className="pl-1.5 mt-4 pt-3 border-t border-[#F2ECE1] flex items-center justify-between text-xs">
-        <div className="text-[#68635B] flex items-center gap-1.5 flex-wrap">
+      <div className="pl-1.5 mt-4 pt-3 border-t border-[#E2D8C6] flex items-center justify-between text-xs">
+        <div className="text-[#4F4A43] flex items-center gap-1.5 flex-wrap">
           <div>
             <span>Closing: </span>
-            <span className={cn("font-medium", isEndingSoon ? "text-[#E96B15] font-bold" : "text-[#1A1918]")}>
+            <span className={cn("font-medium", isEndingSoon ? "text-[#B84D0A] font-bold" : "text-[#1A1918]")}>
               {formatDate(job.applicationEndDate)}
             </span>
             {isEndingSoon && (
-              <span className="ml-1 text-[10px] font-bold text-[#E96B15] bg-[#FDF3EB] px-1.5 py-0.2 rounded border border-[#F9D7C0]">
+              <span className="ml-1 text-[11px] font-bold text-[#B84D0A] bg-[#FDF3EB] px-1.5 py-0.2 rounded border border-[#F9D7C0]">
                 {daysLeft}d left
               </span>
             )}
           </div>
           <span className="text-[#D8CFBF] hidden sm:inline">·</span>
-          <span className="text-[10px] text-[#209948] font-bold hidden sm:inline-flex items-center gap-0.5 bg-[#EDF7F0] px-1.5 py-0.2 rounded border border-[#C6E7D0]">
-            <ShieldCheck className="w-3 h-3 text-[#209948]" />
+          <span className="text-[11px] text-[#17803A] font-bold hidden sm:inline-flex items-center gap-0.5 bg-[#EDF7F0] px-1.5 py-0.2 rounded border border-[#C6E7D0]">
+            <ShieldCheck className="w-3 h-3 text-[#17803A]" />
             <span>Verified</span>
           </span>
         </div>
@@ -142,7 +142,7 @@ export function JobCard({ job, currentStateSlug, currentDistrictSlug }: Props) {
             href={job.officialPdfUrl}
             target="_blank"
             rel="noreferrer"
-            className="text-[#68635B] hover:text-[#1E3799] flex items-center gap-1 font-medium text-xs transition-colors"
+            className="text-[#4F4A43] hover:text-[#1E3799] flex items-center gap-1 font-medium text-xs transition-colors"
             title="Download Official Notification PDF"
           >
             <FileText className="w-3.5 h-3.5" />
@@ -151,7 +151,7 @@ export function JobCard({ job, currentStateSlug, currentDistrictSlug }: Props) {
 
           <Link
             href={detailLink}
-            className="text-[#E96B15] hover:text-[#D4590A] font-bold flex items-center gap-1 transition-colors"
+            className="text-[#B84D0A] hover:text-[#D4590A] font-bold flex items-center gap-1 transition-colors"
           >
             <span>Details</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />

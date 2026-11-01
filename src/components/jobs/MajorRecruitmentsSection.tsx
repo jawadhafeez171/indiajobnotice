@@ -85,9 +85,9 @@ const STATUS_CATEGORIES: StatusCategoryConfig[] = [
     label: "Closing Soon (Last Chance)",
     shortLabel: "Closing Soon",
     badgeText: "Ending Soon",
-    dotColor: "bg-[#E96B15]",
+    dotColor: "bg-[#C2510A]",
     activeColor: "text-white",
-    activeBg: "bg-[#E96B15]",
+    activeBg: "bg-[#C2510A]",
     activeBorder: "border-[#E96B15]",
     icon: Clock,
     description: "Urgent application deadlines ending in the upcoming days. Submit forms before portal closure.",
@@ -291,7 +291,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
   return (
     <section id="major-recruitments" className="space-y-4 scroll-mt-20">
       {/* Section Header with Live View Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#EAE2D2]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#D5CAB5]">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#1E3799]" />
@@ -299,14 +299,14 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               Latest government jobs
             </h2>
           </div>
-          <p className="text-xs text-[#68635B] mt-0.5">
+          <p className="text-xs text-[#4F4A43] mt-0.5">
             Open jobs closing soonest first, then admit cards and results
           </p>
         </div>
 
         {/* View Mode Switcher Toggle */}
         <div className="hidden md:flex items-center gap-1 p-1 rounded-md bg-[#EEF2FA] border border-[#CCD8F0] self-start sm:self-auto text-xs">
-          <span className="text-[10px] uppercase font-mono text-[#1E3799] font-bold px-2 hidden md:inline">
+          <span className="text-[11px] uppercase font-mono text-[#1E3799] font-bold px-2 hidden md:inline">
             Layout:
           </span>
 
@@ -355,7 +355,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
       </div>
 
       {/* ================= UNIVERSAL LIVE SEARCH & MULTI-FACET FILTER BAR ================= */}
-      <div className="bg-white rounded-lg border border-[#EAE2D2] p-3 sm:p-3.5 shadow-2xs space-y-3">
+      <div className="bg-white rounded-lg border border-[#D5CAB5] p-3 sm:p-3.5 shadow-2xs space-y-3">
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2.5">
           {/* Instant Search Input */}
           <div className="relative flex-1">
@@ -412,8 +412,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               <button
                 onClick={() => setSelectedScope("ALL")}
                 className={cn(
-                  "flex-1 px-3 py-1.5 sm:py-1 rounded-md text-xs sm:text-[11px] transition-colors flex items-center justify-center font-bold",
-                  selectedScope === "ALL" ? "bg-[#1E3799] text-white" : "text-[#68635B] hover:text-[#1A1918]"
+                  "flex-1 px-3 py-1.5 sm:py-1 rounded-md text-xs sm:text-[12px] transition-colors flex items-center justify-center font-bold",
+                  selectedScope === "ALL" ? "bg-[#1E3799] text-white" : "text-[#4F4A43] hover:text-[#1A1918]"
                 )}
               >
                 All
@@ -421,8 +421,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               <button
                 onClick={() => setSelectedScope("CENTRAL")}
                 className={cn(
-                  "flex-1 px-3 py-1.5 sm:py-1 rounded-md text-xs sm:text-[11px] transition-colors flex items-center justify-center font-bold",
-                  selectedScope === "CENTRAL" ? "bg-[#1E3799] text-white" : "text-[#68635B] hover:text-[#1A1918]"
+                  "flex-1 px-3 py-1.5 sm:py-1 rounded-md text-xs sm:text-[12px] transition-colors flex items-center justify-center font-bold",
+                  selectedScope === "CENTRAL" ? "bg-[#1E3799] text-white" : "text-[#4F4A43] hover:text-[#1A1918]"
                 )}
               >
                 Central
@@ -430,8 +430,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               <button
                 onClick={() => setSelectedScope("STATE")}
                 className={cn(
-                  "flex-1 px-3 py-1.5 sm:py-1 rounded-md text-xs sm:text-[11px] transition-colors flex items-center justify-center font-bold",
-                  selectedScope === "STATE" ? "bg-[#1E3799] text-white" : "text-[#68635B] hover:text-[#1A1918]"
+                  "flex-1 px-3 py-1.5 sm:py-1 rounded-md text-xs sm:text-[12px] transition-colors flex items-center justify-center font-bold",
+                  selectedScope === "STATE" ? "bg-[#1E3799] text-white" : "text-[#4F4A43] hover:text-[#1A1918]"
                 )}
               >
                 State
@@ -442,9 +442,9 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
 
 
         {/* Results Counter & Active Filter Pills */}
-        <div className="flex items-center justify-between text-xs pt-1 border-t border-[#F2ECE1] text-[#68635B]">
+        <div className="flex items-center justify-between text-xs pt-1 border-t border-[#E2D8C6] text-[#4F4A43]">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-mono text-[11px] font-bold text-[#1E3799]">
+            <span className="font-mono text-[12px] font-bold text-[#1E3799]">
               Showing {filteredJobs.length} verified {filteredJobs.length === 1 ? "notice" : "notices"}
             </span>
 
@@ -452,25 +452,25 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               <>
                 <span className="text-[#D8CFBF]">·</span>
                 {searchQuery && (
-                  <span className="inline-flex items-center gap-1 bg-[#EEF2FA] text-[#1E3799] px-2 py-0.5 rounded text-[10px] font-bold border border-[#CCD8F0]">
+                  <span className="inline-flex items-center gap-1 bg-[#EEF2FA] text-[#1E3799] px-2 py-0.5 rounded text-[11px] font-bold border border-[#CCD8F0]">
                     &ldquo;{searchQuery}&rdquo;
                     <button onClick={() => setSearchQuery("")} className="hover:text-red-600"><X className="w-2.5 h-2.5" /></button>
                   </span>
                 )}
                 {selectedCategory !== "ALL" && (
-                  <span className="inline-flex items-center gap-1 bg-[#EEF2FA] text-[#1E3799] px-2 py-0.5 rounded text-[10px] font-bold border border-[#CCD8F0]">
+                  <span className="inline-flex items-center gap-1 bg-[#EEF2FA] text-[#1E3799] px-2 py-0.5 rounded text-[11px] font-bold border border-[#CCD8F0]">
                     {selectedCategory}
                     <button onClick={() => setSelectedCategory("ALL")} className="hover:text-red-600"><X className="w-2.5 h-2.5" /></button>
                   </span>
                 )}
                 {selectedQualification !== "ALL" && (
-                  <span className="inline-flex items-center gap-1 bg-[#EEF2FA] text-[#1E3799] px-2 py-0.5 rounded text-[10px] font-bold border border-[#CCD8F0]">
+                  <span className="inline-flex items-center gap-1 bg-[#EEF2FA] text-[#1E3799] px-2 py-0.5 rounded text-[11px] font-bold border border-[#CCD8F0]">
                     {QUALIFICATIONS.find((q) => q.value === selectedQualification)?.label}
                     <button onClick={() => setSelectedQualification("ALL")} className="hover:text-red-600"><X className="w-2.5 h-2.5" /></button>
                   </span>
                 )}
                 {selectedScope !== "ALL" && (
-                  <span className="inline-flex items-center gap-1 bg-[#EEF2FA] text-[#1E3799] px-2 py-0.5 rounded text-[10px] font-bold border border-[#CCD8F0]">
+                  <span className="inline-flex items-center gap-1 bg-[#EEF2FA] text-[#1E3799] px-2 py-0.5 rounded text-[11px] font-bold border border-[#CCD8F0]">
                     Scope: {selectedScope}
                     <button onClick={() => setSelectedScope("ALL")} className="hover:text-red-600"><X className="w-2.5 h-2.5" /></button>
                   </span>
@@ -482,7 +482,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
           {hasActiveFilters && (
             <button
               onClick={resetAllFilters}
-              className="inline-flex items-center gap-1 text-[#C41C1C] hover:underline font-bold text-[11px]"
+              className="inline-flex items-center gap-1 text-[#C41C1C] hover:underline font-bold text-[12px]"
             >
               <RotateCcw className="w-3 h-3" />
               <span>Reset Filters</span>
@@ -507,7 +507,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                   "p-3 rounded-lg border text-left transition-all relative flex flex-col justify-between group shadow-2xs hover:shadow-xs",
                   isActive
                     ? "bg-white border-[#1E3799] ring-2 ring-[#1E3799]/15"
-                    : "bg-white border-[#EAE2D2] hover:border-[#CCD8F0] hover:bg-[#FAF7EF]"
+                    : "bg-white border-[#D5CAB5] hover:border-[#CCD8F0] hover:bg-[#FAF7EF]"
                 )}
               >
                 {/* Active Indicator Bar at Top */}
@@ -518,7 +518,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                 <div className="flex items-center justify-between gap-1 mb-2">
                   <div className="flex items-center gap-1.5">
                     <span className={cn("w-2 h-2 rounded-full", cat.dotColor)} />
-                    <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#68635B]">
+                    <span className="text-[11px] uppercase font-mono font-bold tracking-wider text-[#4F4A43]">
                       {cat.badgeText}
                     </span>
                   </div>
@@ -548,7 +548,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
         </div>
 
         {/* Category Description Banner */}
-        <div className="px-3.5 py-2 rounded-md bg-[#FAF7EF] border border-[#EAE2D2] flex items-center justify-between text-xs text-[#524E48]">
+        <div className="px-3.5 py-2 rounded-md bg-[#FAF7EF] border border-[#D5CAB5] flex items-center justify-between text-xs text-[#3F3B35]">
           <div className="flex items-center gap-2">
             <Sparkles className="w-3.5 h-3.5 text-[#1E3799] shrink-0" />
             <span>{currentCategoryConfig.description}</span>
@@ -558,7 +558,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
             <button
               onClick={() => setActiveCategory(activeCategory === "ALL" ? "APPLY_OPEN" : "ALL")}
               className={cn(
-                "text-[11px] font-mono font-bold px-2 py-0.5 rounded transition-colors",
+                "text-[12px] font-mono font-bold px-2 py-0.5 rounded transition-colors",
                 activeCategory === "ALL"
                   ? "bg-[#1E3799] text-white"
                   : "text-[#1E3799] hover:underline"
@@ -574,7 +574,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
       {viewMode === "ledger" && (
         <ul className="md:hidden space-y-2.5">
           {filteredJobs.length === 0 && (
-            <li className="py-8 text-center text-sm text-[#68635B]">
+            <li className="py-8 text-center text-sm text-[#4F4A43]">
               No jobs match these filters.{" "}
               <button onClick={resetAllFilters} className="font-bold text-[#1E3799] underline">Clear filters</button>
             </li>
@@ -585,16 +585,16 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
             const detailLink = job.isCentral ? `/jobs/${job.slug}` : `/state/${job.stateSlug}/jobs/${job.slug}`;
             return (
               <li key={job.id}>
-                <Link href={detailLink} className="block p-3.5 rounded-lg bg-white border border-[#EAE2D2] active:border-[#1E3799]">
-                  <span className="text-[11px] font-bold text-[#1E3799]">
+                <Link href={detailLink} className="block p-3.5 rounded-lg bg-white border border-[#D5CAB5] active:border-[#1E3799]">
+                  <span className="text-[12px] font-bold text-[#1E3799]">
                     {job.orgShortCode} · {job.isCentral ? "Central" : job.stateSlug.toUpperCase()}
                   </span>
                   <p className="mt-0.5 font-serif font-bold text-[15px] leading-snug text-[#1A1918] line-clamp-2">{job.shortTitle}</p>
                   <div className="mt-1.5 flex items-center justify-between gap-2 text-xs">
-                    <span className="text-[#524E48]">
+                    <span className="text-[#3F3B35]">
                       {job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} posts` : "Posts: see notification"}
                     </span>
-                    <span className={cn("font-bold", open && daysLeft <= 7 ? "text-[#E96B15]" : "text-[#1A1918]")}>
+                    <span className={cn("font-bold", open && daysLeft <= 7 ? "text-[#B84D0A]" : "text-[#1A1918]")}>
                       {job.status === "ADMIT_CARD_OUT" ? "Admit card out"
                         : job.status === "RESULT_OUT" ? "Result out"
                         : job.applicationEndDate
@@ -609,11 +609,11 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
         </ul>
       )}
       {viewMode === "ledger" && (
-        <div className="hidden md:block bg-white rounded-lg border border-[#EAE2D2] overflow-hidden shadow-2xs">
+        <div className="hidden md:block bg-white rounded-lg border border-[#D5CAB5] overflow-hidden shadow-2xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-[#FAF7EC] border-b border-[#EAE2D2] text-[#68635B] font-mono text-[11px] uppercase tracking-wider">
+                <tr className="bg-[#FAF7EC] border-b border-[#D5CAB5] text-[#4F4A43] font-mono text-[12px] uppercase tracking-wider">
                   <th className="py-3 px-4 font-bold text-[#1E3799]">Posts</th>
                   <th className="py-3 px-4 font-bold text-[#1A1918]">Recruitment</th>
                   <th className="py-3 px-4 font-semibold hidden md:table-cell">Sector</th>
@@ -622,15 +622,15 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                   <th className="py-3 px-4 text-right font-semibold">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#F2ECE1]">
+              <tbody className="divide-y divide-[#E2D8C6]">
                 {filteredJobs.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-12 text-center text-xs text-[#68635B]">
+                    <td colSpan={6} className="py-12 text-center text-xs text-[#4F4A43]">
                       <div className="max-w-sm mx-auto space-y-2">
                         <p className="font-serif text-base font-bold text-[#1A1918]">
                           No jobs match these filters
                         </p>
-                        <p className="text-xs text-[#68635B]">
+                        <p className="text-xs text-[#4F4A43]">
                           Try adjusting your search keyword or resetting category/qualification filters.
                         </p>
                         <button
@@ -662,7 +662,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                           <span className="font-bold text-sm text-[#1E3799]">
                             {job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "—"}
                           </span>
-                          <span className="text-[10px] text-[#68635B] block">
+                          <span className="text-[11px] text-[#4F4A43] block">
                             posts
                           </span>
                         </td>
@@ -670,11 +670,11 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                         {/* Title & Board */}
                         <td className="py-3.5 px-4 max-w-xs sm:max-w-md">
                           <div className="flex items-center gap-1.5 mb-0.5">
-                            <span className="font-mono text-[10px] uppercase font-bold text-[#1E3799] bg-[#EEF2FA] px-1.5 py-0.2 rounded border border-[#CCD8F0]">
+                            <span className="font-mono text-[11px] uppercase font-bold text-[#1E3799] bg-[#EEF2FA] px-1.5 py-0.2 rounded border border-[#CCD8F0]">
                               {job.orgShortCode}
                             </span>
                             <span className="text-[#D8CFBF]">·</span>
-                            <span className="text-[10px] text-[#68635B] font-medium">
+                            <span className="text-[11px] text-[#4F4A43] font-medium">
                               {job.isCentral ? "Central Govt" : `${job.stateSlug.toUpperCase()} State`}
                             </span>
                           </div>
@@ -684,7 +684,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                           >
                             {job.shortTitle}
                           </Link>
-                          <p className="text-[11px] text-[#68635B] line-clamp-1 mt-0.5 font-medium">
+                          <p className="text-[12px] text-[#4F4A43] line-clamp-1 mt-0.5 font-medium">
                             {job.organization}
                           </p>
                         </td>
@@ -693,7 +693,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                         <td className="py-3.5 px-4 hidden md:table-cell whitespace-nowrap">
                           <span
                             className={cn(
-                              "inline-block px-2 py-0.5 rounded text-[10px] font-bold border",
+                              "inline-block px-2 py-0.5 rounded text-[11px] font-bold border",
                               catColors.bg,
                               catColors.text,
                               catColors.border
@@ -712,20 +712,20 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                         <td className="py-3.5 px-4 whitespace-nowrap">
                           {job.status === "ADMIT_CARD_OUT" ? (
                             <div>
-                              <span className="text-[10px] font-mono text-[#1E3799] font-bold block">Exam Date</span>
+                              <span className="text-[11px] font-mono text-[#1E3799] font-bold block">Exam Date</span>
                               <span className="font-bold text-xs text-[#1A1918]">{job.examDate || "Active"}</span>
                             </div>
                           ) : job.status === "RESULT_OUT" ? (
                             <div>
-                              <span className="font-bold text-xs text-[#209948]">Result out</span>
+                              <span className="font-bold text-xs text-[#17803A]">Result out</span>
                             </div>
                           ) : (
                             <div>
-                              <div className={cn("font-medium", isEndingSoon ? "text-[#E96B15] font-bold" : "text-[#1A1918]")}>
+                              <div className={cn("font-medium", isEndingSoon ? "text-[#B84D0A] font-bold" : "text-[#1A1918]")}>
                                 {formatDate(job.applicationEndDate)}
                               </div>
                               {isEndingSoon && (
-                                <span className="text-[10px] text-[#E96B15] font-bold">
+                                <span className="text-[11px] text-[#B84D0A] font-bold">
                                   {daysLeft}d left
                                 </span>
                               )}
@@ -742,7 +742,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                               className={cn(
                                 "p-1.5 rounded transition-colors",
                                 saved
-                                  ? "text-[#E96B15] hover:text-[#D4590A] bg-[#FDF3EB]"
+                                  ? "text-[#B84D0A] hover:text-[#D4590A] bg-[#FDF3EB]"
                                   : "text-[#8C8273] hover:text-[#1E3799] hover:bg-[#EEF2FA]"
                               )}
                               title={saved ? "Remove from saved jobs" : "Save this job"}
@@ -755,7 +755,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                               href={job.officialPdfUrl}
                               target="_blank"
                               rel="noreferrer"
-                              className="p-1.5 rounded hover:bg-[#EEF2FA] text-[#68635B] hover:text-[#1E3799] transition-colors"
+                              className="p-1.5 rounded hover:bg-[#EEF2FA] text-[#4F4A43] hover:text-[#1E3799] transition-colors"
                               title="Official notification"
                             >
                               <FileText className="w-3.5 h-3.5" />
@@ -763,7 +763,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
 
                             <Link
                               href={detailLink}
-                              className="px-2.5 py-1 rounded bg-[#FDF3EB] border border-[#F9D9C3] text-[#E96B15] hover:bg-[#E96B15] hover:text-white font-bold text-[11px] transition-colors inline-flex items-center gap-1"
+                              className="px-2.5 py-1 rounded bg-[#FDF3EB] border border-[#F9D9C3] text-[#B84D0A] hover:bg-[#C2510A] hover:text-white font-bold text-[12px] transition-colors inline-flex items-center gap-1"
                             >
                               <span>Details</span>
                               <ArrowRight className="w-3 h-3" />
@@ -794,7 +794,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
       {/* ================= OPTION 2: THE EDITORIAL SPOTLIGHT (SPLIT) ================= */}
       {viewMode === "spotlight" && (
         filteredJobs.length === 0 ? (
-          <div className="py-12 text-center text-xs text-[#68635B] bg-white rounded-lg border border-[#EAE2D2]">
+          <div className="py-12 text-center text-xs text-[#4F4A43] bg-white rounded-lg border border-[#D5CAB5]">
             <p className="font-serif text-base font-bold text-[#1A1918]">No circulars found matching criteria</p>
             <button onClick={resetAllFilters} className="mt-2 px-3 py-1.5 rounded bg-[#1E3799] text-white font-bold text-xs">
               Reset Filters
@@ -803,16 +803,16 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
             {/* Main Hero Spotlight (7 Cols) */}
-            <div className="lg:col-span-7 bg-white rounded-lg border border-[#EAE2D2] p-6 flex flex-col justify-between shadow-2xs relative overflow-hidden">
+            <div className="lg:col-span-7 bg-white rounded-lg border border-[#D5CAB5] p-6 flex flex-col justify-between shadow-2xs relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#1E3799]" />
 
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-[#EEF2FA] text-[#1E3799] font-bold border border-[#CCD8F0]">
+                    <span className="text-[11px] font-mono uppercase px-2 py-0.5 rounded bg-[#EEF2FA] text-[#1E3799] font-bold border border-[#CCD8F0]">
                       {currentCategoryConfig.badgeText}
                     </span>
-                    <span className="text-xs text-[#68635B] font-mono font-medium">
+                    <span className="text-xs text-[#4F4A43] font-mono font-medium">
                       {heroJob.orgShortCode} · {heroJob.isCentral ? "Central Govt" : `${heroJob.stateSlug.toUpperCase()} State`}
                     </span>
                   </div>
@@ -820,10 +820,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                     <JobStatusBadge status={heroJob.status} />
                     <button
                       onClick={() => toggleSave(heroJob.id)}
-                      className="p-1 rounded text-[#8C8273] hover:text-[#E96B15] transition-colors"
+                      className="p-1 rounded text-[#8C8273] hover:text-[#B84D0A] transition-colors"
                       title={isSaved(heroJob.id) ? "Unpin notice" : "Pin notice"}
                     >
-                      <Bookmark className={cn("w-4 h-4", isSaved(heroJob.id) && "fill-[#E96B15] text-[#E96B15]")} />
+                      <Bookmark className={cn("w-4 h-4", isSaved(heroJob.id) && "fill-[#E96B15] text-[#B84D0A]")} />
                     </button>
                   </div>
                 </div>
@@ -837,37 +837,37 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                   </h3>
                 </Link>
 
-                <p className="text-xs text-[#68635B] mt-1.5 font-medium">
+                <p className="text-xs text-[#4F4A43] mt-1.5 font-medium">
                   Official Commission: {heroJob.organization}
                 </p>
 
                 {/* Big Metrics Grid */}
-                <div className="grid grid-cols-3 gap-3 my-5 p-3.5 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2] text-xs">
+                <div className="grid grid-cols-3 gap-3 my-5 p-3.5 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5] text-xs">
                   <div>
-                    <span className="text-[10px] text-[#68635B] uppercase font-mono block">Total Posts</span>
+                    <span className="text-[11px] text-[#4F4A43] uppercase font-mono block">Total Posts</span>
                     <span className="font-serif text-xl font-bold text-[#1E3799] mt-0.5 block">
                       {heroJob.totalVacancies ? heroJob.totalVacancies.toLocaleString("en-IN") : "—"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-[#68635B] uppercase font-mono block">Age Bracket</span>
+                    <span className="text-[11px] text-[#4F4A43] uppercase font-mono block">Age Bracket</span>
                     <span className="font-bold text-sm text-[#1A1918] mt-1 block">
                       {formatAgeRange(heroJob)}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-[#68635B] uppercase font-mono block">Status Date</span>
-                    <span className="font-bold text-sm text-[#E96B15] mt-1 block">
+                    <span className="text-[11px] text-[#4F4A43] uppercase font-mono block">Status Date</span>
+                    <span className="font-bold text-sm text-[#B84D0A] mt-1 block">
                       {formatDate(heroJob.applicationEndDate)}
                     </span>
                   </div>
                 </div>
 
                 {/* Highlights */}
-                <div className="space-y-1.5 mb-5 text-xs text-[#524E48]">
+                <div className="space-y-1.5 mb-5 text-xs text-[#3F3B35]">
                   {heroJob.keyHighlights.slice(0, 2).map((hl, i) => (
                     <div key={i} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#209948] shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#17803A] shrink-0 mt-0.5" />
                       <span className="line-clamp-2">{hl}</span>
                     </div>
                   ))}
@@ -875,10 +875,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               </div>
 
               {/* CTAs */}
-              <div className="pt-4 border-t border-[#F2ECE1] flex items-center gap-3">
+              <div className="pt-4 border-t border-[#E2D8C6] flex items-center gap-3">
                 <Link
                   href={heroJob.isCentral ? `/jobs/${heroJob.slug}` : `/state/${heroJob.stateSlug}/jobs/${heroJob.slug}`}
-                  className="flex-1 py-2.5 px-4 rounded-md bg-[#E96B15] hover:bg-[#D4590A] text-white text-xs font-bold text-center flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+                  className="flex-1 py-2.5 px-4 rounded-md bg-[#C2510A] hover:bg-[#A9460A] text-white text-xs font-bold text-center flex items-center justify-center gap-1.5 transition-colors shadow-xs"
                 >
                   <span>Full details</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -906,7 +906,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                 return (
                   <div
                     key={job.id}
-                    className="bg-white rounded-lg border border-[#EAE2D2] p-3.5 hover:border-[#1E3799]/40 transition-colors flex items-start gap-3 shadow-2xs relative"
+                    className="bg-white rounded-lg border border-[#D5CAB5] p-3.5 hover:border-[#1E3799]/40 transition-colors flex items-start gap-3 shadow-2xs relative"
                   >
                     {/* Vacancy Block */}
                     <div className="w-16 h-16 rounded bg-[#EEF2FA] border border-[#CCD8F0] flex flex-col items-center justify-center text-center shrink-0">
@@ -924,20 +924,20 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1 mb-1">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-mono text-[#68635B] font-bold">
+                          <span className="text-[11px] font-mono text-[#4F4A43] font-bold">
                             {job.orgShortCode}
                           </span>
                           <span className="text-[#D8CFBF]">·</span>
-                          <span className="text-[10px] text-[#68635B]">
+                          <span className="text-[11px] text-[#4F4A43]">
                             {job.status === "ADMIT_CARD_OUT" ? "Admit Card Out" : job.status === "RESULT_OUT" ? "Result Live" : `Ends ${formatDate(job.applicationEndDate)}`}
                           </span>
                         </div>
                         <button
                           onClick={() => toggleSave(job.id)}
-                          className="text-[#8C8273] hover:text-[#E96B15] transition-colors p-0.5"
+                          className="text-[#8C8273] hover:text-[#B84D0A] transition-colors p-0.5"
                           title={isSaved(job.id) ? "Unpin notice" : "Pin notice"}
                         >
-                          <Bookmark className={cn("w-3 h-3", isSaved(job.id) && "fill-[#E96B15] text-[#E96B15]")} />
+                          <Bookmark className={cn("w-3 h-3", isSaved(job.id) && "fill-[#E96B15] text-[#B84D0A]")} />
                         </button>
                       </div>
 
@@ -948,13 +948,13 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                         {job.title}
                       </Link>
 
-                      <div className="flex items-center justify-between mt-2 pt-1 border-t border-[#F2ECE1] text-[11px]">
-                        <span className="text-[#68635B] truncate">
+                      <div className="flex items-center justify-between mt-2 pt-1 border-t border-[#E2D8C6] text-[12px]">
+                        <span className="text-[#4F4A43] truncate">
                           {job.qualifications[0]}
                         </span>
                         <Link
                           href={detailLink}
-                          className="text-[#E96B15] hover:text-[#D4590A] font-bold ml-2 shrink-0 inline-flex items-center gap-0.5"
+                          className="text-[#B84D0A] hover:text-[#D4590A] font-bold ml-2 shrink-0 inline-flex items-center gap-0.5"
                         >
                           <span>Details</span>
                           <ArrowRight className="w-3 h-3" />
@@ -973,7 +973,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
       {viewMode === "bulletin" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredJobs.length === 0 ? (
-            <div className="col-span-full py-12 text-center text-xs text-[#68635B] bg-white rounded-lg border border-[#EAE2D2]">
+            <div className="col-span-full py-12 text-center text-xs text-[#4F4A43] bg-white rounded-lg border border-[#D5CAB5]">
               <p className="font-serif text-base font-bold text-[#1A1918]">No circulars found matching criteria</p>
               <button onClick={resetAllFilters} className="mt-2 px-3 py-1.5 rounded bg-[#1E3799] text-white font-bold text-xs">
                 Reset Filters
@@ -990,22 +990,22 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               return (
                 <div
                   key={job.id}
-                  className="bg-white rounded-lg border border-[#EAE2D2] hover:border-[#1E3799]/40 p-4 transition-all flex flex-col justify-between shadow-2xs relative overflow-hidden"
+                  className="bg-white rounded-lg border border-[#D5CAB5] hover:border-[#1E3799]/40 p-4 transition-all flex flex-col justify-between shadow-2xs relative overflow-hidden"
                 >
                   <div className={cn("absolute left-0 top-0 bottom-0 w-1", catColors.stripe)} />
                   <div className="pl-1.5">
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-[10px] font-mono font-bold text-[#1E3799] bg-[#EEF2FA] px-1.5 py-0.2 rounded border border-[#CCD8F0]">
+                      <span className="text-[11px] font-mono font-bold text-[#1E3799] bg-[#EEF2FA] px-1.5 py-0.2 rounded border border-[#CCD8F0]">
                         {job.orgShortCode}
                       </span>
                       <div className="flex items-center gap-1.5">
                         <JobStatusBadge status={job.status} />
                         <button
                           onClick={() => toggleSave(job.id)}
-                          className="p-1 rounded text-[#8C8273] hover:text-[#E96B15] transition-colors"
+                          className="p-1 rounded text-[#8C8273] hover:text-[#B84D0A] transition-colors"
                           title={saved ? "Unpin notice" : "Pin notice"}
                         >
-                          <Bookmark className={cn("w-3.5 h-3.5", saved && "fill-[#E96B15] text-[#E96B15]")} />
+                          <Bookmark className={cn("w-3.5 h-3.5", saved && "fill-[#E96B15] text-[#B84D0A]")} />
                         </button>
                       </div>
                     </div>
@@ -1017,27 +1017,27 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                       {job.title}
                     </Link>
 
-                    <p className="text-[11px] text-[#68635B] mt-1 line-clamp-1">
+                    <p className="text-[12px] text-[#4F4A43] mt-1 line-clamp-1">
                       {job.organization}
                     </p>
 
-                    <div className="mt-3 pt-2.5 border-t border-[#F2ECE1] flex items-center justify-between text-xs font-mono">
+                    <div className="mt-3 pt-2.5 border-t border-[#E2D8C6] flex items-center justify-between text-xs font-mono">
                       <span className="text-[#1E3799] font-bold">
                         {job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} Posts` : "Posts: see notice"}
                       </span>
-                      <span className="text-[#68635B] text-[11px]">
+                      <span className="text-[#4F4A43] text-[12px]">
                         {formatAgeRange(job)}
                       </span>
                     </div>
                   </div>
 
-                  <div className="pl-1.5 mt-3 pt-2.5 border-t border-[#F2ECE1] flex items-center justify-between text-xs">
-                    <span className="text-[11px] text-[#68635B]">
+                  <div className="pl-1.5 mt-3 pt-2.5 border-t border-[#E2D8C6] flex items-center justify-between text-xs">
+                    <span className="text-[12px] text-[#4F4A43]">
                       {job.status === "ADMIT_CARD_OUT" ? "Admit Card Out" : job.status === "RESULT_OUT" ? "Result Live" : `Ends: ${formatDate(job.applicationEndDate)}`}
                     </span>
                     <Link
                       href={detailLink}
-                      className="text-[#E96B15] hover:text-[#D4590A] font-bold inline-flex items-center gap-0.5"
+                      className="text-[#B84D0A] hover:text-[#D4590A] font-bold inline-flex items-center gap-0.5"
                     >
                       <span>Apply/View</span>
                       <ArrowRight className="w-3 h-3" />

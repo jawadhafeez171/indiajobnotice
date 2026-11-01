@@ -10,7 +10,7 @@ interface Props {
 function Fact({ label, children, wide }: { label: string; children: React.ReactNode; wide?: boolean }) {
   return (
     <div className={wide ? "sm:col-span-2" : undefined}>
-      <dt className="text-[11px] font-bold uppercase tracking-wide text-[#68635B]">{label}</dt>
+      <dt className="text-[12px] font-bold uppercase tracking-wide text-[#4F4A43]">{label}</dt>
       <dd className="mt-0.5 text-sm font-semibold text-[#1A1918] leading-snug">{children}</dd>
     </div>
   );
@@ -29,12 +29,12 @@ export function JobKeyFacts({ job }: Props) {
   const latestUpdate = (job.updates || [])[(job.updates || []).length - 1];
 
   return (
-    <section aria-labelledby="key-facts" className="bg-white rounded-xl border border-[#EAE2D2] p-5 sm:p-6 shadow-2xs space-y-4">
+    <section aria-labelledby="key-facts" className="bg-white rounded-xl border border-[#D5CAB5] p-5 sm:p-6 shadow-2xs space-y-4">
       <h2 id="key-facts" className="sr-only">Key facts</h2>
 
       {latestUpdate && (
         <p className="flex items-start gap-2 rounded-lg bg-[#FDF3EB] border border-[#F9D9C3] px-3 py-2 text-sm text-[#1A1918]">
-          <BellRing className="w-4 h-4 text-[#E96B15] shrink-0 mt-0.5" />
+          <BellRing className="w-4 h-4 text-[#B84D0A] shrink-0 mt-0.5" />
           <span>
             <strong>Update{latestUpdate.date ? ` (${formatDate(latestUpdate.date)})` : ""}:</strong> {latestUpdate.text}
           </span>
@@ -42,18 +42,18 @@ export function JobKeyFacts({ job }: Props) {
       )}
 
       {/* The deadline, the one thing nobody should have to search for */}
-      <div className={`rounded-lg px-4 py-3 ${closed ? "bg-[#FAF7EF] border border-[#EAE2D2]" : "bg-[#EDF7F0] border border-[#C6E7D0]"}`}>
-        <p className="text-[11px] font-bold uppercase tracking-wide text-[#68635B]">
+      <div className={`rounded-lg px-4 py-3 ${closed ? "bg-[#FAF7EF] border border-[#D5CAB5]" : "bg-[#EDF7F0] border border-[#C6E7D0]"}`}>
+        <p className="text-[12px] font-bold uppercase tracking-wide text-[#4F4A43]">
           {job.isWalkIn ? "Walk-in interview" : "Last date to apply"}
         </p>
         <p className="text-lg sm:text-xl font-bold text-[#1A1918]">
           {end || "See notification"}
           {end && !closed && daysLeft >= 0 && (
-            <span className="ml-2 text-sm font-semibold text-[#209948]">
+            <span className="ml-2 text-sm font-semibold text-[#17803A]">
               ({daysLeft === 0 ? "today" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`})
             </span>
           )}
-          {end && closed && <span className="ml-2 text-sm font-semibold text-[#68635B]">(closed)</span>}
+          {end && closed && <span className="ml-2 text-sm font-semibold text-[#4F4A43]">(closed)</span>}
         </p>
       </div>
 
@@ -67,7 +67,7 @@ export function JobKeyFacts({ job }: Props) {
             ? <>
                 {clip(qualifications[0])}
                 {(manyPosts || qualifications.length > 1) && (
-                  <span className="block text-xs font-normal text-[#68635B] mt-0.5">Varies by post: see the table below.</span>
+                  <span className="block text-xs font-normal text-[#4F4A43] mt-0.5">Varies by post: see the table below.</span>
                 )}
               </>
             : "See notification"}

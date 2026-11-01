@@ -72,7 +72,7 @@ export function JobLifecycleTracker({ job }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-[#EAE2D2] p-5 shadow-2xs">
+    <div className="bg-white rounded-xl border border-[#D5CAB5] p-5 shadow-2xs">
       <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[#1E3799] mb-4 flex items-center gap-1.5">
         <CircleDot className="w-3.5 h-3.5 text-[#1E3799]" />
         Recruitment progress
@@ -87,22 +87,22 @@ export function JobLifecycleTracker({ job }: Props) {
                 ? "bg-[#EEF2FA] border-[#1E3799] ring-2 ring-[#1E3799]/20"
                 : step.isDone
                 ? "bg-[#EDF7F0] border-[#C6E7D0]"
-                : "bg-[#FCFAF4] border-[#EAE2D2] opacity-65"
+                : "bg-[#FCFAF4] border-[#D5CAB5] opacity-65"
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-mono font-bold text-[#68635B]">Step {idx + 1}</span>
+              <span className="text-[11px] font-mono font-bold text-[#4F4A43]">Step {idx + 1}</span>
               {step.isCurrent ? (
                 <span className="w-2.5 h-2.5 rounded-full bg-[#1E3799]" />
               ) : step.isDone ? (
-                <CheckCircle2 className="w-4 h-4 text-[#209948]" />
+                <CheckCircle2 className="w-4 h-4 text-[#17803A]" />
               ) : (
-                <Clock className="w-3.5 h-3.5 text-[#68635B]" />
+                <Clock className="w-3.5 h-3.5 text-[#4F4A43]" />
               )}
             </div>
             <div>
               <p className="text-xs font-bold text-[#1A1918] leading-snug">{step.label}</p>
-              <p className="text-[11px] text-[#68635B] mt-0.5 line-clamp-2">{step.subtext}</p>
+              <p className="text-[12px] text-[#4F4A43] mt-0.5 line-clamp-2">{step.subtext}</p>
             </div>
           </div>
         ))}

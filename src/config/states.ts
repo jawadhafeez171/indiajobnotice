@@ -540,7 +540,7 @@ export const CENTRAL_INFO = {
 export function getStateBadgeColor(code: string) {
   const c = code.toUpperCase();
   if (["UP", "RJ", "HR", "DL", "PB"].includes(c)) {
-    return { bg: "bg-[#FDF3EB]", text: "text-[#E96B15]", border: "border-[#F9D9C3]" };
+    return { bg: "bg-[#FDF3EB]", text: "text-[#B84D0A]", border: "border-[#F9D9C3]" };
   }
   if (["BR", "MP", "CG", "JH"].includes(c)) {
     return { bg: "bg-[#FCFAF4]", text: "text-[#1E3799]", border: "border-[#CCD8F0]" };
@@ -552,7 +552,7 @@ export function getStateBadgeColor(code: string) {
     return { bg: "bg-[#F6EFF8]", text: "text-[#5C2366]", border: "border-[#E8D4EC]" };
   }
   if (["WB", "OD", "AS", "TR"].includes(c)) {
-    return { bg: "bg-[#EDF7F0]", text: "text-[#209948]", border: "border-[#C6E7D0]" };
+    return { bg: "bg-[#EDF7F0]", text: "text-[#17803A]", border: "border-[#C6E7D0]" };
   }
   if (["AR", "MN", "ML", "MZ", "NL", "SK", "UK", "HP"].includes(c)) {
     return { bg: "bg-[#EEF6F8]", text: "text-[#145C68]", border: "border-[#C8E4E9]" };

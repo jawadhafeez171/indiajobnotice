@@ -40,7 +40,7 @@ export function BrandLogo({
       {/* Domain Suffix Badge */}
       {showDomain && (
         <span
-          className={`text-[10px] sm:text-[11px] font-mono font-bold tracking-tight px-1.5 py-0.5 rounded ${
+          className={`text-[11px] sm:text-[12px] font-mono font-bold tracking-tight px-1.5 py-0.5 rounded ${
             isLight
               ? "bg-white/10 text-white/90 border border-white/20"
               : "bg-[#EEF2FA] text-[#1E3799] border border-[#CCD8F0]"
@@ -60,7 +60,7 @@ export function BrandLogo({
 export function TricolorCapsule({ className = "w-24 h-1.5" }: { className?: string }) {
   return (
     <div className={`inline-flex items-center rounded-full overflow-hidden shadow-2xs ${className}`}>
-      <div className="h-full flex-1 bg-[#E96B15]" />
+      <div className="h-full flex-1 bg-[#C2510A]" />
       <div className="h-full flex-1 bg-[#FAF7EE]" />
       <div className="h-full flex-1 bg-[#209948]" />
     </div>

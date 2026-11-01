@@ -41,7 +41,7 @@ export default async function VacanciesPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
+    <div className="min-h-screen flex flex-col bg-[#F1ECE1]">
       {/* Schema.org Structured Data */}
       <script
         type="application/ld+json"
@@ -51,11 +51,11 @@ export default async function VacanciesPage() {
       <Navbar currentStateSlug="central" />
 
       {/* Editorial Header */}
-      <section className="border-b border-[#EAE2D2] bg-[#FCFAF4] py-8 sm:py-10 px-4 sm:px-6">
+      <section className="border-b border-[#D5CAB5] bg-[#FCFAF4] py-8 sm:py-10 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-2 mb-2">
             <TricolorCapsule className="w-14 h-1.5" />
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
               Vacancies by qualification
             </span>
           </div>
@@ -64,7 +64,7 @@ export default async function VacanciesPage() {
             Qualification-Wise Government Job Vacancy Tracker
           </h1>
 
-          <p className="text-sm sm:text-base text-[#524E48] mt-2 max-w-3xl leading-relaxed">
+          <p className="text-sm sm:text-base text-[#3F3B35] mt-2 max-w-3xl leading-relaxed">
             Consolidated directory of all active and upcoming Central & State government vacancies classified by minimum educational eligibility criteria. Maintained as a public resource for candidates, university career centers, coaching faculty, and public libraries.
           </p>
         </div>

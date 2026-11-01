@@ -11,7 +11,7 @@ export function Footer() {
     <footer className="bg-[#0B153D] text-[#E0E6F5] border-t-2 border-[#1E3799] mt-20 relative">
       {/* Top Tricolor Accent Line extending across the entire page */}
       <div className="h-1 w-full flex">
-        <div className="flex-1 bg-[#E96B15]" />
+        <div className="flex-1 bg-[#C2510A]" />
         <div className="flex-1 bg-white" />
         <div className="flex-1 bg-[#209948]" />
       </div>
@@ -56,7 +56,7 @@ export function Footer() {
           {/* Central Recruitment */}
           <div>
             <div className="flex items-center gap-2 mb-3.5">
-              <span className="w-2 h-2 rounded-full bg-[#E96B15]" />
+              <span className="w-2 h-2 rounded-full bg-[#C2510A]" />
               <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
                 Central Recruitment
               </h3>
@@ -128,7 +128,7 @@ export function Footer() {
               <li><Link href="/qualification/diploma" className="hover:text-[#FFA666] font-medium">Polytechnic & Diploma Jobs</Link></li>
               <li><Link href="/qualification/graduate" className="hover:text-[#FFA666] font-medium">Graduate Degree Jobs</Link></li>
               <li><Link href="/engineering-jobs" className="hover:text-[#FFA666] font-medium">Civil, Mech, Electrical Engineers</Link></li>
-              <li className="pt-2 border-t border-[#1E3799]/60 text-[11px] text-[#A9B8DE]">
+              <li className="pt-2 border-t border-[#1E3799]/60 text-[12px] text-[#A9B8DE]">
                 <span>State + Qualification Hubs:</span>
                 <div className="flex flex-wrap gap-1.5 pt-1 text-white">
                   <Link href="/government-jobs/karnataka/12th-pass" className="hover:text-[#FFA666]">KA 12th</Link>
@@ -148,7 +148,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-[#1E3799]/80">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-2">
             <div className="flex items-center gap-2">
-              <Landmark className="w-4 h-4 text-[#E96B15]" />
+              <Landmark className="w-4 h-4 text-[#B84D0A]" />
               <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
                 Government jobs in all 36 states and union territories
               </h3>
@@ -171,11 +171,11 @@ export function Footer() {
               return (
                 <div key={zone.id} className="bg-[#122055]/60 rounded-lg p-3.5 border border-[#1E3799]/70 space-y-2">
                   <div className="flex items-center justify-between pb-1.5 border-b border-[#1E3799]">
-                    <span className="font-mono font-bold text-white text-[11px] uppercase tracking-wider flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-[#E96B15]" />
+                    <span className="font-mono font-bold text-white text-[12px] uppercase tracking-wider flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-[#B84D0A]" />
                       {zone.name}
                     </span>
-                    <span className="text-[10px] font-mono text-[#FFA666]">({zoneStates.length})</span>
+                    <span className="text-[11px] font-mono text-[#FFA666]">({zoneStates.length})</span>
                   </div>
 
                   <ul className="space-y-1.5 pt-1">
@@ -206,11 +206,11 @@ export function Footer() {
       {/* About this site */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <div className="rounded-xl bg-[#122055] p-5 border border-[#1E3799] text-xs text-[#A9B8DE] flex flex-col md:flex-row gap-4 items-start md:items-center">
-          <ShieldCheck className="w-8 h-8 text-[#209948] shrink-0" />
-          <div className="space-y-1 text-[11px] leading-relaxed">
+          <ShieldCheck className="w-8 h-8 text-[#17803A] shrink-0" />
+          <div className="space-y-1 text-[12px] leading-relaxed">
             <p className="font-bold text-white flex items-center gap-2">
               <span>About IndiaJobNotice</span>
-              <span className="text-[10px] font-mono text-[#209948] bg-[#209948]/20 px-1.5 py-0.2 rounded font-bold">
+              <span className="text-[11px] font-mono text-[#17803A] bg-[#209948]/20 px-1.5 py-0.2 rounded font-bold">
                 Free
               </span>
             </p>

@@ -14,15 +14,15 @@ export function JobStatusBadge({ status, className }: Props) {
   > = {
     APPLY_OPEN: {
       label: "Applications Open",
-      bg: "bg-[#EDF7F0]",
-      text: "text-[#209948]",
-      border: "border-[#C9E7D2]",
+      bg: "bg-[#17803A]",
+      text: "text-white",
+      border: "border-[#17803A]",
     },
     LAST_DATE_NEAR: {
       label: "Closing Soon",
-      bg: "bg-[#FDF3EB]",
-      text: "text-[#E96B15]",
-      border: "border-[#F9D7C0]",
+      bg: "bg-[#C2510A]",
+      text: "text-white",
+      border: "border-[#C2510A]",
     },
     UPCOMING: {
       label: "Announced",
@@ -32,21 +32,21 @@ export function JobStatusBadge({ status, className }: Props) {
     },
     ADMIT_CARD_OUT: {
       label: "Admit Card Out",
-      bg: "bg-[#EEF2FA]",
-      text: "text-[#1E3799]",
-      border: "border-[#CCD8F0]",
+      bg: "bg-[#1E3799]",
+      text: "text-white",
+      border: "border-[#1E3799]",
     },
     RESULT_OUT: {
       label: "Result Out",
-      bg: "bg-[#EDF7F0]",
-      text: "text-[#209948]",
-      border: "border-[#C6E7D0]",
+      bg: "bg-[#6B2FA3]",
+      text: "text-white",
+      border: "border-[#6B2FA3]",
     },
     APPLICATIONS_CLOSED: {
       label: "Applications Closed",
-      bg: "bg-[#F4F1EA]",
-      text: "text-[#68635B]",
-      border: "border-[#DDD5C7]",
+      bg: "bg-[#E6DFD1]",
+      text: "text-[#3F3B35]",
+      border: "border-[#CFC4AE]",
     },
   };
 
@@ -55,7 +55,7 @@ export function JobStatusBadge({ status, className }: Props) {
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border",
+        "inline-flex items-center px-2 py-0.5 rounded text-[12px] font-bold border",
         current.bg,
         current.text,
         current.border,

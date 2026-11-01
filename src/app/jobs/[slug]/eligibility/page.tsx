@@ -58,7 +58,7 @@ export default async function CentralJobEligibilityPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
+    <div className="min-h-screen flex flex-col bg-[#F1ECE1]">
       <Navbar currentStateSlug="central" />
       <main className="flex-1">
         <EligibilityView job={job} stateSlug="central" calculatorJobs={getCalculatorJobs(await getAllJobs())} />

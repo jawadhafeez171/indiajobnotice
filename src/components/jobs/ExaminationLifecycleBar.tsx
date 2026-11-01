@@ -18,8 +18,8 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
     const last = docs[docs.length - 1];
     return docs.length
       ? { subLabel: last.date ? `Out ${last.date.split("-").reverse().join("/")}` : "Released",
-          badge: "Out", badgeColor: "bg-[#EDF7F0] text-[#209948]" }
-      : { subLabel: "Not released yet", badge: "Awaited", badgeColor: "bg-[#FAF7EF] text-[#68635B]" };
+          badge: "Out", badgeColor: "bg-[#EDF7F0] text-[#17803A]" }
+      : { subLabel: "Not released yet", badge: "Awaited", badgeColor: "bg-[#FAF7EF] text-[#4F4A43]" };
   };
 
   const stages = [
@@ -65,8 +65,8 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
   ];
 
   return (
-    <div className="bg-white rounded-xl border border-[#EAE2D2] p-2.5 shadow-2xs print:hidden">
-      <div className="flex items-center justify-between mb-2 px-2 text-[10px] font-mono uppercase tracking-wider text-[#68635B] font-bold">
+    <div className="bg-white rounded-xl border border-[#D5CAB5] p-2.5 shadow-2xs print:hidden">
+      <div className="flex items-center justify-between mb-2 px-2 text-[11px] font-mono uppercase tracking-wider text-[#4F4A43] font-bold">
         <span>This recruitment</span>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
@@ -83,14 +83,14 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
                 "[&:nth-child(5)]:col-span-2 sm:[&:nth-child(5)]:col-span-1",
                 isActive
                   ? "bg-[#1E3799] border-[#1E3799] text-white shadow-xs ring-2 ring-[#1E3799]/20"
-                  : "bg-[#FCFAF4] border-[#EAE2D2] text-[#1A1918] hover:border-[#1E3799] hover:bg-white"
+                  : "bg-[#FCFAF4] border-[#D5CAB5] text-[#1A1918] hover:border-[#1E3799] hover:bg-white"
               )}
             >
               <div className="flex items-start justify-between gap-1 mb-1.5">
                 <Icon
                   className={cn(
                     "w-4 h-4 shrink-0 mt-0.5",
-                    isActive ? "text-[#E96B15]" : "text-[#1E3799] group-hover:text-[#E96B15]"
+                    isActive ? "text-[#B84D0A]" : "text-[#1E3799] group-hover:text-[#B84D0A]"
                   )}
                 />
                 <span
@@ -98,7 +98,7 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
                     "text-[8.5px] font-mono font-bold px-1.5 py-0.2 rounded border shrink-0",
                     isActive
                       ? "bg-white/20 text-white border-white/30"
-                      : `${st.badgeColor} border-[#EAE2D2]`
+                      : `${st.badgeColor} border-[#D5CAB5]`
                   )}
                 >
                   {st.badge}
@@ -115,8 +115,8 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
                 </span>
                 <span
                   className={cn(
-                    "text-[10px] block mt-0.5 truncate",
-                    isActive ? "text-white/80" : "text-[#68635B]"
+                    "text-[11px] block mt-0.5 truncate",
+                    isActive ? "text-white/80" : "text-[#4F4A43]"
                   )}
                 >
                   {st.subLabel}

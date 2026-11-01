@@ -362,9 +362,9 @@ export function getCategoryColors(category: JobCategory) {
     case "Police / Defense":
       return {
         bg: "bg-[#FDF3EB]",
-        text: "text-[#E96B15]",
+        text: "text-[#B84D0A]",
         border: "border-[#F9D9C3]",
-        stripe: "bg-[#E96B15]",
+        stripe: "bg-[#C2510A]",
         label: "Police & Defense",
       };
     case "Administrative / PSC":
@@ -386,7 +386,7 @@ export function getCategoryColors(category: JobCategory) {
     case "Teaching / Education":
       return {
         bg: "bg-[#EDF7F0]",
-        text: "text-[#209948]",
+        text: "text-[#17803A]",
         border: "border-[#C6E7D0]",
         stripe: "bg-[#209948]",
         label: "Teaching & Faculty",

@@ -51,7 +51,7 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
       }}
     >
       <div
-        className="relative w-full max-w-4xl max-h-[88vh] sm:max-h-[85vh] bg-[#FCFAF4] rounded-t-2xl sm:rounded-lg shadow-2xl flex flex-col overflow-hidden border-t sm:border border-[#EAE2D2] animate-in slide-in-from-bottom duration-200"
+        className="relative w-full max-w-4xl max-h-[88vh] sm:max-h-[85vh] bg-[#FCFAF4] rounded-t-2xl sm:rounded-lg shadow-2xl flex flex-col overflow-hidden border-t sm:border border-[#D5CAB5] animate-in slide-in-from-bottom duration-200"
       >
         {/* Mobile Pull Handle */}
         <div className="sm:hidden flex justify-center pt-2.5 pb-1 bg-white cursor-pointer" onClick={onClose}>
@@ -59,24 +59,24 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
         </div>
 
         {/* Header */}
-        <div className="px-4 py-3 sm:p-5 border-b border-[#EAE2D2] flex items-center justify-between bg-white">
+        <div className="px-4 py-3 sm:p-5 border-b border-[#D5CAB5] flex items-center justify-between bg-white">
           <div>
             <div className="flex items-center gap-2 mb-0.5">
               <TricolorCapsule className="w-10 sm:w-12 h-1.5" />
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
                 Multi-Tenant Directory
               </span>
             </div>
             <h2 className="font-serif text-base sm:text-lg font-bold text-[#1A1918]">
               Select State or Union Territory Portal
             </h2>
-            <p className="text-[11px] sm:text-xs text-[#68635B] hidden sm:block">
+            <p className="text-[12px] sm:text-xs text-[#4F4A43] hidden sm:block">
               Each state operates on its dedicated directory (/state/[state]) with localized circulars and syllabus
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 sm:p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-[#68635B] hover:text-[#1A1918] hover:bg-[#EEF2FA] transition-colors"
+            className="p-2 sm:p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-[#4F4A43] hover:text-[#1A1918] hover:bg-[#EEF2FA] transition-colors"
             aria-label="Close state selector dialog"
           >
             <X className="w-5 h-5" />
@@ -84,16 +84,16 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
         </div>
 
         {/* Search & Central Action */}
-        <div className="p-3 bg-[#FCFAF4] border-b border-[#EAE2D2] flex flex-col gap-2.5">
+        <div className="p-3 bg-[#FCFAF4] border-b border-[#D5CAB5] flex flex-col gap-2.5">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#68635B]" />
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#4F4A43]" />
               <input
                 type="text"
                 placeholder="Search state, code (UP, BR, RJ, MH), capital, or commission..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 sm:py-1.5 rounded-lg border border-[#EAE2D2] bg-white text-[15px] sm:text-xs text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 min-h-[44px] sm:min-h-0"
+                className="w-full pl-9 pr-3 py-2.5 sm:py-1.5 rounded-lg border border-[#D5CAB5] bg-white text-[15px] sm:text-xs text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 min-h-[44px] sm:min-h-0"
                 autoFocus
               />
             </div>
@@ -110,7 +110,7 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
 
           {/* Regional Zone Filter Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth pb-0.5 text-xs">
-            <span className="text-[10px] font-mono uppercase text-[#68635B] font-bold shrink-0 mr-1 flex items-center gap-1">
+            <span className="text-[11px] font-mono uppercase text-[#4F4A43] font-bold shrink-0 mr-1 flex items-center gap-1">
               <MapPin className="w-3 h-3 text-[#1E3799]" />
               Zone:
             </span>
@@ -119,10 +119,10 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
               type="button"
               onClick={() => setSelectedZone("all")}
               className={cn(
-                "px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors shrink-0 whitespace-nowrap min-h-[32px] sm:min-h-0",
+                "px-2.5 py-1 rounded-full text-[12px] font-bold border transition-colors shrink-0 whitespace-nowrap min-h-[32px] sm:min-h-0",
                 selectedZone === "all"
                   ? "bg-[#1E3799] text-white border-[#1E3799]"
-                  : "bg-white text-[#3E3C38] border-[#EAE2D2] hover:border-[#1E3799]"
+                  : "bg-white text-[#3E3C38] border-[#D5CAB5] hover:border-[#1E3799]"
               )}
             >
               All (36)
@@ -134,10 +134,10 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
                 type="button"
                 onClick={() => setSelectedZone(zone.id)}
                 className={cn(
-                  "px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors shrink-0 whitespace-nowrap min-h-[32px] sm:min-h-0",
+                  "px-2.5 py-1 rounded-full text-[12px] font-medium border transition-colors shrink-0 whitespace-nowrap min-h-[32px] sm:min-h-0",
                   selectedZone === zone.id
                     ? "bg-[#1E3799] text-white border-[#1E3799] font-bold"
-                    : "bg-white text-[#3E3C38] border-[#EAE2D2] hover:border-[#1E3799]"
+                    : "bg-white text-[#3E3C38] border-[#D5CAB5] hover:border-[#1E3799]"
                 )}
               >
                 {zone.shortName} ({zone.slugs.length})
@@ -148,10 +148,10 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
               type="button"
               onClick={() => setSelectedZone("ut")}
               className={cn(
-                "px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors shrink-0 whitespace-nowrap min-h-[32px] sm:min-h-0",
+                "px-2.5 py-1 rounded-full text-[12px] font-medium border transition-colors shrink-0 whitespace-nowrap min-h-[32px] sm:min-h-0",
                 selectedZone === "ut"
                   ? "bg-[#1E3799] text-white border-[#1E3799] font-bold"
-                  : "bg-white text-[#3E3C38] border-[#EAE2D2] hover:border-[#1E3799]"
+                  : "bg-white text-[#3E3C38] border-[#D5CAB5] hover:border-[#1E3799]"
               )}
             >
               UTs (8)
@@ -174,7 +174,7 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
                   "p-2.5 sm:p-3 rounded-lg border transition-all flex flex-col justify-between shadow-2xs hover:shadow-xs min-h-[64px]",
                   isSelected
                     ? "bg-[#EEF2FA] border-[#1E3799] text-[#1E3799] ring-1 ring-[#1E3799]"
-                    : "bg-white border-[#EAE2D2] hover:border-[#1E3799] hover:bg-[#EEF2FA]/30 text-[#1A1918]"
+                    : "bg-white border-[#D5CAB5] hover:border-[#1E3799] hover:bg-[#EEF2FA]/30 text-[#1A1918]"
                 )}
               >
                 <div>
@@ -182,19 +182,19 @@ export function StateSelectorModal({ isOpen, onClose, currentStateSlug }: Props)
                     <span className="font-serif font-bold text-xs sm:text-sm text-[#1A1918] leading-tight line-clamp-1">
                       {state.name}
                     </span>
-                    <span className="text-[9px] sm:text-[10px] font-mono font-bold text-[#1E3799] bg-[#EEF2FA] px-1.5 py-0.2 rounded border border-[#CCD8F0] shrink-0">
+                    <span className="text-[9px] sm:text-[11px] font-mono font-bold text-[#1E3799] bg-[#EEF2FA] px-1.5 py-0.2 rounded border border-[#CCD8F0] shrink-0">
                       {state.code}
                     </span>
                   </div>
-                  <div className="text-[10px] sm:text-[11px] text-[#68635B] mt-0.5 line-clamp-1">
+                  <div className="text-[11px] sm:text-[12px] text-[#4F4A43] mt-0.5 line-clamp-1">
                     {state.capital}
                   </div>
                 </div>
 
-                <div className="mt-2 pt-1.5 border-t border-[#F2ECE1] flex items-center justify-between text-[10px] sm:text-[11px] font-mono font-semibold">
+                <div className="mt-2 pt-1.5 border-t border-[#E2D8C6] flex items-center justify-between text-[11px] sm:text-[12px] font-mono font-semibold">
                   <span className="text-[#1E3799]">/state/{state.slug}</span>
                   {isSelected && (
-                    <span className="flex items-center gap-0.5 text-[9px] sm:text-[10px] text-[#209948] font-bold">
+                    <span className="flex items-center gap-0.5 text-[9px] sm:text-[11px] text-[#17803A] font-bold">
                       <Check className="w-3 h-3" />
                       Active
                     </span>

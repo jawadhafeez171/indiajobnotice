@@ -55,11 +55,11 @@ export function HeroCounterDeck({
       label: "Open Registrations",
       subtext: `${closingSoonCount} Closing Soon this week`,
       icon: Clock,
-      color: "text-[#E96B15]",
+      color: "text-[#B84D0A]",
       bg: "bg-[#FDF3EB]/70 hover:bg-[#FDF3EB]",
       border: "border-[#F9D9C3] hover:border-[#E96B15]/60",
-      accentDot: "bg-[#E96B15]",
-      pillBg: "bg-[#E96B15]/10 text-[#E96B15]",
+      accentDot: "bg-[#C2510A]",
+      pillBg: "bg-[#C2510A]/10 text-[#B84D0A]",
     },
     {
       id: "admit-cards",
@@ -69,11 +69,11 @@ export function HeroCounterDeck({
       label: "Admit Cards Out",
       subtext: "Exam date still ahead",
       icon: FileCheck,
-      color: "text-[#209948]",
+      color: "text-[#17803A]",
       bg: "bg-[#EDF7F0]/70 hover:bg-[#EDF7F0]",
       border: "border-[#C6E7D0] hover:border-[#209948]/60",
       accentDot: "bg-[#209948]",
-      pillBg: "bg-[#209948]/10 text-[#209948]",
+      pillBg: "bg-[#209948]/10 text-[#17803A]",
     },
     {
       id: "results",
@@ -106,10 +106,10 @@ export function HeroCounterDeck({
   ];
 
   return (
-    <div className="mt-5 pt-4 border-t border-[#EAE2D2]/80">
+    <div className="mt-5 pt-4 border-t border-[#D5CAB5]/80">
       {/* Mini Trust Header */}
       <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
-        <div className="flex items-center gap-2 text-[11px] font-mono text-[#68635B]">
+        <div className="flex items-center gap-2 text-[12px] font-mono text-[#4F4A43]">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#209948] opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#209948]" />
@@ -121,8 +121,8 @@ export function HeroCounterDeck({
           <span>From official notifications across India</span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#209948] font-bold">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#209948]" />
+        <div className="flex items-center gap-1.5 text-[12px] font-mono text-[#17803A] font-bold">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#17803A]" />
           <span className="hidden sm:inline">Official notifications only</span>
         </div>
       </div>
@@ -145,7 +145,7 @@ export function HeroCounterDeck({
                 <div className="flex items-center justify-between gap-1 mb-1.5">
                   <span
                     className={cn(
-                      "text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded",
+                      "text-[9px] sm:text-[11px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded",
                       stat.pillBg
                     )}
                   >
@@ -163,8 +163,8 @@ export function HeroCounterDeck({
                 </div>
               </div>
 
-              <div className="mt-2 pt-1.5 border-t border-black/5 flex items-center justify-between text-[11px] text-[#68635B]">
-                <span className="text-[10px] sm:text-[11px] truncate">{stat.subtext}</span>
+              <div className="mt-2 pt-1.5 border-t border-black/5 flex items-center justify-between text-[12px] text-[#4F4A43]">
+                <span className="text-[11px] sm:text-[12px] truncate">{stat.subtext}</span>
                 <ArrowRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0 ml-1 text-[#1A1918]" />
               </div>
             </a>

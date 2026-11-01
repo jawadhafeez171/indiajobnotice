@@ -46,14 +46,14 @@ export function ReservedAdSlot({
       data-ad-slot={slotId || slotType}
     >
       {/* Google AdSense Compliant Publisher Label */}
-      <span className="text-[10px] font-mono uppercase tracking-widest text-[#A8A196] mb-1 font-medium select-none">
+      <span className="text-[11px] font-mono uppercase tracking-widest text-[#A8A196] mb-1 font-medium select-none">
         Advertisement
       </span>
 
       {/* AdSense Unit Wrapper (Pre-allocated for Zero CLS) */}
       <div
         className={cn(
-          "w-full flex items-center justify-center rounded bg-[#FAF7F0]/40 border border-[#EAE2D2]/50 overflow-hidden",
+          "w-full flex items-center justify-center rounded bg-[#FAF7F0]/40 border border-[#D5CAB5]/50 overflow-hidden",
           config.innerClass
         )}
       >

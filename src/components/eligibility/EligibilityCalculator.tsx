@@ -38,7 +38,7 @@ interface Props {
 export function EligibilityCalculator(props: Props) {
   if (props.jobs.length === 0) {
     return (
-      <div className="p-5 rounded-xl border border-[#DDD5C7] bg-[#FAF7EF] text-sm text-[#524E48]">
+      <div className="p-5 rounded-xl border border-[#DDD5C7] bg-[#FAF7EF] text-sm text-[#3F3B35]">
         The eligibility calculator lists open recruitments that state an age limit. None are listed right now.
       </div>
     );
@@ -188,20 +188,20 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
   const markdownBadge = `[![Govt Job Age Calculator](https://img.shields.io/badge/Govt_Job-Eligibility_Calculator-1E3799?style=for-the-badge&logo=gov)](https://www.indiajobnotice.com/calculator)`;
 
   return (
-    <div className="bg-white rounded-xl border border-[#EAE2D2] border-t-4 border-t-[#E96B15] p-6 sm:p-7 shadow-2xs space-y-6">
+    <div className="bg-white rounded-xl border border-[#D5CAB5] border-t-4 border-t-[#E96B15] p-6 sm:p-7 shadow-2xs space-y-6">
       {/* Header & Tool Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#F2ECE1] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#E2D8C6] pb-5">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
             <TricolorCapsule className="w-12 h-1.5" />
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#E96B15] font-bold">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#B84D0A] font-bold">
               Age eligibility check
             </span>
           </div>
           <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1A1918]">
             Government Job Age & Notification Cutoff Calculator
           </h2>
-          <p className="text-xs text-[#68635B] mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs text-[#4F4A43] mt-1 max-w-2xl leading-relaxed">
             Calculates candidate age strictly against each commission’s statutory cut-off date (e.g. 1st August for UPSC/SSC or 1st July for State Police), applying official category age relaxations (OBC +3y, SC/ST +5y, PwD +10y).
           </p>
         </div>
@@ -218,7 +218,7 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
           </button>
           <button
             onClick={() => window.print()}
-            className="p-1.5 rounded-md border border-[#EAE2D2] hover:bg-[#FAF7EF] text-[#68635B] transition-colors"
+            className="p-1.5 rounded-md border border-[#D5CAB5] hover:bg-[#FAF7EF] text-[#4F4A43] transition-colors"
             title="Print Eligibility Assessment"
           >
             <Printer className="w-4 h-4" />
@@ -227,19 +227,19 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
       </div>
 
       {/* Mode Switcher */}
-      <div className="flex items-center gap-3 border-b border-[#EAE2D2] pb-px text-xs font-bold">
+      <div className="flex items-center gap-3 border-b border-[#D5CAB5] pb-px text-xs font-bold">
         <button
           onClick={() => setCalculationMode("specific")}
           className={cn(
             "pb-3 px-2 border-b-2 transition-all flex items-center gap-1.5",
             calculationMode === "specific"
-              ? "border-[#E96B15] text-[#E96B15]"
-              : "border-transparent text-[#68635B] hover:text-[#1A1918]"
+              ? "border-[#E96B15] text-[#B84D0A]"
+              : "border-transparent text-[#4F4A43] hover:text-[#1A1918]"
           )}
         >
           <Clock className="w-4 h-4" />
           <span>Notification Cut-off Date Calculator</span>
-          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#FDF3EB] text-[#E96B15]">
+          <span className="text-[11px] font-mono px-1.5 py-0.2 rounded bg-[#FDF3EB] text-[#B84D0A]">
             Precise
           </span>
         </button>
@@ -250,19 +250,19 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
             "pb-3 px-2 border-b-2 transition-all flex items-center gap-1.5",
             calculationMode === "scanner"
               ? "border-[#1E3799] text-[#1E3799]"
-              : "border-transparent text-[#68635B] hover:text-[#1A1918]"
+              : "border-transparent text-[#4F4A43] hover:text-[#1A1918]"
           )}
         >
           <Sparkles className="w-4 h-4" />
           <span>All-India Verified Scanner</span>
-          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#EEF2FA] text-[#1E3799]">
+          <span className="text-[11px] font-mono px-1.5 py-0.2 rounded bg-[#EEF2FA] text-[#1E3799]">
             {scannerEligibleJobs.length} Matches
           </span>
         </button>
       </div>
 
       {/* Input Fields */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-[#FCFAF4] p-4 rounded-xl border border-[#EAE2D2]">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-[#FCFAF4] p-4 rounded-xl border border-[#D5CAB5]">
         {/* Date of Birth */}
         <div>
           <label className="block text-xs font-bold text-[#423F3A] mb-1">
@@ -272,9 +272,9 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
             type="date"
             value={dob}
             onChange={(e) => setDob(e.target.value)}
-            className="w-full px-3 py-2.5 sm:py-2 rounded-lg border border-[#EAE2D2] bg-white text-[15px] sm:text-xs min-h-[44px] font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs"
+            className="w-full px-3 py-2.5 sm:py-2 rounded-lg border border-[#D5CAB5] bg-white text-[15px] sm:text-xs min-h-[44px] font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs"
           />
-          <p className="text-[11px] text-[#68635B] mt-1 font-mono">
+          <p className="text-[12px] text-[#4F4A43] mt-1 font-mono">
             As stated on 10th Class Certificate
           </p>
         </div>
@@ -285,14 +285,14 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
             <label className="block text-xs font-bold text-[#423F3A]">
               Reservation Category
             </label>
-            <span className="text-[10px] font-mono text-[#1E3799] font-bold">
+            <span className="text-[11px] font-mono text-[#1E3799] font-bold">
               {activeRuleset.stateName}
             </span>
           </div>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-3 py-2.5 sm:py-2 rounded-lg border border-[#EAE2D2] bg-white text-[15px] sm:text-xs min-h-[44px] font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs cursor-pointer"
+            className="w-full px-3 py-2.5 sm:py-2 rounded-lg border border-[#D5CAB5] bg-white text-[15px] sm:text-xs min-h-[44px] font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs cursor-pointer"
           >
             {activeRuleset.categories.map((c) => (
               <option key={c.code} value={c.code}>
@@ -300,7 +300,7 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
               </option>
             ))}
           </select>
-          <p className="text-[11px] text-[#209948] mt-1 font-semibold">
+          <p className="text-[12px] text-[#17803A] mt-1 font-semibold">
             {relaxationBonus > 0
               ? `+${relaxationBonus} years relaxation (${effectiveMaxAllowedAge} yrs ceiling)`
               : `Upper Age Ceiling: ${effectiveMaxAllowedAge} Years`}
@@ -315,14 +315,14 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
           <select
             value={qualification}
             onChange={(e) => setQualification(e.target.value)}
-            className="w-full px-3 py-2.5 sm:py-2 rounded-lg border border-[#EAE2D2] bg-white text-[15px] sm:text-xs min-h-[44px] font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs cursor-pointer"
+            className="w-full px-3 py-2.5 sm:py-2 rounded-lg border border-[#D5CAB5] bg-white text-[15px] sm:text-xs min-h-[44px] font-medium text-[#1A1918] focus:outline-none focus:border-[#1E3799] focus:ring-1 focus:ring-[#1E3799]/30 transition-all shadow-2xs cursor-pointer"
           >
             <option value="Graduate">Graduation Degree (BA, BSc, BTech, BCom, etc.)</option>
             <option value="Diploma">Diploma / Polytechnic</option>
             <option value="12th Pass">12th Intermediate / Higher Secondary</option>
             <option value="10th Pass">10th Matriculation / High School</option>
           </select>
-          <p className="text-[11px] text-[#68635B] mt-1">
+          <p className="text-[12px] text-[#4F4A43] mt-1">
             Valid recognition by UGC / AICTE / State Boards
           </p>
         </div>
@@ -336,7 +336,7 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
               <span className="font-bold text-[#1A1918] block">
                 {activeRuleset.stateName} State Domicile Status
               </span>
-              <p className="text-[11px] text-[#68635B]">
+              <p className="text-[12px] text-[#4F4A43]">
                 Do you hold a valid domicile / permanent resident certificate of {activeRuleset.stateName}?
               </p>
             </div>
@@ -349,7 +349,7 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
                   "px-3 py-1.5 rounded text-xs font-bold transition-colors",
                   isStateDomicile
                     ? "bg-[#1E3799] text-white"
-                    : "text-[#68635B] hover:text-[#1A1918]"
+                    : "text-[#4F4A43] hover:text-[#1A1918]"
                 )}
               >
                 Yes ({activeRuleset.stateName} Resident)
@@ -360,8 +360,8 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
                 className={cn(
                   "px-3 py-1.5 rounded text-xs font-bold transition-colors",
                   !isStateDomicile
-                    ? "bg-[#E96B15] text-white"
-                    : "text-[#68635B] hover:text-[#1A1918]"
+                    ? "bg-[#C2510A] text-white"
+                    : "text-[#4F4A43] hover:text-[#1A1918]"
                 )}
               >
                 No (Out-of-State Candidate)
@@ -371,8 +371,8 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
 
           {/* Domicile Rule Warning if Out-of-State */}
           {!isStateDomicile && (
-            <div className="p-2.5 rounded bg-[#FDF3EB] border border-[#F9D9C3] text-[11px] text-[#524E48] flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 text-[#E96B15] shrink-0 mt-0.5" />
+            <div className="p-2.5 rounded bg-[#FDF3EB] border border-[#F9D9C3] text-[12px] text-[#3F3B35] flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-[#B84D0A] shrink-0 mt-0.5" />
               <span>
                 <strong>Candidates from other states:</strong> {activeRuleset.domicileRule}
               </span>
@@ -381,14 +381,14 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
 
           {/* State Special Quotas Badges */}
           {activeRuleset.specialQuotas.length > 0 && isStateDomicile && (
-            <div className="pt-2 border-t border-[#EAE2D2] flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-mono font-bold text-[#68635B] uppercase">
+            <div className="pt-2 border-t border-[#D5CAB5] flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] font-mono font-bold text-[#4F4A43] uppercase">
                 Active Special State Quotas:
               </span>
               {activeRuleset.specialQuotas.map((q) => (
                 <span
                   key={q.id}
-                  className="px-2 py-0.5 rounded bg-white border border-[#CCD8F0] text-[#1E3799] text-[10px] font-bold"
+                  className="px-2 py-0.5 rounded bg-white border border-[#CCD8F0] text-[#1E3799] text-[11px] font-bold"
                   title={q.eligibilityCondition}
                 >
                   {q.name} {q.percentage ? `(${q.percentage}%)` : ""}
@@ -440,7 +440,7 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
                       <span>ELIGIBLE TO APPLY</span>
                     </span>
                   ) : (
-                    <span className="px-3 py-1 rounded bg-[#E96B15] text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+                    <span className="px-3 py-1 rounded bg-[#C2510A] text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs">
                       <XCircle className="w-4 h-4" />
                       <span>{specificEligibilityResult.status}</span>
                     </span>
@@ -456,25 +456,25 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
               </div>
 
               {/* Age breakdown chips */}
-              <div className="grid grid-cols-3 gap-2 shrink-0 bg-white p-3 rounded-lg border border-[#EAE2D2] text-center">
+              <div className="grid grid-cols-3 gap-2 shrink-0 bg-white p-3 rounded-lg border border-[#D5CAB5] text-center">
                 <div>
-                  <span className="text-[10px] font-mono uppercase text-[#68635B] block font-semibold">Years</span>
+                  <span className="text-[11px] font-mono uppercase text-[#4F4A43] block font-semibold">Years</span>
                   <span className="font-mono font-bold text-base text-[#1E3799]">{specificJobAge.years}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] font-mono uppercase text-[#68635B] block font-semibold">Months</span>
+                  <span className="text-[11px] font-mono uppercase text-[#4F4A43] block font-semibold">Months</span>
                   <span className="font-mono font-bold text-base text-[#1E3799]">{specificJobAge.months}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] font-mono uppercase text-[#68635B] block font-semibold">Days</span>
+                  <span className="text-[11px] font-mono uppercase text-[#4F4A43] block font-semibold">Days</span>
                   <span className="font-mono font-bold text-base text-[#1E3799]">{specificJobAge.days}</span>
                 </div>
               </div>
             </div>
 
             {/* Quick Link to selected job */}
-            <div className="mt-4 pt-3 border-t border-[#EAE2D2]/60 flex items-center justify-between text-xs">
-              <span className="text-[#68635B]">
+            <div className="mt-4 pt-3 border-t border-[#D5CAB5]/60 flex items-center justify-between text-xs">
+              <span className="text-[#4F4A43]">
                 Notification: <strong className="text-[#1A1918]">{selectedJob.title}</strong>
               </span>
               <Link
@@ -492,17 +492,17 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
       {/* MODE 2: ALL-INDIA SCANNER RESULT */}
       {calculationMode === "scanner" && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between border-b border-[#EAE2D2] pb-2 text-xs">
+          <div className="flex items-center justify-between border-b border-[#D5CAB5] pb-2 text-xs">
             <span className="font-bold text-[#1A1918]">
               Verified Positions matching your DOB & Educational Stream ({scannerEligibleJobs.length})
             </span>
-            <span className="font-mono text-[#68635B]">
+            <span className="font-mono text-[#4F4A43]">
               Calculated using each gazette’s respective cutoff date
             </span>
           </div>
 
           {scannerEligibleJobs.length === 0 ? (
-            <div className="text-center py-8 text-xs text-[#68635B] bg-[#FCFAF4] rounded-lg border border-[#EAE2D2]">
+            <div className="text-center py-8 text-xs text-[#4F4A43] bg-[#FCFAF4] rounded-lg border border-[#D5CAB5]">
               No active circulars match this specific age on cutoff dates. Try selecting a different reservation category or qualification tier.
             </div>
           ) : (
@@ -522,8 +522,8 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
       {/* EMBED CODE MODAL FOR COLLEGE PLACEMENT CELLS & LIBRARIES */}
       {showEmbedModal && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-lg w-full p-6 border border-[#EAE2D2] shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#EAE2D2] pb-3">
+          <div className="bg-white rounded-xl max-w-lg w-full p-6 border border-[#D5CAB5] shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#D5CAB5] pb-3">
               <div className="flex items-center gap-2">
                 <Code className="w-5 h-5 text-[#1E3799]" />
                 <h3 className="font-serif font-bold text-base text-[#1A1918]">
@@ -532,18 +532,18 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
               </div>
               <button
                 onClick={() => setShowEmbedModal(false)}
-                className="text-[#68635B] hover:text-[#1A1918] font-mono text-sm"
+                className="text-[#4F4A43] hover:text-[#1A1918] font-mono text-sm"
               >
                 ✕
               </button>
             </div>
 
-            <p className="text-xs text-[#524E48] leading-relaxed">
+            <p className="text-xs text-[#3F3B35] leading-relaxed">
               College career advisory centres, training & placement cells (TPO), coaching institutes, and district central libraries are welcome to freely integrate this statutory cut-off calculator for students.
             </p>
 
             <div>
-              <label className="block text-[11px] font-mono uppercase font-bold text-[#68635B] mb-1">
+              <label className="block text-[12px] font-mono uppercase font-bold text-[#4F4A43] mb-1">
                 Responsive HTML iFrame Embed Code
               </label>
               <div className="relative">
@@ -551,11 +551,11 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
                   readOnly
                   rows={3}
                   value={embedCode}
-                  className="w-full p-2.5 rounded bg-[#FAF7EF] border border-[#EAE2D2] text-xs font-mono text-[#1A1918] focus:outline-none"
+                  className="w-full p-2.5 rounded bg-[#FAF7EF] border border-[#D5CAB5] text-xs font-mono text-[#1A1918] focus:outline-none"
                 />
                 <button
                   onClick={() => handleCopySnippet(embedCode)}
-                  className="absolute right-2 bottom-3 px-2.5 py-1 rounded bg-[#1E3799] text-white text-[11px] font-bold flex items-center gap-1 shadow-2xs hover:bg-[#15286D]"
+                  className="absolute right-2 bottom-3 px-2.5 py-1 rounded bg-[#1E3799] text-white text-[12px] font-bold flex items-center gap-1 shadow-2xs hover:bg-[#15286D]"
                 >
                   {copiedSnippet ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                   <span>{copiedSnippet ? "Copied" : "Copy iFrame"}</span>
@@ -564,7 +564,7 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
             </div>
 
             <div>
-              <label className="block text-[11px] font-mono uppercase font-bold text-[#68635B] mb-1">
+              <label className="block text-[12px] font-mono uppercase font-bold text-[#4F4A43] mb-1">
                 Markdown Link for College Placement Repositories & Blogs
               </label>
               <div className="relative">
@@ -572,11 +572,11 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
                   readOnly
                   rows={2}
                   value={markdownBadge}
-                  className="w-full p-2.5 rounded bg-[#FAF7EF] border border-[#EAE2D2] text-xs font-mono text-[#1A1918] focus:outline-none"
+                  className="w-full p-2.5 rounded bg-[#FAF7EF] border border-[#D5CAB5] text-xs font-mono text-[#1A1918] focus:outline-none"
                 />
                 <button
                   onClick={() => handleCopySnippet(markdownBadge)}
-                  className="absolute right-2 bottom-3 px-2.5 py-1 rounded bg-[#E96B15] text-white text-[11px] font-bold flex items-center gap-1 shadow-2xs hover:bg-[#D4590A]"
+                  className="absolute right-2 bottom-3 px-2.5 py-1 rounded bg-[#C2510A] text-white text-[12px] font-bold flex items-center gap-1 shadow-2xs hover:bg-[#A9460A]"
                 >
                   {copiedSnippet ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                   <span>{copiedSnippet ? "Copied" : "Copy Markdown"}</span>
@@ -584,8 +584,8 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
               </div>
             </div>
 
-            <div className="pt-2 text-[11px] text-[#68635B] bg-[#EDF7F0] p-3 rounded-lg border border-[#C6E7D0] flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#209948] shrink-0" />
+            <div className="pt-2 text-[12px] text-[#4F4A43] bg-[#EDF7F0] p-3 rounded-lg border border-[#C6E7D0] flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#17803A] shrink-0" />
               <span>100% Free, zero advertisements in iframe, compliant with educational public-interest use.</span>
             </div>
           </div>

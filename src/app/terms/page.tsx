@@ -26,13 +26,13 @@ export default function TermsPage() {
   const lastUpdated = "October 18, 2026";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
+    <div className="min-h-screen flex flex-col bg-[#F1ECE1]">
       <Navbar />
 
       {/* Editorial Header */}
-      <section className="border-b border-[#EAE2D2] bg-[#FCFAF4] py-8 sm:py-10 px-4 sm:px-6">
+      <section className="border-b border-[#D5CAB5] bg-[#FCFAF4] py-8 sm:py-10 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-2 text-xs text-[#68635B] mb-3">
+          <div className="flex items-center gap-2 text-xs text-[#4F4A43] mb-3">
             <Link href="/" className="hover:text-[#1E3799] font-medium transition-colors">
               All-India Gazettes
             </Link>
@@ -51,7 +51,7 @@ export default function TermsPage() {
             Terms of Service & Usage
           </h1>
 
-          <p className="mt-2 text-xs text-[#68635B] font-mono">
+          <p className="mt-2 text-xs text-[#4F4A43] font-mono">
             Effective Date & Last Updated: <strong>{lastUpdated}</strong>
           </p>
         </div>
@@ -63,20 +63,20 @@ export default function TermsPage() {
         {/* Prominent Statutory Disclaimer */}
         <div className="bg-[#FFF9F2] rounded-lg border-2 border-[#E96B15] p-5 shadow-2xs space-y-3">
           <div className="flex items-center gap-2 font-serif font-bold text-[#943F00] text-base">
-            <AlertTriangle className="w-5 h-5 text-[#E96B15] shrink-0" />
+            <AlertTriangle className="w-5 h-5 text-[#B84D0A] shrink-0" />
             <h2>Important Statutory Disclaimer: Not a Government Entity</h2>
           </div>
-          <p className="text-xs text-[#524E48] leading-relaxed">
+          <p className="text-xs text-[#3F3B35] leading-relaxed">
             <strong>IndiaJobNotice.com is an independent private educational and informational portal.</strong> We are NOT associated, affiliated, endorsed by, or in any way officially connected with the Government of India, any State Government, the Union Public Service Commission (UPSC), Staff Selection Commission (SSC), Railway Recruitment Boards (RRB), State Public Service Commissions, High Courts, or any official recruitment board.
           </p>
-          <p className="text-xs text-[#524E48] leading-relaxed">
+          <p className="text-xs text-[#3F3B35] leading-relaxed">
             All recruitment circulars, examination schedules, eligibility summaries, and answer keys hosted on this platform are aggregated strictly from publicly accessible government gazettes, press releases, and official commission websites for public convenience and educational awareness.
           </p>
         </div>
 
         {/* 1. Acceptance of Terms */}
         <section className="space-y-3">
-          <h2 className="font-serif text-xl font-bold text-[#1A1918] border-b border-[#EAE2D2] pb-2">
+          <h2 className="font-serif text-xl font-bold text-[#1A1918] border-b border-[#D5CAB5] pb-2">
             1. Acceptance of Terms
           </h2>
           <p>
@@ -86,13 +86,13 @@ export default function TermsPage() {
 
         {/* 2. Educational Fair Use & Verification Requirement */}
         <section className="space-y-3">
-          <h2 className="font-serif text-xl font-bold text-[#1A1918] border-b border-[#EAE2D2] pb-2">
+          <h2 className="font-serif text-xl font-bold text-[#1A1918] border-b border-[#D5CAB5] pb-2">
             2. Candidate Verification Obligation
           </h2>
           <p>
             While IndiaJobNotice exercises extreme diligence in transcribing, formatting, and presenting public employment notifications accurately:
           </p>
-          <ul className="list-disc pl-5 space-y-2 text-xs text-[#524E48]">
+          <ul className="list-disc pl-5 space-y-2 text-xs text-[#3F3B35]">
             <li>
               <strong>Mandatory PDF Verification:</strong> Every notification card on IndiaJobNotice includes direct links to the issuing body&apos;s official advertisement PDF or portal (ending in <code>.gov.in</code>, <code>.nic.in</code>, etc.). Candidates are <strong>strictly required</strong> to download and thoroughly review the original official notification before submitting any application or making payments.
             </li>
@@ -103,7 +103,7 @@ export default function TermsPage() {
         </section>
 
         {/* 3. Platform Monetization & Transparency */}
-        <section className="space-y-3 bg-white p-5 rounded-lg border border-[#EAE2D2]">
+        <section className="space-y-3 bg-white p-5 rounded-lg border border-[#D5CAB5]">
           <div className="flex items-center gap-2 text-[#1E3799]">
             <Scale className="w-5 h-5" />
             <h2 className="font-serif text-xl font-bold text-[#1A1918]">
@@ -113,7 +113,7 @@ export default function TermsPage() {
           <p>
             IndiaJobNotice is operated as a free public service for competitive examination aspirants across urban and rural India.
           </p>
-          <div className="space-y-2 text-xs text-[#524E48]">
+          <div className="space-y-2 text-xs text-[#3F3B35]">
             <p>
               • <strong>Zero Candidate Fees:</strong> We never charge fees for accessing notifications, downloading syllabus PDFs, checking eligibility, or viewing admit card dates.
             </p>
@@ -128,26 +128,26 @@ export default function TermsPage() {
 
         {/* 4. Intellectual Property Rights */}
         <section className="space-y-3">
-          <h2 className="font-serif text-xl font-bold text-[#1A1918] border-b border-[#EAE2D2] pb-2">
+          <h2 className="font-serif text-xl font-bold text-[#1A1918] border-b border-[#D5CAB5] pb-2">
             4. Intellectual Property & Trademarks
           </h2>
           <p>
             Official names of commissions (e.g., UPSC, SSC, IBPS, NTA, BPSC, UPPSC), state emblems, and statutory titles mentioned on this site are registered trademarks or service marks of their respective government departments. Their fair use here is solely for identification, educational reporting, and public notification purposes under doctrine of fair use.
           </p>
-          <p className="text-xs text-[#524E48]">
+          <p className="text-xs text-[#3F3B35]">
             The unique editorial syntheses, website design, layout tokens, database structure, and eligibility calculation algorithms developed by IndiaJobNotice are protected under copyright laws. Unauthorized bulk extraction, automated scraping, or replication without attribution is prohibited.
           </p>
         </section>
 
         {/* 5. Acceptable User Conduct */}
         <section className="space-y-3">
-          <h2 className="font-serif text-xl font-bold text-[#1A1918] border-b border-[#EAE2D2] pb-2">
+          <h2 className="font-serif text-xl font-bold text-[#1A1918] border-b border-[#D5CAB5] pb-2">
             5. Acceptable User Conduct
           </h2>
           <p>
             When utilizing IndiaJobNotice, you agree not to:
           </p>
-          <ul className="list-disc pl-5 space-y-1 text-xs text-[#524E48]">
+          <ul className="list-disc pl-5 space-y-1 text-xs text-[#3F3B35]">
             <li>Deploy automated bots, spiders, or crawlers at rates that degrade server performance for other students.</li>
             <li>Attempt to breach security measures or probe platform vulnerabilities.</li>
             <li>Misrepresent your identity or falsely claim association with IndiaJobNotice.</li>
@@ -157,26 +157,26 @@ export default function TermsPage() {
 
         {/* 6. Limitation of Liability */}
         <section className="space-y-3">
-          <h2 className="font-serif text-xl font-bold text-[#1A1918] border-b border-[#EAE2D2] pb-2">
+          <h2 className="font-serif text-xl font-bold text-[#1A1918] border-b border-[#D5CAB5] pb-2">
             6. Limitation of Liability
           </h2>
-          <p className="text-xs text-[#524E48] leading-relaxed">
+          <p className="text-xs text-[#3F3B35] leading-relaxed">
             In no event shall IndiaJobNotice, its creators, editors, or contributors be liable for any direct, indirect, incidental, consequential, or punitive damages arising from the use of, or inability to use, this website or the information contained herein. This includes, without limitation, missed application deadlines, examination cancellations, technical server downtimes on official government portals, or disqualification from recruitment processes.
           </p>
         </section>
 
         {/* 7. Contact & Corrections */}
-        <section className="bg-white rounded-lg border border-[#EAE2D2] p-5 shadow-2xs space-y-3">
+        <section className="bg-white rounded-lg border border-[#D5CAB5] p-5 shadow-2xs space-y-3">
           <div className="flex items-center gap-2 text-[#1E3799]">
             <Mail className="w-5 h-5" />
             <h2 className="font-serif text-lg font-bold text-[#1A1918]">
               7. Corrections & Editorial Contact
             </h2>
           </div>
-          <p className="text-xs text-[#524E48]">
+          <p className="text-xs text-[#3F3B35]">
             We welcome corrections from candidates, educators, and departmental officials. If you spot a factual error in any published circular, please inform our editorial team:
           </p>
-          <div className="text-xs font-mono space-y-1 bg-[#FCFAF4] p-3 rounded border border-[#EAE2D2] text-[#1A1918]">
+          <div className="text-xs font-mono space-y-1 bg-[#FCFAF4] p-3 rounded border border-[#D5CAB5] text-[#1A1918]">
             <p><strong>Editorial Desk:</strong> <a href="mailto:contact@indiajobnotice.com" className="text-[#1E3799] underline">contact@indiajobnotice.com</a></p>
             <p><strong>Corrections SLA:</strong> Verified corrections are updated within 24 to 48 hours.</p>
           </div>

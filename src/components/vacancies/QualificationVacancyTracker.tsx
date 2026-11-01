@@ -149,16 +149,16 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
   return (
     <div className="space-y-8">
       {/* Top Controls & Institutional Print Button */}
-      <div className="bg-white rounded-xl border border-[#EAE2D2] p-5 sm:p-6 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F2ECE1] pb-4">
+      <div className="bg-white rounded-xl border border-[#D5CAB5] p-5 sm:p-6 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E2D8C6] pb-4">
           <div>
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E3799] font-bold block mb-1">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#1E3799] font-bold block mb-1">
               From official notifications
             </span>
             <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1A1918]">
               Qualification-Wise Vacancy Breakdown
             </h2>
-            <p className="text-xs text-[#68635B] mt-0.5">
+            <p className="text-xs text-[#4F4A43] mt-0.5">
               Filter government jobs by educational criteria. Used by college placement cells, coaching faculties, and public library desks.
             </p>
           </div>
@@ -186,26 +186,26 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                   "p-3 rounded-lg border text-left transition-all flex flex-col justify-between group",
                   isSelected
                     ? "bg-[#EEF2FA] border-[#1E3799] ring-2 ring-[#1E3799]/20 shadow-2xs"
-                    : "bg-[#FCFAF4] border-[#EAE2D2] hover:bg-white hover:border-[#CCD8F0]"
+                    : "bg-[#FCFAF4] border-[#D5CAB5] hover:bg-white hover:border-[#CCD8F0]"
                 )}
               >
                 <div>
                   <span className={cn(
-                    "text-[10px] font-mono uppercase font-bold block mb-1 truncate",
-                    isSelected ? "text-[#1E3799]" : "text-[#68635B]"
+                    "text-[11px] font-mono uppercase font-bold block mb-1 truncate",
+                    isSelected ? "text-[#1E3799]" : "text-[#4F4A43]"
                   )}>
                     {tier.shortLabel}
                   </span>
                   <span className="font-serif font-bold text-lg text-[#1A1918] block leading-tight">
                     {tier.totalVacancies.toLocaleString("en-IN")}
                   </span>
-                  <span className="text-[10px] text-[#68635B] block mt-0.5">
+                  <span className="text-[11px] text-[#4F4A43] block mt-0.5">
                     Vacancies
                   </span>
                 </div>
 
-                <div className="mt-2.5 pt-2 border-t border-[#EAE2D2]/60 flex items-center justify-between text-[10px] font-bold">
-                  <span className={isSelected ? "text-[#1E3799]" : "text-[#524E48]"}>
+                <div className="mt-2.5 pt-2 border-t border-[#D5CAB5]/60 flex items-center justify-between text-[11px] font-bold">
+                  <span className={isSelected ? "text-[#1E3799]" : "text-[#3F3B35]"}>
                     {tier.jobCount} jobs
                   </span>
                   <ArrowRight className={cn(
@@ -219,13 +219,13 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
         </div>
 
         {/* Active Toggle & Summary Bar */}
-        <div className="mt-4 pt-4 border-t border-[#F2ECE1] flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="mt-4 pt-4 border-t border-[#E2D8C6] flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
             <span className="font-bold text-[#1A1918]">Showing:</span>
             <span className="px-2.5 py-0.5 rounded bg-[#EEF2FA] text-[#1E3799] font-bold border border-[#CCD8F0]">
               {currentTier.label}
             </span>
-            <span className="text-[#68635B]">
+            <span className="text-[#4F4A43]">
               ({totalFilteredVacancies.toLocaleString("en-IN")} Total Posts in {filteredJobs.length} Drives)
             </span>
           </div>
@@ -243,8 +243,8 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
       </div>
 
       {/* Vacancy Table / Printable Gazette Listing */}
-      <div className="bg-white rounded-xl border border-[#EAE2D2] p-6 shadow-2xs space-y-4">
-        <div className="flex items-center justify-between border-b border-[#EAE2D2] pb-3">
+      <div className="bg-white rounded-xl border border-[#D5CAB5] p-6 shadow-2xs space-y-4">
+        <div className="flex items-center justify-between border-b border-[#D5CAB5] pb-3">
           <div className="flex items-center gap-2">
             <GraduationCap className="w-5 h-5 text-[#1E3799]" />
             <h3 className="font-serif text-base sm:text-lg font-bold text-[#1A1918]">
@@ -264,7 +264,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
         </div>
 
         {filteredJobs.length === 0 ? (
-          <div className="text-center py-10 text-xs text-[#68635B] bg-[#FCFAF4] rounded-lg border border-[#EAE2D2]">
+          <div className="text-center py-10 text-xs text-[#4F4A43] bg-[#FCFAF4] rounded-lg border border-[#D5CAB5]">
             No active positions currently open under this qualification tier. Check upcoming gazettes on the{" "}
             <Link href="/calendar" className="text-[#1E3799] font-bold hover:underline">
               Exam Calendar
@@ -272,9 +272,9 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border border-[#EAE2D2] rounded-lg overflow-hidden bg-white">
+            <table className="w-full text-left text-xs border border-[#D5CAB5] rounded-lg overflow-hidden bg-white">
               <thead>
-                <tr className="bg-[#FAF7EC] border-b border-[#EAE2D2] font-mono text-[11px] text-[#68635B] uppercase">
+                <tr className="bg-[#FAF7EC] border-b border-[#D5CAB5] font-mono text-[12px] text-[#4F4A43] uppercase">
                   <th className="py-3 px-4 font-bold text-[#1E3799]">Recruiting Commission & Post</th>
                   <th className="py-3 px-4 font-bold text-center">Vacancies</th>
                   <th className="py-3 px-4 font-semibold">Eligibility Details</th>
@@ -283,7 +283,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                   <th className="py-3 px-4 font-bold text-right print:hidden">Notification</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#F2ECE1]">
+              <tbody className="divide-y divide-[#E2D8C6]">
                 {filteredJobs.map((job) => {
                   const jobHref = job.isCentral
                     ? `/jobs/${job.slug}`
@@ -296,7 +296,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                       {/* Commission & Title */}
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#EEF2FA] text-[#1E3799] border border-[#CCD8F0]">
+                          <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#EEF2FA] text-[#1E3799] border border-[#CCD8F0]">
                             {job.orgShortCode}
                           </span>
                           <JobStatusBadge status={job.status} />
@@ -304,7 +304,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                         <Link href={jobHref} className="font-serif font-bold text-xs text-[#1A1918] hover:text-[#1E3799] block leading-snug">
                           {job.title}
                         </Link>
-                        <span className="text-[10px] text-[#68635B] block mt-0.5">
+                        <span className="text-[11px] text-[#4F4A43] block mt-0.5">
                           {job.isCentral ? "All-India Central" : `${job.stateSlug.toUpperCase()} State`} · {job.category}
                         </span>
                       </td>
@@ -314,7 +314,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                         <span className="font-mono font-bold text-sm text-[#1A1918] block">
                           {job.totalVacancies.toLocaleString("en-IN")}
                         </span>
-                        <span className="text-[10px] text-[#68635B]">Posts</span>
+                        <span className="text-[11px] text-[#4F4A43]">Posts</span>
                       </td>
 
                       {/* Eligibility Details */}
@@ -323,14 +323,14 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                           <span className="font-medium text-[#1A1918] block line-clamp-2">
                             {job.qualifications.join(", ")}
                           </span>
-                          <span className="text-[10px] font-mono text-[#68635B] block">
+                          <span className="text-[11px] font-mono text-[#4F4A43] block">
                             Age: {formatAgeRange(job)}
                           </span>
                         </div>
                       </td>
 
                       {/* Pay Scale */}
-                      <td className="py-3.5 px-4 font-mono font-bold text-xs text-[#209948]">
+                      <td className="py-3.5 px-4 font-mono font-bold text-xs text-[#17803A]">
                         {job.salary ? job.salary.split("(")[0] : "See notification"}
                       </td>
 
@@ -338,11 +338,11 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                       <td className="py-3.5 px-4 font-mono text-xs">
                         <span className="text-[#1A1918] block font-semibold">{formatDate(job.applicationEndDate)}</span>
                         {daysLeft > 0 ? (
-                          <span className="text-[10px] text-[#E96B15] font-bold block">
+                          <span className="text-[11px] text-[#B84D0A] font-bold block">
                             {daysLeft} days left
                           </span>
                         ) : (
-                          <span className="text-[10px] text-[#68635B] block">Closed</span>
+                          <span className="text-[11px] text-[#4F4A43] block">Closed</span>
                         )}
                       </td>
 
@@ -366,12 +366,12 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
       </div>
 
       {/* Campus Notice Board Notice Box */}
-      <div className="p-5 rounded-xl bg-[#FAF7EF] border border-[#EAE2D2] flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
+      <div className="p-5 rounded-xl bg-[#FAF7EF] border border-[#D5CAB5] flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
         <div>
           <span className="font-bold text-sm text-[#1A1918] block">
             Placement Cell & Library Notice Board Kit
           </span>
-          <span className="text-[#68635B] mt-0.5 block">
+          <span className="text-[#4F4A43] mt-0.5 block">
             Print this bulletin weekly or display on campus digital kiosks. Updates are verified directly against official Union and State gazettes.
           </span>
         </div>

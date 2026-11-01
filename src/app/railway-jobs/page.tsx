@@ -30,7 +30,7 @@ export default function RailwayJobsPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FCFAF4]">
+    <div className="min-h-screen flex flex-col bg-[#F1ECE1]">
       <Navbar currentStateSlug="central" />
       <main className="flex-1">
         <CategoryHubView hub={hub} parentCrumb={{ label: "Sectors", href: "/" }} />

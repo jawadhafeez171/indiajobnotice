@@ -22,17 +22,17 @@ export function ClosedRecruitmentAlert({ job, stateSlug, activeJobs }: Props) {
           </div>
           <div className="space-y-1.5 flex-1">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-[#68635B] text-white">
+              <span className="font-mono text-[11px] uppercase font-bold px-2 py-0.5 rounded bg-[#68635B] text-white">
                 Applications Closed for This Cycle
               </span>
-              <span className="text-xs font-mono text-[#68635B] font-semibold">
+              <span className="text-xs font-mono text-[#4F4A43] font-semibold">
                 Closed Date: {formatDate(job.applicationEndDate)}
               </span>
             </div>
             <h3 className="font-serif text-base font-bold text-[#1A1918]">
               Online Application Window for {job.shortTitle} Has Concluded
             </h3>
-            <p className="text-xs text-[#524E48] leading-relaxed">
+            <p className="text-xs text-[#3F3B35] leading-relaxed">
               New registrations are no longer accepted for this recruitment cycle. This master gazette page remains permanently accessible as an authoritative reference for eligibility criteria, post-wise qualification mappings, detailed syllabus, and historical cut-offs. Registered candidates can check Admit Card, Answer Key, and Result stages using the lifecycle tabs above.
             </p>
           </div>
@@ -41,10 +41,10 @@ export function ClosedRecruitmentAlert({ job, stateSlug, activeJobs }: Props) {
 
       {/* Active Opportunities Callout */}
       {activeJobs.length > 0 && (
-        <div className="bg-white rounded-xl border border-[#EAE2D2] p-5 shadow-2xs">
-          <div className="flex items-center justify-between mb-3 border-b border-[#F2ECE1] pb-2.5">
+        <div className="bg-white rounded-xl border border-[#D5CAB5] p-5 shadow-2xs">
+          <div className="flex items-center justify-between mb-3 border-b border-[#E2D8C6] pb-2.5">
             <div className="flex items-center gap-2">
-              <Briefcase className="w-4 h-4 text-[#209948]" />
+              <Briefcase className="w-4 h-4 text-[#17803A]" />
               <h4 className="font-serif text-sm font-bold text-[#1A1918]">
                 Looking for Active Opportunities? Check Ongoing Recruitments:
               </h4>
@@ -63,12 +63,12 @@ export function ClosedRecruitmentAlert({ job, stateSlug, activeJobs }: Props) {
               <Link
                 key={activeJob.id}
                 href={activeJob.isCentral ? `/jobs/${activeJob.slug}` : `/state/${activeJob.stateSlug}/jobs/${activeJob.slug}`}
-                className="p-3 rounded-lg bg-[#FCFAF4] border border-[#EAE2D2] hover:border-[#1E3799] hover:bg-white transition-all group flex flex-col justify-between"
+                className="p-3 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5] hover:border-[#1E3799] hover:bg-white transition-all group flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-center justify-between text-[10px] font-mono mb-1">
+                  <div className="flex items-center justify-between text-[11px] font-mono mb-1">
                     <span className="text-[#1E3799] font-bold">{activeJob.orgShortCode}</span>
-                    <span className="text-[#209948] font-bold bg-[#EDF7F0] px-1.5 py-0.2 rounded border border-[#C6E7D0]">
+                    <span className="text-[#17803A] font-bold bg-[#EDF7F0] px-1.5 py-0.2 rounded border border-[#C6E7D0]">
                       Open Now
                     </span>
                   </div>
@@ -76,9 +76,9 @@ export function ClosedRecruitmentAlert({ job, stateSlug, activeJobs }: Props) {
                     {activeJob.title}
                   </span>
                 </div>
-                <div className="mt-2.5 pt-2 border-t border-[#F2ECE1] flex items-center justify-between text-[10px] text-[#68635B]">
+                <div className="mt-2.5 pt-2 border-t border-[#E2D8C6] flex items-center justify-between text-[11px] text-[#4F4A43]">
                   <span>{activeJob.totalVacancies.toLocaleString("en-IN")} Posts</span>
-                  <span className="text-[#E96B15] font-semibold">Ends {formatDate(activeJob.applicationEndDate)}</span>
+                  <span className="text-[#B84D0A] font-semibold">Ends {formatDate(activeJob.applicationEndDate)}</span>
                 </div>
               </Link>
             ))}

@@ -40,10 +40,10 @@ export function DistrictSelectorBar({
   }
 
   return (
-    <div className="mt-4 pt-3.5 border-t border-[#EAE2D2]/80">
+    <div className="mt-4 pt-3.5 border-t border-[#D5CAB5]/80">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-        <div className="flex items-center gap-1.5 text-xs text-[#68635B] font-mono">
-          <MapPin className="w-3.5 h-3.5 text-[#E96B15]" />
+        <div className="flex items-center gap-1.5 text-xs text-[#4F4A43] font-mono">
+          <MapPin className="w-3.5 h-3.5 text-[#B84D0A]" />
           <span className="font-bold text-[#1A1918]">Jobs by district:</span>
           <span className="text-[#8C827A]">({allDistricts.length} Districts in {stateName})</span>
         </div>
@@ -76,7 +76,7 @@ export function DistrictSelectorBar({
             >
               <span>{dist.name}</span>
               {dist.nativeName && (
-                <span className="text-[10px] opacity-70 font-normal">
+                <span className="text-[11px] opacity-70 font-normal">
                   ({dist.nativeName})
                 </span>
               )}
@@ -87,7 +87,7 @@ export function DistrictSelectorBar({
         {allDistricts.length > 8 && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="px-2.5 py-1 rounded text-xs font-bold border border-dashed border-[#C5BBAA] bg-[#F7F3E9] text-[#E96B15] hover:border-[#E96B15] hover:bg-[#FDF3EB] transition-all"
+            className="px-2.5 py-1 rounded text-xs font-bold border border-dashed border-[#C5BBAA] bg-[#F7F3E9] text-[#B84D0A] hover:border-[#E96B15] hover:bg-[#FDF3EB] transition-all"
           >
             +{allDistricts.length - majorDistricts.length} More Districts...
           </button>
@@ -102,24 +102,24 @@ export function DistrictSelectorBar({
             if (e.target === e.currentTarget) setIsModalOpen(false);
           }}
         >
-          <div className="relative w-full max-w-2xl max-h-[85vh] bg-[#FCFAF4] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-[#EAE2D2]">
+          <div className="relative w-full max-w-2xl max-h-[85vh] bg-[#FCFAF4] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-[#D5CAB5]">
             {/* Modal Header */}
-            <div className="p-4 border-b border-[#EAE2D2] bg-white flex items-center justify-between">
+            <div className="p-4 border-b border-[#D5CAB5] bg-white flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#E96B15]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#C2510A]" />
                   <h3 className="font-serif text-lg font-bold text-[#1A1918]">
                     Select District in {stateName}
                   </h3>
                 </div>
-                <p className="text-xs text-[#68635B] mt-0.5">
+                <p className="text-xs text-[#4F4A43] mt-0.5">
                   Official NIC Collectorates, District Courts & local health society circulars
                 </p>
               </div>
 
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1 rounded-md text-[#68635B] hover:text-[#1A1918] hover:bg-[#F2EDE4]"
+                className="p-1 rounded-md text-[#4F4A43] hover:text-[#1A1918] hover:bg-[#F2EDE4]"
                 aria-label="Close"
               >
                 <X className="w-5 h-5" />
@@ -127,7 +127,7 @@ export function DistrictSelectorBar({
             </div>
 
             {/* Search Input Bar */}
-            <div className="p-3 bg-[#F9F6EE] border-b border-[#EAE2D2]">
+            <div className="p-3 bg-[#F9F6EE] border-b border-[#D5CAB5]">
               <div className="relative">
                 <Search className="w-4 h-4 text-[#8C827A] absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
@@ -142,7 +142,7 @@ export function DistrictSelectorBar({
             </div>
 
             {/* Districts Grid / List */}
-            <div className="p-4 overflow-y-auto max-h-[55vh] divide-y divide-[#EAE2D2]/50">
+            <div className="p-4 overflow-y-auto max-h-[55vh] divide-y divide-[#D5CAB5]/50">
               {filteredDistricts.length === 0 ? (
                 <div className="py-8 text-center text-xs text-[#8C827A]">
                   No districts match "{searchQuery}".
@@ -160,7 +160,7 @@ export function DistrictSelectorBar({
                           "p-2.5 rounded-lg border text-left transition-all flex flex-col justify-between group",
                           isSelected
                             ? "bg-[#1E3799] text-white border-[#1E3799]"
-                            : "bg-white border-[#EAE2D2] hover:border-[#1E3799] hover:bg-[#EEF2FA]/40"
+                            : "bg-white border-[#D5CAB5] hover:border-[#1E3799] hover:bg-[#EEF2FA]/40"
                         )}
                       >
                         <div>
@@ -168,14 +168,14 @@ export function DistrictSelectorBar({
                             {dist.name}
                           </div>
                           {dist.nativeName && (
-                            <div className={cn("text-[11px] font-serif", isSelected ? "text-white/80" : "text-[#68635B]")}>
+                            <div className={cn("text-[12px] font-serif", isSelected ? "text-white/80" : "text-[#4F4A43]")}>
                               {dist.nativeName}
                             </div>
                           )}
                         </div>
 
                         {dist.division && (
-                          <div className={cn("text-[10px] font-mono mt-1 pt-1 border-t", isSelected ? "border-white/20 text-white/70" : "border-black/5 text-[#8C827A]")}>
+                          <div className={cn("text-[11px] font-mono mt-1 pt-1 border-t", isSelected ? "border-white/20 text-white/70" : "border-black/5 text-[#8C827A]")}>
                             {dist.division}
                           </div>
                         )}
@@ -187,8 +187,8 @@ export function DistrictSelectorBar({
             </div>
 
             {/* Modal Footer */}
-            <div className="p-3 border-t border-[#EAE2D2] bg-[#F9F6EE] flex items-center justify-between text-xs text-[#68635B]">
-              <span className="font-mono text-[11px]">
+            <div className="p-3 border-t border-[#D5CAB5] bg-[#F9F6EE] flex items-center justify-between text-xs text-[#4F4A43]">
+              <span className="font-mono text-[12px]">
                 Showing {filteredDistricts.length} of {allDistricts.length} districts
               </span>
               <button
