@@ -2,14 +2,12 @@ import React from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { JobCard } from "@/components/jobs/JobCard";
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
-import { EligibilityCalculator } from "@/components/eligibility/EligibilityCalculator";
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
 import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { HeroCounterDeck } from "@/components/home/HeroCounterDeck";
-import { getJobCanonicalPath, getListingJobs, getCalculatorJobs, getExamsInProgress } from "@/data/jobs";
+import { getListingJobs, getExamsInProgress } from "@/data/jobs";
 import { ExamsInProgressSection } from "@/components/jobs/ExamsInProgressSection";
 import { ExamCalendarSections } from "@/components/jobs/ExamCalendarSections";
 import { getAllJobs } from "@/lib/jobs-store";
@@ -17,7 +15,6 @@ import { getAllJobs } from "@/lib/jobs-store";
 import { STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
 import { getStateSubdomainUrl } from "@/lib/subdomains";
 import { cn } from "@/lib/utils";
-import { ArrowRight, FileCheck, Award, ShieldCheck, Sparkles } from "lucide-react";
 
 export const metadata = {
   title: "IndiaJobNotice.com - Government Job Notifications, Admit Cards & Results",
@@ -27,7 +24,7 @@ export const metadata = {
   },
   openGraph: {
     title: "IndiaJobNotice.com - Central & State Government Jobs",
-    description: "Verified official notifications, admit cards, and results across all 36 States & Union Territories.",
+    description: "Official notifications, admit cards and results from all 36 states and union territories.",
     url: "https://www.indiajobnotice.com",
     siteName: "India Job Notice",
     locale: "en_IN",
@@ -35,16 +32,14 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "IndiaJobNotice.com - Official Govt Job Notifications",
-    description: "Official notifications, admit cards, exam schedules, and direct PDF downloads.",
+    title: "IndiaJobNotice.com - Government Job Notifications",
+    description: "Official notifications, admit cards, exam schedules and results.",
   },
 };
 
 export default async function HomePage() {
   const allJobs = await getAllJobs();
   const listedJobs = getListingJobs(allJobs);
-  const centralJobs = listedJobs.filter((j) => j.isCentral);
-  const featuredJobs = listedJobs.filter((j) => j.featured);
   const admitCards = listedJobs.filter((j) => j.status === "ADMIT_CARD_OUT");
   const results = listedJobs.filter((j) => j.status === "RESULT_OUT");
 
@@ -142,165 +137,41 @@ export default async function HomePage() {
         <SocialAlertBar />
 
         {/* Exams coming (admit cards out) and latest results, from the official documents */}
-        <ExamCalendarSections jobs={allJobs} />
+        <ExamCalendarSections jobs={allJobs} limit={5} />
 
         {/* Applications closed, exams or results under way */}
-        <ExamsInProgressSection jobs={getExamsInProgress(allJobs)} />
+        <ExamsInProgressSection jobs={getExamsInProgress(allJobs)} limit={6} />
 
         {/* Reserved Ad Space (0.00 CLS Protected) */}
         <ReservedAdSlot slotType="leaderboard" slotId="home-leaderboard" />
 
-        {/* Age & Eligibility Calculator */}
-        <section id="calculator">
-          <EligibilityCalculator currentStateSlug="central" jobs={getCalculatorJobs(allJobs)} />
-        </section>
-
-        {/* Central government jobs */}
-        <section id="central-jobs">
-          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 mb-4 border-b border-[#EAE2D2] pb-2">
-            <div className="flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#1E3799]" />
-              <div>
-                <h2 className="font-serif text-xl font-bold text-[#1A1918]">
-                  Central government jobs
-                </h2>
-                <p className="text-xs text-[#68635B]">
-                  Complete coverage across UPSC (CSE, NDA, CDS, CAPF), SSC (CGL, CHSL, GD, MTS, CPO), Railways (NTPC, Group D, ALP, JE), Banking (SBI, IBPS, RBI), Teaching & Postal
-                </p>
-              </div>
-            </div>
-            <span className="text-xs font-mono font-bold text-[#1E3799] bg-[#EEF2FA] px-2.5 py-1 rounded border border-[#CCD8F0] self-start sm:self-auto shrink-0">
-              {centralJobs.length} jobs
+        {/* Age check: one line here, the calculator has its own page */}
+        <Link
+          href="/calculator"
+          className="flex items-center justify-between gap-3 p-4 rounded-xl bg-white border border-[#EAE2D2] hover:border-[#1E3799] shadow-2xs"
+        >
+          <span>
+            <span className="block font-serif font-bold text-[#1A1918]">Am I eligible? Check your age</span>
+            <span className="block text-xs text-[#68635B] mt-0.5">
+              Enter your date of birth to see which open jobs you can apply for.
             </span>
-          </div>
+          </span>
+          <span className="text-sm font-bold text-[#1E3799] shrink-0">Open →</span>
+        </Link>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {centralJobs.map((job) => (
-              <JobCard key={job.id} job={job} currentStateSlug="central" />
+        {/* Jobs by state */}
+        <section id="all-states" className="bg-white rounded-lg border border-[#EAE2D2] p-5 shadow-2xs">
+          <h2 className="font-serif text-lg font-bold text-[#1A1918] mb-3">Jobs by state and union territory</h2>
+          <div className="flex flex-wrap gap-2 text-xs">
+            {STATES_REGISTRY.map((st) => (
+              <a
+                key={st.slug}
+                href={getStateSubdomainUrl(st.slug)}
+                className="px-2.5 py-1.5 rounded border border-[#EAE2D2] hover:border-[#1E3799] hover:bg-[#EEF2FA]/40 font-semibold text-[#1A1918]"
+              >
+                {st.name}
+              </a>
             ))}
-          </div>
-        </section>
-
-        {/* Two-Column Admit Cards & Results (Subtly Colored Boxes) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6" id="admit-cards">
-          {/* Admit Cards Box - Royal Navy Accents from Logo */}
-          <section className="bg-white rounded-lg border border-[#CCD8F0] p-5 shadow-2xs">
-            <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#EEF2FA]">
-              <div className="flex items-center gap-2">
-                <FileCheck className="w-4 h-4 text-[#1E3799]" />
-                <h3 className="font-serif text-base font-bold text-[#1E3799]">
-                  Admit Cards Active
-                </h3>
-              </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EEF2FA] text-[#1E3799] font-bold border border-[#CCD8F0]">
-                Exam ahead
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              {admitCards.map((job) => (
-                <div key={job.id} className="flex items-baseline justify-between text-xs py-2 border-b border-[#FCFAF4] hover:bg-[#EEF2FA]/30 px-1 rounded transition-colors">
-                  <div>
-                    <Link href={getJobCanonicalPath(job)} className="font-semibold text-[#1A1918] hover:text-[#1E3799] block">
-                      {job.shortTitle}
-                    </Link>
-                    <span className="text-[11px] text-[#68635B]">{job.organization} · Exam: {job.examDate}</span>
-                  </div>
-                  <a
-                    href={job.applyOnlineUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[#1E3799] hover:underline shrink-0 ml-3 font-bold"
-                  >
-                    Download →
-                  </a>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Results Box - Tiranga Green Accents from Logo */}
-          <section className="bg-white rounded-lg border border-[#C6E7D0] p-5 shadow-2xs" id="results">
-            <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#EDF7F0]">
-              <div className="flex items-center gap-2">
-                <Award className="w-4 h-4 text-[#209948]" />
-                <h3 className="font-serif text-base font-bold text-[#209948]">
-                  Recent Results & Cut-off Marks
-                </h3>
-              </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EDF7F0] text-[#209948] font-bold border border-[#C6E7D0]">
-                Merit Lists
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              {results.map((job) => (
-                <div key={job.id} className="flex items-baseline justify-between text-xs py-2 border-b border-[#FCFAF4] hover:bg-[#EDF7F0]/30 px-1 rounded transition-colors">
-                  <div>
-                    <Link href={getJobCanonicalPath(job)} className="font-semibold text-[#1A1918] hover:text-[#209948] block">
-                      {job.shortTitle}
-                    </Link>
-                    <span className="text-[11px] text-[#68635B]">{job.organization} · {job.totalVacancies.toLocaleString()} Posts</span>
-                  </div>
-                  <a
-                    href={job.applyOnlineUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[#209948] hover:underline shrink-0 ml-3 font-bold"
-                  >
-                    View Score →
-                  </a>
-                </div>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        {/* State Subdirectory Directory - Distinct Regional Palettes */}
-        <section id="all-states" className="bg-white rounded-lg border border-[#EAE2D2] p-6 shadow-2xs">
-          <div className="mb-4 pb-2 border-b border-[#F2ECE1] flex items-baseline justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <TricolorCapsule className="w-12 h-1.5" />
-                <h2 className="font-serif text-lg font-bold text-[#1A1918]">
-                  Jobs by state and union territory
-                </h2>
-              </div>
-              <p className="text-xs text-[#68635B] mt-0.5">
-                Each state operates on its dedicated subfolder hub with localized circulars and syllabus
-              </p>
-            </div>
-            <span className="text-xs font-mono text-[#1E3799] font-bold">36 State Hubs Active</span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 text-xs">
-            {STATES_REGISTRY.map((st) => {
-              const badge = getStateBadgeColor(st.code);
-              return (
-                <a
-                  key={st.slug}
-                  href={getStateSubdomainUrl(st.slug)}
-                  className="p-3 rounded border border-[#EAE2D2] hover:border-[#1E3799] hover:bg-[#EEF2FA]/40 transition-all flex items-baseline justify-between group shadow-2xs hover:shadow-xs"
-                >
-                  <div>
-                    <span className="font-bold text-[#1A1918] group-hover:text-[#1E3799] transition-colors block">
-                      {st.name}
-                    </span>
-                    <span className="text-[10px] text-[#68635B] font-mono group-hover:text-[#1E3799]/80">/state/{st.slug}</span>
-                  </div>
-                  <span
-                    className={cn(
-                      "text-[10px] font-mono px-1.5 py-0.2 rounded font-bold border",
-                      badge.bg,
-                      badge.text,
-                      badge.border
-                    )}
-                  >
-                    {st.code}
-                  </span>
-                </a>
-              );
-            })}
           </div>
         </section>
       </main>
