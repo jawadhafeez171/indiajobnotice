@@ -12,10 +12,10 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+// Built on first visit, then cached (not at deploy: ~1,750 job and district pages made every
+// deployment ~0.9 GB and filled Vercel's storage).
 export async function generateStaticParams() {
-  return (await getAllJobs()).filter((j) => j.isCentral).map((job) => ({
-    slug: job.slug,
-  }));
+  return [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

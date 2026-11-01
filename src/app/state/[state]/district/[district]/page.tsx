@@ -9,9 +9,7 @@ import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { DistrictSelectorBar } from "@/components/common/DistrictSelectorBar";
 import { getStateBySlug, getStateBadgeColor } from "@/config/states";
 import { 
-  DISTRICTS_REGISTRY, 
   getDistrictBySlug, 
-  getDistrictsByState,
   getMajorDistricts 
 } from "@/config/districts";
 import { getJobsByDistrict, getListingJobs } from "@/data/jobs";
@@ -39,11 +37,10 @@ interface PageProps {
   }>;
 }
 
+// Built on first visit, then cached (not at deploy: ~1,750 job and district pages made every
+// deployment ~0.9 GB and filled Vercel's storage).
 export async function generateStaticParams() {
-  return DISTRICTS_REGISTRY.map((d) => ({
-    state: d.stateSlug,
-    district: d.slug,
-  }));
+  return [];
 }
 
 export async function generateMetadata({ params }: PageProps) {
