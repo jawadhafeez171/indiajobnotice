@@ -80,8 +80,11 @@ export function Navbar({ currentStateSlug }: Props) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between gap-3 h-16">
             {/* Logo */}
-            <a href={getCentralPortalUrl()} className="block min-w-0 shrink group transition-transform hover:opacity-95" title="India Job Notice Home">
-              <BrandLogo height={32} />
+            <a href={getCentralPortalUrl()} className="flex flex-col min-w-0 shrink group transition-transform hover:opacity-95" title="India Job Notice Home">
+              <BrandLogo height={32} className="!h-6 sm:!h-8 [&_img]:!h-6 sm:[&_img]:!h-8" />
+              <span className="mt-0.5 text-[11px] sm:text-[12px] leading-none font-semibold tracking-wide text-muted whitespace-nowrap">
+                Verified government job alerts
+              </span>
             </a>
 
             {/* Desktop Navigation */}

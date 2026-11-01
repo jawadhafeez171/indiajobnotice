@@ -9,6 +9,12 @@ const config: Config = {
   darkMode: "media",
   theme: {
     extend: {
+      keyframes: {
+        marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
+      },
+      animation: {
+        marquee: "marquee 60s linear infinite",
+      },
       colors: {
         "canvas": "rgb(var(--c-canvas) / <alpha-value>)",
         "surface": "rgb(var(--c-surface) / <alpha-value>)",

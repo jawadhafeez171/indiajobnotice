@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/editorial-policy",
   },
   openGraph: {
-    title: "Editorial & Verification Standards - IndiaJobNotice",
+    title: "Editorial & Verification Standards - India Job Notice",
     description: "How IndiaJobNotice verifies government employment notifications, calculates age criteria, and upholds primary source integrity.",
     url: "https://www.indiajobnotice.com/editorial-policy",
     siteName: "India Job Notice",

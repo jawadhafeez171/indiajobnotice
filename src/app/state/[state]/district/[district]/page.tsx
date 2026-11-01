@@ -62,7 +62,7 @@ export async function generateMetadata({ params }: PageProps) {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${district.name} Government Jobs - IndiaJobNotice`,
+      title: `${district.name} Government Jobs - India Job Notice`,
       description: `Official job alerts, exam schedules, and circulars for ${district.name}, ${state.name}.`,
       url: canonicalUrl,
       siteName: "India Job Notice",

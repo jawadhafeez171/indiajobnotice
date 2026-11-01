@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/contact",
   },
   openGraph: {
-    title: "Contact IndiaJobNotice Editorial Desk",
+    title: "Contact India Job Notice",
     description: "Official contact emails, grievance officer details, and errata correction procedures for IndiaJobNotice.com.",
     url: "https://www.indiajobnotice.com/contact",
     siteName: "India Job Notice",

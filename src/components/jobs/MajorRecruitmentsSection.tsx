@@ -4,14 +4,15 @@ import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { 
   JobNotification, 
-  getCategoryColors,
   formatAgeRange,
   nextExamDate,
+  getJobCanonicalPath,
 } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
-import { JobListCard } from "./JobListCard";
+import { JobListCard, JobRow, JobDeadline, STATUS_STYLE, qualificationLabel, cleanTitle, placeLabel } from "./JobListCard";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
 import { useWatchlist } from "@/lib/watchlist";
+import { getStateBySlug } from "@/config/states";
 import { 
   Table, 
   LayoutTemplate, 
@@ -19,21 +20,17 @@ import {
   FileText, 
   ArrowRight, 
   CheckCircle2,
-  Clock,
-  Sparkles,
-  Award,
-  FileCheck,
   Search,
   SlidersHorizontal,
   X,
-  RotateCcw,
   Bookmark,
-  CalendarDays,
 } from "lucide-react";
 
 interface Props {
   jobs: JobNotification[];
   currentStateSlug?: string;
+  /** The page has its own search with every filter (home page): no search box or filter row here. */
+  hideSearch?: boolean;
 }
 
 type ViewMode = "ledger" | "spotlight" | "bulletin";
@@ -46,95 +43,18 @@ export type StatusCategoryKey =
   | "EXAM_DATES"
   | "RESULT";
 
-interface StatusCategoryConfig {
-  key: StatusCategoryKey;
-  label: string;
-  shortLabel: string;
-  badgeText: string;
-  dotColor: string;
-  activeColor: string;
-  activeBg: string;
-  activeBorder: string;
-  icon: React.ElementType;
-  description: string;
-}
+// one row of tabs; the active one takes its stage colour (same as the card stripes)
+export const TAB_ORDER: StatusCategoryKey[] = ["APPLY_OPEN", "CLOSING_SOON", "EXAM_DATES", "ADMIT_CARD", "RESULT", "ALL"];
+export const TABS: Record<StatusCategoryKey, { label: string; short: string; active: string; order?: string }> = {
+  APPLY_OPEN: { label: "Open", short: "Open", active: "bg-green-solid", order: "closing soonest first" },
+  CLOSING_SOON: { label: "Closing soon", short: "Closing", active: "bg-saffron-solid", order: "closing soonest first" },
+  EXAM_DATES: { label: "Exam dates", short: "Exams", active: "bg-navy-solid", order: "soonest exam first" },
+  ADMIT_CARD: { label: "Admit cards", short: "Admit card", active: "bg-navy-solid" },
+  RESULT: { label: "Results", short: "Results", active: "bg-purple-solid" },
+  ALL: { label: "All", short: "All", active: "bg-ink-2", order: "open jobs first" },
+};
 
-const STATUS_CATEGORIES: StatusCategoryConfig[] = [
-  {
-    key: "ALL",
-    label: "All Recruitments",
-    shortLabel: "All",
-    badgeText: "Overview",
-    dotColor: "bg-navy-solid",
-    activeColor: "text-white",
-    activeBg: "bg-navy-solid",
-    activeBorder: "border-navy",
-    icon: Sparkles,
-    description: "All verified national and state circulars across recruitment lifecycle stages.",
-  },
-  {
-    key: "APPLY_OPEN",
-    label: "Latest Notifications (Apply Open)",
-    shortLabel: "Apply Open",
-    badgeText: "Open Now",
-    dotColor: "bg-navy-solid",
-    activeColor: "text-white",
-    activeBg: "bg-navy-solid",
-    activeBorder: "border-navy",
-    icon: Sparkles,
-    description: "Newly gazetted drives with active registration and online application windows.",
-  },
-  {
-    key: "CLOSING_SOON",
-    label: "Closing Soon (Last Chance)",
-    shortLabel: "Closing Soon",
-    badgeText: "Ending Soon",
-    dotColor: "bg-saffron-solid",
-    activeColor: "text-white",
-    activeBg: "bg-saffron-solid",
-    activeBorder: "border-saffron-bright",
-    icon: Clock,
-    description: "Urgent application deadlines ending in the upcoming days. Submit forms before portal closure.",
-  },
-  {
-    key: "ADMIT_CARD",
-    label: "Admit Card Released",
-    shortLabel: "Admit Cards",
-    badgeText: "Hall Tickets",
-    dotColor: "bg-navy-solid",
-    activeColor: "text-white",
-    activeBg: "bg-navy-solid",
-    activeBorder: "border-navy",
-    icon: FileCheck,
-    description: "Official exam city slips, CBT call letters, and physical test hall tickets available for download.",
-  },
-  {
-    key: "EXAM_DATES",
-    label: "Exam dates",
-    shortLabel: "Exam Dates",
-    badgeText: "Coming Up",
-    dotColor: "bg-navy-solid",
-    activeColor: "text-white",
-    activeBg: "bg-navy-solid",
-    activeBorder: "border-navy",
-    icon: CalendarDays,
-    description: "Exams, physical tests and interviews still ahead, soonest first, from admit cards and exam schedules.",
-  },
-  {
-    key: "RESULT",
-    label: "Result Announced",
-    shortLabel: "Results",
-    badgeText: "Merit Lists",
-    dotColor: "bg-green-solid",
-    activeColor: "text-white",
-    activeBg: "bg-green-solid",
-    activeBorder: "border-green",
-    icon: Award,
-    description: "Final selection lists, cut-off marks, scorecards, and normalized answer keys.",
-  },
-];
-
-const JOB_CATEGORIES = [
+export const JOB_CATEGORIES = [
   "ALL",
   "Police / Defense",
   "Administrative / PSC",
@@ -146,7 +66,7 @@ const JOB_CATEGORIES = [
   "Medical & Nursing",
 ];
 
-const QUALIFICATIONS = [
+export const QUALIFICATIONS = [
   { label: "All Qualifications", value: "ALL" },
   { label: "10th (Matric) Pass", value: "10th" },
   { label: "12th (Intermediate)", value: "12th" },
@@ -155,7 +75,12 @@ const QUALIFICATIONS = [
   { label: "Teaching (B.Ed / CTET)", value: "teaching" },
 ];
 
-export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
+/** Stage names in links (/?stage=closing) <-> tab keys. */
+export const STAGE_PARAM: Record<string, StatusCategoryKey> = {
+  open: "APPLY_OPEN", closing: "CLOSING_SOON", exams: "EXAM_DATES", admit: "ADMIT_CARD", results: "RESULT", all: "ALL",
+};
+
+export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = false }: Props) {
   const [viewMode, setViewMode] = useState<ViewMode>("ledger");
   const [activeCategory, setActiveCategory] = useState<StatusCategoryKey>("APPLY_OPEN");
   
@@ -164,6 +89,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedQualification, setSelectedQualification] = useState("ALL");
   const [selectedScope, setSelectedScope] = useState<"ALL" | "CENTRAL" | "STATE">("ALL");
+  const [selectedState, setSelectedState] = useState("ALL");
+  const [myAge, setMyAge] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   // a page of jobs at a time: the full list made the home page 40 phone screens long
   const [visible, setVisible] = useState(20);
@@ -187,9 +114,35 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
         setActiveCategory("APPLY_OPEN");
       } else if (hash === "#all-recruitments" || hash === "#major-recruitments") {
         setActiveCategory("ALL");
+      } else {
+        return;
       }
+      // these hashes are tabs, not elements: bring the list into view
+      document.getElementById("major-recruitments")?.scrollIntoView({ behavior: "smooth" });
     };
     handleHash();
+    // search from the home page hero: /?q=...
+    const applyQuery = () => {
+      const u = new URLSearchParams(window.location.search);
+      const keys = ["q", "state", "qual", "sector", "scope", "stage", "age"];
+      if (!keys.some((k) => u.get(k))) return;
+      const q = u.get("q") || "";
+      const stage = STAGE_PARAM[u.get("stage") || ""];
+      const qual = u.get("qual") || "";
+      const sector = u.get("sector") || "";
+      const scope = (u.get("scope") || "").toUpperCase();
+      const age = Number(u.get("age"));
+      setSearchQuery(q);
+      if (u.get("state")) setSelectedState(u.get("state") as string);
+      if (QUALIFICATIONS.some((x) => x.value === qual)) setSelectedQualification(qual);
+      if (JOB_CATEGORIES.includes(sector)) setSelectedCategory(sector);
+      if (scope === "CENTRAL" || scope === "STATE") setSelectedScope(scope);
+      if (age >= 14 && age <= 70) setMyAge(age);
+      // a search looks at every stage unless one was chosen
+      setActiveCategory(stage || (q ? "ALL" : "APPLY_OPEN"));
+      document.getElementById("major-recruitments")?.scrollIntoView();
+    };
+    applyQuery();
     window.addEventListener("hashchange", handleHash);
     return () => window.removeEventListener("hashchange", handleHash);
   }, []);
@@ -217,50 +170,51 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
   };
 
   // Check if any filter is actively applied
-  const hasActiveFilters = searchQuery.trim() !== "" || selectedCategory !== "ALL" || selectedQualification !== "ALL" || selectedScope !== "ALL";
+  const hasActiveFilters = searchQuery.trim() !== "" || selectedCategory !== "ALL" || selectedQualification !== "ALL"
+    || selectedScope !== "ALL" || selectedState !== "ALL" || myAge !== null;
+  const facetCount = [selectedCategory !== "ALL", selectedQualification !== "ALL", selectedScope !== "ALL",
+    selectedState !== "ALL", myAge !== null].filter(Boolean).length;
 
   const resetAllFilters = () => {
     setSearchQuery("");
     setSelectedCategory("ALL");
     setSelectedQualification("ALL");
     setSelectedScope("ALL");
+    setSelectedState("ALL");
+    setMyAge(null);
     setActiveCategory("ALL");
+  };
+
+  // every filter except the stage tab: used for the list and for the tab counts
+  const passesFacets = (j: JobNotification): boolean => {
+    if (searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase().trim();
+      const textToMatch = `${j.title} ${j.shortTitle} ${j.organization} ${j.orgShortCode} ${j.category} ${j.stateSlug} ${j.keyHighlights.join(" ")} ${j.qualifications.join(" ")}`.toLowerCase();
+      if (!textToMatch.includes(q)) return false;
+    }
+    if (selectedCategory !== "ALL" && j.category !== selectedCategory) return false;
+    if (selectedQualification !== "ALL") {
+      const quals = `${j.qualifications.join(" ")} ${qualificationLabel(j) || ""}`.toLowerCase();
+      if (selectedQualification === "10th" && !quals.includes("10th") && !quals.includes("matric")) return false;
+      if (selectedQualification === "12th" && !quals.includes("12th") && !quals.includes("intermediate")) return false;
+      if (selectedQualification === "graduate" && !quals.includes("graduate") && !quals.includes("bachelor") && !quals.includes("degree")) return false;
+      if (selectedQualification === "tech" && !quals.includes("iti") && !quals.includes("diploma") && !quals.includes("engineering") && !quals.includes("tech")) return false;
+      if (selectedQualification === "teaching" && !quals.includes("b.ed") && !quals.includes("d.el.ed") && !quals.includes("ctet") && !quals.includes("stet")) return false;
+    }
+    if (selectedScope === "CENTRAL" && !j.isCentral) return false;
+    if (selectedScope === "STATE" && j.isCentral) return false;
+    // a state shows its own jobs plus central ones (open to everyone)
+    if (selectedState !== "ALL" && !j.isCentral && j.stateSlug !== selectedState) return false;
+    // age: only jobs whose stated limits include it; a notice that states no limit stays in
+    if (myAge !== null && j.ageKnown !== false && j.maxAge > 0) {
+      if (myAge > j.maxAge || (j.minAge && myAge < j.minAge)) return false;
+    }
+    return true;
   };
 
   // Filtered jobs matching all criteria
   const filteredJobs = useMemo(() => {
-    return jobs.filter((j) => {
-      // 1. Status Filter
-      if (!matchesStatus(j, activeCategory)) return false;
-
-      // 2. Text Search
-      if (searchQuery.trim() !== "") {
-        const q = searchQuery.toLowerCase().trim();
-        const textToMatch = `${j.title} ${j.shortTitle} ${j.organization} ${j.orgShortCode} ${j.category} ${j.keyHighlights.join(" ")} ${j.qualifications.join(" ")}`.toLowerCase();
-        if (!textToMatch.includes(q)) return false;
-      }
-
-      // 3. Category Filter
-      if (selectedCategory !== "ALL" && j.category !== selectedCategory) {
-        return false;
-      }
-
-      // 4. Qualification Filter
-      if (selectedQualification !== "ALL") {
-        const quals = j.qualifications.join(" ").toLowerCase();
-        if (selectedQualification === "10th" && !quals.includes("10th") && !quals.includes("matric")) return false;
-        if (selectedQualification === "12th" && !quals.includes("12th") && !quals.includes("intermediate")) return false;
-        if (selectedQualification === "graduate" && !quals.includes("graduate") && !quals.includes("bachelor") && !quals.includes("degree")) return false;
-        if (selectedQualification === "tech" && !quals.includes("iti") && !quals.includes("diploma") && !quals.includes("engineering") && !quals.includes("tech")) return false;
-        if (selectedQualification === "teaching" && !quals.includes("b.ed") && !quals.includes("d.el.ed") && !quals.includes("ctet") && !quals.includes("stet")) return false;
-      }
-
-      // 5. Scope Filter (Central vs State)
-      if (selectedScope === "CENTRAL" && !j.isCentral) return false;
-      if (selectedScope === "STATE" && j.isCentral) return false;
-
-      return true;
-    }).sort((a, b) => {
+    return jobs.filter((j) => matchesStatus(j, activeCategory) && passesFacets(j)).sort((a, b) => {
       if (activeCategory === "EXAM_DATES") {
         return (nextExamDate(a)?.date || "9999").localeCompare(nextExamDate(b)?.date || "9999");
       }
@@ -271,7 +225,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
         || (a.applicationEndDate || "9999").localeCompare(b.applicationEndDate || "9999")
         || b.totalVacancies - a.totalVacancies;
     });
-  }, [jobs, activeCategory, searchQuery, selectedCategory, selectedQualification, selectedScope]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobs, activeCategory, searchQuery, selectedCategory, selectedQualification, selectedScope, selectedState, myAge]);
 
   // Counts for each status category (respecting text search and facet filters)
   const categoryCounts = useMemo(() => {
@@ -285,15 +240,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
     };
 
     jobs.forEach((j) => {
-      // Check facets first
-      if (selectedCategory !== "ALL" && j.category !== selectedCategory) return;
-      if (selectedScope === "CENTRAL" && !j.isCentral) return;
-      if (selectedScope === "STATE" && j.isCentral) return;
-      if (searchQuery.trim() !== "") {
-        const q = searchQuery.toLowerCase().trim();
-        const textToMatch = `${j.title} ${j.shortTitle} ${j.organization} ${j.orgShortCode} ${j.category}`.toLowerCase();
-        if (!textToMatch.includes(q)) return;
-      }
+      if (!passesFacets(j)) return;
 
       counts.ALL += 1;
       if (matchesStatus(j, "APPLY_OPEN")) counts.APPLY_OPEN += 1;
@@ -304,11 +251,9 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
     });
 
     return counts;
-  }, [jobs, selectedCategory, selectedScope, searchQuery]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobs, selectedCategory, selectedQualification, selectedScope, selectedState, myAge, searchQuery]);
 
-  const currentCategoryConfig = useMemo(() => {
-    return STATUS_CATEGORIES.find((c) => c.key === activeCategory) || STATUS_CATEGORIES[0];
-  }, [activeCategory]);
 
   const heroJob = filteredJobs[0] || jobs[0];
   const sideJobs = filteredJobs.slice(1, 6);
@@ -325,7 +270,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
             </h2>
           </div>
           <p className="text-xs text-muted mt-0.5">
-            Open jobs closing soonest first, then admit cards and results
+            From official notifications, checked twice a day
           </p>
         </div>
 
@@ -379,407 +324,296 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
         </div>
       </div>
 
-      {/* ================= UNIVERSAL LIVE SEARCH & MULTI-FACET FILTER BAR ================= */}
-      <div className="bg-surface rounded-lg border border-line p-3 sm:p-3.5 shadow-2xs space-y-3">
-        <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2.5">
-          {/* Instant Search Input */}
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-faint absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by post, exam or organisation (e.g. SSC, KEA, BPSC)"
-              className="w-full pl-9 pr-8 py-2.5 sm:py-2 text-[15px] sm:text-xs min-h-[44px] sm:min-h-0 bg-subtle border border-line rounded-lg focus:outline-none focus:border-navy text-ink placeholder-faint transition-colors"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-faint hover:text-ink p-1"
-                aria-label="Clear search"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-
-          {/* Filter Toggles / Selects */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex items-center gap-2">
-            {/* Category Dropdown */}
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full lg:w-auto px-3 py-2.5 sm:py-2 text-[14px] sm:text-xs min-h-[44px] sm:min-h-0 bg-subtle border border-line rounded-lg text-ink font-medium focus:outline-none focus:border-navy transition-colors cursor-pointer"
-            >
-              <option value="ALL">All Categories / Sectors</option>
-              {JOB_CATEGORIES.filter((c) => c !== "ALL").map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-
-            {/* Qualification Dropdown */}
-            <select
-              value={selectedQualification}
-              onChange={(e) => setSelectedQualification(e.target.value)}
-              className="w-full lg:w-auto px-3 py-2.5 sm:py-2 text-[14px] sm:text-xs min-h-[44px] sm:min-h-0 bg-subtle border border-line rounded-lg text-ink font-medium focus:outline-none focus:border-navy transition-colors cursor-pointer"
-            >
-              {QUALIFICATIONS.map((q) => (
-                <option key={q.value} value={q.value}>
-                  {q.label}
-                </option>
-              ))}
-            </select>
-
-            {/* Scope (Central / State) Toggle */}
-            <div className="col-span-full sm:col-span-2 lg:col-span-1 flex rounded-lg border border-line bg-subtle p-0.5 text-xs font-semibold min-h-[44px] sm:min-h-0">
-              <button
-                onClick={() => setSelectedScope("ALL")}
-                className={cn(
-                  "flex-1 px-3 py-1.5 sm:py-1 rounded-md text-xs sm:text-[12px] transition-colors flex items-center justify-center font-bold",
-                  selectedScope === "ALL" ? "bg-navy-solid text-white" : "text-muted hover:text-ink"
-                )}
-              >
-                All
-              </button>
-              <button
-                onClick={() => setSelectedScope("CENTRAL")}
-                className={cn(
-                  "flex-1 px-3 py-1.5 sm:py-1 rounded-md text-xs sm:text-[12px] transition-colors flex items-center justify-center font-bold",
-                  selectedScope === "CENTRAL" ? "bg-navy-solid text-white" : "text-muted hover:text-ink"
-                )}
-              >
-                Central
-              </button>
-              <button
-                onClick={() => setSelectedScope("STATE")}
-                className={cn(
-                  "flex-1 px-3 py-1.5 sm:py-1 rounded-md text-xs sm:text-[12px] transition-colors flex items-center justify-center font-bold",
-                  selectedScope === "STATE" ? "bg-navy-solid text-white" : "text-muted hover:text-ink"
-                )}
-              >
-                State
-              </button>
-            </div>
-          </div>
-        </div>
-
-
-        {/* Results Counter & Active Filter Pills */}
-        <div className="flex items-center justify-between text-xs pt-1 border-t border-line-soft text-muted">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-mono text-[12px] font-bold text-navy">
-              Showing {filteredJobs.length} verified {filteredJobs.length === 1 ? "notice" : "notices"}
-            </span>
-
-            {hasActiveFilters && (
-              <>
-                <span className="text-faint">·</span>
-                {searchQuery && (
-                  <span className="inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded text-[11px] font-bold border border-navy-line">
-                    &ldquo;{searchQuery}&rdquo;
-                    <button onClick={() => setSearchQuery("")} className="hover:text-danger"><X className="w-2.5 h-2.5" /></button>
-                  </span>
-                )}
-                {selectedCategory !== "ALL" && (
-                  <span className="inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded text-[11px] font-bold border border-navy-line">
-                    {selectedCategory}
-                    <button onClick={() => setSelectedCategory("ALL")} className="hover:text-danger"><X className="w-2.5 h-2.5" /></button>
-                  </span>
-                )}
-                {selectedQualification !== "ALL" && (
-                  <span className="inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded text-[11px] font-bold border border-navy-line">
-                    {QUALIFICATIONS.find((q) => q.value === selectedQualification)?.label}
-                    <button onClick={() => setSelectedQualification("ALL")} className="hover:text-danger"><X className="w-2.5 h-2.5" /></button>
-                  </span>
-                )}
-                {selectedScope !== "ALL" && (
-                  <span className="inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded text-[11px] font-bold border border-navy-line">
-                    Scope: {selectedScope}
-                    <button onClick={() => setSelectedScope("ALL")} className="hover:text-danger"><X className="w-2.5 h-2.5" /></button>
-                  </span>
-                )}
-              </>
-            )}
-          </div>
-
-          {hasActiveFilters && (
-            <button
-              onClick={resetAllFilters}
-              className="inline-flex items-center gap-1 text-danger hover:underline font-bold text-[12px]"
-            >
-              <RotateCcw className="w-3 h-3" />
-              <span>Reset Filters</span>
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* ================= 4-CATEGORY STATUTORY LIFECYCLE TABS ================= */}
-      <div className="space-y-3">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-          {STATUS_CATEGORIES.map((cat) => {
-            const count = categoryCounts[cat.key];
-            const isActive = activeCategory === cat.key;
-            const Icon = cat.icon;
-
+      {/* ================= STAGE TABS: one row, kept in view under the header while scrolling ================= */}
+      <div className="sticky top-[109px] z-20 -mx-4 px-4 sm:mx-0 sm:px-0 py-2 bg-canvas/95 backdrop-blur-sm">
+        <div role="tablist" aria-label="Job stages" className="grid grid-cols-3 gap-1.5 md:flex md:gap-2">
+          {TAB_ORDER.map((key) => {
+            const isActive = activeCategory === key;
+            const t = TABS[key];
             return (
               <button
-                key={cat.key}
-                onClick={() => setActiveCategory(cat.key)}
+                key={key}
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveCategory(key)}
                 className={cn(
-                  "p-3 rounded-lg border text-left transition-all relative flex flex-col justify-between group shadow-2xs hover:shadow-xs",
-                  isActive
-                    ? "bg-surface border-navy ring-2 ring-navy/15"
-                    : "bg-surface border-line hover:border-navy-line hover:bg-subtle"
+                  "flex items-center justify-between md:justify-start gap-1.5 pl-2.5 pr-1.5 md:pl-3 md:pr-2 min-h-[38px] rounded-lg md:rounded-full border text-[13px] font-semibold whitespace-nowrap transition-colors",
+                  isActive ? cn(t.active, "text-white border-transparent") : "bg-surface border-line text-ink-2 hover:border-navy"
                 )}
               >
-                {/* Active Indicator Bar at Top */}
-                {isActive && (
-                  <div className={cn("absolute top-0 left-0 right-0 h-1 rounded-t-lg", cat.activeBg)} />
-                )}
-
-                <div className="flex items-center justify-between gap-1 mb-2">
-                  <div className="flex items-center gap-1.5">
-                    <span className={cn("w-2 h-2 rounded-full", cat.dotColor)} />
-                    <span className="text-[11px] uppercase font-mono font-bold tracking-wider text-muted">
-                      {cat.badgeText}
-                    </span>
-                  </div>
-                  <Icon className={cn("w-3.5 h-3.5", isActive ? "text-navy" : "text-faint")} />
-                </div>
-
-                <div>
-                  <div className="flex items-baseline justify-between gap-1">
-                    <span className={cn("text-xs sm:text-sm font-bold font-serif leading-tight", isActive ? "text-navy" : "text-ink")}>
-                      {cat.shortLabel}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-xs font-mono font-bold px-1.5 py-0.2 rounded border",
-                        isActive
-                          ? "bg-navy-solid text-white border-navy"
-                          : "bg-navy-tint text-navy border-navy-line"
-                      )}
-                    >
-                      {count}
-                    </span>
-                  </div>
-                </div>
+                <span className="md:hidden">{t.short}</span>
+                <span className="hidden md:inline">{t.label}</span>
+                <span
+                  className={cn(
+                    "min-w-[22px] px-1.5 py-0.5 rounded-full text-[12px] font-bold leading-none tabular-nums",
+                    isActive ? "bg-white/20 text-white" : "bg-subtle text-muted"
+                  )}
+                >
+                  {categoryCounts[key]}
+                </span>
               </button>
             );
           })}
         </div>
+      </div>
 
-        {/* Category Description Banner */}
-        <div className="px-3.5 py-2 rounded-md bg-subtle border border-line flex items-center justify-between text-xs text-ink-2">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-navy shrink-0" />
-            <span>{currentCategoryConfig.description}</span>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={() => setActiveCategory(activeCategory === "ALL" ? "APPLY_OPEN" : "ALL")}
+      {/* ================= COUNT, FILTERS ================= */}
+      <div className="space-y-2.5">
+        <div className="flex items-center justify-between gap-3 text-[13px]">
+          <p className="text-ink-2 min-w-0">
+            <b className="text-ink">{filteredJobs.length}</b> {filteredJobs.length === 1 ? "job" : "jobs"}
+            {TABS[activeCategory].order && <span className="text-muted"> · {TABS[activeCategory].order}</span>}
+            {selectedState !== "ALL" && (
+              <span className="ml-2 inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded-full text-[12px] font-bold border border-navy-line align-middle">
+                {getStateBySlug(selectedState)?.name || selectedState} + central
+                <button onClick={() => setSelectedState("ALL")} aria-label="Clear state" className="hover:text-danger">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            {myAge !== null && (
+              <span className="ml-2 inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded-full text-[12px] font-bold border border-navy-line align-middle">
+                Age {myAge}
+                <button onClick={() => setMyAge(null)} aria-label="Clear age" className="hover:text-danger">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            {[
+              selectedCategory !== "ALL" && { label: selectedCategory, clear: () => setSelectedCategory("ALL") },
+              selectedQualification !== "ALL" && {
+                label: QUALIFICATIONS.find((q) => q.value === selectedQualification)?.label || selectedQualification,
+                clear: () => setSelectedQualification("ALL"),
+              },
+              selectedScope !== "ALL" && {
+                label: selectedScope === "CENTRAL" ? "Central government" : "State government",
+                clear: () => setSelectedScope("ALL"),
+              },
+            ].filter(Boolean).map((c) => {
+              const chip = c as { label: string; clear: () => void };
+              return (
+                <span key={chip.label} className="ml-2 inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded-full text-[12px] font-bold border border-navy-line align-middle">
+                  {chip.label}
+                  <button onClick={chip.clear} aria-label={`Clear ${chip.label}`} className="hover:text-danger">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              );
+            })}
+            {searchQuery && (
+              <span className="ml-2 inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded-full text-[12px] font-bold border border-navy-line align-middle">
+                &ldquo;{searchQuery}&rdquo;
+                <button onClick={() => setSearchQuery("")} aria-label="Clear search" className="hover:text-danger">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+          </p>
+          <div className="flex items-center gap-3 shrink-0">
+            {hasActiveFilters && (
+              <button onClick={resetAllFilters} className="text-[13px] font-semibold text-danger hover:underline">
+                Clear filters
+              </button>
+            )}
+            {!hideSearch && (<button
+              onClick={() => setShowFilters(!showFilters)}
+              aria-expanded={showFilters}
               className={cn(
-                "text-[12px] font-mono font-bold px-2 py-0.5 rounded transition-colors",
-                activeCategory === "ALL"
-                  ? "bg-navy-solid text-white"
-                  : "text-navy hover:underline"
+                "md:hidden flex items-center gap-1.5 px-3 min-h-[36px] rounded-lg border text-[13px] font-semibold",
+                facetCount ? "border-navy text-navy bg-navy-tint" : "border-line text-ink-2 bg-surface"
               )}
             >
-              {activeCategory === "ALL" ? "✓ Viewing All Stages" : "View All (Combined) →"}
-            </button>
+              <SlidersHorizontal className="w-4 h-4" />
+              Filters{facetCount ? ` · ${facetCount}` : ""}
+            </button>)}
           </div>
         </div>
+
+        {/* phones: behind the Filters button; wider screens: one slim row */}
+        {!hideSearch && (<div className={cn(showFilters ? "grid" : "hidden", "grid-cols-1 gap-2 p-3 rounded-xl bg-surface border border-line md:flex md:items-center md:p-0 md:border-0 md:bg-transparent")}>
+          {!hideSearch && (
+            <div className="relative md:flex-1">
+              <Search className="w-4 h-4 text-faint absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search a post, exam or organisation"
+                className="w-full pl-9 pr-3 min-h-[44px] md:min-h-[38px] text-[15px] md:text-sm bg-surface border border-line rounded-lg focus:outline-none focus:border-navy text-ink placeholder:text-faint"
+              />
+            </div>
+          )}
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            aria-label="Sector"
+            className="w-full md:w-auto px-3 min-h-[44px] md:min-h-[38px] text-[15px] md:text-sm bg-surface border border-line rounded-lg text-ink focus:outline-none focus:border-navy cursor-pointer"
+          >
+            <option value="ALL">All sectors</option>
+            {JOB_CATEGORIES.filter((c) => c !== "ALL").map((cat) => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+          <select
+            value={selectedQualification}
+            onChange={(e) => setSelectedQualification(e.target.value)}
+            aria-label="Qualification"
+            className="w-full md:w-auto px-3 min-h-[44px] md:min-h-[38px] text-[15px] md:text-sm bg-surface border border-line rounded-lg text-ink focus:outline-none focus:border-navy cursor-pointer"
+          >
+            {QUALIFICATIONS.map((q) => (
+              <option key={q.value} value={q.value}>{q.label}</option>
+            ))}
+          </select>
+          <div className="flex rounded-lg border border-line bg-surface p-0.5 min-h-[44px] md:min-h-[38px]">
+            {(["ALL", "CENTRAL", "STATE"] as const).map((sc) => (
+              <button
+                key={sc}
+                onClick={() => setSelectedScope(sc)}
+                className={cn(
+                  "flex-1 md:flex-none px-3 rounded-md text-[13px] font-semibold transition-colors",
+                  selectedScope === sc ? "bg-navy-solid text-white" : "text-muted hover:text-ink"
+                )}
+              >
+                {sc === "ALL" ? "All" : sc === "CENTRAL" ? "Central" : "State"}
+              </button>
+            ))}
+          </div>
+        </div>)}
       </div>
 
       {/* ================= LIST VIEW: cards on phones, a table on wider screens ================= */}
       {viewMode === "ledger" && (
-        <ul className={activeCategory === "EXAM_DATES" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" : "md:hidden space-y-2.5"}>
+        <ul className={cn(
+          "bg-surface rounded-xl border border-line divide-y divide-line-soft overflow-hidden",
+          activeCategory === "EXAM_DATES" ? "" : "lg:hidden"
+        )}>
           {filteredJobs.length === 0 && (
-            <li className="py-8 text-center text-sm text-muted">
+            <li className="col-span-full py-8 text-center text-sm text-muted">
               No jobs match these filters.{" "}
               <button onClick={resetAllFilters} className="font-bold text-navy underline">Clear filters</button>
             </li>
           )}
           {filteredJobs.slice(0, visible).map((job) => (
             <li key={job.id}>
-              <JobListCard job={job} exam={activeCategory === "EXAM_DATES" ? nextExamDate(job) : undefined} />
+              <JobRow
+                job={job}
+                exam={activeCategory === "EXAM_DATES" || job.status === "ADMIT_CARD_OUT" ? nextExamDate(job) : undefined}
+                action={
+                  <button
+                    onClick={() => toggleSave(job.id)}
+                    className={cn("p-1.5 -m-1 rounded", isSaved(job.id) ? "text-saffron" : "text-faint hover:text-navy")}
+                    title={isSaved(job.id) ? "Remove from saved" : "Save this job"}
+                    aria-label={isSaved(job.id) ? "Remove from saved" : "Save this job"}
+                  >
+                    <Bookmark className={cn("w-4 h-4", isSaved(job.id) && "fill-saffron-bright")} />
+                  </button>
+                }
+              />
             </li>
           ))}
         </ul>
       )}
       {viewMode === "ledger" && activeCategory !== "EXAM_DATES" && (
-        <div className="hidden md:block bg-surface rounded-lg border border-line overflow-hidden shadow-2xs">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr className="bg-subtle border-b border-line text-muted font-mono text-[12px] uppercase tracking-wider">
-                  <th className="py-3 px-4 font-bold text-navy">Posts</th>
-                  <th className="py-3 px-4 font-bold text-ink">Recruitment</th>
-                  <th className="py-3 px-4 font-semibold hidden md:table-cell">Sector</th>
-                  <th className="py-3 px-4 font-semibold hidden lg:table-cell">Status</th>
-                  <th className="py-3 px-4 font-semibold">Last date</th>
-                  <th className="py-3 px-4 text-right font-semibold">Actions</th>
+        <div className="hidden lg:block bg-surface rounded-xl border border-line overflow-hidden shadow-2xs">
+          <table className="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr className="bg-subtle border-b border-line text-[12px] font-semibold text-muted">
+                <th className="py-2.5 pl-6 pr-4">Recruitment</th>
+                <th className="py-2.5 px-4 text-right">Posts</th>
+                <th className="py-2.5 px-4">Eligibility</th>
+                <th className="py-2.5 px-4">Last date / exam</th>
+                <th className="py-2.5 pl-2 pr-4"><span className="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-line-soft">
+              {filteredJobs.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-12 text-center text-sm text-muted">
+                    No jobs match these filters.{" "}
+                    <button onClick={resetAllFilters} className="font-bold text-navy underline">Clear filters</button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-line-soft">
-                {filteredJobs.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-12 text-center text-xs text-muted">
-                      <div className="max-w-sm mx-auto space-y-2">
-                        <p className="font-serif text-base font-bold text-ink">
-                          No jobs match these filters
-                        </p>
-                        <p className="text-xs text-muted">
-                          Try adjusting your search keyword or resetting category/qualification filters.
-                        </p>
-                        <button
-                          onClick={resetAllFilters}
-                          className="mt-2 px-3 py-1.5 rounded bg-navy-solid text-white font-bold text-xs shadow-2xs hover:bg-navy-strong transition-colors"
+              ) : (
+                filteredJobs.slice(0, visible).map((job) => {
+                  const style = STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING;
+                  const detailLink = getJobCanonicalPath(job);
+                  const saved = isSaved(job.id);
+                  const qual = qualificationLabel(job);
+                  const age = job.ageKnown !== false && job.maxAge > 0 ? formatAgeRange(job) : null;
+                  return (
+                    <tr key={job.id} className="group hover:bg-subtle transition-colors">
+                      {/* recruitment, with the stage stripe on the left edge */}
+                      <td className="relative py-3 pl-6 pr-4">
+                        <span className={cn("absolute left-0 inset-y-0 w-1.5", style.stripe)} aria-hidden />
+                        <div className="flex items-center gap-1.5 text-[12px]">
+                          <span className="px-1.5 py-0.5 rounded bg-navy-tint text-navy font-bold leading-none border border-navy-line">
+                            {job.orgShortCode}
+                          </span>
+                          <span className="text-muted">{placeLabel(job)}</span>
+                          <span className="text-faint" aria-hidden>·</span>
+                          <span className={cn("font-bold", style.text)}>{style.label}</span>
+                        </div>
+                        <Link
+                          href={detailLink}
+                          className="mt-1 block font-serif font-bold text-[15px] leading-snug text-ink group-hover:text-navy line-clamp-2"
                         >
-                          Clear filters
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  filteredJobs.slice(0, visible).map((job) => {
-                    const daysLeft = getDaysRemaining(job.applicationEndDate);
-                    const isEndingSoon = daysLeft > 0 && daysLeft <= 10;
-                    const catColors = getCategoryColors(job.category);
-                    const detailLink = job.isCentral
-                      ? `/jobs/${job.slug}`
-                      : `/state/${job.stateSlug}/jobs/${job.slug}`;
-                    const saved = isSaved(job.id);
+                          {cleanTitle(job)}
+                        </Link>
+                        <p className="text-[12px] text-muted line-clamp-1 mt-0.5">{job.organization}</p>
+                      </td>
 
-                    return (
-                      <tr
-                        key={job.id}
-                        className="hover:bg-subtle transition-colors group"
-                      >
-                        {/* Vacancy Column */}
-                        <td className="py-3.5 px-4 font-mono whitespace-nowrap">
-                          <span className="font-bold text-sm text-navy">
-                            {job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "—"}
-                          </span>
-                          <span className="text-[11px] text-muted block">
-                            posts
-                          </span>
-                        </td>
+                      <td className="py-3 px-4 text-right whitespace-nowrap tabular-nums">
+                        {job.totalVacancies ? (
+                          <b className="text-ink">{job.totalVacancies.toLocaleString("en-IN")}</b>
+                        ) : (
+                          <span className="text-faint">—</span>
+                        )}
+                      </td>
 
-                        {/* Title & Board */}
-                        <td className="py-3.5 px-4 max-w-xs sm:max-w-md">
-                          <div className="flex items-center gap-1.5 mb-0.5">
-                            <span className="font-mono text-[11px] uppercase font-bold text-navy bg-navy-tint px-1.5 py-0.2 rounded border border-navy-line">
-                              {job.orgShortCode}
+                      <td className="py-3 px-4">
+                        <div className="flex flex-wrap gap-1.5">
+                          {[qual, age].filter(Boolean).map((c) => (
+                            <span key={c} className="px-2 py-0.5 rounded-full bg-subtle border border-line-soft text-[12px] text-ink-2 whitespace-nowrap">
+                              {c}
                             </span>
-                            <span className="text-faint">·</span>
-                            <span className="text-[11px] text-muted font-medium">
-                              {job.isCentral ? "Central Govt" : `${job.stateSlug.toUpperCase()} State`}
-                            </span>
-                          </div>
+                          ))}
+                          {!qual && !age && <span className="text-[12px] text-faint">See notification</span>}
+                        </div>
+                      </td>
+
+                      <td className="py-3 px-4">
+                        <div className="flex flex-col items-start gap-1 text-[13px] whitespace-nowrap">
+                          <JobDeadline job={job} exam={job.status === "ADMIT_CARD_OUT" ? nextExamDate(job) : undefined} />
+                        </div>
+                      </td>
+
+                      <td className="py-3 pl-2 pr-4 text-right whitespace-nowrap">
+                        <div className="inline-flex items-center gap-1">
+                          <button
+                            onClick={() => toggleSave(job.id)}
+                            className={cn(
+                              "p-2 rounded-lg transition-colors",
+                              saved ? "text-saffron bg-saffron-tint" : "text-faint hover:text-navy hover:bg-navy-tint"
+                            )}
+                            title={saved ? "Remove from saved jobs" : "Save this job"}
+                            aria-label={saved ? "Remove from saved jobs" : "Save this job"}
+                          >
+                            <Bookmark className={cn("w-4 h-4", saved && "fill-saffron-bright")} />
+                          </button>
                           <Link
                             href={detailLink}
-                            className="font-serif font-bold text-sm text-ink group-hover:text-navy transition-colors leading-snug line-clamp-2"
+                            className="px-3 py-1.5 rounded-lg border border-line text-navy font-semibold text-[13px] hover:border-navy hover:bg-navy-tint transition-colors inline-flex items-center gap-1"
                           >
-                            {job.shortTitle}
+                            Details <ArrowRight className="w-3.5 h-3.5" />
                           </Link>
-                          <p className="text-[12px] text-muted line-clamp-1 mt-0.5 font-medium">
-                            {job.organization}
-                          </p>
-                        </td>
-
-                        {/* Category Tag */}
-                        <td className="py-3.5 px-4 hidden md:table-cell whitespace-nowrap">
-                          <span
-                            className={cn(
-                              "inline-block px-2 py-0.5 rounded text-[11px] font-bold border",
-                              catColors.bg,
-                              catColors.text,
-                              catColors.border
-                            )}
-                          >
-                            {catColors.label}
-                          </span>
-                        </td>
-
-                        {/* Stage Status */}
-                        <td className="py-3.5 px-4 hidden lg:table-cell whitespace-nowrap">
-                          <JobStatusBadge status={job.status} />
-                        </td>
-
-                        {/* Date Info */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">
-                          {job.status === "ADMIT_CARD_OUT" ? (
-                            <div>
-                              <span className="text-[11px] font-mono text-navy font-bold block">Exam Date</span>
-                              <span className="font-bold text-xs text-ink">{job.examDate || "Active"}</span>
-                            </div>
-                          ) : job.status === "RESULT_OUT" ? (
-                            <div>
-                              <span className="font-bold text-xs text-green">Result out</span>
-                            </div>
-                          ) : (
-                            <div>
-                              <div className={cn("font-medium", isEndingSoon ? "text-saffron font-bold" : "text-ink")}>
-                                {formatDate(job.applicationEndDate)}
-                              </div>
-                              {isEndingSoon && (
-                                <span className="text-[11px] text-saffron font-bold">
-                                  {daysLeft}d left
-                                </span>
-                              )}
-                            </div>
-                          )}
-                        </td>
-
-                        {/* Actions */}
-                        <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                          <div className="inline-flex items-center gap-1.5">
-                            {/* Watchlist Pin Button */}
-                            <button
-                              onClick={() => toggleSave(job.id)}
-                              className={cn(
-                                "p-1.5 rounded transition-colors",
-                                saved
-                                  ? "text-saffron hover:text-saffron bg-saffron-tint"
-                                  : "text-faint hover:text-navy hover:bg-navy-tint"
-                              )}
-                              title={saved ? "Remove from saved jobs" : "Save this job"}
-                              aria-label={saved ? "Remove from saved jobs" : "Save this job"}
-                            >
-                              <Bookmark className={cn("w-3.5 h-3.5", saved && "fill-saffron-bright")} />
-                            </button>
-
-                            <a
-                              href={job.officialPdfUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="p-1.5 rounded hover:bg-navy-tint text-muted hover:text-navy transition-colors"
-                              title="Official notification"
-                            >
-                              <FileText className="w-3.5 h-3.5" />
-                            </a>
-
-                            <Link
-                              href={detailLink}
-                              className="px-2.5 py-1 rounded bg-saffron-tint border border-saffron-line text-saffron hover:bg-saffron-solid hover:text-white font-bold text-[12px] transition-colors inline-flex items-center gap-1"
-                            >
-                              <span>Details</span>
-                              <ArrowRight className="w-3 h-3" />
-                            </Link>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
       )}
 
@@ -813,7 +647,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] font-mono uppercase px-2 py-0.5 rounded bg-navy-tint text-navy font-bold border border-navy-line">
-                      {currentCategoryConfig.badgeText}
+                      {TABS[activeCategory].label}
                     </span>
                     <span className="text-xs text-muted font-mono font-medium">
                       {heroJob.orgShortCode} · {heroJob.isCentral ? "Central Govt" : `${heroJob.stateSlug.toUpperCase()} State`}

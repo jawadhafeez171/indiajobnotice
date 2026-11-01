@@ -32,7 +32,36 @@ async function loadJobs(): Promise<JobNotification[]> {
 const cachedJobs = unstable_cache(loadJobs, ["published-jobs"], { tags: ["jobs"], revalidate: 3600 });
 
 /** Every published job, with its status worked out from today's date. */
+const SMALL_WORDS = new Set(["of", "the", "and", "for", "in", "&", "at", "to", "office"]);
+const KEEP_WORDS = new Set(["District Court", "High Court"]);
+
+/**
+ * The short code shown on cards and tags. Some sources store a place name ("BENGALURURURAL",
+ * "ARUNACHAL") or a word ("Constable") instead of the body's initials: build the initials from the
+ * organisation's name then (Bengaluru Rural District Court -> BRDC). A real acronym the name
+ * itself gives in brackets (MAHAGENCO) is kept.
+ */
+function cleanOrgCode(job: JobNotification): string {
+  const code = (job.orgShortCode || "").trim();
+  const org = job.organization || "";
+  if (KEEP_WORDS.has(code)) return code;
+  const looksRight = /^[A-Z][A-Z0-9&.-]{1,6}$/.test(code);
+  const statedInName = /^[A-Z0-9&.-]+$/.test(code) && org.includes(`(${code})`);
+  if (code && (looksRight || statedInName)) return code;
+  // the name in brackets when it is the body itself ("Office of the DGP, Nagaland (Nagaland Police)")
+  const bracket = org.match(/\(([^)]+)\)/)?.[1] || "";
+  const base = /police|commission|board|court/i.test(bracket) && !/court/i.test(org.split("(")[0])
+    ? bracket : org.split("(")[0].split(",")[0];
+  const words = base.replace(/[,.]/g, " ").split(/\s+/).filter((w) => w && !SMALL_WORDS.has(w.toLowerCase()));
+  const initials = words.map((w) => w[0].toUpperCase()).join("");
+  if (initials.length >= 2 && initials.length <= 6) {
+    // keep a word in the code when it is the whole point ("Nagaland Police" -> NP is unclear)
+    return initials.length === 2 && words.length === 2 ? words.join(" ") : initials;
+  }
+  return code || initials.slice(0, 6);
+}
+
 export async function getAllJobs(): Promise<JobNotification[]> {
   const jobs = await cachedJobs();
-  return jobs.map((job) => ({ ...job, status: computeJobStatus(job) }));
+  return jobs.map((job) => ({ ...job, orgShortCode: cleanOrgCode(job), status: computeJobStatus(job) }));
 }

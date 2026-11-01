@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { 
   JobNotification, 
@@ -54,6 +54,14 @@ function EligibilityCalculatorInner({ currentStateSlug, defaultJobId, jobs }: Pr
     (defaultJobId && jobs.some((j) => j.id === defaultJobId) ? defaultJobId : jobs[0].id)
   );
   const [dob, setDob] = useState("2000-05-15");
+  // date of birth from the home page box: /calculator?dob=YYYY-MM-DD
+  useEffect(() => {
+    const fromLink = () => {
+      const v = new URLSearchParams(window.location.search).get("dob");
+      if (v && /^\d{4}-\d{2}-\d{2}$/.test(v)) setDob(v);
+    };
+    fromLink();
+  }, []);
   const [category, setCategory] = useState<string>("UR");
   const [isStateDomicile, setIsStateDomicile] = useState(true);
   const [qualification, setQualification] = useState<string>("Graduate");

@@ -14,7 +14,7 @@ export const metadata = {
     "Upcoming government exam, physical test and interview dates from official admit cards and exam schedules, soonest first, for central and state recruitments.",
   alternates: { canonical: "https://www.indiajobnotice.com/exam-dates" },
   openGraph: {
-    title: "Upcoming Government Exam Dates - IndiaJobNotice",
+    title: "Upcoming Government Exam Dates - India Job Notice",
     description: "Exam dates from official admit cards and exam schedules, soonest first.",
     url: "https://www.indiajobnotice.com/exam-dates",
     siteName: "India Job Notice",

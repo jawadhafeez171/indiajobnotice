@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/for-colleges-libraries",
   },
   openGraph: {
-    title: "Institutional Resources for Placement Cells & Libraries - IndiaJobNotice",
+    title: "Institutional Resources for Placement Cells & Libraries - India Job Notice",
     description: "Equip your students with verified recruitment tools: deadline calendar, qualification tracker, cutoff age calculator, and state directory.",
     url: "https://www.indiajobnotice.com/for-colleges-libraries",
     siteName: "India Job Notice",

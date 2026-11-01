@@ -15,7 +15,7 @@ export const metadata = {
     canonical: "https://www.indiajobnotice.com/calendar",
   },
   openGraph: {
-    title: "Government Exam Calendar & Timeline 2026 - IndiaJobNotice",
+    title: "Government Exam Calendar & Timeline 2026 - India Job Notice",
     description: "Export exam dates to Google Calendar and download .ics schedules for UPSC, SSC, Railways, and State PSCs.",
     url: "https://www.indiajobnotice.com/calendar",
     siteName: "India Job Notice",

@@ -15,11 +15,11 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com",
   },
   title: {
-    template: "%s | IndiaJobNotice.com",
-    default: "IndiaJobNotice.com - Government Job Notifications from All States",
+    template: "%s | India Job Notice",
+    default: "India Job Notice - Government Job Notifications, Admit Cards & Results",
   },
   description:
-    "India's dedicated multi-state government job notification network. Official circulars, admit cards, answer keys, results, and eligibility calculator across all 28 states & UTs.",
+    "Government job notifications from official sources: last dates, eligibility, admit cards, exam dates and results for central and state recruitments.",
   keywords: [
     "Sarkari Result",
     "Govt Job Notification",
@@ -66,12 +66,29 @@ export const metadata: Metadata = {
   },
 };
 
+// Google shows the site name from WebSite data on the home page (otherwise it falls back to the
+// domain); the Organization logo can appear next to it. Keep the name the same everywhere:
+// titles, og:site_name and here.
 const websiteSchema = {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "India Job Notice",
-  alternateName: ["IndiaJobNotice", "IndiaJobNotice.com"],
-  url: "https://www.indiajobnotice.com",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://www.indiajobnotice.com/#website",
+      name: "India Job Notice",
+      alternateName: ["IndiaJobNotice", "IndiaJobNotice.com"],
+      url: "https://www.indiajobnotice.com/",
+      publisher: { "@id": "https://www.indiajobnotice.com/#organization" },
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.indiajobnotice.com/#organization",
+      name: "India Job Notice",
+      url: "https://www.indiajobnotice.com/",
+      logo: "https://www.indiajobnotice.com/icon.png",
+      sameAs: ["https://t.me/Indiajobnotice1", "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C"],
+    },
+  ],
 };
 
 export default function RootLayout({

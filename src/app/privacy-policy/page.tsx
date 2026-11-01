@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/privacy-policy",
   },
   openGraph: {
-    title: "Privacy Policy - IndiaJobNotice",
+    title: "Privacy Policy - India Job Notice",
     description: "Data protection, cookies, and transparency practices on IndiaJobNotice.com.",
     url: "https://www.indiajobnotice.com/privacy-policy",
     siteName: "India Job Notice",

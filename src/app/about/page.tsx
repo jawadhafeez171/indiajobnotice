@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/about",
   },
   openGraph: {
-    title: "About IndiaJobNotice - Independent Public Career Intelligence",
+    title: "About India Job Notice - Independent Public Career Intelligence",
     description: "Empowering 40M+ Indian youth with verified government job gazettes, exam dates, syllabus patterns, and district-level notices.",
     url: "https://www.indiajobnotice.com/about",
     siteName: "India Job Notice",

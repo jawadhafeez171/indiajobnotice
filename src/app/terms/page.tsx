@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/terms",
   },
   openGraph: {
-    title: "Terms of Service - IndiaJobNotice",
+    title: "Terms of Service - India Job Notice",
     description: "Terms and conditions of use for IndiaJobNotice.com.",
     url: "https://www.indiajobnotice.com/terms",
     siteName: "India Job Notice",
