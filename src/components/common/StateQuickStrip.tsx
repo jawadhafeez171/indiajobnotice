@@ -38,7 +38,7 @@ export function StateQuickStrip({ currentStateSlug, onOpenSelector }: Props) {
             State:
           </span>
           <span className="font-bold text-xs text-navy truncate">
-            {currentState ? `${currentState.name} (${currentState.code})` : "🇮🇳 All-India Central"}
+            {currentState ? `${currentState.name} (${currentState.code})` : "All India"}
           </span>
         </button>
 

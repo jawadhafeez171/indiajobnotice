@@ -108,7 +108,7 @@ export function Footer() {
               </li>
               <li className="pt-2 border-t border-navy/60">
                 <a href={getCentralPortalUrl()} className="text-white hover:text-saffron-light font-bold flex items-center gap-1">
-                  <span>🇮🇳 All-India Central Portal</span>
+                  <span>All India (central jobs)</span>
                 </a>
               </li>
             </ul>
