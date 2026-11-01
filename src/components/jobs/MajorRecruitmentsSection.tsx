@@ -6,6 +6,7 @@ import {
   JobNotification, 
   getCategoryColors,
   formatAgeRange,
+  nextExamDate,
 } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
 import { JobListCard } from "./JobListCard";
@@ -26,7 +27,8 @@ import {
   SlidersHorizontal,
   X,
   RotateCcw,
-  Bookmark
+  Bookmark,
+  CalendarDays,
 } from "lucide-react";
 
 interface Props {
@@ -41,6 +43,7 @@ export type StatusCategoryKey =
   | "APPLY_OPEN"
   | "CLOSING_SOON"
   | "ADMIT_CARD"
+  | "EXAM_DATES"
   | "RESULT";
 
 interface StatusCategoryConfig {
@@ -106,6 +109,18 @@ const STATUS_CATEGORIES: StatusCategoryConfig[] = [
     description: "Official exam city slips, CBT call letters, and physical test hall tickets available for download.",
   },
   {
+    key: "EXAM_DATES",
+    label: "Exam dates",
+    shortLabel: "Exam Dates",
+    badgeText: "Coming Up",
+    dotColor: "bg-navy-solid",
+    activeColor: "text-white",
+    activeBg: "bg-navy-solid",
+    activeBorder: "border-navy",
+    icon: CalendarDays,
+    description: "Exams, physical tests and interviews still ahead, soonest first, from admit cards and exam schedules.",
+  },
+  {
     key: "RESULT",
     label: "Result Announced",
     shortLabel: "Results",
@@ -166,6 +181,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
         setActiveCategory("RESULT");
       } else if (hash === "#closing-soon") {
         setActiveCategory("CLOSING_SOON");
+      } else if (hash === "#exam-dates") {
+        setActiveCategory("EXAM_DATES");
       } else if (hash === "#apply-open") {
         setActiveCategory("APPLY_OPEN");
       } else if (hash === "#all-recruitments" || hash === "#major-recruitments") {
@@ -191,6 +208,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
         return job.status === "ADMIT_CARD_OUT";
       case "RESULT":
         return job.status === "RESULT_OUT";
+      case "EXAM_DATES":
+        return nextExamDate(job) !== null;
       case "ALL":
       default:
         return true;
@@ -242,6 +261,9 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
 
       return true;
     }).sort((a, b) => {
+      if (activeCategory === "EXAM_DATES") {
+        return (nextExamDate(a)?.date || "9999").localeCompare(nextExamDate(b)?.date || "9999");
+      }
       const rank = (j: JobNotification) =>
         j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR" ? 0
           : j.status === "ADMIT_CARD_OUT" || j.status === "RESULT_OUT" ? 1 : 2;
@@ -258,6 +280,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
       APPLY_OPEN: 0,
       CLOSING_SOON: 0,
       ADMIT_CARD: 0,
+      EXAM_DATES: 0,
       RESULT: 0,
     };
 
@@ -276,6 +299,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
       if (matchesStatus(j, "APPLY_OPEN")) counts.APPLY_OPEN += 1;
       if (matchesStatus(j, "CLOSING_SOON")) counts.CLOSING_SOON += 1;
       if (matchesStatus(j, "ADMIT_CARD")) counts.ADMIT_CARD += 1;
+      if (matchesStatus(j, "EXAM_DATES")) counts.EXAM_DATES += 1;
       if (matchesStatus(j, "RESULT")) counts.RESULT += 1;
     });
 
@@ -494,7 +518,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
 
       {/* ================= 4-CATEGORY STATUTORY LIFECYCLE TABS ================= */}
       <div className="space-y-3">
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
           {STATUS_CATEGORIES.map((cat) => {
             const count = categoryCounts[cat.key];
             const isActive = activeCategory === cat.key;
@@ -573,7 +597,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
 
       {/* ================= LIST VIEW: cards on phones, a table on wider screens ================= */}
       {viewMode === "ledger" && (
-        <ul className="md:hidden space-y-2.5">
+        <ul className={activeCategory === "EXAM_DATES" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" : "md:hidden space-y-2.5"}>
           {filteredJobs.length === 0 && (
             <li className="py-8 text-center text-sm text-muted">
               No jobs match these filters.{" "}
@@ -582,12 +606,12 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
           )}
           {filteredJobs.slice(0, visible).map((job) => (
             <li key={job.id}>
-              <JobListCard job={job} />
+              <JobListCard job={job} exam={activeCategory === "EXAM_DATES" ? nextExamDate(job) : undefined} />
             </li>
           ))}
         </ul>
       )}
-      {viewMode === "ledger" && (
+      {viewMode === "ledger" && activeCategory !== "EXAM_DATES" && (
         <div className="hidden md:block bg-surface rounded-lg border border-line overflow-hidden shadow-2xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
@@ -965,6 +989,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
                 <JobListCard
                   key={job.id}
                   job={job}
+                  exam={activeCategory === "EXAM_DATES" ? nextExamDate(job) : undefined}
                   action={
                     <button
                       onClick={() => toggleSave(job.id)}

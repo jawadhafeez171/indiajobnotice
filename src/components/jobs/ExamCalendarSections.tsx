@@ -41,6 +41,9 @@ export function ExamCalendarSections({ jobs, limit = 10 }: Props) {
               </li>
             ))}
           </ul>
+          <Link href="/exam-dates" className="inline-flex items-center gap-1 text-sm font-bold text-navy hover:underline">
+            See all exam dates →
+          </Link>
         </section>
       )}
       {results.length > 0 && (

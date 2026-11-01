@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { JobNotification, JobStatus, getJobCanonicalPath, formatAgeRange } from "@/data/jobs";
+import { JobNotification, JobStatus, ExamDateEntry, getJobCanonicalPath, formatAgeRange, daysUntil } from "@/data/jobs";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
 
 /** Colour of the left stripe and the status word, one per stage. */
@@ -54,7 +54,24 @@ export function qualificationLabel(job: JobNotification): string | null {
   return null;
 }
 
-function Bottom({ job }: { job: JobNotification }) {
+/** "in 3 days" / "Tomorrow" / "Today" for an exam date. */
+export function examWhen(date: string): string {
+  const d = daysUntil(date);
+  return d <= 0 ? "Today" : d === 1 ? "Tomorrow" : `in ${d} days`;
+}
+
+function Bottom({ job, exam }: { job: JobNotification; exam?: ExamDateEntry | null }) {
+  if (exam) {
+    return (
+      <>
+        <span className="text-ink-2">
+          Exam <b className="text-ink">{formatDate(exam.date)}</b>
+          {exam.tentative && <span className="text-muted"> (tentative)</span>}
+        </span>
+        <span className="px-2 py-0.5 rounded-full font-bold text-[12px] bg-navy-tint text-navy">{examWhen(exam.date)}</span>
+      </>
+    );
+  }
   const open = job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
   const daysLeft = getDaysRemaining(job.applicationEndDate);
   if (open && job.applicationEndDate) {
@@ -89,6 +106,8 @@ interface Props {
   job: JobNotification;
   /** Extra chips after the facts (district quota, etc.). */
   extra?: React.ReactNode;
+  /** Show this exam date on the bottom line instead of the last date. */
+  exam?: ExamDateEntry | null;
   /** Top-right control (e.g. save button); sits above the card's link. */
   action?: React.ReactNode;
   className?: string;
@@ -98,7 +117,7 @@ interface Props {
  * Job card with a stage-coloured stripe: organisation, title, key facts as chips, then the
  * deadline (or the stage). The whole card is the link; `action` stays clickable on top.
  */
-export function JobListCard({ job, extra, action, className }: Props) {
+export function JobListCard({ job, extra, exam, action, className }: Props) {
   const style = STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING;
   const qual = qualificationLabel(job);
   const age = job.ageKnown !== false && job.maxAge > 0 ? formatAgeRange(job) : null;
@@ -150,7 +169,7 @@ export function JobListCard({ job, extra, action, className }: Props) {
 
       <div className="mt-auto pt-2.5">
         <div className="pt-2.5 border-t border-line-soft flex items-center justify-between gap-2 text-[13px]">
-          <Bottom job={job} />
+          <Bottom job={job} exam={exam} />
         </div>
       </div>
     </article>

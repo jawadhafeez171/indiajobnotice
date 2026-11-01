@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  Menu, X, Bookmark, Briefcase, CalendarDays, BarChart3, Calculator, Building2, MapPin, ChevronRight,
+  Menu, X, Bookmark, Briefcase, CalendarDays, CalendarClock, BarChart3, Calculator, Building2, MapPin, ChevronRight,
 } from "lucide-react";
 import { BrandLogo } from "./BrandLogo";
 import { StateSelectorModal } from "./StateSelectorModal";
@@ -62,6 +62,7 @@ export function Navbar({ currentStateSlug }: Props) {
   const close = () => setMobileMenuOpen(false);
   const menuLinks = [
     { href: jobsHref, label: currentState ? `${currentState.name} jobs` : "All jobs", icon: Briefcase },
+    { href: "/exam-dates", label: "Exam dates", icon: CalendarClock },
     { href: "/calendar", label: "Exam calendar", icon: CalendarDays },
     { href: "/vacancies", label: "Vacancies by qualification", icon: BarChart3 },
     { href: "/calculator", label: "Age calculator", icon: Calculator },
@@ -91,8 +92,8 @@ export function Navbar({ currentStateSlug }: Props) {
               <Link href="/calendar" className="hover:text-navy transition-colors whitespace-nowrap">
                 Exam calendar
               </Link>
-              <Link href="/vacancies" className="hover:text-navy transition-colors whitespace-nowrap">
-                Vacancies
+              <Link href="/exam-dates" className="hover:text-navy transition-colors whitespace-nowrap">
+                Exam dates
               </Link>
               <Link href="/calculator" className="hover:text-navy transition-colors whitespace-nowrap">
                 Age calculator

@@ -203,6 +203,55 @@ export function getUpcomingExams(jobs: JobNotification[], today = todayIST()): U
   return out.sort((a, b) => a.nextDate.localeCompare(b.nextDate));
 }
 
+export interface ExamDateEntry {
+  job: JobNotification;
+  /** ISO date of the exam / test / interview. */
+  date: string;
+  /** The admit card or schedule that gives the date; absent when it comes from the notification. */
+  stage?: JobStage;
+  /** Only the notification gives this date (no admit card or schedule confirms it yet). */
+  tentative: boolean;
+}
+
+/**
+ * Every exam date still ahead, soonest first: from admit cards and exam schedules the agent read,
+ * plus the exam date printed in the notification (tentative until a document confirms it).
+ * One entry per recruitment and date (a schedule and its corrigendum often repeat a date).
+ */
+export function getExamDates(jobs: JobNotification[], today = todayIST()): ExamDateEntry[] {
+  const out: ExamDateEntry[] = [];
+  const rank = (s: JobStage) => (s.kind === "admit_card" ? 0 : 1);
+  for (const job of jobs) {
+    const seen = new Set<string>();
+    const docs = (job.stages || [])
+      .filter((s) => s.kind === "admit_card" || s.kind === "schedule")
+      .sort((a, b) => rank(a) - rank(b) || (b.date || "").localeCompare(a.date || ""));
+    for (const s of docs) {
+      for (const d of s.examDates || []) {
+        if (d >= today && !seen.has(d)) {
+          seen.add(d);
+          out.push({ job, date: d, stage: s, tentative: false });
+        }
+      }
+    }
+    const own = (job.examDate || "").slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(own) && own >= today && !seen.size) {
+      out.push({ job, date: own, tentative: true });
+    }
+  }
+  return out.sort((a, b) => a.date.localeCompare(b.date) || a.job.organization.localeCompare(b.job.organization));
+}
+
+/** The next exam date of one recruitment, or null. */
+export function nextExamDate(job: JobNotification, today = todayIST()): ExamDateEntry | null {
+  return getExamDates([job], today)[0] || null;
+}
+
+/** Days from today (IST) to an ISO date: 0 today, 1 tomorrow. */
+export function daysUntil(date: string, today = todayIST()): number {
+  return Math.round((Date.parse(date) - Date.parse(today)) / 86400000);
+}
+
 /** Results (any stage) dated within the last `days` days, newest first. */
 export function getLatestResults(jobs: JobNotification[], days = 45, today = todayIST()): { job: JobNotification; stage: JobStage }[] {
   const cutoff = new Date(Date.parse(today) - days * 86400 * 1000).toISOString().slice(0, 10);
@@ -294,10 +343,11 @@ export function getActiveOpportunities(
 /** Jobs for listing pages: open ones plus those closed in the last 45 days (older pages stay reachable by URL). */
 export function getListingJobs(jobs: JobNotification[]): JobNotification[] {
   const cutoff = new Date(Date.now() - 45 * 86400 * 1000).toISOString().slice(0, 10);
-  // recruitments under way join the main list while an admit card or a recent result is out
+  // recruitments under way join the main list while an admit card or a recent result is out, or
+  // an exam date is still ahead (the "Exam dates" tab)
   return jobs.filter((j) =>
     j.inProgress
-      ? j.status === "ADMIT_CARD_OUT" || j.status === "RESULT_OUT"
+      ? j.status === "ADMIT_CARD_OUT" || j.status === "RESULT_OUT" || nextExamDate(j) !== null
       : !j.applicationEndDate || j.applicationEndDate >= cutoff);
 }
 
