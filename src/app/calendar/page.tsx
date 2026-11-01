@@ -26,24 +26,24 @@ export const metadata = {
 
 export default async function CalendarPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F1ECE1]">
+    <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar currentStateSlug="central" />
 
       {/* Editorial Calendar Header */}
-      <section className="border-b border-[#D5CAB5] bg-[#FCFAF4] py-10 px-4 sm:px-6">
+      <section className="border-b border-line bg-subtle py-10 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-2 mb-2">
             <TricolorCapsule className="w-14 h-1.5" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-navy font-bold">
               Exam and last-date calendar
             </span>
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1918] tracking-tight">
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
             Government Exam Schedule & Calendar 2026
           </h1>
 
-          <p className="text-sm sm:text-base text-[#3F3B35] mt-2 max-w-3xl leading-relaxed">
+          <p className="text-sm sm:text-base text-ink-2 mt-2 max-w-3xl leading-relaxed">
             Consolidated timeline of all verified recruitment deadlines, CBT test schedules, hall ticket dates, and result announcements for UPSC, SSC, Railways, Banking, and State PSCs. Sync directly to your smartphone calendar with one click.
           </p>
         </div>

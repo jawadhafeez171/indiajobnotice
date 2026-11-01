@@ -256,38 +256,38 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
     switch (type) {
       case "DEADLINE":
         return {
-          bg: "bg-[#FDF3EB]",
-          text: "text-[#B84D0A]",
-          border: "border-[#F9D7C0]",
-          badge: "bg-[#C2510A] text-white",
-          dot: "bg-[#C2510A]",
+          bg: "bg-saffron-tint",
+          text: "text-saffron",
+          border: "border-saffron-line",
+          badge: "bg-saffron-solid text-white",
+          dot: "bg-saffron-solid",
           label: "Deadline",
         };
       case "EXAM":
         return {
-          bg: "bg-[#EDF7F0]",
-          text: "text-[#17803A]",
-          border: "border-[#C6E7D0]",
-          badge: "bg-[#209948] text-white",
-          dot: "bg-[#209948]",
+          bg: "bg-green-tint",
+          text: "text-green",
+          border: "border-green-line",
+          badge: "bg-green-solid text-white",
+          dot: "bg-green-solid",
           label: "Exam Date",
         };
       case "ADMIT_CARD":
         return {
-          bg: "bg-[#EEF2FA]",
-          text: "text-[#1E3799]",
-          border: "border-[#CCD8F0]",
-          badge: "bg-[#1E3799] text-white",
-          dot: "bg-[#1E3799]",
+          bg: "bg-navy-tint",
+          text: "text-navy",
+          border: "border-navy-line",
+          badge: "bg-navy-solid text-white",
+          dot: "bg-navy-solid",
           label: "Admit Card",
         };
       case "RESULT":
         return {
-          bg: "bg-[#F8EFF8]",
-          text: "text-[#8E24AA]",
-          border: "border-[#E1BEE7]",
-          badge: "bg-[#8E24AA] text-white",
-          dot: "bg-[#8E24AA]",
+          bg: "bg-purple-tint",
+          text: "text-purple",
+          border: "border-purple-line",
+          badge: "bg-purple-solid text-white",
+          dot: "bg-purple-solid",
           label: "Result Out",
         };
     }
@@ -296,17 +296,17 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
   return (
     <div className="space-y-6">
       {/* Control Bar: View Mode, Event Filter, Scope, Export Action */}
-      <div className="bg-white rounded-lg border border-[#D5CAB5] p-4 shadow-2xs space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-[#E2D8C6]">
+      <div className="bg-surface rounded-lg border border-line p-4 shadow-2xs space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-line-soft">
           {/* View Toggle */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold text-[#4F4A43] uppercase">View:</span>
-            <div className="inline-flex rounded-md border border-[#DDD5C7] bg-[#FCFAF4] p-0.5 text-xs font-semibold">
+            <span className="text-xs font-mono font-bold text-muted uppercase">View:</span>
+            <div className="inline-flex rounded-md border border-line bg-subtle p-0.5 text-xs font-semibold">
               <button
                 onClick={() => setViewFormat("agenda")}
                 className={cn(
                   "px-3 py-1.5 rounded transition-colors flex items-center gap-1.5",
-                  viewFormat === "agenda" ? "bg-[#1E3799] text-white shadow-2xs" : "text-[#4F4A43] hover:text-[#1A1918]"
+                  viewFormat === "agenda" ? "bg-navy-solid text-white shadow-2xs" : "text-muted hover:text-ink"
                 )}
               >
                 <Clock className="w-3.5 h-3.5" />
@@ -316,7 +316,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                 onClick={() => setViewFormat("month")}
                 className={cn(
                   "px-3 py-1.5 rounded transition-colors flex items-center gap-1.5",
-                  viewFormat === "month" ? "bg-[#1E3799] text-white shadow-2xs" : "text-[#4F4A43] hover:text-[#1A1918]"
+                  viewFormat === "month" ? "bg-navy-solid text-white shadow-2xs" : "text-muted hover:text-ink"
                 )}
               >
                 <CalendarIcon className="w-3.5 h-3.5" />
@@ -329,7 +329,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
           <div className="flex items-center gap-2 flex-wrap self-start md:self-auto">
             <button
               onClick={() => setShowEmbedModal(true)}
-              className="px-3 py-1.5 border border-[#CCD8F0] bg-[#EEF2FA] hover:bg-[#DDE7F7] text-[#1E3799] text-xs font-bold rounded-md transition-colors flex items-center gap-1.5 shadow-2xs"
+              className="px-3 py-1.5 border border-navy-line bg-navy-tint hover:bg-navy-tint-2 text-navy text-xs font-bold rounded-md transition-colors flex items-center gap-1.5 shadow-2xs"
               title="Embed calendar widget on college career portal"
             >
               <Code className="w-3.5 h-3.5" />
@@ -338,7 +338,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
 
             <button
               onClick={() => window.print()}
-              className="px-3 py-1.5 border border-[#D5CAB5] bg-white hover:bg-[#FAF7EF] text-[#423F3A] text-xs font-bold rounded-md transition-colors flex items-center gap-1.5 shadow-2xs"
+              className="px-3 py-1.5 border border-line bg-surface hover:bg-subtle text-ink-2 text-xs font-bold rounded-md transition-colors flex items-center gap-1.5 shadow-2xs"
               title="Print Weekly Exam & Deadline Bulletin for Notice Boards"
             >
               <Printer className="w-3.5 h-3.5" />
@@ -347,7 +347,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
 
             <button
               onClick={handleExportAllCalendar}
-              className="px-3.5 py-1.5 bg-[#1E3799] hover:bg-[#162a75] text-white text-xs font-bold rounded-md transition-colors flex items-center gap-1.5 shadow-2xs"
+              className="px-3.5 py-1.5 bg-navy-solid hover:bg-navy-strong text-white text-xs font-bold rounded-md transition-colors flex items-center gap-1.5 shadow-2xs"
               title="Download .ics schedule for Google Calendar, Apple Calendar, or Outlook"
             >
               <Download className="w-3.5 h-3.5" />
@@ -360,13 +360,13 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
           {/* Event Type Pills */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[12px] font-mono text-[#4F4A43] font-bold mr-1">Event:</span>
+            <span className="text-[12px] font-mono text-muted font-bold mr-1">Event:</span>
             
             <button
               onClick={() => setSelectedType("ALL")}
               className={cn(
                 "px-2.5 py-1 rounded text-xs font-bold border transition-colors",
-                selectedType === "ALL" ? "bg-[#1E3799] text-white border-[#1E3799]" : "bg-white text-[#4F4A43] border-[#D5CAB5] hover:border-[#1E3799]"
+                selectedType === "ALL" ? "bg-navy-solid text-white border-navy" : "bg-surface text-muted border-line hover:border-navy"
               )}
             >
               All Events ({allEvents.length})
@@ -376,7 +376,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
               onClick={() => setSelectedType("DEADLINE")}
               className={cn(
                 "px-2.5 py-1 rounded text-xs font-bold border transition-colors flex items-center gap-1.5",
-                selectedType === "DEADLINE" ? "bg-[#C2510A] text-white border-[#E96B15]" : "bg-[#FDF3EB] text-[#B84D0A] border-[#F9D7C0] hover:bg-[#FCEADE]"
+                selectedType === "DEADLINE" ? "bg-saffron-solid text-white border-saffron-bright" : "bg-saffron-tint text-saffron border-saffron-line hover:bg-saffron-tint"
               )}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-current" />
@@ -387,7 +387,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
               onClick={() => setSelectedType("EXAM")}
               className={cn(
                 "px-2.5 py-1 rounded text-xs font-bold border transition-colors flex items-center gap-1.5",
-                selectedType === "EXAM" ? "bg-[#209948] text-white border-[#209948]" : "bg-[#EDF7F0] text-[#17803A] border-[#C6E7D0] hover:bg-[#E2F3E7]"
+                selectedType === "EXAM" ? "bg-green-solid text-white border-green" : "bg-green-tint text-green border-green-line hover:bg-green-tint"
               )}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-current" />
@@ -398,7 +398,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
               onClick={() => setSelectedType("ADMIT_CARD")}
               className={cn(
                 "px-2.5 py-1 rounded text-xs font-bold border transition-colors flex items-center gap-1.5",
-                selectedType === "ADMIT_CARD" ? "bg-[#1E3799] text-white border-[#1E3799]" : "bg-[#EEF2FA] text-[#1E3799] border-[#CCD8F0] hover:bg-[#E3ECF8]"
+                selectedType === "ADMIT_CARD" ? "bg-navy-solid text-white border-navy" : "bg-navy-tint text-navy border-navy-line hover:bg-navy-tint"
               )}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-current" />
@@ -408,23 +408,23 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
 
           {/* Scope Toggle */}
           <div className="flex items-center gap-1">
-            <span className="text-[12px] font-mono text-[#4F4A43] font-bold">Scope:</span>
-            <div className="inline-flex rounded border border-[#DDD5C7] bg-[#FCFAF4] p-0.5 text-[12px] font-bold">
+            <span className="text-[12px] font-mono text-muted font-bold">Scope:</span>
+            <div className="inline-flex rounded border border-line bg-subtle p-0.5 text-[12px] font-bold">
               <button
                 onClick={() => setSelectedScope("ALL")}
-                className={cn("px-2 py-0.5 rounded", selectedScope === "ALL" ? "bg-[#1E3799] text-white" : "text-[#4F4A43]")}
+                className={cn("px-2 py-0.5 rounded", selectedScope === "ALL" ? "bg-navy-solid text-white" : "text-muted")}
               >
                 All
               </button>
               <button
                 onClick={() => setSelectedScope("CENTRAL")}
-                className={cn("px-2 py-0.5 rounded", selectedScope === "CENTRAL" ? "bg-[#1E3799] text-white" : "text-[#4F4A43]")}
+                className={cn("px-2 py-0.5 rounded", selectedScope === "CENTRAL" ? "bg-navy-solid text-white" : "text-muted")}
               >
                 Central
               </button>
               <button
                 onClick={() => setSelectedScope("STATE")}
-                className={cn("px-2 py-0.5 rounded", selectedScope === "STATE" ? "bg-[#1E3799] text-white" : "text-[#4F4A43]")}
+                className={cn("px-2 py-0.5 rounded", selectedScope === "STATE" ? "bg-navy-solid text-white" : "text-muted")}
               >
                 State
               </button>
@@ -435,12 +435,12 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
 
       {/* ================= VIEW 1: MONTHLY CALENDAR MATRIX ================= */}
       {viewFormat === "month" && (
-        <div className="bg-white rounded-lg border border-[#D5CAB5] p-5 shadow-2xs space-y-4">
+        <div className="bg-surface rounded-lg border border-line p-5 shadow-2xs space-y-4">
           {/* Month Header Switcher */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#E2D8C6]">
+          <div className="flex items-center justify-between pb-3 border-b border-line-soft">
             <div className="flex items-center gap-2">
-              <CalendarIcon className="w-5 h-5 text-[#1E3799]" />
-              <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1A1918]">
+              <CalendarIcon className="w-5 h-5 text-navy" />
+              <h3 className="font-serif text-lg sm:text-xl font-bold text-ink">
                 {monthData.monthName} {monthData.year}
               </h3>
             </div>
@@ -448,14 +448,14 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={handlePrevMonth}
-                className="p-1.5 rounded border border-[#DDD5C7] hover:bg-[#EEF2FA] text-[#1E3799] transition-colors"
+                className="p-1.5 rounded border border-line hover:bg-navy-tint text-navy transition-colors"
                 aria-label="Previous month"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={handleNextMonth}
-                className="p-1.5 rounded border border-[#DDD5C7] hover:bg-[#EEF2FA] text-[#1E3799] transition-colors"
+                className="p-1.5 rounded border border-line hover:bg-navy-tint text-navy transition-colors"
                 aria-label="Next month"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -464,7 +464,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
           </div>
 
           {/* Day of Week Headers */}
-          <div className="grid grid-cols-7 gap-1 text-center font-mono text-[12px] font-bold text-[#4F4A43] uppercase py-1 border-b border-[#E2D8C6]">
+          <div className="grid grid-cols-7 gap-1 text-center font-mono text-[12px] font-bold text-muted uppercase py-1 border-b border-line-soft">
             <span>Sun</span>
             <span>Mon</span>
             <span>Tue</span>
@@ -478,7 +478,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
           <div className="grid grid-cols-7 gap-1.5">
             {/* Empty slots before first day */}
             {Array.from({ length: monthData.firstDayIndex }).map((_, i) => (
-              <div key={`empty-${i}`} className="min-h-[75px] rounded bg-[#FAF7EF]/40 border border-transparent" />
+              <div key={`empty-${i}`} className="min-h-[75px] rounded bg-subtle/40 border border-transparent" />
             ))}
 
             {/* Days of Month */}
@@ -499,18 +499,18 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                   className={cn(
                     "min-h-[85px] p-1.5 rounded-md border flex flex-col justify-between transition-all text-xs",
                     isSelected
-                      ? "border-[#1E3799] ring-2 ring-[#1E3799]/20 bg-[#EEF2FA]/50"
+                      ? "border-navy ring-2 ring-navy/20 bg-navy-tint/50"
                       : events.length > 0
-                      ? "border-[#DDD5C7] bg-white hover:border-[#1E3799] cursor-pointer shadow-2xs"
-                      : "border-[#E2D8C6] bg-[#FCFAF4] text-[#8C8273]"
+                      ? "border-line bg-surface hover:border-navy cursor-pointer shadow-2xs"
+                      : "border-line-soft bg-subtle text-faint"
                   )}
                 >
                   <div className="flex items-center justify-between">
-                    <span className={cn("font-mono font-bold text-xs", events.length > 0 ? "text-[#1A1918]" : "text-[#A89F91]")}>
+                    <span className={cn("font-mono font-bold text-xs", events.length > 0 ? "text-ink" : "text-faint")}>
                       {day}
                     </span>
                     {events.length > 0 && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#C2510A]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-saffron-solid" />
                     )}
                   </div>
 
@@ -529,7 +529,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                       );
                     })}
                     {events.length > 2 && (
-                      <span className="text-[8px] font-mono font-bold text-[#1E3799] block text-center">
+                      <span className="text-[8px] font-mono font-bold text-navy block text-center">
                         +{events.length - 2} more
                       </span>
                     )}
@@ -540,13 +540,13 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
           </div>
 
           {selectedDate && (
-            <div className="p-3 bg-[#EEF2FA] rounded-md border border-[#CCD8F0] flex items-center justify-between text-xs">
-              <span className="font-semibold text-[#1E3799]">
+            <div className="p-3 bg-navy-tint rounded-md border border-navy-line flex items-center justify-between text-xs">
+              <span className="font-semibold text-navy">
                 Filtering for: <b className="font-mono">{formatDate(selectedDate)}</b>
               </span>
               <button
                 onClick={() => setSelectedDate(null)}
-                className="text-xs font-bold text-[#B84D0A] hover:underline"
+                className="text-xs font-bold text-saffron hover:underline"
               >
                 Clear date filter
               </button>
@@ -557,18 +557,18 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
 
       {/* ================= VIEW 2 / LIST: CHRONOLOGICAL AGENDA TIMELINE ================= */}
       <div className="space-y-3.5">
-        <div className="flex items-center justify-between border-b border-[#D5CAB5] pb-2">
-          <h3 className="font-serif text-lg font-bold text-[#1A1918]">
+        <div className="flex items-center justify-between border-b border-line pb-2">
+          <h3 className="font-serif text-lg font-bold text-ink">
             Upcoming Events Schedule
           </h3>
-          <span className="text-xs font-mono font-bold text-[#1E3799]">
+          <span className="text-xs font-mono font-bold text-navy">
             {filteredEvents.length} Events Listed
           </span>
         </div>
 
         {filteredEvents.length === 0 ? (
-          <div className="p-10 text-center bg-white rounded-lg border border-[#D5CAB5] text-[#4F4A43] space-y-2">
-            <p className="font-serif text-base font-bold text-[#1A1918]">
+          <div className="p-10 text-center bg-surface rounded-lg border border-line text-muted space-y-2">
+            <p className="font-serif text-base font-bold text-ink">
               No events found for the selected criteria
             </p>
             <p className="text-xs">
@@ -577,7 +577,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
             {selectedDate && (
               <button
                 onClick={() => setSelectedDate(null)}
-                className="mt-2 px-3 py-1.5 rounded bg-[#1E3799] text-white font-bold text-xs shadow-2xs"
+                className="mt-2 px-3 py-1.5 rounded bg-navy-solid text-white font-bold text-xs shadow-2xs"
               >
                 Reset Date Selection
               </button>
@@ -602,20 +602,20 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
               return (
                 <div
                   key={ev.id}
-                  className="bg-white rounded-lg border border-[#D5CAB5] hover:border-[#1E3799]/40 p-4 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs relative overflow-hidden"
+                  className="bg-surface rounded-lg border border-line hover:border-navy/40 p-4 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs relative overflow-hidden"
                 >
                   <div className={cn("absolute left-0 top-0 bottom-0 w-1", styles.dot)} />
 
                   {/* Left: Date & Status Block */}
                   <div className="flex items-start sm:items-center gap-3.5 pl-1.5">
-                    <div className="w-16 h-16 rounded-md bg-[#FAF7EF] border border-[#DDD5C7] flex flex-col items-center justify-center text-center shrink-0">
-                      <span className="font-mono text-[11px] uppercase font-bold text-[#4F4A43]">
+                    <div className="w-16 h-16 rounded-md bg-subtle border border-line flex flex-col items-center justify-center text-center shrink-0">
+                      <span className="font-mono text-[11px] uppercase font-bold text-muted">
                         {new Date(ev.dateStr).toLocaleDateString("en-US", { month: "short" })}
                       </span>
-                      <span className="font-serif font-bold text-xl text-[#1A1918] leading-none my-0.5">
+                      <span className="font-serif font-bold text-xl text-ink leading-none my-0.5">
                         {new Date(ev.dateStr).getDate()}
                       </span>
-                      <span className="font-mono text-[9px] text-[#8C8273]">
+                      <span className="font-mono text-[9px] text-faint">
                         {new Date(ev.dateStr).getFullYear()}
                       </span>
                     </div>
@@ -626,18 +626,18 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                           {styles.label}
                         </span>
 
-                        <span className="text-[12px] font-mono uppercase font-bold text-[#4F4A43]">
+                        <span className="text-[12px] font-mono uppercase font-bold text-muted">
                           {ev.job.orgShortCode} · {ev.job.isCentral ? "Central" : ev.job.stateSlug.toUpperCase()}
                         </span>
 
                         {isPast ? (
                           <span className="text-[11px] text-[#888] font-mono">Concluded</span>
                         ) : isUrgent ? (
-                          <span className="text-[11px] text-[#B84D0A] font-mono font-bold bg-[#FDF3EB] px-1.5 py-0.2 rounded border border-[#F9D7C0]">
+                          <span className="text-[11px] text-saffron font-mono font-bold bg-saffron-tint px-1.5 py-0.2 rounded border border-saffron-line">
                             {days} {days === 1 ? "day" : "days"} left!
                           </span>
                         ) : (
-                          <span className="text-[11px] text-[#17803A] font-mono font-bold">
+                          <span className="text-[11px] text-green font-mono font-bold">
                             In {days} days
                           </span>
                         )}
@@ -645,12 +645,12 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
 
                       <Link
                         href={ev.noticeUrl}
-                        className="font-serif text-base font-bold text-[#1A1918] hover:text-[#1E3799] transition-colors line-clamp-1"
+                        className="font-serif text-base font-bold text-ink hover:text-navy transition-colors line-clamp-1"
                       >
                         {ev.title}
                       </Link>
 
-                      <p className="text-xs text-[#4F4A43] mt-0.5 font-medium line-clamp-1">
+                      <p className="text-xs text-muted mt-0.5 font-medium line-clamp-1">
                         {ev.organization} · {ev.job.totalVacancies.toLocaleString()} Vacancies
                       </p>
                     </div>
@@ -664,12 +664,12 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                       className={cn(
                         "p-2 rounded-md border text-xs font-bold transition-colors flex items-center gap-1",
                         saved
-                          ? "bg-[#FDF3EB] text-[#B84D0A] border-[#F9D7C0]"
-                          : "bg-white text-[#4F4A43] border-[#DDD5C7] hover:border-[#1E3799]"
+                          ? "bg-saffron-tint text-saffron border-saffron-line"
+                          : "bg-surface text-muted border-line hover:border-navy"
                       )}
                       title={saved ? "Unpin notice" : "Pin notice to Watchlist"}
                     >
-                      <Bookmark className={cn("w-3.5 h-3.5", saved && "fill-[#E96B15]")} />
+                      <Bookmark className={cn("w-3.5 h-3.5", saved && "fill-saffron-bright")} />
                       <span className="hidden sm:inline">{saved ? "Pinned" : "Pin"}</span>
                     </button>
 
@@ -678,7 +678,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                       href={googleCalUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="px-2.5 py-1.5 rounded-md bg-[#EEF2FA] text-[#1E3799] border border-[#CCD8F0] hover:bg-[#E0E9F8] text-xs font-bold transition-colors flex items-center gap-1"
+                      className="px-2.5 py-1.5 rounded-md bg-navy-tint text-navy border border-navy-line hover:bg-navy-tint-2 text-xs font-bold transition-colors flex items-center gap-1"
                       title="Add this event to your Google Calendar"
                     >
                       <CalendarIcon className="w-3.5 h-3.5" />
@@ -696,7 +696,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                           url: ev.applyUrl,
                         }, `${ev.job.slug}-event.ics`);
                       }}
-                      className="p-2 rounded-md bg-[#FAF7EF] border border-[#DDD5C7] hover:bg-[#EEF2FA] text-[#1E3799] transition-colors"
+                      className="p-2 rounded-md bg-subtle border border-line hover:bg-navy-tint text-navy transition-colors"
                       title="Download .ics file"
                       aria-label="Download .ics"
                     >
@@ -706,7 +706,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                     {/* View Details */}
                     <Link
                       href={ev.noticeUrl}
-                      className="px-3 py-1.5 rounded-md bg-[#C2510A] hover:bg-[#A9460A] text-white text-xs font-bold transition-colors flex items-center gap-1 shadow-2xs"
+                      className="px-3 py-1.5 rounded-md bg-saffron-solid hover:bg-saffron-strong text-white text-xs font-bold transition-colors flex items-center gap-1 shadow-2xs"
                     >
                       <span>View</span>
                       <ArrowRight className="w-3 h-3" />
@@ -722,28 +722,28 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
       {/* EMBED MODAL FOR PLACEMENT CELLS & LIBRARIES */}
       {showEmbedModal && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-lg w-full p-6 border border-[#D5CAB5] shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#D5CAB5] pb-3">
+          <div className="bg-surface rounded-xl max-w-lg w-full p-6 border border-line shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-line pb-3">
               <div className="flex items-center gap-2">
-                <Code className="w-5 h-5 text-[#1E3799]" />
-                <h3 className="font-serif font-bold text-base text-[#1A1918]">
+                <Code className="w-5 h-5 text-navy" />
+                <h3 className="font-serif font-bold text-base text-ink">
                   Embed Deadline Calendar on College Portal
                 </h3>
               </div>
               <button
                 onClick={() => setShowEmbedModal(false)}
-                className="text-[#4F4A43] hover:text-[#1A1918] font-mono text-sm"
+                className="text-muted hover:text-ink font-mono text-sm"
               >
                 ✕
               </button>
             </div>
 
-            <p className="text-xs text-[#3F3B35] leading-relaxed">
+            <p className="text-xs text-ink-2 leading-relaxed">
               Universities, student placement boards, training & placement cells (TPO), and library digital kiosks may freely embed this live recruitment deadline calendar.
             </p>
 
             <div>
-              <label className="block text-[12px] font-mono uppercase font-bold text-[#4F4A43] mb-1">
+              <label className="block text-[12px] font-mono uppercase font-bold text-muted mb-1">
                 HTML Embed Code (Responsive Widget)
               </label>
               <div className="relative">
@@ -751,7 +751,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                   readOnly
                   rows={3}
                   value={`<iframe src="https://www.indiajobnotice.com/calendar" width="100%" height="750" frameborder="0" title="Government Recruitment Exam & Deadline Calendar"></iframe>`}
-                  className="w-full p-2.5 rounded bg-[#FAF7EF] border border-[#D5CAB5] text-xs font-mono text-[#1A1918] focus:outline-none"
+                  className="w-full p-2.5 rounded bg-subtle border border-line text-xs font-mono text-ink focus:outline-none"
                 />
                 <button
                   onClick={() => {
@@ -759,7 +759,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                     setCopiedSnippet(true);
                     setTimeout(() => setCopiedSnippet(false), 2000);
                   }}
-                  className="absolute right-2 bottom-3 px-2.5 py-1 rounded bg-[#1E3799] text-white text-[12px] font-bold flex items-center gap-1 shadow-2xs hover:bg-[#15286D]"
+                  className="absolute right-2 bottom-3 px-2.5 py-1 rounded bg-navy-solid text-white text-[12px] font-bold flex items-center gap-1 shadow-2xs hover:bg-navy-strong"
                 >
                   {copiedSnippet ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                   <span>{copiedSnippet ? "Copied" : "Copy iFrame"}</span>
@@ -767,8 +767,8 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
               </div>
             </div>
 
-            <div className="pt-2 text-[12px] text-[#4F4A43] bg-[#EDF7F0] p-3 rounded-lg border border-[#C6E7D0] flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#17803A] shrink-0" />
+            <div className="pt-2 text-[12px] text-muted bg-green-tint p-3 rounded-lg border border-green-line flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-green shrink-0" />
               <span>Public-interest career resource. Free embed frame for educational institutions.</span>
             </div>
           </div>

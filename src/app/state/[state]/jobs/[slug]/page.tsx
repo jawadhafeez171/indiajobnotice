@@ -73,7 +73,7 @@ export default async function StateJobPage({ params }: Props) {
   const allJobs = await getAllJobs();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F1ECE1]">
+    <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar currentStateSlug={resolvedParams.state} />
       <main className="flex-1">
         <JobDetailView

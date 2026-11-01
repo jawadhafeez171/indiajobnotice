@@ -16,15 +16,15 @@ export function ExamsInProgressSection({ jobs, limit = 12 }: Props) {
   const shown = jobs.slice(0, limit);
 
   return (
-    <section className="space-y-4 -mx-4 sm:mx-0 px-4 py-6 sm:p-6 bg-[#E3EAF7] border-y sm:border border-[#BFCDEA] sm:rounded-2xl" aria-labelledby="exams-in-progress">
+    <section className="space-y-4 -mx-4 sm:mx-0 px-4 py-6 sm:p-6 bg-navy-tint border-y sm:border border-navy-line sm:rounded-2xl" aria-labelledby="exams-in-progress">
       <div className="flex items-center gap-2">
-        <Hourglass className="w-5 h-5 text-[#B84D0A]" />
-        <h2 id="exams-in-progress" className="font-serif text-xl sm:text-2xl font-bold text-[#1A1918]">
+        <Hourglass className="w-5 h-5 text-saffron" />
+        <h2 id="exams-in-progress" className="font-serif text-xl sm:text-2xl font-bold text-ink">
           Exams in progress
         </h2>
-        <span className="text-xs font-mono text-[#4F4A43]">{jobs.length}</span>
+        <span className="text-xs font-mono text-muted">{jobs.length}</span>
       </div>
-      <p className="text-sm text-[#4F4A43] -mt-2">
+      <p className="text-sm text-muted -mt-2">
         Applications have closed; admit cards, answer keys or results are coming out. Each entry links to the
         official documents.
       </p>
@@ -35,17 +35,17 @@ export function ExamsInProgressSection({ jobs, limit = 12 }: Props) {
             <li key={job.id}>
               <Link
                 href={getJobCanonicalPath(job)}
-                className="block h-full p-4 rounded-xl bg-white border border-[#D5CAB5] hover:border-[#1E3799] shadow-2xs transition-colors"
+                className="block h-full p-4 rounded-xl bg-surface border border-line hover:border-navy shadow-2xs transition-colors"
               >
-                <span className="inline-block px-2 py-0.5 rounded bg-[#EEF2FA] text-[#1E3799] font-bold text-[12px] border border-[#CCD8F0]">
+                <span className="inline-block px-2 py-0.5 rounded bg-navy-tint text-navy font-bold text-[12px] border border-navy-line">
                   {job.orgShortCode}
                 </span>
-                <p className="mt-2 text-sm font-bold text-[#1A1918] leading-snug line-clamp-2">{job.shortTitle}</p>
+                <p className="mt-2 text-sm font-bold text-ink leading-snug line-clamp-2">{job.shortTitle}</p>
                 {job.currentStage && (
-                  <p className="mt-1.5 text-xs font-bold text-[#B84D0A]">{job.currentStage}</p>
+                  <p className="mt-1.5 text-xs font-bold text-saffron">{job.currentStage}</p>
                 )}
-                {last && <p className="mt-1 text-xs text-[#4F4A43] line-clamp-1">Latest: {stageText(last).main}</p>}
-                <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[#1E3799]">
+                {last && <p className="mt-1 text-xs text-muted line-clamp-1">Latest: {stageText(last).main}</p>}
+                <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-navy">
                   Stages & documents <ArrowRight className="w-3 h-3" />
                 </span>
               </Link>
@@ -54,7 +54,7 @@ export function ExamsInProgressSection({ jobs, limit = 12 }: Props) {
         })}
       </ul>
       {jobs.length > shown.length && (
-        <p className="text-xs text-[#4F4A43]">and {jobs.length - shown.length} more on the state pages.</p>
+        <p className="text-xs text-muted">and {jobs.length - shown.length} more on the state pages.</p>
       )}
     </section>
   );

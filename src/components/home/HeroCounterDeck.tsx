@@ -41,11 +41,11 @@ export function HeroCounterDeck({
       label: "Active Vacancies",
       subtext: "Central, Railways, PSC & Defense",
       icon: Briefcase,
-      color: "text-[#1E3799]",
-      bg: "bg-[#EEF2FA]/70 hover:bg-[#EEF2FA]",
-      border: "border-[#CCD8F0] hover:border-[#1E3799]/60",
-      accentDot: "bg-[#1E3799]",
-      pillBg: "bg-[#1E3799]/10 text-[#1E3799]",
+      color: "text-navy",
+      bg: "bg-navy-tint/70 hover:bg-navy-tint",
+      border: "border-navy-line hover:border-navy/60",
+      accentDot: "bg-navy-solid",
+      pillBg: "bg-navy-solid/10 text-navy",
     },
     {
       id: "open-apps",
@@ -55,11 +55,11 @@ export function HeroCounterDeck({
       label: "Open Registrations",
       subtext: `${closingSoonCount} Closing Soon this week`,
       icon: Clock,
-      color: "text-[#B84D0A]",
-      bg: "bg-[#FDF3EB]/70 hover:bg-[#FDF3EB]",
-      border: "border-[#F9D9C3] hover:border-[#E96B15]/60",
-      accentDot: "bg-[#C2510A]",
-      pillBg: "bg-[#C2510A]/10 text-[#B84D0A]",
+      color: "text-saffron",
+      bg: "bg-saffron-tint/70 hover:bg-saffron-tint",
+      border: "border-saffron-line hover:border-saffron-bright/60",
+      accentDot: "bg-saffron-solid",
+      pillBg: "bg-saffron-solid/10 text-saffron",
     },
     {
       id: "admit-cards",
@@ -69,11 +69,11 @@ export function HeroCounterDeck({
       label: "Admit Cards Out",
       subtext: "Exam date still ahead",
       icon: FileCheck,
-      color: "text-[#17803A]",
-      bg: "bg-[#EDF7F0]/70 hover:bg-[#EDF7F0]",
-      border: "border-[#C6E7D0] hover:border-[#209948]/60",
-      accentDot: "bg-[#209948]",
-      pillBg: "bg-[#209948]/10 text-[#17803A]",
+      color: "text-green",
+      bg: "bg-green-tint/70 hover:bg-green-tint",
+      border: "border-green-line hover:border-green/60",
+      accentDot: "bg-green-solid",
+      pillBg: "bg-green-solid/10 text-green",
     },
     {
       id: "results",
@@ -83,11 +83,11 @@ export function HeroCounterDeck({
       label: "Results & Scorecards",
       subtext: "Published in the last 45 days",
       icon: Award,
-      color: "text-[#6C3EB8]",
-      bg: "bg-[#F4F1F9]/70 hover:bg-[#F4F1F9]",
-      border: "border-[#D9CEEE] hover:border-[#6C3EB8]/60",
-      accentDot: "bg-[#6C3EB8]",
-      pillBg: "bg-[#6C3EB8]/10 text-[#6C3EB8]",
+      color: "text-purple",
+      bg: "bg-purple-tint/70 hover:bg-purple-tint",
+      border: "border-purple-line hover:border-purple/60",
+      accentDot: "bg-purple-solid",
+      pillBg: "bg-purple-solid/10 text-purple",
     },
     {
       id: "states",
@@ -97,32 +97,32 @@ export function HeroCounterDeck({
       label: "Official State Portals",
       subtext: "Official websites linked",
       icon: MapPin,
-      color: "text-[#8A5F19]",
-      bg: "bg-[#FAF5EC]/70 hover:bg-[#FAF5EC]",
-      border: "border-[#EBDBC1] hover:border-[#8A5F19]/60",
-      accentDot: "bg-[#8A5F19]",
-      pillBg: "bg-[#8A5F19]/10 text-[#8A5F19]",
+      color: "text-amber",
+      bg: "bg-subtle/70 hover:bg-subtle",
+      border: "border-amber-line hover:border-amber/60",
+      accentDot: "bg-amber-solid",
+      pillBg: "bg-amber-solid/10 text-amber",
     },
   ];
 
   return (
-    <div className="mt-5 pt-4 border-t border-[#D5CAB5]/80">
+    <div className="mt-5 pt-4 border-t border-line/80">
       {/* Mini Trust Header */}
       <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
-        <div className="flex items-center gap-2 text-[12px] font-mono text-[#4F4A43]">
+        <div className="flex items-center gap-2 text-[12px] font-mono text-muted">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#209948] opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#209948]" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-solid opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-solid" />
           </span>
-          <span className="font-bold text-[#1A1918] uppercase tracking-wider">
+          <span className="font-bold text-ink uppercase tracking-wider">
             Live Recruitment Counter
           </span>
-          <span className="text-[#D8CFBF]">·</span>
+          <span className="text-faint">·</span>
           <span>From official notifications across India</span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[12px] font-mono text-[#17803A] font-bold">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#17803A]" />
+        <div className="flex items-center gap-1.5 text-[12px] font-mono text-green font-bold">
+          <ShieldCheck className="w-3.5 h-3.5 text-green" />
           <span className="hidden sm:inline">Official notifications only</span>
         </div>
       </div>
@@ -158,14 +158,14 @@ export function HeroCounterDeck({
                   {stat.value}
                 </div>
 
-                <div className="text-xs font-semibold text-[#1A1918] mt-0.5 line-clamp-1">
+                <div className="text-xs font-semibold text-ink mt-0.5 line-clamp-1">
                   {stat.label}
                 </div>
               </div>
 
-              <div className="mt-2 pt-1.5 border-t border-black/5 flex items-center justify-between text-[12px] text-[#4F4A43]">
+              <div className="mt-2 pt-1.5 border-t border-black/5 flex items-center justify-between text-[12px] text-muted">
                 <span className="text-[11px] sm:text-[12px] truncate">{stat.subtext}</span>
-                <ArrowRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0 ml-1 text-[#1A1918]" />
+                <ArrowRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0 ml-1 text-ink" />
               </div>
             </a>
           );

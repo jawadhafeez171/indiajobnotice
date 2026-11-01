@@ -45,18 +45,18 @@ export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-7">
       {/* Breadcrumb Navigation */}
-      <nav aria-label="Breadcrumb" className="flex items-center justify-between text-xs text-[#4F4A43]">
+      <nav aria-label="Breadcrumb" className="flex items-center justify-between text-xs text-muted">
         <div className="flex items-center gap-2">
-          <Link href="/" className="hover:text-[#1E3799] font-medium transition-colors">Home</Link>
+          <Link href="/" className="hover:text-navy font-medium transition-colors">Home</Link>
           <span>/</span>
-          <Link href={basePrefix} className="hover:text-[#1E3799] font-medium transition-colors">{job.shortTitle}</Link>
+          <Link href={basePrefix} className="hover:text-navy font-medium transition-colors">{job.shortTitle}</Link>
           <span>/</span>
-          <span className="text-[#1A1918] font-bold">Age Limit & Qualification</span>
+          <span className="text-ink font-bold">Age Limit & Qualification</span>
         </div>
 
         <Link
           href={basePrefix}
-          className="text-[#1E3799] hover:underline font-bold flex items-center gap-1"
+          className="text-navy hover:underline font-bold flex items-center gap-1"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to the notification</span>
@@ -64,16 +64,16 @@ export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
       </nav>
 
       {/* Prominent Back Link Banner to Master Notice */}
-      <div className="bg-[#EEF2FA] border border-[#CCD8F0] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+      <div className="bg-navy-tint border border-navy-line rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2.5">
-          <FileText className="w-4 h-4 text-[#1E3799] shrink-0" />
-          <span className="text-[#1E3799] font-medium">
+          <FileText className="w-4 h-4 text-navy shrink-0" />
+          <span className="text-navy font-medium">
             Viewing dedicated statutory eligibility & age criteria for {job.shortTitle}.
           </span>
         </div>
         <Link
           href={basePrefix}
-          className="px-3 py-1.5 rounded-md bg-[#1E3799] text-white font-bold hover:bg-[#15286D] transition-colors shrink-0 self-start sm:self-auto text-center"
+          className="px-3 py-1.5 rounded-md bg-navy-solid text-white font-bold hover:bg-navy-strong transition-colors shrink-0 self-start sm:self-auto text-center"
         >
           Full notification details →
         </Link>
@@ -83,77 +83,77 @@ export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
       <ExaminationLifecycleBar job={job} activeStage="eligibility" stateSlug={stateSlug} />
 
       {/* Main Eligibility Header Banner */}
-      <div className="bg-white rounded-xl border border-[#D5CAB5] border-t-4 border-t-[#1E3799] p-6 sm:p-8 shadow-2xs space-y-4">
+      <div className="bg-surface rounded-xl border border-line border-t-4 border-t-navy p-6 sm:p-8 shadow-2xs space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="px-2.5 py-1 rounded bg-[#EEF2FA] text-[#1E3799] font-bold text-xs flex items-center gap-1.5 border border-[#CCD8F0]">
+            <span className="px-2.5 py-1 rounded bg-navy-tint text-navy font-bold text-xs flex items-center gap-1.5 border border-navy-line">
               <Building2 className="w-3.5 h-3.5" />
               {job.orgShortCode}
             </span>
-            <span className="text-xs font-mono text-[#4F4A43] px-2 py-0.5 rounded bg-[#FAF7EF] border border-[#D5CAB5]">
+            <span className="text-xs font-mono text-muted px-2 py-0.5 rounded bg-subtle border border-line">
               {job.category}
             </span>
           </div>
-          <span className="text-xs font-mono font-bold text-[#B84D0A] bg-[#FDF3EB] px-2.5 py-1 rounded border border-[#F9D9C3]">
+          <span className="text-xs font-mono font-bold text-saffron bg-saffron-tint px-2.5 py-1 rounded border border-saffron-line">
             Crucial Cut-off Date: {formatDate(cutoffDate)}
           </span>
         </div>
 
-        <h1 className="font-serif text-2xl sm:text-4xl font-bold text-[#1A1918] leading-tight">
+        <h1 className="font-serif text-2xl sm:text-4xl font-bold text-ink leading-tight">
           {job.shortTitle} 2026 Age Limit, Cut-off Date & Educational Qualification
         </h1>
 
-        <p className="text-sm text-[#3F3B35] leading-relaxed">
+        <p className="text-sm text-ink-2 leading-relaxed">
           Official statutory eligibility criteria, minimum educational qualification, post-wise degree requirements, and category-wise age relaxations for {job.organization} ({job.totalVacancies.toLocaleString("en-IN")} Posts).
         </p>
 
         {/* Quick Statutory Metrics Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-[#E2D8C6] text-xs">
-          <div className="p-3 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5]">
-            <span className="text-[11px] font-mono uppercase text-[#4F4A43] block font-semibold">Minimum Age</span>
-            <span className="font-mono font-bold text-lg text-[#1A1918]">{job.ageKnown !== false && job.minAge ? `${job.minAge} Years` : "See notification"}</span>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-line-soft text-xs">
+          <div className="p-3 rounded-lg bg-subtle border border-line">
+            <span className="text-[11px] font-mono uppercase text-muted block font-semibold">Minimum Age</span>
+            <span className="font-mono font-bold text-lg text-ink">{job.ageKnown !== false && job.minAge ? `${job.minAge} Years` : "See notification"}</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5]">
-            <span className="text-[11px] font-mono uppercase text-[#4F4A43] block font-semibold">Max Age (General / UR)</span>
-            <span className="font-mono font-bold text-lg text-[#1A1918]">{job.ageKnown !== false && job.maxAge ? `${job.maxAge} Years` : "See notification"}</span>
+          <div className="p-3 rounded-lg bg-subtle border border-line">
+            <span className="text-[11px] font-mono uppercase text-muted block font-semibold">Max Age (General / UR)</span>
+            <span className="font-mono font-bold text-lg text-ink">{job.ageKnown !== false && job.maxAge ? `${job.maxAge} Years` : "See notification"}</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5]">
-            <span className="text-[11px] font-mono uppercase text-[#4F4A43] block font-semibold">Crucial Cut-off Date</span>
-            <span className="font-mono font-bold text-xs text-[#B84D0A] block mt-1">{formatDate(cutoffDate)}</span>
+          <div className="p-3 rounded-lg bg-subtle border border-line">
+            <span className="text-[11px] font-mono uppercase text-muted block font-semibold">Crucial Cut-off Date</span>
+            <span className="font-mono font-bold text-xs text-saffron block mt-1">{formatDate(cutoffDate)}</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5]">
-            <span className="text-[11px] font-mono uppercase text-[#4F4A43] block font-semibold">Total Vacancies</span>
-            <span className="font-mono font-bold text-lg text-[#17803A]">{job.totalVacancies.toLocaleString("en-IN")} Posts</span>
+          <div className="p-3 rounded-lg bg-subtle border border-line">
+            <span className="text-[11px] font-mono uppercase text-muted block font-semibold">Total Vacancies</span>
+            <span className="font-mono font-bold text-lg text-green">{job.totalVacancies.toLocaleString("en-IN")} Posts</span>
           </div>
         </div>
       </div>
 
       {/* Category-Wise Age Relaxation Table (State-Specific & Central) */}
-      <section className="bg-white rounded-xl border border-[#D5CAB5] p-6 shadow-2xs space-y-4">
-        <div className="border-b border-[#E2D8C6] pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <section className="bg-surface rounded-xl border border-line p-6 shadow-2xs space-y-4">
+        <div className="border-b border-line-soft pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h2 className="font-serif text-lg font-bold text-[#1A1918]">
+            <h2 className="font-serif text-lg font-bold text-ink">
               {stateRules.stateSlug === "central" 
                 ? "Central Statutory Age Relaxation Matrix" 
                 : `${stateRules.stateName} State Reservation & Age Relaxation Matrix`}
             </h2>
-            <p className="text-xs text-[#4F4A43]">
+            <p className="text-xs text-muted">
               Calculated on the official cut-off date ({formatDate(cutoffDate)}) as mandated by the gazette
             </p>
           </div>
-          <span className="text-[12px] font-mono text-[#1E3799] font-bold px-2.5 py-1 rounded bg-[#EEF2FA] border border-[#CCD8F0] shrink-0 self-start sm:self-auto">
+          <span className="text-[12px] font-mono text-navy font-bold px-2.5 py-1 rounded bg-navy-tint border border-navy-line shrink-0 self-start sm:self-auto">
             {stateRules.stateSlug === "central" ? "Government of India Norms" : `${stateRules.stateName} Civil Services Rules`}
           </span>
         </div>
 
         {/* Out-of-State Domicile Notice for State Recruitments */}
         {stateRules.stateSlug !== "central" && (
-          <div className="p-3.5 rounded-lg bg-[#FAF7EF] border border-[#DDD5C7] text-xs text-[#3F3B35] space-y-1">
-            <span className="font-bold text-[#1A1918] flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-[#1E3799]" />
+          <div className="p-3.5 rounded-lg bg-subtle border border-line text-xs text-ink-2 space-y-1">
+            <span className="font-bold text-ink flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-navy" />
               Official Domicile & Caste Reservation Policy:
             </span>
             <p className="leading-relaxed">
@@ -164,31 +164,31 @@ export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
 
         {categoryMatrix.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border border-[#D5CAB5] rounded-lg overflow-hidden bg-white">
+            <table className="w-full text-left text-xs border border-line rounded-lg overflow-hidden bg-surface">
               <thead>
-                <tr className="bg-[#FAF7EC] border-b border-[#D5CAB5] font-mono text-[12px] text-[#4F4A43] uppercase">
-                  <th className="py-2.5 px-4 font-bold text-[#1E3799]">Social Category / Class</th>
+                <tr className="bg-subtle border-b border-line font-mono text-[12px] text-muted uppercase">
+                  <th className="py-2.5 px-4 font-bold text-navy">Social Category / Class</th>
                   <th className="py-2.5 px-4 font-bold text-center">Permissible Age Relaxation</th>
                   <th className="py-2.5 px-4 font-bold text-center">Effective Upper Age Limit</th>
                   <th className="py-2.5 px-4 font-semibold">Statutory Rules & Exemption Note</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2D8C6]">
+              <tbody className="divide-y divide-line-soft">
                 {categoryMatrix.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-[#FCFAF4] transition-colors">
-                    <td className="py-3 px-4 font-bold text-[#1A1918]">
+                  <tr key={idx} className="hover:bg-subtle transition-colors">
+                    <td className="py-3 px-4 font-bold text-ink">
                       <span>{item.category}</span>
-                      <span className="font-mono text-[11px] text-[#4F4A43] block font-normal">
+                      <span className="font-mono text-[11px] text-muted block font-normal">
                         Code: {item.code}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-center font-mono font-bold text-[#17803A]">
+                    <td className="py-3 px-4 text-center font-mono font-bold text-green">
                       {item.ageRelaxation}
                     </td>
-                    <td className="py-3 px-4 text-center font-mono font-bold text-[#1E3799]">
+                    <td className="py-3 px-4 text-center font-mono font-bold text-navy">
                       {item.maxEligibleAge}
                     </td>
-                    <td className="py-3 px-4 text-[#4F4A43]">
+                    <td className="py-3 px-4 text-muted">
                       {item.exemptionNote || "Standard verification requirements apply"}
                     </td>
                   </tr>
@@ -197,19 +197,19 @@ export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
             </table>
           </div>
         ) : (
-          <p className="text-xs text-[#3F3B35]">Category-wise fees and age relaxations: see the official notification.</p>
+          <p className="text-xs text-ink-2">Category-wise fees and age relaxations: see the official notification.</p>
         )}
 
         {/* Special Quotas Badges */}
         {stateRules.specialQuotas.length > 0 && (
           <div className="pt-2 flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] font-mono font-bold text-[#4F4A43] uppercase">
+            <span className="text-[11px] font-mono font-bold text-muted uppercase">
               Special Quota Provisions:
             </span>
             {stateRules.specialQuotas.map((q) => (
               <span
                 key={q.id}
-                className="px-2.5 py-1 rounded bg-[#EEF2FA] border border-[#CCD8F0] text-[#1E3799] text-[12px] font-semibold"
+                className="px-2.5 py-1 rounded bg-navy-tint border border-navy-line text-navy text-[12px] font-semibold"
                 title={q.eligibilityCondition}
               >
                 {q.name} {q.percentage ? `(${q.percentage}%)` : ""}
@@ -220,36 +220,36 @@ export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
       </section>
 
       {/* Post-Wise Educational Qualifications Section */}
-      <section className="bg-white rounded-xl border border-[#D5CAB5] p-6 shadow-2xs space-y-4">
-        <div className="border-b border-[#E2D8C6] pb-3">
-          <h2 className="font-serif text-lg font-bold text-[#1A1918]">
+      <section className="bg-surface rounded-xl border border-line p-6 shadow-2xs space-y-4">
+        <div className="border-b border-line-soft pb-3">
+          <h2 className="font-serif text-lg font-bold text-ink">
             Educational Qualification & Branch Requirements
           </h2>
-          <p className="text-xs text-[#4F4A43]">
+          <p className="text-xs text-muted">
             Mandatory degree recognition, final year student rules, and post-wise criteria
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <div className="p-4 rounded-xl bg-[#FCFAF4] border border-[#D5CAB5] space-y-2">
-            <span className="font-bold text-[#1E3799] block font-mono uppercase text-[11px]">
+          <div className="p-4 rounded-xl bg-subtle border border-line space-y-2">
+            <span className="font-bold text-navy block font-mono uppercase text-[11px]">
               Minimum Prescribed Qualification
             </span>
-            <ul className="space-y-1.5 text-[#3E3C38]">
+            <ul className="space-y-1.5 text-ink-2">
               {job.qualifications.map((q, idx) => (
                 <li key={idx} className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#17803A] shrink-0 mt-0.5" />
-                  <span className="font-medium text-[#1A1918]">{q}</span>
+                  <CheckCircle2 className="w-4 h-4 text-green shrink-0 mt-0.5" />
+                  <span className="font-medium text-ink">{q}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#FCFAF4] border border-[#D5CAB5] space-y-2">
-            <span className="font-bold text-[#B84D0A] block font-mono uppercase text-[11px]">
+          <div className="p-4 rounded-xl bg-subtle border border-line space-y-2">
+            <span className="font-bold text-saffron block font-mono uppercase text-[11px]">
               Crucial Educational Verification Conditions
             </span>
-            <ul className="space-y-1.5 text-[#3F3B35] leading-relaxed">
+            <ul className="space-y-1.5 text-ink-2 leading-relaxed">
               <li>• The degree/diploma must be awarded by a recognized University / Board established by Central or State Act.</li>
               <li>• Final year candidates may apply only if the qualifying examination result is declared on or before the document verification date.</li>
               <li>• Equivalence certificates must be produced if the degree title differs from the gazetted discipline.</li>
@@ -264,12 +264,12 @@ export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
       </div>
 
       {/* Questions */}
-      <section className="bg-white rounded-xl border border-[#D5CAB5] p-6 sm:p-7 shadow-2xs space-y-4">
-        <div className="border-b border-[#E2D8C6] pb-3">
-          <h3 className="font-serif text-lg font-bold text-[#1A1918]">
+      <section className="bg-surface rounded-xl border border-line p-6 sm:p-7 shadow-2xs space-y-4">
+        <div className="border-b border-line-soft pb-3">
+          <h3 className="font-serif text-lg font-bold text-ink">
             Frequently Asked Questions on Eligibility — {job.shortTitle}
           </h3>
-          <p className="text-xs text-[#4F4A43]">
+          <p className="text-xs text-muted">
             Official answers regarding age relaxation, cut-off date, and selection procedure
           </p>
         </div>
@@ -278,15 +278,15 @@ export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
           {faqs.map((faq, idx) => (
             <details
               key={idx}
-              className="group p-3.5 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5] text-xs transition-colors hover:border-[#1E3799]"
+              className="group p-3.5 rounded-lg bg-subtle border border-line text-xs transition-colors hover:border-navy"
             >
-              <summary className="font-serif font-bold text-[#1A1918] cursor-pointer flex items-center justify-between gap-3 select-none">
+              <summary className="font-serif font-bold text-ink cursor-pointer flex items-center justify-between gap-3 select-none">
                 <span>{faq.question}</span>
-                <span className="text-sm font-mono text-[#1E3799] group-open:rotate-180 transition-transform">
+                <span className="text-sm font-mono text-navy group-open:rotate-180 transition-transform">
                   ▼
                 </span>
               </summary>
-              <p className="mt-2.5 pt-2.5 border-t border-[#D5CAB5]/60 text-[#423F3A] leading-relaxed">
+              <p className="mt-2.5 pt-2.5 border-t border-line/60 text-ink-2 leading-relaxed">
                 {faq.answer}
               </p>
             </details>

@@ -540,24 +540,24 @@ export const CENTRAL_INFO = {
 export function getStateBadgeColor(code: string) {
   const c = code.toUpperCase();
   if (["UP", "RJ", "HR", "DL", "PB"].includes(c)) {
-    return { bg: "bg-[#FDF3EB]", text: "text-[#B84D0A]", border: "border-[#F9D9C3]" };
+    return { bg: "bg-saffron-tint", text: "text-saffron", border: "border-saffron-line" };
   }
   if (["BR", "MP", "CG", "JH"].includes(c)) {
-    return { bg: "bg-[#FCFAF4]", text: "text-[#1E3799]", border: "border-[#CCD8F0]" };
+    return { bg: "bg-subtle", text: "text-navy", border: "border-navy-line" };
   }
   if (["TN", "KL", "KA", "AP", "TG", "PY"].includes(c)) {
-    return { bg: "bg-[#EEF2FA]", text: "text-[#1E3799]", border: "border-[#CCD8F0]" };
+    return { bg: "bg-navy-tint", text: "text-navy", border: "border-navy-line" };
   }
   if (["MH", "GJ", "GA", "DD"].includes(c)) {
-    return { bg: "bg-[#F6EFF8]", text: "text-[#5C2366]", border: "border-[#E8D4EC]" };
+    return { bg: "bg-purple-tint", text: "text-purple", border: "border-purple-line" };
   }
   if (["WB", "OD", "AS", "TR"].includes(c)) {
-    return { bg: "bg-[#EDF7F0]", text: "text-[#17803A]", border: "border-[#C6E7D0]" };
+    return { bg: "bg-green-tint", text: "text-green", border: "border-green-line" };
   }
   if (["AR", "MN", "ML", "MZ", "NL", "SK", "UK", "HP"].includes(c)) {
-    return { bg: "bg-[#EEF6F8]", text: "text-[#145C68]", border: "border-[#C8E4E9]" };
+    return { bg: "bg-teal-tint", text: "text-teal", border: "border-teal-line" };
   }
-  return { bg: "bg-[#F4EFE6]", text: "text-[#3D3A36]", border: "border-[#DFD7C7]" };
+  return { bg: "bg-sunken", text: "text-ink", border: "border-line" };
 }
 
 export interface StateZone {

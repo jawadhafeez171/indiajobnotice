@@ -72,9 +72,9 @@ export function JobLifecycleTracker({ job }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-[#D5CAB5] p-5 shadow-2xs">
-      <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[#1E3799] mb-4 flex items-center gap-1.5">
-        <CircleDot className="w-3.5 h-3.5 text-[#1E3799]" />
+    <div className="bg-surface rounded-xl border border-line p-5 shadow-2xs">
+      <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-navy mb-4 flex items-center gap-1.5">
+        <CircleDot className="w-3.5 h-3.5 text-navy" />
         Recruitment progress
       </h4>
 
@@ -84,25 +84,25 @@ export function JobLifecycleTracker({ job }: Props) {
             key={step.id}
             className={`p-3 rounded-lg border flex flex-col justify-between ${
               step.isCurrent
-                ? "bg-[#EEF2FA] border-[#1E3799] ring-2 ring-[#1E3799]/20"
+                ? "bg-navy-tint border-navy ring-2 ring-navy/20"
                 : step.isDone
-                ? "bg-[#EDF7F0] border-[#C6E7D0]"
-                : "bg-[#FCFAF4] border-[#D5CAB5] opacity-65"
+                ? "bg-green-tint border-green-line"
+                : "bg-subtle border-line opacity-65"
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono font-bold text-[#4F4A43]">Step {idx + 1}</span>
+              <span className="text-[11px] font-mono font-bold text-muted">Step {idx + 1}</span>
               {step.isCurrent ? (
-                <span className="w-2.5 h-2.5 rounded-full bg-[#1E3799]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-navy-solid" />
               ) : step.isDone ? (
-                <CheckCircle2 className="w-4 h-4 text-[#17803A]" />
+                <CheckCircle2 className="w-4 h-4 text-green" />
               ) : (
-                <Clock className="w-3.5 h-3.5 text-[#4F4A43]" />
+                <Clock className="w-3.5 h-3.5 text-muted" />
               )}
             </div>
             <div>
-              <p className="text-xs font-bold text-[#1A1918] leading-snug">{step.label}</p>
-              <p className="text-[12px] text-[#4F4A43] mt-0.5 line-clamp-2">{step.subtext}</p>
+              <p className="text-xs font-bold text-ink leading-snug">{step.label}</p>
+              <p className="text-[12px] text-muted mt-0.5 line-clamp-2">{step.subtext}</p>
             </div>
           </div>
         ))}

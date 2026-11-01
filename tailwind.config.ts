@@ -6,30 +6,59 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: "class",
+  darkMode: "media",
   theme: {
     extend: {
       colors: {
-        brand: {
-          navy: "#1E3799",       // Exact Royal Navy from INDIA NOTICE in logo
-          navyDark: "#10205C",   // Deep Navy for text & dark footer
-          navyMuted: "#152A77",  // Medium dark navy
-          navyLight: "#EEF2FA",  // Soft Navy wash for pills & tables
-          navyBorder: "#CCD8F0", // Navy container border
-          orange: "#E96B15",     // Exact Saffron Orange from JOB in logo
-          orangeDark: "#D4590A", // Hover state for Saffron
-          orangeLight: "#FDF3EB",// Soft Saffron wash for urgency & alerts
-          orangeBorder: "#F9D9C3",
-          green: "#209948",      // Exact Tiranga Green from logo capsule
-          greenDark: "#177B37",
-          greenLight: "#EDF7F0", // Soft Green wash for verified & admit cards
-          greenBorder: "#C6E7D0",
-          canvas: "#FCFAF4",     // Exact warm ivory background from logo
-          card: "#FFFFFF",
-          border: "#EAE2D2",     // Sandstone border
-          text: "#1A1918",
-          muted: "#68635B",
-        },
+        "canvas": "rgb(var(--c-canvas) / <alpha-value>)",
+        "surface": "rgb(var(--c-surface) / <alpha-value>)",
+        "subtle": "rgb(var(--c-subtle) / <alpha-value>)",
+        "sunken": "rgb(var(--c-sunken) / <alpha-value>)",
+        "line": "rgb(var(--c-line) / <alpha-value>)",
+        "line-soft": "rgb(var(--c-line-soft) / <alpha-value>)",
+        "ink": "rgb(var(--c-ink) / <alpha-value>)",
+        "ink-2": "rgb(var(--c-ink-2) / <alpha-value>)",
+        "muted": "rgb(var(--c-muted) / <alpha-value>)",
+        "faint": "rgb(var(--c-faint) / <alpha-value>)",
+        "navy": "rgb(var(--c-navy) / <alpha-value>)",
+        "navy-solid": "rgb(var(--c-navy-solid) / <alpha-value>)",
+        "navy-strong": "rgb(var(--c-navy-strong) / <alpha-value>)",
+        "navy-deep": "rgb(var(--c-navy-deep) / <alpha-value>)",
+        "navy-tint": "rgb(var(--c-navy-tint) / <alpha-value>)",
+        "navy-tint-2": "rgb(var(--c-navy-tint-2) / <alpha-value>)",
+        "navy-line": "rgb(var(--c-navy-line) / <alpha-value>)",
+        "on-navy": "rgb(var(--c-on-navy) / <alpha-value>)",
+        "on-navy-2": "rgb(var(--c-on-navy-2) / <alpha-value>)",
+        "saffron": "rgb(var(--c-saffron) / <alpha-value>)",
+        "saffron-bright": "rgb(var(--c-saffron-bright) / <alpha-value>)",
+        "saffron-solid": "rgb(var(--c-saffron-solid) / <alpha-value>)",
+        "saffron-strong": "rgb(var(--c-saffron-strong) / <alpha-value>)",
+        "saffron-tint": "rgb(var(--c-saffron-tint) / <alpha-value>)",
+        "saffron-line": "rgb(var(--c-saffron-line) / <alpha-value>)",
+        "saffron-light": "rgb(var(--c-saffron-light) / <alpha-value>)",
+        "saffron-pale": "rgb(var(--c-saffron-pale) / <alpha-value>)",
+        "green": "rgb(var(--c-green) / <alpha-value>)",
+        "green-solid": "rgb(var(--c-green-solid) / <alpha-value>)",
+        "green-tint": "rgb(var(--c-green-tint) / <alpha-value>)",
+        "green-line": "rgb(var(--c-green-line) / <alpha-value>)",
+        "green-pop": "rgb(var(--c-green-pop) / <alpha-value>)",
+        "purple": "rgb(var(--c-purple) / <alpha-value>)",
+        "purple-solid": "rgb(var(--c-purple-solid) / <alpha-value>)",
+        "purple-tint": "rgb(var(--c-purple-tint) / <alpha-value>)",
+        "purple-line": "rgb(var(--c-purple-line) / <alpha-value>)",
+        "danger": "rgb(var(--c-danger) / <alpha-value>)",
+        "danger-solid": "rgb(var(--c-danger-solid) / <alpha-value>)",
+        "danger-tint": "rgb(var(--c-danger-tint) / <alpha-value>)",
+        "danger-line": "rgb(var(--c-danger-line) / <alpha-value>)",
+        "amber": "rgb(var(--c-amber) / <alpha-value>)",
+        "amber-solid": "rgb(var(--c-amber-solid) / <alpha-value>)",
+        "amber-tint": "rgb(var(--c-amber-tint) / <alpha-value>)",
+        "amber-line": "rgb(var(--c-amber-line) / <alpha-value>)",
+        "teal": "rgb(var(--c-teal) / <alpha-value>)",
+        "teal-solid": "rgb(var(--c-teal-solid) / <alpha-value>)",
+        "teal-tint": "rgb(var(--c-teal-tint) / <alpha-value>)",
+        "teal-line": "rgb(var(--c-teal-line) / <alpha-value>)",
+        "sky-tint": "rgb(var(--c-sky-tint) / <alpha-value>)",
       },
     },
   },

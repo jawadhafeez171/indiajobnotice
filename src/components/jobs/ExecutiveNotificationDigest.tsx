@@ -13,7 +13,7 @@ interface Props {
   job: JobNotification;
 }
 
-const card = "bg-white rounded-xl border border-[#D5CAB5] p-5 sm:p-6 shadow-2xs space-y-4";
+const card = "bg-surface rounded-xl border border-line p-5 sm:p-6 shadow-2xs space-y-4";
 const th = "py-2.5 px-3.5 font-bold";
 
 // The notification's details below the key facts: posts with their eligibility, category-wise fees
@@ -27,26 +27,26 @@ export function ExecutiveNotificationDigest({ job }: Props) {
     <section className="space-y-6" id="details">
       {posts.length > 0 && (
         <div className={card}>
-          <h2 className="font-serif text-lg font-bold text-[#1A1918] flex items-center gap-2">
-            <GraduationCap className="w-5 h-5 text-[#1E3799]" />
+          <h2 className="font-serif text-lg font-bold text-ink flex items-center gap-2">
+            <GraduationCap className="w-5 h-5 text-navy" />
             Posts and eligibility
           </h2>
           <ul className="md:hidden space-y-2.5">
             {posts.map((post: PostVacancyBreakdown, idx: number) => (
-              <li key={idx} className="p-3.5 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5] text-xs space-y-1.5">
-                <p className="font-bold text-sm text-[#1E3799]">
+              <li key={idx} className="p-3.5 rounded-lg bg-subtle border border-line text-xs space-y-1.5">
+                <p className="font-bold text-sm text-navy">
                   {post.postName}
                   {typeof post.vacancies === "number" ? (post.vacancies ? ` · ${post.vacancies} posts` : "") : ` · ${post.vacancies}`}
                 </p>
-                <p><span className="font-bold text-[#4F4A43]">Qualification: </span>{post.qualification}</p>
-                <p><span className="font-bold text-[#4F4A43]">Age: </span>{post.ageLimit}</p>
-                <p><span className="font-bold text-[#4F4A43]">Pay: </span>{post.payLevel}</p>
+                <p><span className="font-bold text-muted">Qualification: </span>{post.qualification}</p>
+                <p><span className="font-bold text-muted">Age: </span>{post.ageLimit}</p>
+                <p><span className="font-bold text-muted">Pay: </span>{post.payLevel}</p>
               </li>
             ))}
           </ul>
-          <div className="hidden md:block overflow-x-auto rounded-lg border border-[#D5CAB5]">
+          <div className="hidden md:block overflow-x-auto rounded-lg border border-line">
             <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-[#FAF7EF] border-b border-[#D5CAB5] text-[12px] uppercase tracking-wide text-[#4F4A43]">
+              <thead className="bg-subtle border-b border-line text-[12px] uppercase tracking-wide text-muted">
                 <tr>
                   <th className={th}>Post</th>
                   <th className={`${th} text-center`}>Posts</th>
@@ -55,18 +55,18 @@ export function ExecutiveNotificationDigest({ job }: Props) {
                   <th className={th}>Pay</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2D8C6] text-[#1A1918]">
+              <tbody className="divide-y divide-line-soft text-ink">
                 {posts.map((post: PostVacancyBreakdown, idx: number) => (
                   <tr key={idx} className="align-top">
-                    <td className="py-3 px-3.5 font-bold text-[#1E3799]">{post.postName}</td>
+                    <td className="py-3 px-3.5 font-bold text-navy">{post.postName}</td>
                     <td className="py-3 px-3.5 font-bold text-center">
                       {typeof post.vacancies === "number"
                         ? post.vacancies ? post.vacancies.toLocaleString("en-IN") : "—"
                         : post.vacancies}
                     </td>
                     <td className="py-3 px-3.5 leading-relaxed">{post.qualification}</td>
-                    <td className="py-3 px-3.5 text-[#3F3B35]">{post.ageLimit}</td>
-                    <td className="py-3 px-3.5 text-[#3F3B35]">{post.payLevel}</td>
+                    <td className="py-3 px-3.5 text-ink-2">{post.ageLimit}</td>
+                    <td className="py-3 px-3.5 text-ink-2">{post.payLevel}</td>
                   </tr>
                 ))}
               </tbody>
@@ -78,17 +78,17 @@ export function ExecutiveNotificationDigest({ job }: Props) {
       {categories.length > 0 && (
         <div className={card}>
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-            <h2 className="font-serif text-lg font-bold text-[#1A1918] flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-[#17803A]" />
+            <h2 className="font-serif text-lg font-bold text-ink flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-green" />
               Fees and age relaxation by category
             </h2>
-            <Link href="/calculator" className="text-xs font-bold text-[#B84D0A] hover:underline shrink-0">
+            <Link href="/calculator" className="text-xs font-bold text-saffron hover:underline shrink-0">
               Check your age →
             </Link>
           </div>
-          <div className="overflow-x-auto rounded-lg border border-[#D5CAB5]">
+          <div className="overflow-x-auto rounded-lg border border-line">
             <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-[#FAF7EF] border-b border-[#D5CAB5] text-[12px] uppercase tracking-wide text-[#4F4A43]">
+              <thead className="bg-subtle border-b border-line text-[12px] uppercase tracking-wide text-muted">
                 <tr>
                   <th className={th}>Category</th>
                   <th className={th}>Fee</th>
@@ -97,14 +97,14 @@ export function ExecutiveNotificationDigest({ job }: Props) {
                   <th className={th}>Note</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2D8C6] text-[#1A1918]">
+              <tbody className="divide-y divide-line-soft text-ink">
                 {categories.map((item: CategoryStatutoryMatrixItem, idx: number) => (
                   <tr key={idx}>
                     <td className="py-3 px-3.5 font-bold">{item.category}</td>
                     <td className="py-3 px-3.5">{item.fee}</td>
                     <td className="py-3 px-3.5">{item.ageRelaxation}</td>
                     <td className="py-3 px-3.5">{item.maxEligibleAge}</td>
-                    <td className="py-3 px-3.5 text-[#3F3B35]">{item.exemptionNote}</td>
+                    <td className="py-3 px-3.5 text-ink-2">{item.exemptionNote}</td>
                   </tr>
                 ))}
               </tbody>
@@ -115,14 +115,14 @@ export function ExecutiveNotificationDigest({ job }: Props) {
 
       {steps.length > 0 && (
         <div className={card}>
-          <h2 className="font-serif text-lg font-bold text-[#1A1918] flex items-center gap-2">
-            <Layers className="w-5 h-5 text-[#1E3799]" />
+          <h2 className="font-serif text-lg font-bold text-ink flex items-center gap-2">
+            <Layers className="w-5 h-5 text-navy" />
             Selection process
           </h2>
           <ol className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             {steps.map((step, idx) => (
-              <li key={idx} className="p-3.5 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5] text-xs text-[#1A1918]">
-                <span className="w-5 h-5 rounded-full bg-[#1E3799] text-white text-[12px] font-bold flex items-center justify-center mb-2">
+              <li key={idx} className="p-3.5 rounded-lg bg-subtle border border-line text-xs text-ink">
+                <span className="w-5 h-5 rounded-full bg-navy-solid text-white text-[12px] font-bold flex items-center justify-center mb-2">
                   {idx + 1}
                 </span>
                 <span className="font-semibold leading-snug">{step}</span>

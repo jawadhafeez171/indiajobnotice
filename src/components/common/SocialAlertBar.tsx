@@ -12,18 +12,18 @@ export function SocialAlertBar({ state }: Props) {
   const stateLabel = state ? state.name : "all of India";
 
   return (
-    <div className="bg-[#1E3799] rounded-lg border border-[#1E3799] p-4 sm:p-5 my-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">
+    <div className="bg-navy-solid rounded-lg border border-navy p-4 sm:p-5 my-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">
       <div>
         <div className="flex items-center gap-2 mb-1">
           <TricolorCapsule className="w-12 h-1" />
-          <span className="text-[11px] font-mono uppercase tracking-wider text-[#FFD9B8] font-bold">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-saffron-pale font-bold">
             Live Official Alerts
           </span>
         </div>
         <h4 className="font-serif text-base font-bold text-white">
           New job alerts for {stateLabel}
         </h4>
-        <p className="text-xs text-[#DCE4F5] mt-0.5 max-w-xl">
+        <p className="text-xs text-on-navy mt-0.5 max-w-xl">
           Get new notifications, admit cards, answer keys and results as soon as they are published. Free.
         </p>
       </div>

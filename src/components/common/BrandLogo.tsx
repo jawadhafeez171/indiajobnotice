@@ -34,8 +34,18 @@ export function BrandLogo({
         width={width}
         height={height}
         priority
-        className="h-7 sm:h-9 w-auto object-contain transition-opacity group-hover:opacity-95"
+        className={`h-7 sm:h-9 w-auto object-contain transition-opacity group-hover:opacity-95 ${isLight ? "" : "dark:hidden"}`}
       />
+      {!isLight && (
+        <Image
+          src="/logo-white.png"
+          alt=""
+          aria-hidden
+          width={width}
+          height={height}
+          className="hidden dark:block h-7 sm:h-9 w-auto object-contain"
+        />
+      )}
 
       {/* Domain Suffix Badge */}
       {showDomain && (
@@ -43,7 +53,7 @@ export function BrandLogo({
           className={`text-[11px] sm:text-[12px] font-mono font-bold tracking-tight px-1.5 py-0.5 rounded ${
             isLight
               ? "bg-white/10 text-white/90 border border-white/20"
-              : "bg-[#EEF2FA] text-[#1E3799] border border-[#CCD8F0]"
+              : "bg-navy-tint text-navy border border-navy-line"
           }`}
         >
           .com
@@ -60,9 +70,9 @@ export function BrandLogo({
 export function TricolorCapsule({ className = "w-24 h-1.5" }: { className?: string }) {
   return (
     <div className={`inline-flex items-center rounded-full overflow-hidden shadow-2xs ${className}`}>
-      <div className="h-full flex-1 bg-[#C2510A]" />
-      <div className="h-full flex-1 bg-[#FAF7EE]" />
-      <div className="h-full flex-1 bg-[#209948]" />
+      <div className="h-full flex-1 bg-saffron-solid" />
+      <div className="h-full flex-1 bg-white" />
+      <div className="h-full flex-1 bg-green-solid" />
     </div>
   );
 }

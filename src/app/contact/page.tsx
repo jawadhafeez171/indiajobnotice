@@ -38,110 +38,110 @@ export default function ContactPage() {
   const telegramChannel = "https://t.me/Indiajobnotice1";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F1ECE1]">
+    <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar />
 
       {/* Editorial Header */}
-      <section className="border-b border-[#D5CAB5] bg-[#FCFAF4] py-8 sm:py-12 px-4 sm:px-6">
+      <section className="border-b border-line bg-subtle py-8 sm:py-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto space-y-3">
-          <div className="flex items-center gap-2 text-xs text-[#4F4A43]">
-            <Link href="/" className="hover:text-[#1E3799] font-medium transition-colors">
+          <div className="flex items-center gap-2 text-xs text-muted">
+            <Link href="/" className="hover:text-navy font-medium transition-colors">
               All-India Gazettes
             </Link>
             <span>/</span>
-            <span className="text-[#1A1918] font-bold">Contact &amp; Grievance</span>
+            <span className="text-ink font-bold">Contact &amp; Grievance</span>
           </div>
 
           <div className="flex items-center gap-2">
             <TricolorCapsule className="w-10 h-1.5" />
-            <span className="text-xs font-mono uppercase tracking-wider text-[#1E3799] font-bold">
+            <span className="text-xs font-mono uppercase tracking-wider text-navy font-bold">
               Accountability &amp; Support
             </span>
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-[#1A1918] tracking-tight">
+          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-ink tracking-tight">
             Contact Editorial Desk &amp; Grievance Officer
           </h1>
 
-          <p className="text-base sm:text-lg text-[#3F3B35] font-serif leading-relaxed max-w-3xl pt-2">
+          <p className="text-base sm:text-lg text-ink-2 font-serif leading-relaxed max-w-3xl pt-2">
             We value accuracy, candidate transparency, and ethical publishing. Reach out to our editorial desk for corrections, legal inquiries, institutional partnerships, or platform feedback.
           </p>
         </div>
       </section>
 
       {/* Main Content Area */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-10 text-sm text-[#423F3A] leading-relaxed">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-10 text-sm text-ink-2 leading-relaxed">
         
         {/* Contact Department Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Card 1: Editorial & Errata */}
-          <div className="bg-white p-5 rounded-lg border border-[#D5CAB5] shadow-2xs space-y-3 flex flex-col justify-between">
+          <div className="bg-surface p-5 rounded-lg border border-line shadow-2xs space-y-3 flex flex-col justify-between">
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-[#1E3799] font-serif font-bold text-base">
-                <FileCheck className="w-5 h-5 text-[#1E3799]" />
+              <div className="flex items-center gap-2 text-navy font-serif font-bold text-base">
+                <FileCheck className="w-5 h-5 text-navy" />
                 <h2>Editorial &amp; Errata</h2>
               </div>
-              <p className="text-xs text-[#3F3B35] leading-relaxed">
+              <p className="text-xs text-ink-2 leading-relaxed">
                 Found a typo, changed exam date, or discrepancy in a gazette summary? Report it directly to our fact-checking desk.
               </p>
             </div>
-            <div className="pt-2 border-t border-[#E2D8C6] space-y-1">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#706B62] block">Primary Email</span>
-              <a href="mailto:contact@indiajobnotice.com" className="text-xs font-bold text-[#1E3799] hover:underline block break-all">
+            <div className="pt-2 border-t border-line-soft space-y-1">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted block">Primary Email</span>
+              <a href="mailto:contact@indiajobnotice.com" className="text-xs font-bold text-navy hover:underline block break-all">
                 contact@indiajobnotice.com
               </a>
-              <span className="text-[12px] text-[#17803A] font-medium block">Turnaround: 24-48 Hours</span>
+              <span className="text-[12px] text-green font-medium block">Turnaround: 24-48 Hours</span>
             </div>
           </div>
 
           {/* Card 2: Grievance Officer */}
-          <div className="bg-white p-5 rounded-lg border border-[#D5CAB5] shadow-2xs space-y-3 flex flex-col justify-between">
+          <div className="bg-surface p-5 rounded-lg border border-line shadow-2xs space-y-3 flex flex-col justify-between">
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-[#B84D0A] font-serif font-bold text-base">
-                <ShieldAlert className="w-5 h-5 text-[#B84D0A]" />
+              <div className="flex items-center gap-2 text-saffron font-serif font-bold text-base">
+                <ShieldAlert className="w-5 h-5 text-saffron" />
                 <h2>Grievance Redressal</h2>
               </div>
-              <p className="text-xs text-[#3F3B35] leading-relaxed">
+              <p className="text-xs text-ink-2 leading-relaxed">
                 Designated Grievance Officer in compliance with India&apos;s Information Technology (Intermediary Guidelines) Rules, 2021 &amp; DPDP Act.
               </p>
             </div>
-            <div className="pt-2 border-t border-[#E2D8C6] space-y-1">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#706B62] block">Grievance Desk</span>
-              <a href="mailto:grievance@indiajobnotice.com" className="text-xs font-bold text-[#B84D0A] hover:underline block break-all">
+            <div className="pt-2 border-t border-line-soft space-y-1">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted block">Grievance Desk</span>
+              <a href="mailto:grievance@indiajobnotice.com" className="text-xs font-bold text-saffron hover:underline block break-all">
                 grievance@indiajobnotice.com
               </a>
-              <span className="text-[12px] text-[#3F3B35] font-medium block">Subject: [Grievance] Notice ID</span>
+              <span className="text-[12px] text-ink-2 font-medium block">Subject: [Grievance] Notice ID</span>
             </div>
           </div>
 
           {/* Card 3: Institutions & Colleges */}
-          <div className="bg-white p-5 rounded-lg border border-[#D5CAB5] shadow-2xs space-y-3 flex flex-col justify-between">
+          <div className="bg-surface p-5 rounded-lg border border-line shadow-2xs space-y-3 flex flex-col justify-between">
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-[#17803A] font-serif font-bold text-base">
-                <Building2 className="w-5 h-5 text-[#17803A]" />
+              <div className="flex items-center gap-2 text-green font-serif font-bold text-base">
+                <Building2 className="w-5 h-5 text-green" />
                 <h2>College Notice Boards</h2>
               </div>
-              <p className="text-xs text-[#3F3B35] leading-relaxed">
+              <p className="text-xs text-ink-2 leading-relaxed">
                 For educational libraries, universities, and coaching institutes seeking to embed our free exam calendar widgets.
               </p>
             </div>
-            <div className="pt-2 border-t border-[#E2D8C6] space-y-1">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#706B62] block">Institutional Desk</span>
-              <a href="mailto:institutions@indiajobnotice.com" className="text-xs font-bold text-[#17803A] hover:underline block break-all">
+            <div className="pt-2 border-t border-line-soft space-y-1">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted block">Institutional Desk</span>
+              <a href="mailto:institutions@indiajobnotice.com" className="text-xs font-bold text-green hover:underline block break-all">
                 institutions@indiajobnotice.com
               </a>
-              <span className="text-[12px] text-[#3F3B35] font-medium block">Free Digital Notice Boards</span>
+              <span className="text-[12px] text-ink-2 font-medium block">Free Digital Notice Boards</span>
             </div>
           </div>
         </div>
 
         {/* Official Channels & Community Broadcasts */}
-        <section className="bg-white rounded-lg border border-[#D5CAB5] p-6 shadow-2xs space-y-4">
-          <div className="border-b border-[#E2D8C6] pb-3">
-            <h2 className="font-serif text-xl font-bold text-[#1A1918]">
+        <section className="bg-surface rounded-lg border border-line p-6 shadow-2xs space-y-4">
+          <div className="border-b border-line-soft pb-3">
+            <h2 className="font-serif text-xl font-bold text-ink">
               Official Real-Time Alert Broadcasts
             </h2>
-            <p className="text-xs text-[#4F4A43] mt-1">
+            <p className="text-xs text-muted mt-1">
               Subscribe directly to our verified, scam-free channels for instant alerts when new gazettes are released:
             </p>
           </div>
@@ -152,17 +152,17 @@ export default function ContactPage() {
               href={whatsappChannel}
               target="_blank"
               rel="noreferrer"
-              className="p-4 rounded-lg border border-[#25D366]/40 bg-[#F0FBF4] hover:bg-[#E3F8EA] transition-colors flex items-center justify-between group"
+              className="p-4 rounded-lg border border-[#25D366]/40 bg-green-tint hover:bg-green-tint transition-colors flex items-center justify-between group"
             >
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-full bg-[#25D366] text-white">
                   <WhatsAppLogo className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1A1918] text-sm group-hover:text-[#1E7E34]">
+                  <h3 className="font-bold text-ink text-sm group-hover:text-green">
                     Official WhatsApp Channel
                   </h3>
-                  <p className="text-xs text-[#3F3B35]">Daily gazettes &amp; urgent circulars</p>
+                  <p className="text-xs text-ink-2">Daily gazettes &amp; urgent circulars</p>
                 </div>
               </div>
               <ExternalLink className="w-4 h-4 text-[#25D366]" />
@@ -173,17 +173,17 @@ export default function ContactPage() {
               href={telegramChannel}
               target="_blank"
               rel="noreferrer"
-              className="p-4 rounded-lg border border-[#24A1DE]/40 bg-[#F0F8FD] hover:bg-[#E4F3FB] transition-colors flex items-center justify-between group"
+              className="p-4 rounded-lg border border-[#24A1DE]/40 bg-sky-tint hover:bg-sky-tint transition-colors flex items-center justify-between group"
             >
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-full bg-[#24A1DE] text-white">
                   <TelegramLogo className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1A1918] text-sm group-hover:text-[#187CB0]">
+                  <h3 className="font-bold text-ink text-sm group-hover:text-[#187CB0]">
                     Official Telegram Channel
                   </h3>
-                  <p className="text-xs text-[#3F3B35]">PDF circulars &amp; syllabus sheets</p>
+                  <p className="text-xs text-ink-2">PDF circulars &amp; syllabus sheets</p>
                 </div>
               </div>
               <ExternalLink className="w-4 h-4 text-[#24A1DE]" />
@@ -192,28 +192,28 @@ export default function ContactPage() {
         </section>
 
         {/* Physical / Registered Location Details */}
-        <section className="bg-white rounded-lg border border-[#D5CAB5] p-6 shadow-2xs space-y-4">
-          <div className="flex items-center gap-2 border-b border-[#E2D8C6] pb-3">
-            <MapPin className="w-5 h-5 text-[#1E3799]" />
-            <h2 className="font-serif text-lg font-bold text-[#1A1918]">
+        <section className="bg-surface rounded-lg border border-line p-6 shadow-2xs space-y-4">
+          <div className="flex items-center gap-2 border-b border-line-soft pb-3">
+            <MapPin className="w-5 h-5 text-navy" />
+            <h2 className="font-serif text-lg font-bold text-ink">
               Publisher Information &amp; Postal Correspondence
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-[#3F3B35]">
-            <div className="space-y-1.5 font-mono bg-[#FCFAF4] p-4 rounded border border-[#D5CAB5]">
-              <p className="font-bold text-[#1A1918]">IndiaJobNotice Editorial Desk</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-ink-2">
+            <div className="space-y-1.5 font-mono bg-subtle p-4 rounded border border-line">
+              <p className="font-bold text-ink">IndiaJobNotice Editorial Desk</p>
               <p>Independent Educational Publishing &amp; Civic Career Intelligence</p>
               <p>New Delhi &amp; Bengaluru, India</p>
-              <p className="pt-2 text-[12px] text-[#4F4A43]">
+              <p className="pt-2 text-[12px] text-muted">
                 Working Hours: Monday – Saturday (9:30 AM to 6:30 PM IST)
               </p>
             </div>
-            <div className="space-y-2 p-4 rounded bg-[#FCFAF4] border border-[#D5CAB5]">
-              <div className="flex items-center gap-1.5 font-bold text-[#1A1918]">
-                <Clock className="w-4 h-4 text-[#B84D0A]" />
+            <div className="space-y-2 p-4 rounded bg-subtle border border-line">
+              <div className="flex items-center gap-1.5 font-bold text-ink">
+                <Clock className="w-4 h-4 text-saffron" />
                 <span>Editorial Processing Standard</span>
               </div>
-              <p className="text-xs text-[#4F4A43] leading-relaxed">
+              <p className="text-xs text-muted leading-relaxed">
                 Factual correction requests received through <code>contact@indiajobnotice.com</code> are logged in our editorial registry and verified within 24 to 48 hours. Urgent exam date revisions are updated same-day.
               </p>
             </div>
@@ -221,15 +221,15 @@ export default function ContactPage() {
         </section>
 
         {/* Candidate Anti-Scam Security Notice */}
-        <section className="bg-[#FFF9F2] rounded-lg border-2 border-[#E96B15] p-5 shadow-2xs space-y-3">
-          <div className="flex items-center gap-2 font-serif font-bold text-[#943F00] text-base">
-            <AlertTriangle className="w-5 h-5 text-[#B84D0A] shrink-0" />
+        <section className="bg-saffron-tint rounded-lg border-2 border-saffron-bright p-5 shadow-2xs space-y-3">
+          <div className="flex items-center gap-2 font-serif font-bold text-saffron text-base">
+            <AlertTriangle className="w-5 h-5 text-saffron shrink-0" />
             <h2>Important Candidate Reassurance: Zero Financial Transactions</h2>
           </div>
-          <p className="text-xs text-[#3F3B35] leading-relaxed">
+          <p className="text-xs text-ink-2 leading-relaxed">
             <strong>IndiaJobNotice never conducts job interviews, never issues appointment letters, and NEVER requests money, registration fees, UPI transfers, or bank account details from aspirants.</strong>
           </p>
-          <p className="text-xs text-[#3F3B35] leading-relaxed">
+          <p className="text-xs text-ink-2 leading-relaxed">
             All legitimate government examination application fees must only be paid through the official commission payment gateways hosted on official government portals (such as <code>upsc.gov.in</code>, <code>ssc.gov.in</code>, or state commission sites). Beware of fraudulent individuals posing as portal representatives on social media or messaging platforms.
           </p>
         </section>

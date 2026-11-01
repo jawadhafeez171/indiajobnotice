@@ -97,22 +97,22 @@ export function WatchlistDrawer({ isOpen, onClose }: Props) {
       />
 
       {/* Drawer Panel */}
-      <div className="relative w-full max-w-md bg-[#FCFAF4] h-full shadow-2xl flex flex-col border-l border-[#D5CAB5] z-10 animate-in slide-in-from-right duration-300">
+      <div className="relative w-full max-w-md bg-subtle h-full shadow-2xl flex flex-col border-l border-line z-10 animate-in slide-in-from-right duration-300">
         
         {/* Drawer Header */}
-        <div className="p-5 border-b border-[#D5CAB5] bg-white flex items-center justify-between">
+        <div className="p-5 border-b border-line bg-surface flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <TricolorCapsule className="w-10 h-1" />
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-navy font-bold">
                 Your list
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <h2 className="font-serif text-lg font-bold text-[#1A1918]">
+              <h2 className="font-serif text-lg font-bold text-ink">
                 Saved jobs
               </h2>
-              <span className="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-[#EEF2FA] text-[#1E3799] border border-[#CCD8F0]">
+              <span className="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-navy-tint text-navy border border-navy-line">
                 {savedCount}
               </span>
             </div>
@@ -120,7 +120,7 @@ export function WatchlistDrawer({ isOpen, onClose }: Props) {
 
           <button
             onClick={onClose}
-            className="p-2 rounded-lg text-[#4F4A43] hover:text-[#1A1918] hover:bg-[#EEF2FA] transition-colors"
+            className="p-2 rounded-lg text-muted hover:text-ink hover:bg-navy-tint transition-colors"
             aria-label="Close Watchlist Drawer"
           >
             <X className="w-5 h-5" />
@@ -129,10 +129,10 @@ export function WatchlistDrawer({ isOpen, onClose }: Props) {
 
         {/* Action Toolbar if items exist */}
         {savedCount > 0 && (
-          <div className="px-5 py-2.5 bg-[#FAF7EF] border-b border-[#D5CAB5] flex items-center justify-between text-xs">
+          <div className="px-5 py-2.5 bg-subtle border-b border-line flex items-center justify-between text-xs">
             <button
               onClick={handleExportAllToCalendar}
-              className="inline-flex items-center gap-1.5 font-bold text-[#1E3799] hover:underline"
+              className="inline-flex items-center gap-1.5 font-bold text-navy hover:underline"
               title="Download calendar schedule (.ics) for all pinned exams"
             >
               <Download className="w-3.5 h-3.5" />
@@ -141,7 +141,7 @@ export function WatchlistDrawer({ isOpen, onClose }: Props) {
 
             <button
               onClick={clearAll}
-              className="inline-flex items-center gap-1 text-[#C41C1C] hover:underline font-semibold"
+              className="inline-flex items-center gap-1 text-danger hover:underline font-semibold"
             >
               <Trash2 className="w-3 h-3" />
               <span>Clear All</span>
@@ -152,19 +152,19 @@ export function WatchlistDrawer({ isOpen, onClose }: Props) {
         {/* Job List / Empty State */}
         <div className="flex-1 overflow-y-auto p-5 space-y-3.5">
           {savedCount === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center p-6 text-[#4F4A43]">
-              <div className="w-14 h-14 rounded-full bg-[#EEF2FA] text-[#1E3799] flex items-center justify-center mb-4 border border-[#CCD8F0]">
+            <div className="h-full flex flex-col items-center justify-center text-center p-6 text-muted">
+              <div className="w-14 h-14 rounded-full bg-navy-tint text-navy flex items-center justify-center mb-4 border border-navy-line">
                 <Bookmark className="w-7 h-7 stroke-[1.5]" />
               </div>
-              <h3 className="font-serif text-base font-bold text-[#1A1918]">
+              <h3 className="font-serif text-base font-bold text-ink">
                 No Pinned Notices Yet
               </h3>
-              <p className="text-xs text-[#4F4A43] mt-1.5 max-w-xs leading-relaxed">
-                Click the <span className="font-semibold text-[#1E3799]">Pin / Bookmark</span> button on any recruitment card to track application deadlines, admit card releases, and exam dates in one place.
+              <p className="text-xs text-muted mt-1.5 max-w-xs leading-relaxed">
+                Click the <span className="font-semibold text-navy">Pin / Bookmark</span> button on any recruitment card to track application deadlines, admit card releases, and exam dates in one place.
               </p>
               <button
                 onClick={onClose}
-                className="mt-6 px-4 py-2 bg-[#1E3799] text-white text-xs font-bold rounded-md hover:bg-[#162a75] transition-colors shadow-2xs"
+                className="mt-6 px-4 py-2 bg-navy-solid text-white text-xs font-bold rounded-md hover:bg-navy-strong transition-colors shadow-2xs"
               >
                 Browse Latest Notifications
               </button>
@@ -182,20 +182,20 @@ export function WatchlistDrawer({ isOpen, onClose }: Props) {
               return (
                 <div
                   key={job.id}
-                  className="bg-white rounded-lg border border-[#D5CAB5] p-4 shadow-2xs relative overflow-hidden flex flex-col justify-between hover:border-[#1E3799]/40 transition-all"
+                  className="bg-surface rounded-lg border border-line p-4 shadow-2xs relative overflow-hidden flex flex-col justify-between hover:border-navy/40 transition-all"
                 >
                   <div className={cn("absolute left-0 top-0 bottom-0 w-1", categoryColors.stripe)} />
 
                   <div className="pl-1">
                     <div className="flex items-center justify-between gap-2 mb-1.5">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[11px] font-mono uppercase font-bold text-[#4F4A43]">
+                        <span className="text-[11px] font-mono uppercase font-bold text-muted">
                           {job.orgShortCode} · {job.isCentral ? "CENTRAL" : job.stateSlug.toUpperCase()}
                         </span>
                       </div>
                       <button
                         onClick={() => removeJob(job.id)}
-                        className="text-[#999] hover:text-[#C41C1C] transition-colors p-1"
+                        className="text-[#999] hover:text-danger transition-colors p-1"
                         title="Remove from watchlist"
                         aria-label="Remove"
                       >
@@ -206,25 +206,25 @@ export function WatchlistDrawer({ isOpen, onClose }: Props) {
                     <Link
                       href={detailLink}
                       onClick={onClose}
-                      className="font-serif text-sm font-bold text-[#1A1918] hover:text-[#1E3799] transition-colors block line-clamp-2"
+                      className="font-serif text-sm font-bold text-ink hover:text-navy transition-colors block line-clamp-2"
                     >
                       {job.title}
                     </Link>
 
-                    <p className="text-[12px] text-[#4F4A43] mt-1 font-medium">
+                    <p className="text-[12px] text-muted mt-1 font-medium">
                       {job.organization} · {job.totalVacancies.toLocaleString()} Posts
                     </p>
 
                     {/* Deadline Ribbon */}
-                    <div className="mt-3 pt-2.5 border-t border-[#E2D8C6] flex items-center justify-between text-xs">
+                    <div className="mt-3 pt-2.5 border-t border-line-soft flex items-center justify-between text-xs">
                       <div className="flex items-center gap-1 font-mono text-[12px]">
-                        <Clock className={cn("w-3.5 h-3.5", isUrgent ? "text-[#B84D0A]" : "text-[#4F4A43]")} />
+                        <Clock className={cn("w-3.5 h-3.5", isUrgent ? "text-saffron" : "text-muted")} />
                         {isExpired ? (
                           <span className="text-[#888]">Application Closed</span>
                         ) : isUrgent ? (
-                          <span className="text-[#B84D0A] font-bold">Ends in {daysLeft} {daysLeft === 1 ? "day" : "days"}!</span>
+                          <span className="text-saffron font-bold">Ends in {daysLeft} {daysLeft === 1 ? "day" : "days"}!</span>
                         ) : (
-                          <span className="text-[#4F4A43]">Last Date: {formatDate(job.applicationEndDate)}</span>
+                          <span className="text-muted">Last Date: {formatDate(job.applicationEndDate)}</span>
                         )}
                       </div>
 
@@ -236,7 +236,7 @@ export function WatchlistDrawer({ isOpen, onClose }: Props) {
                       <Link
                         href={detailLink}
                         onClick={onClose}
-                        className="py-1.5 px-2 rounded bg-[#EEF2FA] hover:bg-[#E0E9F8] text-[#1E3799] font-bold text-center border border-[#CCD8F0] transition-colors flex items-center justify-center gap-1"
+                        className="py-1.5 px-2 rounded bg-navy-tint hover:bg-navy-tint-2 text-navy font-bold text-center border border-navy-line transition-colors flex items-center justify-center gap-1"
                       >
                         <span>Details</span>
                         <ArrowRight className="w-3 h-3" />
@@ -246,7 +246,7 @@ export function WatchlistDrawer({ isOpen, onClose }: Props) {
                         href={job.applyOnlineUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="py-1.5 px-2 rounded bg-[#C2510A] hover:bg-[#A9460A] text-white font-bold text-center transition-colors flex items-center justify-center gap-1 shadow-2xs"
+                        className="py-1.5 px-2 rounded bg-saffron-solid hover:bg-saffron-strong text-white font-bold text-center transition-colors flex items-center justify-center gap-1 shadow-2xs"
                       >
                         <span>Apply</span>
                         <ExternalLink className="w-3 h-3" />
@@ -260,8 +260,8 @@ export function WatchlistDrawer({ isOpen, onClose }: Props) {
         </div>
 
         {/* Footer Note */}
-        <div className="p-3.5 bg-white border-t border-[#D5CAB5] text-[12px] text-[#4F4A43] flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-[#17803A] shrink-0" />
+        <div className="p-3.5 bg-surface border-t border-line text-[12px] text-muted flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-green shrink-0" />
           <span>Tracked offline in your browser. Data is private and never shared.</span>
         </div>
       </div>

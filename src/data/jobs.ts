@@ -361,74 +361,74 @@ export function getCategoryColors(category: JobCategory) {
   switch (category) {
     case "Police / Defense":
       return {
-        bg: "bg-[#FDF3EB]",
-        text: "text-[#B84D0A]",
-        border: "border-[#F9D9C3]",
-        stripe: "bg-[#C2510A]",
+        bg: "bg-saffron-tint",
+        text: "text-saffron",
+        border: "border-saffron-line",
+        stripe: "bg-saffron-solid",
         label: "Police & Defense",
       };
     case "Administrative / PSC":
       return {
-        bg: "bg-[#EEF2FA]",
-        text: "text-[#1E3799]",
-        border: "border-[#CCD8F0]",
-        stripe: "bg-[#1E3799]",
+        bg: "bg-navy-tint",
+        text: "text-navy",
+        border: "border-navy-line",
+        stripe: "bg-navy-solid",
         label: "Civil Services & PSC",
       };
     case "Railways":
       return {
-        bg: "bg-[#EEF2FA]",
-        text: "text-[#1E3799]",
-        border: "border-[#CCD8F0]",
-        stripe: "bg-[#1E3799]",
+        bg: "bg-navy-tint",
+        text: "text-navy",
+        border: "border-navy-line",
+        stripe: "bg-navy-solid",
         label: "Indian Railways",
       };
     case "Teaching / Education":
       return {
-        bg: "bg-[#EDF7F0]",
-        text: "text-[#17803A]",
-        border: "border-[#C6E7D0]",
-        stripe: "bg-[#209948]",
+        bg: "bg-green-tint",
+        text: "text-green",
+        border: "border-green-line",
+        stripe: "bg-green-solid",
         label: "Teaching & Faculty",
       };
     case "Banking / Insurance":
       return {
-        bg: "bg-[#FAF4E6]",
-        text: "text-[#9A6516]",
-        border: "border-[#EFE0BC]",
-        stripe: "bg-[#9A6516]",
+        bg: "bg-amber-tint",
+        text: "text-amber",
+        border: "border-amber-line",
+        stripe: "bg-amber-solid",
         label: "Banking & Insurance",
       };
     case "Engineering / Technical":
       return {
-        bg: "bg-[#E8F4F5]",
-        text: "text-[#1A616A]",
-        border: "border-[#CCE7EB]",
-        stripe: "bg-[#1A616A]",
+        bg: "bg-teal-tint",
+        text: "text-teal",
+        border: "border-teal-line",
+        stripe: "bg-teal-solid",
         label: "Engineering & Technical",
       };
     case "Clerical / Stenographer":
       return {
-        bg: "bg-[#F3EFE9]",
-        text: "text-[#5B5044]",
-        border: "border-[#DDD4C7]",
-        stripe: "bg-[#5B5044]",
+        bg: "bg-sunken",
+        text: "text-ink-2",
+        border: "border-line",
+        stripe: "bg-ink-2",
         label: "Clerical & Staff",
       };
     case "Medical & Nursing":
       return {
-        bg: "bg-[#FAECF0]",
-        text: "text-[#952644]",
-        border: "border-[#F2D1DC]",
-        stripe: "bg-[#952644]",
+        bg: "bg-danger-tint",
+        text: "text-danger",
+        border: "border-danger-line",
+        stripe: "bg-danger-solid",
         label: "Medical & Health",
       };
     default:
       return {
-        bg: "bg-[#F2EDE4]",
-        text: "text-[#4A4641]",
-        border: "border-[#DDD5C7]",
-        stripe: "bg-[#4A4641]",
+        bg: "bg-sunken",
+        text: "text-ink-2",
+        border: "border-line",
+        stripe: "bg-ink-2",
         label: category,
       };
   }

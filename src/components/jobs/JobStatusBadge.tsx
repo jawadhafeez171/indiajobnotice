@@ -14,39 +14,39 @@ export function JobStatusBadge({ status, className }: Props) {
   > = {
     APPLY_OPEN: {
       label: "Applications Open",
-      bg: "bg-[#17803A]",
+      bg: "bg-green-solid",
       text: "text-white",
-      border: "border-[#17803A]",
+      border: "border-green",
     },
     LAST_DATE_NEAR: {
       label: "Closing Soon",
-      bg: "bg-[#C2510A]",
+      bg: "bg-saffron-solid",
       text: "text-white",
-      border: "border-[#C2510A]",
+      border: "border-saffron",
     },
     UPCOMING: {
       label: "Announced",
-      bg: "bg-[#EEF2FA]",
-      text: "text-[#1E3799]",
-      border: "border-[#CCD8F0]",
+      bg: "bg-navy-tint",
+      text: "text-navy",
+      border: "border-navy-line",
     },
     ADMIT_CARD_OUT: {
       label: "Admit Card Out",
-      bg: "bg-[#1E3799]",
+      bg: "bg-navy-solid",
       text: "text-white",
-      border: "border-[#1E3799]",
+      border: "border-navy",
     },
     RESULT_OUT: {
       label: "Result Out",
-      bg: "bg-[#6B2FA3]",
+      bg: "bg-purple-solid",
       text: "text-white",
-      border: "border-[#6B2FA3]",
+      border: "border-purple",
     },
     APPLICATIONS_CLOSED: {
       label: "Applications Closed",
-      bg: "bg-[#E6DFD1]",
-      text: "text-[#3F3B35]",
-      border: "border-[#CFC4AE]",
+      bg: "bg-sunken",
+      text: "text-ink-2",
+      border: "border-line",
     },
   };
 

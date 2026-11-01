@@ -41,7 +41,7 @@ export default async function CentralJobAnswerKeyPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F1ECE1]">
+    <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar currentStateSlug="central" />
       <main className="flex-1">
         <AnswerKeyView job={job} stateSlug="central" />

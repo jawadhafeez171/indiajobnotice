@@ -26,20 +26,20 @@ export const metadata = {
 
 export default async function CalculatorPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F1ECE1]">
+    <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar currentStateSlug="central" />
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-8">
         <div className="max-w-3xl">
           <div className="flex items-center gap-2 mb-2">
             <TricolorCapsule className="w-14 h-1.5" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-navy font-bold">
               Age eligibility calculator
             </span>
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1918] tracking-tight">
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
             Government Job Eligibility & Age Calculator
           </h1>
-          <p className="text-sm sm:text-base text-[#3F3B35] mt-2 leading-relaxed">
+          <p className="text-sm sm:text-base text-ink-2 mt-2 leading-relaxed">
             Never miss an exam because of confusing age limit clauses. Our calculator applies statutory category age relaxations (OBC +3y, SC/ST +5y) to filter positions you can legally apply for.
           </p>
         </div>

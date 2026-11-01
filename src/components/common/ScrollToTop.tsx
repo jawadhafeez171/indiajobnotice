@@ -42,11 +42,11 @@ export function ScrollToTop() {
       className={cn(
         "fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40",
         "flex items-center justify-center w-10 h-10 rounded-full",
-        "bg-white/90 hover:bg-white text-[#1E3799] hover:text-[#0B153D]",
-        "border border-[#D8CFBF] hover:border-[#1E3799]/40",
+        "bg-surface/90 hover:bg-surface text-navy hover:text-navy",
+        "border border-line hover:border-navy/40",
         "shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0",
         "backdrop-blur-xs transition-all duration-200 ease-out",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3799]/40",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-navy/40",
         isVisible
           ? "opacity-100 scale-100 pointer-events-auto"
           : "opacity-0 scale-90 pointer-events-none"

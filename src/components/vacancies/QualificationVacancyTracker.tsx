@@ -149,16 +149,16 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
   return (
     <div className="space-y-8">
       {/* Top Controls & Institutional Print Button */}
-      <div className="bg-white rounded-xl border border-[#D5CAB5] p-5 sm:p-6 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E2D8C6] pb-4">
+      <div className="bg-surface rounded-xl border border-line p-5 sm:p-6 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line-soft pb-4">
           <div>
-            <span className="text-[11px] font-mono uppercase tracking-wider text-[#1E3799] font-bold block mb-1">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-navy font-bold block mb-1">
               From official notifications
             </span>
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1A1918]">
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-ink">
               Qualification-Wise Vacancy Breakdown
             </h2>
-            <p className="text-xs text-[#4F4A43] mt-0.5">
+            <p className="text-xs text-muted mt-0.5">
               Filter government jobs by educational criteria. Used by college placement cells, coaching faculties, and public library desks.
             </p>
           </div>
@@ -166,7 +166,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
           <div className="flex items-center gap-2 self-start sm:self-auto">
             <button
               onClick={() => window.print()}
-              className="px-3.5 py-2 rounded-lg bg-[#1E3799] hover:bg-[#15286D] text-white text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-lg bg-navy-solid hover:bg-navy-strong text-white text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print Campus Notice Board Bulletin</span>
@@ -185,32 +185,32 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                 className={cn(
                   "p-3 rounded-lg border text-left transition-all flex flex-col justify-between group",
                   isSelected
-                    ? "bg-[#EEF2FA] border-[#1E3799] ring-2 ring-[#1E3799]/20 shadow-2xs"
-                    : "bg-[#FCFAF4] border-[#D5CAB5] hover:bg-white hover:border-[#CCD8F0]"
+                    ? "bg-navy-tint border-navy ring-2 ring-navy/20 shadow-2xs"
+                    : "bg-subtle border-line hover:bg-surface hover:border-navy-line"
                 )}
               >
                 <div>
                   <span className={cn(
                     "text-[11px] font-mono uppercase font-bold block mb-1 truncate",
-                    isSelected ? "text-[#1E3799]" : "text-[#4F4A43]"
+                    isSelected ? "text-navy" : "text-muted"
                   )}>
                     {tier.shortLabel}
                   </span>
-                  <span className="font-serif font-bold text-lg text-[#1A1918] block leading-tight">
+                  <span className="font-serif font-bold text-lg text-ink block leading-tight">
                     {tier.totalVacancies.toLocaleString("en-IN")}
                   </span>
-                  <span className="text-[11px] text-[#4F4A43] block mt-0.5">
+                  <span className="text-[11px] text-muted block mt-0.5">
                     Vacancies
                   </span>
                 </div>
 
-                <div className="mt-2.5 pt-2 border-t border-[#D5CAB5]/60 flex items-center justify-between text-[11px] font-bold">
-                  <span className={isSelected ? "text-[#1E3799]" : "text-[#3F3B35]"}>
+                <div className="mt-2.5 pt-2 border-t border-line/60 flex items-center justify-between text-[11px] font-bold">
+                  <span className={isSelected ? "text-navy" : "text-ink-2"}>
                     {tier.jobCount} jobs
                   </span>
                   <ArrowRight className={cn(
                     "w-3 h-3 transition-transform",
-                    isSelected ? "text-[#1E3799] translate-x-0.5" : "text-[#A09B90] group-hover:translate-x-0.5"
+                    isSelected ? "text-navy translate-x-0.5" : "text-faint group-hover:translate-x-0.5"
                   )} />
                 </div>
               </button>
@@ -219,23 +219,23 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
         </div>
 
         {/* Active Toggle & Summary Bar */}
-        <div className="mt-4 pt-4 border-t border-[#E2D8C6] flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="mt-4 pt-4 border-t border-line-soft flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-[#1A1918]">Showing:</span>
-            <span className="px-2.5 py-0.5 rounded bg-[#EEF2FA] text-[#1E3799] font-bold border border-[#CCD8F0]">
+            <span className="font-bold text-ink">Showing:</span>
+            <span className="px-2.5 py-0.5 rounded bg-navy-tint text-navy font-bold border border-navy-line">
               {currentTier.label}
             </span>
-            <span className="text-[#4F4A43]">
+            <span className="text-muted">
               ({totalFilteredVacancies.toLocaleString("en-IN")} Total Posts in {filteredJobs.length} Drives)
             </span>
           </div>
 
-          <label className="flex items-center gap-2 text-xs font-medium cursor-pointer text-[#423F3A]">
+          <label className="flex items-center gap-2 text-xs font-medium cursor-pointer text-ink-2">
             <input
               type="checkbox"
               checked={activeOnly}
               onChange={(e) => setActiveOnly(e.target.checked)}
-              className="rounded border-[#DDD5C7] text-[#1E3799] focus:ring-[#1E3799]"
+              className="rounded border-line text-navy focus:ring-navy"
             />
             <span>Active & Upcoming Openings Only</span>
           </label>
@@ -243,11 +243,11 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
       </div>
 
       {/* Vacancy Table / Printable Gazette Listing */}
-      <div className="bg-white rounded-xl border border-[#D5CAB5] p-6 shadow-2xs space-y-4">
-        <div className="flex items-center justify-between border-b border-[#D5CAB5] pb-3">
+      <div className="bg-surface rounded-xl border border-line p-6 shadow-2xs space-y-4">
+        <div className="flex items-center justify-between border-b border-line pb-3">
           <div className="flex items-center gap-2">
-            <GraduationCap className="w-5 h-5 text-[#1E3799]" />
-            <h3 className="font-serif text-base sm:text-lg font-bold text-[#1A1918]">
+            <GraduationCap className="w-5 h-5 text-navy" />
+            <h3 className="font-serif text-base sm:text-lg font-bold text-ink">
               {currentTier.label} — Live Recruitment Openings
             </h3>
           </div>
@@ -255,7 +255,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
           {currentTier.id !== "all" && (
             <Link
               href={currentTier.hubUrl}
-              className="text-xs font-bold text-[#1E3799] hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-navy hover:underline flex items-center gap-1"
             >
               <span>Permanent {currentTier.shortLabel} Hub</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -264,18 +264,18 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
         </div>
 
         {filteredJobs.length === 0 ? (
-          <div className="text-center py-10 text-xs text-[#4F4A43] bg-[#FCFAF4] rounded-lg border border-[#D5CAB5]">
+          <div className="text-center py-10 text-xs text-muted bg-subtle rounded-lg border border-line">
             No active positions currently open under this qualification tier. Check upcoming gazettes on the{" "}
-            <Link href="/calendar" className="text-[#1E3799] font-bold hover:underline">
+            <Link href="/calendar" className="text-navy font-bold hover:underline">
               Exam Calendar
             </Link>.
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border border-[#D5CAB5] rounded-lg overflow-hidden bg-white">
+            <table className="w-full text-left text-xs border border-line rounded-lg overflow-hidden bg-surface">
               <thead>
-                <tr className="bg-[#FAF7EC] border-b border-[#D5CAB5] font-mono text-[12px] text-[#4F4A43] uppercase">
-                  <th className="py-3 px-4 font-bold text-[#1E3799]">Recruiting Commission & Post</th>
+                <tr className="bg-subtle border-b border-line font-mono text-[12px] text-muted uppercase">
+                  <th className="py-3 px-4 font-bold text-navy">Recruiting Commission & Post</th>
                   <th className="py-3 px-4 font-bold text-center">Vacancies</th>
                   <th className="py-3 px-4 font-semibold">Eligibility Details</th>
                   <th className="py-3 px-4 font-semibold">Pay Scale</th>
@@ -283,7 +283,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                   <th className="py-3 px-4 font-bold text-right print:hidden">Notification</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2D8C6]">
+              <tbody className="divide-y divide-line-soft">
                 {filteredJobs.map((job) => {
                   const jobHref = job.isCentral
                     ? `/jobs/${job.slug}`
@@ -292,57 +292,57 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                   const daysLeft = getDaysRemaining(job.applicationEndDate);
 
                   return (
-                    <tr key={job.id} className="hover:bg-[#FCFAF4] transition-colors">
+                    <tr key={job.id} className="hover:bg-subtle transition-colors">
                       {/* Commission & Title */}
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#EEF2FA] text-[#1E3799] border border-[#CCD8F0]">
+                          <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-navy-tint text-navy border border-navy-line">
                             {job.orgShortCode}
                           </span>
                           <JobStatusBadge status={job.status} />
                         </div>
-                        <Link href={jobHref} className="font-serif font-bold text-xs text-[#1A1918] hover:text-[#1E3799] block leading-snug">
+                        <Link href={jobHref} className="font-serif font-bold text-xs text-ink hover:text-navy block leading-snug">
                           {job.title}
                         </Link>
-                        <span className="text-[11px] text-[#4F4A43] block mt-0.5">
+                        <span className="text-[11px] text-muted block mt-0.5">
                           {job.isCentral ? "All-India Central" : `${job.stateSlug.toUpperCase()} State`} · {job.category}
                         </span>
                       </td>
 
                       {/* Vacancies */}
                       <td className="py-3.5 px-4 text-center">
-                        <span className="font-mono font-bold text-sm text-[#1A1918] block">
+                        <span className="font-mono font-bold text-sm text-ink block">
                           {job.totalVacancies.toLocaleString("en-IN")}
                         </span>
-                        <span className="text-[11px] text-[#4F4A43]">Posts</span>
+                        <span className="text-[11px] text-muted">Posts</span>
                       </td>
 
                       {/* Eligibility Details */}
                       <td className="py-3.5 px-4 max-w-xs">
                         <div className="space-y-1">
-                          <span className="font-medium text-[#1A1918] block line-clamp-2">
+                          <span className="font-medium text-ink block line-clamp-2">
                             {job.qualifications.join(", ")}
                           </span>
-                          <span className="text-[11px] font-mono text-[#4F4A43] block">
+                          <span className="text-[11px] font-mono text-muted block">
                             Age: {formatAgeRange(job)}
                           </span>
                         </div>
                       </td>
 
                       {/* Pay Scale */}
-                      <td className="py-3.5 px-4 font-mono font-bold text-xs text-[#17803A]">
+                      <td className="py-3.5 px-4 font-mono font-bold text-xs text-green">
                         {job.salary ? job.salary.split("(")[0] : "See notification"}
                       </td>
 
                       {/* Deadline */}
                       <td className="py-3.5 px-4 font-mono text-xs">
-                        <span className="text-[#1A1918] block font-semibold">{formatDate(job.applicationEndDate)}</span>
+                        <span className="text-ink block font-semibold">{formatDate(job.applicationEndDate)}</span>
                         {daysLeft > 0 ? (
-                          <span className="text-[11px] text-[#B84D0A] font-bold block">
+                          <span className="text-[11px] text-saffron font-bold block">
                             {daysLeft} days left
                           </span>
                         ) : (
-                          <span className="text-[11px] text-[#4F4A43] block">Closed</span>
+                          <span className="text-[11px] text-muted block">Closed</span>
                         )}
                       </td>
 
@@ -350,7 +350,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                       <td className="py-3.5 px-4 text-right print:hidden">
                         <Link
                           href={jobHref}
-                          className="px-3 py-1.5 rounded bg-[#FAF7EF] border border-[#DDD5C7] hover:border-[#1E3799] hover:text-[#1E3799] text-xs font-bold transition-all inline-flex items-center gap-1"
+                          className="px-3 py-1.5 rounded bg-subtle border border-line hover:border-navy hover:text-navy text-xs font-bold transition-all inline-flex items-center gap-1"
                         >
                           <span>Notification</span>
                           <ArrowRight className="w-3 h-3" />
@@ -366,19 +366,19 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
       </div>
 
       {/* Campus Notice Board Notice Box */}
-      <div className="p-5 rounded-xl bg-[#FAF7EF] border border-[#D5CAB5] flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
+      <div className="p-5 rounded-xl bg-subtle border border-line flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
         <div>
-          <span className="font-bold text-sm text-[#1A1918] block">
+          <span className="font-bold text-sm text-ink block">
             Placement Cell & Library Notice Board Kit
           </span>
-          <span className="text-[#4F4A43] mt-0.5 block">
+          <span className="text-muted mt-0.5 block">
             Print this bulletin weekly or display on campus digital kiosks. Updates are verified directly against official Union and State gazettes.
           </span>
         </div>
 
         <button
           onClick={() => window.print()}
-          className="px-4 py-2 rounded-md bg-[#1E3799] text-white font-bold hover:bg-[#15286D] transition-colors shrink-0 flex items-center gap-1.5 self-start sm:self-auto"
+          className="px-4 py-2 rounded-md bg-navy-solid text-white font-bold hover:bg-navy-strong transition-colors shrink-0 flex items-center gap-1.5 self-start sm:self-auto"
         >
           <Printer className="w-3.5 h-3.5" />
           <span>Print Weekly Bulletin</span>

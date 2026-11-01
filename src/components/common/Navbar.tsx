@@ -29,7 +29,12 @@ export function Navbar({ currentStateSlug }: Props) {
   return (
     <>
       {/* Fixed Clean Header with Stable 64px Height */}
-      <header className="sticky top-0 z-40 bg-[#FCFAF4]/95 backdrop-blur-md border-b border-[#D5CAB5] shadow-xs">
+      <header className="sticky top-0 z-40 bg-surface/95 backdrop-blur-md border-b border-line shadow-xs">
+        <div className="flex h-[3px]" aria-hidden>
+          <span className="flex-1 bg-saffron-bright" />
+          <span className="flex-1 bg-white" />
+          <span className="flex-1 bg-green-solid" />
+        </div>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
             
@@ -42,59 +47,59 @@ export function Navbar({ currentStateSlug }: Props) {
               {/* State Switcher Pill */}
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EEF2FA] hover:bg-[#E0E9F8] text-[#1E3799] text-xs font-semibold border border-[#CCD8F0] transition-colors whitespace-nowrap"
+                className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-navy-tint hover:bg-navy-tint-2 text-navy text-xs font-semibold border border-navy-line transition-colors whitespace-nowrap"
                 title="Switch State Portal"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#C2510A]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-saffron-solid" />
                 <span>{currentState ? `${currentState.name} (${currentState.code})` : "All India"}</span>
-                <span className="text-[11px] font-mono font-bold px-1 py-0.5 rounded bg-white text-[#1E3799] border border-[#CCD8F0] leading-none">
+                <span className="text-[11px] font-mono font-bold px-1 py-0.5 rounded bg-surface text-navy border border-navy-line leading-none">
                   36 States
                 </span>
-                <ChevronDown className="w-3 h-3 text-[#1E3799]/70" />
+                <ChevronDown className="w-3 h-3 text-navy/70" />
               </button>
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-4 xl:gap-5 text-xs xl:text-sm text-[#3E3C38] font-medium shrink-0">
+            <nav className="hidden lg:flex items-center gap-4 xl:gap-5 text-xs xl:text-sm text-ink-2 font-medium shrink-0">
               <a
                 href={currentState ? getStateSubdomainUrl(currentState.slug) : getCentralPortalUrl()}
-                className="hover:text-[#1E3799] transition-colors font-semibold whitespace-nowrap"
+                className="hover:text-navy transition-colors font-semibold whitespace-nowrap"
               >
                 Jobs
               </a>
 
               <Link
                 href="/calendar"
-                className="hover:text-[#1E3799] transition-colors font-semibold flex items-center gap-1.5 whitespace-nowrap"
+                className="hover:text-navy transition-colors font-semibold flex items-center gap-1.5 whitespace-nowrap"
               >
-                <Calendar className="w-3.5 h-3.5 text-[#1E3799]" />
+                <Calendar className="w-3.5 h-3.5 text-navy" />
                 <span>Calendar</span>
               </Link>
 
               <Link
                 href="/vacancies"
-                className="hover:text-[#1E3799] transition-colors font-semibold whitespace-nowrap"
+                className="hover:text-navy transition-colors font-semibold whitespace-nowrap"
               >
                 <span>Vacancy Tracker</span>
               </Link>
 
               <Link
                 href="/calculator"
-                className="text-[#B84D0A] hover:text-[#D4590A] transition-colors font-bold whitespace-nowrap"
+                className="text-saffron hover:text-saffron transition-colors font-bold whitespace-nowrap"
               >
                 <span>Age Calculator</span>
               </Link>
 
               <Link
                 href="/directory"
-                className="hover:text-[#1E3799] transition-colors font-semibold whitespace-nowrap"
+                className="hover:text-navy transition-colors font-semibold whitespace-nowrap"
               >
                 <span>Directory</span>
               </Link>
 
               <Link
                 href="/about"
-                className="hover:text-[#1E3799] transition-colors font-semibold whitespace-nowrap"
+                className="hover:text-navy transition-colors font-semibold whitespace-nowrap"
               >
                 <span>About</span>
               </Link>
@@ -114,13 +119,13 @@ export function Navbar({ currentStateSlug }: Props) {
               {/* Watchlist Bookmark Trigger */}
               <button
                 onClick={() => setIsWatchlistOpen(true)}
-                className="relative flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-[#D5CAB5] hover:border-[#1E3799] text-[#1A1918] hover:text-[#1E3799] text-xs font-bold transition-all shadow-xs whitespace-nowrap"
+                className="relative flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface border border-line hover:border-navy text-ink hover:text-navy text-xs font-bold transition-all shadow-xs whitespace-nowrap"
                 title="View your saved and pinned notifications"
               >
-                <Bookmark className={`w-3.5 h-3.5 ${savedCount > 0 ? "fill-[#E96B15] text-[#B84D0A]" : "text-[#4F4A43]"}`} />
+                <Bookmark className={`w-3.5 h-3.5 ${savedCount > 0 ? "fill-saffron-bright text-saffron" : "text-muted"}`} />
                 <span>Pinned</span>
                 {savedCount > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[11px] font-mono font-black bg-[#C2510A] text-white leading-none">
+                  <span className="px-1.5 py-0.5 rounded-full text-[11px] font-mono font-black bg-saffron-solid text-white leading-none">
                     {savedCount}
                   </span>
                 )}
@@ -131,12 +136,12 @@ export function Navbar({ currentStateSlug }: Props) {
             <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden">
               <button
                 onClick={() => setIsWatchlistOpen(true)}
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center relative rounded-lg bg-white border border-[#D5CAB5] text-[#1A1918] active:bg-[#FCFAF4] transition-colors"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center relative rounded-lg bg-surface border border-line text-ink active:bg-subtle transition-colors"
                 aria-label="View saved jobs"
               >
-                <Bookmark className={`w-4 h-4 ${savedCount > 0 ? "fill-[#E96B15] text-[#B84D0A]" : "text-[#4F4A43]"}`} />
+                <Bookmark className={`w-4 h-4 ${savedCount > 0 ? "fill-saffron-bright text-saffron" : "text-muted"}`} />
                 {savedCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#C2510A] text-white text-[9px] font-bold flex items-center justify-center font-mono">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-saffron-solid text-white text-[9px] font-bold flex items-center justify-center font-mono">
                     {savedCount}
                   </span>
                 )}
@@ -144,10 +149,10 @@ export function Navbar({ currentStateSlug }: Props) {
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-[#1E3799] bg-white border border-[#D5CAB5] hover:bg-[#EEF2FA] rounded-lg active:scale-95 transition-all"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-navy bg-surface border border-line hover:bg-navy-tint rounded-lg active:scale-95 transition-all"
                 aria-label="Toggle Navigation Menu"
               >
-                {mobileMenuOpen ? <X className="w-5 h-5 text-[#B84D0A]" /> : <Menu className="w-5 h-5 text-[#1E3799]" />}
+                {mobileMenuOpen ? <X className="w-5 h-5 text-saffron" /> : <Menu className="w-5 h-5 text-navy" />}
               </button>
             </div>
           </div>
@@ -161,14 +166,14 @@ export function Navbar({ currentStateSlug }: Props) {
 
         {/* Mobile Dropdown Drawer (Touch-Optimized for all phone screens) */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-[#D5CAB5] bg-[#FCFAF4] max-h-[calc(100vh-104px)] overflow-y-auto px-4 py-4 space-y-4 text-sm shadow-xl overscroll-contain">
+          <div className="lg:hidden border-t border-line bg-subtle max-h-[calc(100vh-104px)] overflow-y-auto px-4 py-4 space-y-4 text-sm shadow-xl overscroll-contain">
             {/* Active Portal Banner */}
-            <div className="p-3 rounded-xl bg-white border border-[#D5CAB5] shadow-2xs space-y-2">
+            <div className="p-3 rounded-xl bg-surface border border-line shadow-2xs space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[11px] font-mono uppercase font-bold text-[#4F4A43] tracking-wider">
+                <span className="text-[11px] font-mono uppercase font-bold text-muted tracking-wider">
                   Active Regional Portal
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-[#EDF7F0] text-[#17803A] font-bold text-[11px] font-mono">
+                <span className="px-2 py-0.5 rounded-full bg-green-tint text-green font-bold text-[11px] font-mono">
                   Live
                 </span>
               </div>
@@ -177,41 +182,41 @@ export function Navbar({ currentStateSlug }: Props) {
                   setMobileMenuOpen(false);
                   setIsModalOpen(true);
                 }}
-                className="w-full text-left py-2.5 px-3 rounded-lg bg-[#EEF2FA] hover:bg-[#E0E9F8] font-bold text-[#1E3799] flex justify-between items-center border border-[#CCD8F0] min-h-[44px] transition-colors"
+                className="w-full text-left py-2.5 px-3 rounded-lg bg-navy-tint hover:bg-navy-tint-2 font-bold text-navy flex justify-between items-center border border-navy-line min-h-[44px] transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#C2510A]" />
+                  <span className="w-2 h-2 rounded-full bg-saffron-solid" />
                   <span>{currentState ? currentState.name : "All-India / Central"}</span>
                 </div>
-                <span className="text-xs text-[#B84D0A] font-semibold">Change State →</span>
+                <span className="text-xs text-saffron font-semibold">Change State →</span>
               </button>
             </div>
 
             {/* Core Tools & Editorial Hubs */}
             <div className="space-y-1">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#4F4A43] font-bold px-1 block">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted font-bold px-1 block">
                 Recruitment Tools & Portals
               </span>
-              <div className="grid grid-cols-1 gap-1 pt-1 font-medium text-[#1A1918]">
+              <div className="grid grid-cols-1 gap-1 pt-1 font-medium text-ink">
                 <a
                   href={currentState ? getStateSubdomainUrl(currentState.slug) : getCentralPortalUrl()}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white border border-[#D5CAB5] hover:border-[#1E3799] min-h-[44px] transition-colors"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface border border-line hover:border-navy min-h-[44px] transition-colors"
                 >
-                  <span className="font-bold text-[#1E3799]">All job notifications</span>
-                  <span className="text-xs text-[#4F4A43]">Explore →</span>
+                  <span className="font-bold text-navy">All job notifications</span>
+                  <span className="text-xs text-muted">Explore →</span>
                 </a>
 
                 <Link
                   href="/calendar"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white border border-[#D5CAB5] hover:border-[#1E3799] min-h-[44px] transition-colors"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface border border-line hover:border-navy min-h-[44px] transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    <Calendar className="w-4 h-4 text-[#1E3799]" />
+                    <Calendar className="w-4 h-4 text-navy" />
                     <span>Recruitment Calendar 2026</span>
                   </div>
-                  <span className="text-[11px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#EEF2FA] text-[#1E3799]">
+                  <span className="text-[11px] font-mono font-bold px-1.5 py-0.5 rounded bg-navy-tint text-navy">
                     Updated
                   </span>
                 </Link>
@@ -219,13 +224,13 @@ export function Navbar({ currentStateSlug }: Props) {
                 <Link
                   href="/calculator"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[#FDF3EB] border border-[#F9D9C3] hover:border-[#E96B15] min-h-[44px] transition-colors"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-saffron-tint border border-saffron-line hover:border-saffron-bright min-h-[44px] transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    <span className="text-[#B84D0A] font-bold">⚡</span>
-                    <span className="font-bold text-[#B84D0A]">Crucial Cut-off Age Calculator</span>
+                    <span className="text-saffron font-bold">⚡</span>
+                    <span className="font-bold text-saffron">Crucial Cut-off Age Calculator</span>
                   </div>
-                  <span className="text-[11px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#C2510A] text-white">
+                  <span className="text-[11px] font-mono font-bold px-1.5 py-0.5 rounded bg-saffron-solid text-white">
                     Tool
                   </span>
                 </Link>
@@ -233,68 +238,68 @@ export function Navbar({ currentStateSlug }: Props) {
                 <Link
                   href="/vacancies"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white border border-[#D5CAB5] hover:border-[#1E3799] min-h-[44px] transition-colors"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface border border-line hover:border-navy min-h-[44px] transition-colors"
                 >
                   <span>Qualification Vacancy Tracker</span>
-                  <span className="text-xs text-[#4F4A43]">→</span>
+                  <span className="text-xs text-muted">→</span>
                 </Link>
 
                 <Link
                   href="/directory"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white border border-[#D5CAB5] hover:border-[#1E3799] min-h-[44px] transition-colors"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface border border-line hover:border-navy min-h-[44px] transition-colors"
                 >
                   <span>Public Service Commissions Directory</span>
-                  <span className="text-xs text-[#4F4A43]">→</span>
+                  <span className="text-xs text-muted">→</span>
                 </Link>
               </div>
             </div>
 
             {/* Quick Qualification & Sector Hubs */}
             <div className="space-y-1 pt-1">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#4F4A43] font-bold px-1 block">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted font-bold px-1 block">
                 Qualification Direct Hubs
               </span>
               <div className="grid grid-cols-2 gap-1.5 pt-1">
                 <Link
                   href="/qualification/12th-pass"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2.5 rounded-lg bg-white border border-[#D5CAB5] hover:border-[#1E3799] text-xs font-semibold text-[#1A1918] min-h-[44px] flex items-center justify-center text-center transition-colors"
+                  className="p-2.5 rounded-lg bg-surface border border-line hover:border-navy text-xs font-semibold text-ink min-h-[44px] flex items-center justify-center text-center transition-colors"
                 >
                   12th Pass Jobs
                 </Link>
                 <Link
                   href="/qualification/diploma"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2.5 rounded-lg bg-white border border-[#D5CAB5] hover:border-[#1E3799] text-xs font-semibold text-[#1A1918] min-h-[44px] flex items-center justify-center text-center transition-colors"
+                  className="p-2.5 rounded-lg bg-surface border border-line hover:border-navy text-xs font-semibold text-ink min-h-[44px] flex items-center justify-center text-center transition-colors"
                 >
                   Diploma & Poly
                 </Link>
                 <Link
                   href="/engineering-jobs"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2.5 rounded-lg bg-white border border-[#D5CAB5] hover:border-[#1E3799] text-xs font-semibold text-[#1A1918] min-h-[44px] flex items-center justify-center text-center transition-colors"
+                  className="p-2.5 rounded-lg bg-surface border border-line hover:border-navy text-xs font-semibold text-ink min-h-[44px] flex items-center justify-center text-center transition-colors"
                 >
                   Engineering (AE/JE)
                 </Link>
                 <Link
                   href="/qualification/graduate"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2.5 rounded-lg bg-white border border-[#D5CAB5] hover:border-[#1E3799] text-xs font-semibold text-[#1A1918] min-h-[44px] flex items-center justify-center text-center transition-colors"
+                  className="p-2.5 rounded-lg bg-surface border border-line hover:border-navy text-xs font-semibold text-ink min-h-[44px] flex items-center justify-center text-center transition-colors"
                 >
                   Graduate Degree
                 </Link>
                 <Link
                   href="/organisations/ssc"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2.5 rounded-lg bg-[#EEF2FA] border border-[#CCD8F0] text-xs font-bold text-[#1E3799] min-h-[44px] flex items-center justify-center text-center transition-colors"
+                  className="p-2.5 rounded-lg bg-navy-tint border border-navy-line text-xs font-bold text-navy min-h-[44px] flex items-center justify-center text-center transition-colors"
                 >
                   SSC Recruitment
                 </Link>
                 <Link
                   href="/railway-jobs"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2.5 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5] text-xs font-semibold text-[#1A1918] min-h-[44px] flex items-center justify-center text-center transition-colors"
+                  className="p-2.5 rounded-lg bg-subtle border border-line text-xs font-semibold text-ink min-h-[44px] flex items-center justify-center text-center transition-colors"
                 >
                   Railway RRB
                 </Link>
@@ -302,29 +307,29 @@ export function Navbar({ currentStateSlug }: Props) {
             </div>
 
             {/* Trust & Editorial Policy */}
-            <div className="space-y-1 pt-1 border-t border-[#D5CAB5]">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#4F4A43] font-bold px-1 block">
+            <div className="space-y-1 pt-1 border-t border-line">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted font-bold px-1 block">
                 Editorial Desk & Trust
               </span>
               <div className="grid grid-cols-3 gap-1.5 pt-1 text-center text-xs">
                 <Link
                   href="/about"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2.5 rounded-lg bg-white border border-[#D5CAB5] hover:border-[#1E3799] font-medium text-[#1A1918] flex items-center justify-center min-h-[44px]"
+                  className="p-2.5 rounded-lg bg-surface border border-line hover:border-navy font-medium text-ink flex items-center justify-center min-h-[44px]"
                 >
                   About Us
                 </Link>
                 <Link
                   href="/editorial-policy"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2.5 rounded-lg bg-white border border-[#D5CAB5] hover:border-[#1E3799] font-medium text-[#1A1918] flex items-center justify-center min-h-[44px]"
+                  className="p-2.5 rounded-lg bg-surface border border-line hover:border-navy font-medium text-ink flex items-center justify-center min-h-[44px]"
                 >
                   Verification
                 </Link>
                 <Link
                   href="/contact"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2.5 rounded-lg bg-white border border-[#D5CAB5] hover:border-[#1E3799] font-medium text-[#1A1918] flex items-center justify-center min-h-[44px]"
+                  className="p-2.5 rounded-lg bg-surface border border-line hover:border-navy font-medium text-ink flex items-center justify-center min-h-[44px]"
                 >
                   Contact Desk
                 </Link>

@@ -3,17 +3,118 @@
 @tailwind utilities;
 
 @layer base {
+  /* Tricolour palette: chakra navy, saffron, India green. Every colour class in
+     the site points at these variables; dark mode follows the phone/OS setting. */
   :root {
-    --brand-navy: #1e3799;       /* Exact Royal Navy from INDIA NOTICE in logo */
-    --brand-orange: #e96b15;     /* Exact Saffron Orange from JOB in logo */
-    --brand-green: #209948;      /* Exact India Green from logo capsule */
-    --brand-bg: #f1ece1;         /* Exact warm off-white canvas of logo */
-    --brand-border: #eae2d2;     /* Harmonious warm sandstone border */
+    color-scheme: light dark;
+    --c-canvas: 244 246 249;
+    --c-surface: 255 255 255;
+    --c-subtle: 248 250 252;
+    --c-sunken: 238 241 245;
+    --c-line: 211 217 226;
+    --c-line-soft: 229 233 239;
+    --c-ink: 15 23 42;
+    --c-ink-2: 51 65 85;
+    --c-muted: 75 85 101;
+    --c-faint: 107 115 133;
+    --c-navy: 18 38 122;
+    --c-navy-solid: 18 38 122;
+    --c-navy-strong: 12 28 94;
+    --c-navy-deep: 10 22 71;
+    --c-navy-tint: 238 241 252;
+    --c-navy-tint-2: 225 231 250;
+    --c-navy-line: 201 210 242;
+    --c-on-navy: 195 206 239;
+    --c-on-navy-2: 147 163 207;
+    --c-saffron: 194 65 12;
+    --c-saffron-bright: 240 122 22;
+    --c-saffron-solid: 194 65 12;
+    --c-saffron-strong: 154 52 18;
+    --c-saffron-tint: 255 243 232;
+    --c-saffron-line: 249 207 174;
+    --c-saffron-light: 255 166 102;
+    --c-saffron-pale: 255 217 184;
+    --c-green: 15 110 18;
+    --c-green-solid: 19 136 8;
+    --c-green-tint: 235 247 236;
+    --c-green-line: 189 227 194;
+    --c-green-pop: 78 226 120;
+    --c-purple: 107 47 163;
+    --c-purple-solid: 107 47 163;
+    --c-purple-tint: 244 238 251;
+    --c-purple-line: 220 205 240;
+    --c-danger: 185 28 28;
+    --c-danger-solid: 180 35 24;
+    --c-danger-tint: 252 237 238;
+    --c-danger-line: 244 207 211;
+    --c-amber: 138 90 11;
+    --c-amber-solid: 138 90 11;
+    --c-amber-tint: 251 244 226;
+    --c-amber-line: 238 217 168;
+    --c-teal: 20 92 104;
+    --c-teal-solid: 26 97 106;
+    --c-teal-tint: 234 245 246;
+    --c-teal-line: 198 227 231;
+    --c-sky-tint: 230 244 251;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --c-canvas: 11 17 32;
+      --c-surface: 19 26 43;
+      --c-subtle: 24 32 53;
+      --c-sunken: 30 39 64;
+      --c-line: 46 56 84;
+      --c-line-soft: 36 45 69;
+      --c-ink: 232 236 244;
+      --c-ink-2: 199 207 221;
+      --c-muted: 163 173 192;
+      --c-faint: 127 138 160;
+      --c-navy: 165 182 255;
+      --c-navy-solid: 46 71 184;
+      --c-navy-strong: 58 85 204;
+      --c-navy-deep: 8 13 28;
+      --c-navy-tint: 26 36 82;
+      --c-navy-tint-2: 35 48 112;
+      --c-navy-line: 52 65 138;
+      --c-on-navy: 195 206 239;
+      --c-on-navy-2: 147 163 207;
+      --c-saffron: 255 157 87;
+      --c-saffron-bright: 243 138 51;
+      --c-saffron-solid: 201 80 15;
+      --c-saffron-strong: 168 66 16;
+      --c-saffron-tint: 58 36 18;
+      --c-saffron-line: 110 61 28;
+      --c-saffron-light: 255 166 102;
+      --c-saffron-pale: 255 217 184;
+      --c-green: 111 220 133;
+      --c-green-solid: 28 127 49;
+      --c-green-tint: 18 48 27;
+      --c-green-line: 40 94 54;
+      --c-green-pop: 78 226 120;
+      --c-purple: 201 166 242;
+      --c-purple-solid: 123 69 190;
+      --c-purple-tint: 42 28 64;
+      --c-purple-line: 77 58 112;
+      --c-danger: 244 154 154;
+      --c-danger-solid: 163 48 42;
+      --c-danger-tint: 58 26 30;
+      --c-danger-line: 106 46 53;
+      --c-amber: 232 190 106;
+      --c-amber-solid: 154 107 22;
+      --c-amber-tint: 48 39 15;
+      --c-amber-line: 94 74 30;
+      --c-teal: 124 207 217;
+      --c-teal-solid: 30 110 120;
+      --c-teal-tint: 17 44 48;
+      --c-teal-line: 35 84 90;
+      --c-sky-tint: 16 42 56;
+    }
   }
 
   body {
-    background-color: var(--brand-bg);
-    color: #1a1918;
+    background-color: rgb(var(--c-canvas));
+    color: rgb(var(--c-ink));
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     letter-spacing: -0.011em;
@@ -36,12 +137,12 @@ a, button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d8cfc0;
+  background: rgb(var(--c-line));
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #beb29e;
+  background: rgb(var(--c-faint));
 }
 
 /* Official Print Gazette Digest Styles */

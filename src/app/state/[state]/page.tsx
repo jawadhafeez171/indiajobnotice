@@ -70,28 +70,28 @@ export default async function StateHomePage({ params }: PageProps) {
   const badgeStyle = getStateBadgeColor(state.code);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F1ECE1]">
+    <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar currentStateSlug={state.slug} />
 
       {/* Editorial State Header with Regional Tint Accent */}
-      <section className="border-b border-[#D5CAB5] bg-[#FCFAF4] py-5 sm:py-6 px-4 sm:px-6">
+      <section className="border-b border-line bg-subtle py-5 sm:py-6 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Breadcrumb with Tricolor Accent */}
-          <div className="flex items-center gap-2 text-xs text-[#4F4A43] mb-3">
-            <a href={getCentralPortalUrl()} className="hover:text-[#1E3799] font-medium transition-colors">
+          <div className="flex items-center gap-2 text-xs text-muted mb-3">
+            <a href={getCentralPortalUrl()} className="hover:text-navy font-medium transition-colors">
               All-India jobs
             </a>
             <span>/</span>
-            <span className="text-[#1A1918] font-bold">{state.name}</span>
+            <span className="text-ink font-bold">{state.name}</span>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1918] tracking-tight">
+                <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
                   {state.name}
                 </h1>
-                <span className="text-sm font-serif italic text-[#4F4A43]">
+                <span className="text-sm font-serif italic text-muted">
                   {state.nativeName}
                 </span>
                 <span
@@ -104,24 +104,24 @@ export default async function StateHomePage({ params }: PageProps) {
                 >
                   {state.code}
                 </span>
-                <span className="text-xs font-mono text-[#4F4A43]">
+                <span className="text-xs font-mono text-muted">
                   Capital: {state.capital}
                 </span>
               </div>
 
               {/* Dignified Cultural Greeting Line */}
-              <p className="mt-2 text-xs font-semibold text-[#1E3799]">
+              <p className="mt-2 text-xs font-semibold text-navy">
                 {state.greeting}
               </p>
 
-              <p className="mt-1 text-sm text-[#3F3B35] max-w-2xl leading-relaxed">
+              <p className="mt-1 text-sm text-ink-2 max-w-2xl leading-relaxed">
                 Official employment notifications, syllabus patterns, and gazette notices issued by state departments and public service commissions in {state.name}.
               </p>
             </div>
 
             {/* Subdirectory Context Pill */}
             <div className="flex items-center gap-2 text-xs font-mono shrink-0">
-              <span className="text-[#4F4A43] font-medium">State Hub:</span>
+              <span className="text-muted font-medium">State Hub:</span>
               <span className={cn("px-2.5 py-1 rounded font-bold border", badgeStyle.bg, badgeStyle.text, badgeStyle.border)}>
                 /state/{state.slug}
               </span>
@@ -154,17 +154,17 @@ export default async function StateHomePage({ params }: PageProps) {
         </section>
 
         {/* Authorized Recruitment Bodies & Stream Navigation */}
-        <section className="bg-white rounded-lg border border-[#D5CAB5] p-5 shadow-2xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E2D8C6] pb-3">
+        <section className="bg-surface rounded-lg border border-line p-5 shadow-2xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-line-soft pb-3">
             <div className="flex items-center gap-2">
               <TricolorCapsule className="w-10 h-1.5" />
-              <h3 className="font-serif text-sm font-bold text-[#1A1918]">
+              <h3 className="font-serif text-sm font-bold text-ink">
                 Key Recruitment Boards & Commissions in {state.name}
               </h3>
             </div>
             <a
               href={`/government-jobs/${state.slug}`}
-              className="text-xs font-bold text-[#1E3799] hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-navy hover:underline flex items-center gap-1"
             >
               <span>View Permanent {state.name} Hub</span>
               <span aria-hidden="true">→</span>
@@ -188,34 +188,34 @@ export default async function StateHomePage({ params }: PageProps) {
           </div>
 
           {/* Links to qualification and sector pages */}
-          <div className="pt-2 border-t border-[#E2D8C6] grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <div className="pt-2 border-t border-line-soft grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
             <a
               href="/engineering-jobs"
-              className="p-2.5 rounded bg-[#FCFAF4] border border-[#D5CAB5] hover:border-[#1E3799] transition-colors block text-center"
+              className="p-2.5 rounded bg-subtle border border-line hover:border-navy transition-colors block text-center"
             >
-              <span className="font-bold text-[#1A1918] block truncate">Engineering Jobs</span>
-              <span className="text-[11px] text-[#4F4A43]">B.Tech & Diploma</span>
+              <span className="font-bold text-ink block truncate">Engineering Jobs</span>
+              <span className="text-[11px] text-muted">B.Tech & Diploma</span>
             </a>
             <a
               href="/police-defense-jobs"
-              className="p-2.5 rounded bg-[#FCFAF4] border border-[#D5CAB5] hover:border-[#E96B15] transition-colors block text-center"
+              className="p-2.5 rounded bg-subtle border border-line hover:border-saffron-bright transition-colors block text-center"
             >
-              <span className="font-bold text-[#1A1918] block truncate">Police & Defense</span>
-              <span className="text-[11px] text-[#4F4A43]">SI & Constable</span>
+              <span className="font-bold text-ink block truncate">Police & Defense</span>
+              <span className="text-[11px] text-muted">SI & Constable</span>
             </a>
             <a
               href="/qualification/graduate"
-              className="p-2.5 rounded bg-[#FCFAF4] border border-[#D5CAB5] hover:border-[#1E3799] transition-colors block text-center"
+              className="p-2.5 rounded bg-subtle border border-line hover:border-navy transition-colors block text-center"
             >
-              <span className="font-bold text-[#1A1918] block truncate">Graduate Jobs</span>
-              <span className="text-[11px] text-[#4F4A43]">Any Degree</span>
+              <span className="font-bold text-ink block truncate">Graduate Jobs</span>
+              <span className="text-[11px] text-muted">Any Degree</span>
             </a>
             <a
               href="/qualification/12th-pass"
-              className="p-2.5 rounded bg-[#FCFAF4] border border-[#D5CAB5] hover:border-[#209948] transition-colors block text-center"
+              className="p-2.5 rounded bg-subtle border border-line hover:border-green transition-colors block text-center"
             >
-              <span className="font-bold text-[#1A1918] block truncate">12th Pass Jobs</span>
-              <span className="text-[11px] text-[#4F4A43]">Clerk & Assistant</span>
+              <span className="font-bold text-ink block truncate">12th Pass Jobs</span>
+              <span className="text-[11px] text-muted">Clerk & Assistant</span>
             </a>
           </div>
         </section>

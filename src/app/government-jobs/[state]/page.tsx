@@ -100,7 +100,7 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F1ECE1]">
+    <div className="min-h-screen flex flex-col bg-canvas">
       {/* Schema.org CollectionPage Structured Data */}
       <script
         type="application/ld+json"
@@ -110,52 +110,52 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-8">
         {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-2 text-xs text-[#4F4A43]">
-          <Link href="/" className="hover:text-[#1E3799] font-medium transition-colors">
+        <nav className="flex items-center gap-2 text-xs text-muted">
+          <Link href="/" className="hover:text-navy font-medium transition-colors">
             Home
           </Link>
           <span>/</span>
-          <Link href="/#all-states" className="hover:text-[#1E3799] font-medium transition-colors">
+          <Link href="/#all-states" className="hover:text-navy font-medium transition-colors">
             State jobs
           </Link>
           <span>/</span>
-          <span className="text-[#1A1918] font-bold">{state.name}</span>
+          <span className="text-ink font-bold">{state.name}</span>
         </nav>
 
         {/* Editorial State Govt Jobs Banner */}
-        <section className="bg-white rounded-xl border border-[#D5CAB5] p-6 sm:p-8 shadow-2xs border-t-4 border-t-[#1E3799]">
+        <section className="bg-surface rounded-xl border border-line p-6 sm:p-8 shadow-2xs border-t-4 border-t-navy">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div className="max-w-3xl">
               <div className="flex items-center gap-2.5 mb-2.5 flex-wrap">
                 <TricolorCapsule className="w-12 h-1.5" />
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[#1E3799] font-bold">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-navy font-bold">
                   All government jobs in the state
                 </span>
-                <span className="text-[#D8CFBF]">·</span>
+                <span className="text-faint">·</span>
                 <span className={cn("text-xs font-mono px-2 py-0.5 rounded font-bold border", badgeStyle.bg, badgeStyle.text, badgeStyle.border)}>
                   {state.code}
                 </span>
-                <span className="text-xs font-serif italic text-[#4F4A43]">
+                <span className="text-xs font-serif italic text-muted">
                   {state.nativeName}
                 </span>
               </div>
 
-              <h1 className="font-serif text-2xl sm:text-4xl font-bold text-[#1A1918] tracking-tight">
+              <h1 className="font-serif text-2xl sm:text-4xl font-bold text-ink tracking-tight">
                 Government Jobs in {state.name} 2026
               </h1>
 
-              <p className="mt-1.5 text-xs sm:text-sm font-semibold text-[#1E3799]">
+              <p className="mt-1.5 text-xs sm:text-sm font-semibold text-navy">
                 {state.greeting}
               </p>
 
-              <p className="mt-2 text-sm text-[#3F3B35] leading-relaxed">
+              <p className="mt-2 text-sm text-ink-2 leading-relaxed">
                 Direct access to official employment notifications issued by state public service commissions, police recruitment boards, high courts, and administrative departments in {state.name}.
               </p>
 
-              <div className="mt-4 pt-3 border-t border-[#E2D8C6] flex items-center gap-2 text-xs text-[#4F4A43] flex-wrap">
-                <span className="font-medium text-[#1A1918]">Major Recruiting Commissions:</span>
+              <div className="mt-4 pt-3 border-t border-line-soft flex items-center gap-2 text-xs text-muted flex-wrap">
+                <span className="font-medium text-ink">Major Recruiting Commissions:</span>
                 {state.majorExams.map((exam, i) => (
-                  <span key={i} className="px-2 py-0.5 rounded bg-[#EEF2FA] text-[#1E3799] font-mono font-bold text-[12px] border border-[#CCD8F0]">
+                  <span key={i} className="px-2 py-0.5 rounded bg-navy-tint text-navy font-mono font-bold text-[12px] border border-navy-line">
                     {exam}
                   </span>
                 ))}
@@ -164,20 +164,20 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
 
             {/* Quick Metrics */}
             <div className="grid grid-cols-2 md:grid-cols-1 gap-2.5 shrink-0 w-full md:w-56">
-              <div className="p-3 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5]">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[#4F4A43] font-bold block">
+              <div className="p-3 rounded-lg bg-subtle border border-line">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-muted font-bold block">
                   State Capital
                 </span>
-                <span className="text-base font-serif font-bold text-[#1A1918] block mt-0.5">
+                <span className="text-base font-serif font-bold text-ink block mt-0.5">
                   {state.capital}
                 </span>
               </div>
 
-              <div className="p-3 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5]">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[#4F4A43] font-bold block">
+              <div className="p-3 rounded-lg bg-subtle border border-line">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-muted font-bold block">
                   Active Vacancies
                 </span>
-                <span className="text-xl font-serif font-bold text-[#1E3799] block mt-0.5">
+                <span className="text-xl font-serif font-bold text-navy block mt-0.5">
                   {totalVacancies.toLocaleString("en-IN")}+ Posts
                 </span>
               </div>
@@ -186,43 +186,43 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
         </section>
 
         {/* State Specific Statutory Eligibility Guidance */}
-        <section className="bg-white rounded-xl border border-[#D5CAB5] p-6 shadow-2xs">
-          <div className="flex items-center gap-2 mb-4 border-b border-[#E2D8C6] pb-3">
-            <ShieldCheck className="w-5 h-5 text-[#1E3799]" />
+        <section className="bg-surface rounded-xl border border-line p-6 shadow-2xs">
+          <div className="flex items-center gap-2 mb-4 border-b border-line-soft pb-3">
+            <ShieldCheck className="w-5 h-5 text-navy" />
             <div>
-              <h2 className="font-serif text-lg font-bold text-[#1A1918]">
+              <h2 className="font-serif text-lg font-bold text-ink">
                 {state.name} Domicile, Language & Age Criteria
               </h2>
-              <p className="text-xs text-[#4F4A43]">
+              <p className="text-xs text-muted">
                 Key statutory conditions for applying to state departments vs all-India quotas
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-[#3E3C38]">
-            <div className="p-4 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5]">
-              <span className="font-bold text-[#1E3799] block mb-1 uppercase font-mono text-[11px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-ink-2">
+            <div className="p-4 rounded-lg bg-subtle border border-line">
+              <span className="font-bold text-navy block mb-1 uppercase font-mono text-[11px]">
                 1. Domicile & Reservation Rules
               </span>
-              <p className="leading-relaxed text-[#3F3B35]">
+              <p className="leading-relaxed text-ink-2">
                 Reserved category benefits (SC, ST, OBC, EWS) apply strictly to bona fide permanent residents of {state.name}. Candidates from other states may apply under the Open / General (Unreserved) merit quota.
               </p>
             </div>
 
-            <div className="p-4 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5]">
-              <span className="font-bold text-[#1E3799] block mb-1 uppercase font-mono text-[11px]">
+            <div className="p-4 rounded-lg bg-subtle border border-line">
+              <span className="font-bold text-navy block mb-1 uppercase font-mono text-[11px]">
                 2. Regional Language Paper
               </span>
-              <p className="leading-relaxed text-[#3F3B35]">
+              <p className="leading-relaxed text-ink-2">
                 Most Group B and C positions in {state.name} require proof of having studied the official regional language up to 10th standard matriculation or qualifying a mandatory state language screening test.
               </p>
             </div>
 
-            <div className="p-4 rounded-lg bg-[#FCFAF4] border border-[#D5CAB5]">
-              <span className="font-bold text-[#1E3799] block mb-1 uppercase font-mono text-[11px]">
+            <div className="p-4 rounded-lg bg-subtle border border-line">
+              <span className="font-bold text-navy block mb-1 uppercase font-mono text-[11px]">
                 3. Employment Exchange Registration
               </span>
-              <p className="leading-relaxed text-[#3F3B35]">
+              <p className="leading-relaxed text-ink-2">
                 Select technical and clerical drives require an active registration number on the official {state.name} State Employment Exchange portal prior to the application deadline.
               </p>
             </div>
@@ -234,16 +234,16 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
 
         {/* State jobs */}
         <section className="space-y-4">
-          <div className="flex items-baseline justify-between border-b border-[#D5CAB5] pb-2">
+          <div className="flex items-baseline justify-between border-b border-line pb-2">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#C2510A]" />
-              <h2 className="font-serif text-xl font-bold text-[#1A1918]">
+              <span className="w-2.5 h-2.5 rounded-full bg-saffron-solid" />
+              <h2 className="font-serif text-xl font-bold text-ink">
                 {state.name} jobs ({stateJobs.length})
               </h2>
             </div>
             <Link 
               href={`/state/${state.slug}`}
-              className="text-xs font-bold text-[#1E3799] hover:underline"
+              className="text-xs font-bold text-navy hover:underline"
             >
               Open Dedicated /state/{state.slug} Hub →
             </Link>
@@ -256,8 +256,8 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
               ))}
             </div>
           ) : (
-            <div className="p-6 text-center bg-white rounded-lg border border-[#D5CAB5]">
-              <p className="text-xs text-[#4F4A43]">
+            <div className="p-6 text-center bg-surface rounded-lg border border-line">
+              <p className="text-xs text-muted">
                 New state commission notifications for {state.name} will be gazetted shortly. Check national central drives below currently accepting applications from {state.name}.
               </p>
             </div>
@@ -265,15 +265,15 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
         </section>
 
         {/* Sector and qualification pages for this state */}
-        <section className="bg-white rounded-xl border border-[#D5CAB5] p-6 shadow-2xs space-y-4">
-          <div className="flex items-center justify-between border-b border-[#E2D8C6] pb-3">
+        <section className="bg-surface rounded-xl border border-line p-6 shadow-2xs space-y-4">
+          <div className="flex items-center justify-between border-b border-line-soft pb-3">
             <div className="flex items-center gap-2">
-              <Compass className="w-5 h-5 text-[#1E3799]" />
+              <Compass className="w-5 h-5 text-navy" />
               <div>
-                <h3 className="font-serif text-lg font-bold text-[#1A1918]">
+                <h3 className="font-serif text-lg font-bold text-ink">
                   Browse {state.name} Opportunities by Stream & Cadre
                 </h3>
-                <p className="text-xs text-[#4F4A43]">
+                <p className="text-xs text-muted">
                   Direct routes to departmental cadres and educational eligibility hubs
                 </p>
               </div>
@@ -283,20 +283,20 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
             <Link
               href="/engineering-jobs"
-              className="p-3.5 rounded-lg border border-[#D5CAB5] bg-[#FCFAF4] hover:border-[#1E3799] hover:bg-white transition-all group flex flex-col justify-between"
+              className="p-3.5 rounded-lg border border-line bg-subtle hover:border-navy hover:bg-surface transition-all group flex flex-col justify-between"
             >
               <div>
-                <span className="font-mono text-[11px] uppercase font-bold text-[#17803A] block mb-1">
+                <span className="font-mono text-[11px] uppercase font-bold text-green block mb-1">
                   Technical & Engineering
                 </span>
-                <span className="font-serif font-bold text-[#1A1918] group-hover:text-[#1E3799] transition-colors block">
+                <span className="font-serif font-bold text-ink group-hover:text-navy transition-colors block">
                   {state.name} Engineering Jobs
                 </span>
-                <p className="text-[12px] text-[#4F4A43] mt-1">
+                <p className="text-[12px] text-muted mt-1">
                   AE & JE recruitments across PWD, WRD, and Electricity Boards
                 </p>
               </div>
-              <span className="text-[12px] font-bold text-[#1E3799] mt-3 flex items-center gap-1">
+              <span className="text-[12px] font-bold text-navy mt-3 flex items-center gap-1">
                 <span>Engineering jobs</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
               </span>
@@ -304,20 +304,20 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
 
             <Link
               href="/police-defense-jobs"
-              className="p-3.5 rounded-lg border border-[#D5CAB5] bg-[#FCFAF4] hover:border-[#1E3799] hover:bg-white transition-all group flex flex-col justify-between"
+              className="p-3.5 rounded-lg border border-line bg-subtle hover:border-navy hover:bg-surface transition-all group flex flex-col justify-between"
             >
               <div>
-                <span className="font-mono text-[11px] uppercase font-bold text-[#B84D0A] block mb-1">
+                <span className="font-mono text-[11px] uppercase font-bold text-saffron block mb-1">
                   Uniformed Services
                 </span>
-                <span className="font-serif font-bold text-[#1A1918] group-hover:text-[#1E3799] transition-colors block">
+                <span className="font-serif font-bold text-ink group-hover:text-navy transition-colors block">
                   {state.name} Police & Defense
                 </span>
-                <p className="text-[12px] text-[#4F4A43] mt-1">
+                <p className="text-[12px] text-muted mt-1">
                   Police Sub-Inspector, Constable, and Forest Guard circulars
                 </p>
               </div>
-              <span className="text-[12px] font-bold text-[#1E3799] mt-3 flex items-center gap-1">
+              <span className="text-[12px] font-bold text-navy mt-3 flex items-center gap-1">
                 <span>Police jobs</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
               </span>
@@ -325,20 +325,20 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
 
             <Link
               href="/qualification/graduate"
-              className="p-3.5 rounded-lg border border-[#D5CAB5] bg-[#FCFAF4] hover:border-[#1E3799] hover:bg-white transition-all group flex flex-col justify-between"
+              className="p-3.5 rounded-lg border border-line bg-subtle hover:border-navy hover:bg-surface transition-all group flex flex-col justify-between"
             >
               <div>
-                <span className="font-mono text-[11px] uppercase font-bold text-[#1E3799] block mb-1">
+                <span className="font-mono text-[11px] uppercase font-bold text-navy block mb-1">
                   Degree Cadre
                 </span>
-                <span className="font-serif font-bold text-[#1A1918] group-hover:text-[#1E3799] transition-colors block">
+                <span className="font-serif font-bold text-ink group-hover:text-navy transition-colors block">
                   Graduate Officer Posts
                 </span>
-                <p className="text-[12px] text-[#4F4A43] mt-1">
+                <p className="text-[12px] text-muted mt-1">
                   Group A & B administrative civil services and officer appointments
                 </p>
               </div>
-              <span className="text-[12px] font-bold text-[#1E3799] mt-3 flex items-center gap-1">
+              <span className="text-[12px] font-bold text-navy mt-3 flex items-center gap-1">
                 <span>View Graduate Hub</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
               </span>
@@ -346,20 +346,20 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
 
             <Link
               href="/qualification/12th-pass"
-              className="p-3.5 rounded-lg border border-[#D5CAB5] bg-[#FCFAF4] hover:border-[#1E3799] hover:bg-white transition-all group flex flex-col justify-between"
+              className="p-3.5 rounded-lg border border-line bg-subtle hover:border-navy hover:bg-surface transition-all group flex flex-col justify-between"
             >
               <div>
-                <span className="font-mono text-[11px] uppercase font-bold text-[#4F4A43] block mb-1">
+                <span className="font-mono text-[11px] uppercase font-bold text-muted block mb-1">
                   Intermediate
                 </span>
-                <span className="font-serif font-bold text-[#1A1918] group-hover:text-[#1E3799] transition-colors block">
+                <span className="font-serif font-bold text-ink group-hover:text-navy transition-colors block">
                   12th Pass Vacancies
                 </span>
-                <p className="text-[12px] text-[#4F4A43] mt-1">
+                <p className="text-[12px] text-muted mt-1">
                   Clerical assistants, data entry operators, and junior staff posts
                 </p>
               </div>
-              <span className="text-[12px] font-bold text-[#1E3799] mt-3 flex items-center gap-1">
+              <span className="text-[12px] font-bold text-navy mt-3 flex items-center gap-1">
                 <span>View 12th Pass Hub</span>
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
               </span>
@@ -369,14 +369,14 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
 
         {/* Central Govt Jobs Open in this State */}
         <section className="space-y-4">
-          <div className="flex items-baseline justify-between border-b border-[#D5CAB5] pb-2">
+          <div className="flex items-baseline justify-between border-b border-line pb-2">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#1E3799]" />
-              <h2 className="font-serif text-xl font-bold text-[#1A1918]">
+              <span className="w-2.5 h-2.5 rounded-full bg-navy-solid" />
+              <h2 className="font-serif text-xl font-bold text-ink">
                 Central Government Jobs Open to {state.name} Candidates
               </h2>
             </div>
-            <span className="text-xs font-mono text-[#4F4A43]">
+            <span className="text-xs font-mono text-muted">
               National Eligibility
             </span>
           </div>

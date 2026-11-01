@@ -89,7 +89,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col font-sans bg-slate-50 text-slate-900 antialiased">
+      <body className="min-h-full flex flex-col font-sans bg-canvas text-ink antialiased">
         {children}
         <ScrollToTop />
         <Analytics />

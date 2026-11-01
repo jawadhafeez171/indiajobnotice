@@ -30,7 +30,7 @@ export default function BankingJobsPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F1ECE1]">
+    <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar currentStateSlug="central" />
       <main className="flex-1">
         <CategoryHubView hub={hub} parentCrumb={{ label: "Sectors", href: "/" }} />

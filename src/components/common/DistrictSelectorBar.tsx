@@ -40,18 +40,18 @@ export function DistrictSelectorBar({
   }
 
   return (
-    <div className="mt-4 pt-3.5 border-t border-[#D5CAB5]/80">
+    <div className="mt-4 pt-3.5 border-t border-line/80">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-        <div className="flex items-center gap-1.5 text-xs text-[#4F4A43] font-mono">
-          <MapPin className="w-3.5 h-3.5 text-[#B84D0A]" />
-          <span className="font-bold text-[#1A1918]">Jobs by district:</span>
-          <span className="text-[#8C827A]">({allDistricts.length} Districts in {stateName})</span>
+        <div className="flex items-center gap-1.5 text-xs text-muted font-mono">
+          <MapPin className="w-3.5 h-3.5 text-saffron" />
+          <span className="font-bold text-ink">Jobs by district:</span>
+          <span className="text-faint">({allDistricts.length} Districts in {stateName})</span>
         </div>
 
         {allDistricts.length > 8 && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="self-start sm:self-auto text-xs text-[#1E3799] hover:text-[#16276E] hover:underline font-bold flex items-center gap-1"
+            className="self-start sm:self-auto text-xs text-navy hover:text-navy hover:underline font-bold flex items-center gap-1"
           >
             <span>Browse All {allDistricts.length} Districts</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -70,8 +70,8 @@ export function DistrictSelectorBar({
               className={cn(
                 "px-2.5 py-1 rounded text-xs font-semibold border transition-all flex items-center gap-1 shadow-2xs",
                 isSelected
-                  ? "bg-[#1E3799] text-white border-[#1E3799] font-bold"
-                  : "bg-white text-[#4A4641] border-[#E0D7C7] hover:border-[#1E3799] hover:text-[#1E3799] hover:bg-[#EEF2FA]/50"
+                  ? "bg-navy-solid text-white border-navy font-bold"
+                  : "bg-surface text-ink-2 border-line hover:border-navy hover:text-navy hover:bg-navy-tint/50"
               )}
             >
               <span>{dist.name}</span>
@@ -87,7 +87,7 @@ export function DistrictSelectorBar({
         {allDistricts.length > 8 && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="px-2.5 py-1 rounded text-xs font-bold border border-dashed border-[#C5BBAA] bg-[#F7F3E9] text-[#B84D0A] hover:border-[#E96B15] hover:bg-[#FDF3EB] transition-all"
+            className="px-2.5 py-1 rounded text-xs font-bold border border-dashed border-line bg-subtle text-saffron hover:border-saffron-bright hover:bg-saffron-tint transition-all"
           >
             +{allDistricts.length - majorDistricts.length} More Districts...
           </button>
@@ -97,29 +97,29 @@ export function DistrictSelectorBar({
       {/* Searchable All Districts Modal */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#0B153D]/70 backdrop-blur-xs animate-in fade-in duration-150"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-navy-deep/70 backdrop-blur-xs animate-in fade-in duration-150"
           onClick={(e) => {
             if (e.target === e.currentTarget) setIsModalOpen(false);
           }}
         >
-          <div className="relative w-full max-w-2xl max-h-[85vh] bg-[#FCFAF4] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-[#D5CAB5]">
+          <div className="relative w-full max-w-2xl max-h-[85vh] bg-subtle rounded-xl shadow-2xl flex flex-col overflow-hidden border border-line">
             {/* Modal Header */}
-            <div className="p-4 border-b border-[#D5CAB5] bg-white flex items-center justify-between">
+            <div className="p-4 border-b border-line bg-surface flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#C2510A]" />
-                  <h3 className="font-serif text-lg font-bold text-[#1A1918]">
+                  <span className="w-2.5 h-2.5 rounded-full bg-saffron-solid" />
+                  <h3 className="font-serif text-lg font-bold text-ink">
                     Select District in {stateName}
                   </h3>
                 </div>
-                <p className="text-xs text-[#4F4A43] mt-0.5">
+                <p className="text-xs text-muted mt-0.5">
                   Official NIC Collectorates, District Courts & local health society circulars
                 </p>
               </div>
 
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1 rounded-md text-[#4F4A43] hover:text-[#1A1918] hover:bg-[#F2EDE4]"
+                className="p-1 rounded-md text-muted hover:text-ink hover:bg-sunken"
                 aria-label="Close"
               >
                 <X className="w-5 h-5" />
@@ -127,24 +127,24 @@ export function DistrictSelectorBar({
             </div>
 
             {/* Search Input Bar */}
-            <div className="p-3 bg-[#F9F6EE] border-b border-[#D5CAB5]">
+            <div className="p-3 bg-subtle border-b border-line">
               <div className="relative">
-                <Search className="w-4 h-4 text-[#8C827A] absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-faint absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder={`Search ${allDistricts.length} districts in ${stateName}...`}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-[#DCD3C3] rounded-md focus:outline-hidden focus:ring-1 focus:ring-[#1E3799] focus:border-[#1E3799]"
+                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-surface border border-line rounded-md focus:outline-hidden focus:ring-1 focus:ring-navy focus:border-navy"
                   autoFocus
                 />
               </div>
             </div>
 
             {/* Districts Grid / List */}
-            <div className="p-4 overflow-y-auto max-h-[55vh] divide-y divide-[#D5CAB5]/50">
+            <div className="p-4 overflow-y-auto max-h-[55vh] divide-y divide-line/50">
               {filteredDistricts.length === 0 ? (
-                <div className="py-8 text-center text-xs text-[#8C827A]">
+                <div className="py-8 text-center text-xs text-faint">
                   No districts match "{searchQuery}".
                 </div>
               ) : (
@@ -159,23 +159,23 @@ export function DistrictSelectorBar({
                         className={cn(
                           "p-2.5 rounded-lg border text-left transition-all flex flex-col justify-between group",
                           isSelected
-                            ? "bg-[#1E3799] text-white border-[#1E3799]"
-                            : "bg-white border-[#D5CAB5] hover:border-[#1E3799] hover:bg-[#EEF2FA]/40"
+                            ? "bg-navy-solid text-white border-navy"
+                            : "bg-surface border-line hover:border-navy hover:bg-navy-tint/40"
                         )}
                       >
                         <div>
-                          <div className={cn("text-xs font-bold leading-snug", isSelected ? "text-white" : "text-[#1A1918] group-hover:text-[#1E3799]")}>
+                          <div className={cn("text-xs font-bold leading-snug", isSelected ? "text-white" : "text-ink group-hover:text-navy")}>
                             {dist.name}
                           </div>
                           {dist.nativeName && (
-                            <div className={cn("text-[12px] font-serif", isSelected ? "text-white/80" : "text-[#4F4A43]")}>
+                            <div className={cn("text-[12px] font-serif", isSelected ? "text-white/80" : "text-muted")}>
                               {dist.nativeName}
                             </div>
                           )}
                         </div>
 
                         {dist.division && (
-                          <div className={cn("text-[11px] font-mono mt-1 pt-1 border-t", isSelected ? "border-white/20 text-white/70" : "border-black/5 text-[#8C827A]")}>
+                          <div className={cn("text-[11px] font-mono mt-1 pt-1 border-t", isSelected ? "border-white/20 text-white/70" : "border-black/5 text-faint")}>
                             {dist.division}
                           </div>
                         )}
@@ -187,13 +187,13 @@ export function DistrictSelectorBar({
             </div>
 
             {/* Modal Footer */}
-            <div className="p-3 border-t border-[#D5CAB5] bg-[#F9F6EE] flex items-center justify-between text-xs text-[#4F4A43]">
+            <div className="p-3 border-t border-line bg-subtle flex items-center justify-between text-xs text-muted">
               <span className="font-mono text-[12px]">
                 Showing {filteredDistricts.length} of {allDistricts.length} districts
               </span>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-3 py-1 bg-white border border-[#DCD3C3] rounded text-xs font-semibold text-[#1A1918] hover:bg-[#F2EDE4]"
+                className="px-3 py-1 bg-surface border border-line rounded text-xs font-semibold text-ink hover:bg-sunken"
               >
                 Close
               </button>
