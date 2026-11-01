@@ -2,15 +2,14 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Menu, X, Bookmark, Calendar, Send, MapPin } from "lucide-react";
+import { Menu, X, Bookmark, Calendar, Send } from "lucide-react";
 import { BrandLogo } from "./BrandLogo";
 import { StateSelectorModal } from "./StateSelectorModal";
 import { StateQuickStrip } from "./StateQuickStrip";
 import { WatchlistDrawer } from "./WatchlistDrawer";
 import { useWatchlist } from "@/lib/watchlist";
-import { getStateBySlug, STATES_REGISTRY } from "@/config/states";
+import { getStateBySlug } from "@/config/states";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
-import { cn } from "@/lib/utils";
 
 interface Props {
   currentStateSlug?: string;
@@ -38,94 +37,40 @@ export function Navbar({ currentStateSlug }: Props) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
             
-            {/* Logo Brand Mark & State Switcher */}
-            <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-              <a href={getCentralPortalUrl()} className="block group transition-transform hover:opacity-95" title="India Job Notice Home">
-                <BrandLogo height={32} />
-              </a>
-
-              {/* State Switcher Pill */}
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-navy-tint hover:bg-navy-tint-2 text-navy text-xs font-semibold border border-navy-line transition-colors whitespace-nowrap"
-                title="Switch State Portal"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-saffron-solid" />
-                <span>{currentState ? `${currentState.name} (${currentState.code})` : "All India"}</span>
-                <span className="text-[11px] font-mono font-bold px-1 py-0.5 rounded bg-surface text-navy border border-navy-line leading-none">
-                  36 States
-                </span>
-                <ChevronDown className="w-3 h-3 text-navy/70" />
-              </button>
-            </div>
+            {/* Logo */}
+            <a href={getCentralPortalUrl()} className="block shrink-0 group transition-transform hover:opacity-95" title="India Job Notice Home">
+              <BrandLogo height={32} />
+            </a>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-4 xl:gap-5 text-xs xl:text-sm text-ink-2 font-medium shrink-0">
+            <nav className="hidden lg:flex items-center gap-7 xl:gap-8 text-sm text-ink-2 font-semibold">
               <a
                 href={currentState ? getStateSubdomainUrl(currentState.slug) : getCentralPortalUrl()}
-                className="hover:text-navy transition-colors font-semibold whitespace-nowrap"
+                className="hover:text-navy transition-colors whitespace-nowrap"
               >
                 Jobs
               </a>
-
-              <Link
-                href="/calendar"
-                className="hover:text-navy transition-colors font-semibold flex items-center gap-1.5 whitespace-nowrap"
-              >
-                <Calendar className="w-3.5 h-3.5 text-navy" />
-                <span>Calendar</span>
+              <Link href="/calendar" className="hover:text-navy transition-colors whitespace-nowrap">
+                Exam calendar
               </Link>
-
-              <Link
-                href="/vacancies"
-                className="hover:text-navy transition-colors font-semibold whitespace-nowrap"
-              >
-                <span>Vacancy Tracker</span>
+              <Link href="/vacancies" className="hover:text-navy transition-colors whitespace-nowrap">
+                Vacancies
               </Link>
-
-              <Link
-                href="/calculator"
-                className="text-saffron hover:text-saffron transition-colors font-bold whitespace-nowrap"
-              >
-                <span>Age Calculator</span>
+              <Link href="/calculator" className="hover:text-navy transition-colors whitespace-nowrap">
+                Age calculator
               </Link>
-
-              <Link
-                href="/directory"
-                className="hover:text-navy transition-colors font-semibold whitespace-nowrap"
-              >
-                <span>Directory</span>
+              <Link href="/directory" className="hover:text-navy transition-colors whitespace-nowrap">
+                Directory
               </Link>
-
-              <Link
-                href="/about"
-                className="hover:text-navy transition-colors font-semibold whitespace-nowrap"
-              >
-                <span>About</span>
-              </Link>
-
-              {/* Telegram Channel Quick Action */}
-              <a
-                href="https://t.me/Indiajobnotice1"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#229ED9] hover:bg-[#1D88BC] text-white text-xs font-bold transition-colors whitespace-nowrap shadow-xs"
-                title="Join official Telegram channel for instant alerts"
-              >
-                <Send className="w-3 h-3" />
-                <span>Telegram</span>
-              </a>
-
-              {/* Watchlist Bookmark Trigger */}
               <button
                 onClick={() => setIsWatchlistOpen(true)}
-                className="relative flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface border border-line hover:border-navy text-ink hover:text-navy text-xs font-bold transition-all shadow-xs whitespace-nowrap"
-                title="View your saved and pinned notifications"
+                className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line hover:border-navy text-ink hover:text-navy transition-colors whitespace-nowrap"
+                title="Jobs you saved"
               >
-                <Bookmark className={`w-3.5 h-3.5 ${savedCount > 0 ? "fill-saffron-bright text-saffron" : "text-muted"}`} />
-                <span>Pinned</span>
+                <Bookmark className={`w-4 h-4 ${savedCount > 0 ? "fill-saffron-bright text-saffron" : "text-muted"}`} />
+                <span>Saved</span>
                 {savedCount > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[11px] font-mono font-black bg-saffron-solid text-white leading-none">
+                  <span className="px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-saffron-solid text-white leading-none">
                     {savedCount}
                   </span>
                 )}
