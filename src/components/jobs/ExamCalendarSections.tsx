@@ -9,7 +9,7 @@ interface Props {
   limit?: number;
 }
 
-const card = "p-4 rounded-xl bg-surface border border-line shadow-2xs flex flex-col gap-1.5";
+const card = "relative overflow-hidden pl-5 pr-4 py-4 rounded-xl bg-surface border border-line shadow-2xs flex flex-col gap-1.5";
 
 // "Admit card out, exam coming" and "Latest results": from the official documents the notice agent
 // read (exam dates from admit card / schedule notices, result dates). Each section shows only when
@@ -29,7 +29,8 @@ export function ExamCalendarSections({ jobs, limit = 10 }: Props) {
           <ul className="space-y-2.5">
             {upcoming.map(({ job, stage, nextDate }) => (
               <li key={job.id} className={card}>
-                <span className="text-xs font-bold text-saffron">Exam {formatDate(nextDate)}</span>
+                <span aria-hidden className="absolute left-0 inset-y-0 w-1.5 bg-navy-solid" />
+                <span className="text-xs font-bold text-navy">Exam {formatDate(nextDate)}</span>
                 <Link href={getJobCanonicalPath(job)} className="text-sm font-bold text-ink hover:text-navy leading-snug">
                   {job.shortTitle}
                 </Link>
@@ -45,12 +46,13 @@ export function ExamCalendarSections({ jobs, limit = 10 }: Props) {
       {results.length > 0 && (
         <section aria-labelledby="latest-results" className="space-y-3">
           <h2 id="latest-results" className="font-serif text-xl font-bold text-ink flex items-center gap-2">
-            <Award className="w-5 h-5 text-green" /> Latest results
+            <Award className="w-5 h-5 text-purple" /> Latest results
           </h2>
           <ul className="space-y-2.5">
             {results.map(({ job, stage }) => (
               <li key={job.id} className={card}>
-                <span className="text-xs font-bold text-green">
+                <span aria-hidden className="absolute left-0 inset-y-0 w-1.5 bg-purple-solid" />
+                <span className="text-xs font-bold text-purple">
                   {stage.kind === "final_result" ? "Final result" : "Result"} · {formatDate(stage.date || "")}
                 </span>
                 <Link href={getJobCanonicalPath(job)} className="text-sm font-bold text-ink hover:text-navy leading-snug">

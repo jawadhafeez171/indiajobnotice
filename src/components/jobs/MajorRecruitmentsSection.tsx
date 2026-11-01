@@ -8,6 +8,7 @@ import {
   formatAgeRange,
 } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
+import { JobListCard } from "./JobListCard";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
 import { useWatchlist } from "@/lib/watchlist";
 import { 
@@ -579,33 +580,11 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
               <button onClick={resetAllFilters} className="font-bold text-navy underline">Clear filters</button>
             </li>
           )}
-          {filteredJobs.slice(0, visible).map((job) => {
-            const daysLeft = getDaysRemaining(job.applicationEndDate);
-            const open = job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
-            const detailLink = job.isCentral ? `/jobs/${job.slug}` : `/state/${job.stateSlug}/jobs/${job.slug}`;
-            return (
-              <li key={job.id}>
-                <Link href={detailLink} className="block p-3.5 rounded-lg bg-surface border border-line active:border-navy">
-                  <span className="text-[12px] font-bold text-navy">
-                    {job.orgShortCode} · {job.isCentral ? "Central" : job.stateSlug.toUpperCase()}
-                  </span>
-                  <p className="mt-0.5 font-serif font-bold text-[15px] leading-snug text-ink line-clamp-2">{job.shortTitle}</p>
-                  <div className="mt-1.5 flex items-center justify-between gap-2 text-xs">
-                    <span className="text-ink-2">
-                      {job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} posts` : "Posts: see notification"}
-                    </span>
-                    <span className={cn("font-bold", open && daysLeft <= 7 ? "text-saffron" : "text-ink")}>
-                      {job.status === "ADMIT_CARD_OUT" ? "Admit card out"
-                        : job.status === "RESULT_OUT" ? "Result out"
-                        : job.applicationEndDate
-                          ? `${job.isWalkIn ? "Walk-in" : "Last date"} ${formatDate(job.applicationEndDate)}${open && daysLeft >= 0 ? ` · ${daysLeft}d left` : ""}`
-                          : "See notification"}
-                    </span>
-                  </div>
-                </Link>
-              </li>
-            );
-          })}
+          {filteredJobs.slice(0, visible).map((job) => (
+            <li key={job.id}>
+              <JobListCard job={job} />
+            </li>
+          ))}
         </ul>
       )}
       {viewMode === "ledger" && (
@@ -981,69 +960,22 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug }: Props) {
             </div>
           ) : (
             filteredJobs.map((job) => {
-              const catColors = getCategoryColors(job.category);
-              const detailLink = job.isCentral
-                ? `/jobs/${job.slug}`
-                : `/state/${job.stateSlug}/jobs/${job.slug}`;
               const saved = isSaved(job.id);
-
               return (
-                <div
+                <JobListCard
                   key={job.id}
-                  className="bg-surface rounded-lg border border-line hover:border-navy/40 p-4 transition-all flex flex-col justify-between shadow-2xs relative overflow-hidden"
-                >
-                  <div className={cn("absolute left-0 top-0 bottom-0 w-1", catColors.stripe)} />
-                  <div className="pl-1.5">
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-[11px] font-mono font-bold text-navy bg-navy-tint px-1.5 py-0.2 rounded border border-navy-line">
-                        {job.orgShortCode}
-                      </span>
-                      <div className="flex items-center gap-1.5">
-                        <JobStatusBadge status={job.status} />
-                        <button
-                          onClick={() => toggleSave(job.id)}
-                          className="p-1 rounded text-faint hover:text-saffron transition-colors"
-                          title={saved ? "Unpin notice" : "Pin notice"}
-                        >
-                          <Bookmark className={cn("w-3.5 h-3.5", saved && "fill-saffron-bright text-saffron")} />
-                        </button>
-                      </div>
-                    </div>
-
-                    <Link
-                      href={detailLink}
-                      className="font-serif font-bold text-sm text-ink hover:text-navy transition-colors line-clamp-2 leading-snug"
+                  job={job}
+                  action={
+                    <button
+                      onClick={() => toggleSave(job.id)}
+                      className={cn("p-1 rounded", saved ? "text-saffron" : "text-faint hover:text-navy")}
+                      title={saved ? "Remove from saved" : "Save this job"}
+                      aria-label={saved ? "Remove from saved" : "Save this job"}
                     >
-                      {job.title}
-                    </Link>
-
-                    <p className="text-[12px] text-muted mt-1 line-clamp-1">
-                      {job.organization}
-                    </p>
-
-                    <div className="mt-3 pt-2.5 border-t border-line-soft flex items-center justify-between text-xs font-mono">
-                      <span className="text-navy font-bold">
-                        {job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} Posts` : "Posts: see notice"}
-                      </span>
-                      <span className="text-muted text-[12px]">
-                        {formatAgeRange(job)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="pl-1.5 mt-3 pt-2.5 border-t border-line-soft flex items-center justify-between text-xs">
-                    <span className="text-[12px] text-muted">
-                      {job.status === "ADMIT_CARD_OUT" ? "Admit Card Out" : job.status === "RESULT_OUT" ? "Result Live" : `Ends: ${formatDate(job.applicationEndDate)}`}
-                    </span>
-                    <Link
-                      href={detailLink}
-                      className="text-saffron hover:text-saffron font-bold inline-flex items-center gap-0.5"
-                    >
-                      <span>Apply/View</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </Link>
-                  </div>
-                </div>
+                      <Bookmark className={cn("w-4 h-4", saved && "fill-saffron-bright")} />
+                    </button>
+                  }
+                />
               );
             })
           )}

@@ -1,0 +1,158 @@
+import React from "react";
+import Link from "next/link";
+import { JobNotification, JobStatus, getJobCanonicalPath, formatAgeRange } from "@/data/jobs";
+import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
+
+/** Colour of the left stripe and the status word, one per stage. */
+export const STATUS_STYLE: Record<JobStatus, { stripe: string; text: string; label: string }> = {
+  APPLY_OPEN: { stripe: "bg-green-solid", text: "text-green", label: "Open" },
+  LAST_DATE_NEAR: { stripe: "bg-saffron-bright", text: "text-saffron", label: "Closing soon" },
+  ADMIT_CARD_OUT: { stripe: "bg-navy-solid", text: "text-navy", label: "Admit card" },
+  RESULT_OUT: { stripe: "bg-purple-solid", text: "text-purple", label: "Result" },
+  UPCOMING: { stripe: "bg-navy-line", text: "text-navy", label: "Announced" },
+  APPLICATIONS_CLOSED: { stripe: "bg-line", text: "text-muted", label: "Closed" },
+};
+
+// Lowest level a qualification text asks for; specific degrees win over the generic level.
+const SPECIFIC: [RegExp, string][] = [
+  [/\bMBBS\b/i, "MBBS"],
+  // abbreviations are case-sensitive: "be" / "ma" are ordinary words
+  [/\bB\.\s?E\b|\bBE\b|\bB\.?\s?Tech/, "B.E./B.Tech"],
+  [/\bLL\.?\s?B\b|law degree/i, "Law degree"],
+  [/nursing|\bGNM\b|\bANM\b/i, "Nursing"],
+];
+const LEVELS: [RegExp, string][] = [
+  [/\b(8th|class\s*viii)\b/i, "8th"],
+  [/\b(10th|matric|sslc|class\s*x)\b|secondary school/i, "10th"],
+  [/\bITI\b/, "ITI"],
+  [/\b(12th|intermediate|higher secondary|class\s*xii|10\s*\+\s*2)\b|\b(PUC|HSC)\b/i, "12th"],
+  [/diploma/i, "Diploma"],
+  [/graduat|bachelor|\bdegree\b|\bB\.\s?(A|Sc|Com)\b|\bB(Sc|Com)\b/i, "Graduate"],
+  [/post.?graduat|master'?s|\bMBA\b|\bM\.\s?(A|Sc|Com|Tech)\b|\bM(Sc|Com|Tech)\b/i, "Postgraduate"],
+  [/\bPh\.?\s?D\b/, "PhD"],
+];
+// "Master's degree", "post graduate degree": not a plain graduate requirement
+const PG_PHRASE = /(post[\s-]?graduat\w*|\bPG\b|master'?s?)(\s+degree)?|\bM\.?\s?(A|Sc|Com|Tech|Phil)\b\.?(\s+degree)?|\bMBA\b|\bPh\.?\s?D\b(\s+degree)?/gi;
+
+function levelOf(text: string): string | null {
+  for (const [re, label] of SPECIFIC) if (re.test(text)) return label;
+  const withoutPg = text.replace(PG_PHRASE, " ");
+  for (const [re, label] of LEVELS) {
+    if (re.test(label === "Graduate" ? withoutPg : text)) return label;
+  }
+  return null;
+}
+
+/** "Graduate", "12th", "B.E./B.Tech", "Varies by post", or null when the notice gives nothing usable. */
+export function qualificationLabel(job: JobNotification): string | null {
+  const texts = job.posts?.length
+    ? job.posts.map((p) => p.qualification).filter(Boolean)
+    : job.qualifications.filter(Boolean);
+  const levels = new Set(texts.map(levelOf).filter((l): l is string => !!l));
+  if (levels.size === 1) return [...levels][0];
+  if (levels.size > 1) return "Varies by post";
+  return null;
+}
+
+function Bottom({ job }: { job: JobNotification }) {
+  const open = job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
+  const daysLeft = getDaysRemaining(job.applicationEndDate);
+  if (open && job.applicationEndDate) {
+    return (
+      <>
+        <span className="text-ink-2">
+          {job.isWalkIn ? "Walk-in" : "Last date"} <b className="text-ink">{formatDate(job.applicationEndDate)}</b>
+        </span>
+        {daysLeft >= 0 && (
+          <span
+            className={cn(
+              "px-2 py-0.5 rounded-full font-bold text-[12px]",
+              daysLeft <= 7 ? "bg-saffron-tint text-saffron" : "bg-green-tint text-green"
+            )}
+          >
+            {daysLeft === 0 ? "Last day" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`}
+          </span>
+        )}
+      </>
+    );
+  }
+  const text =
+    job.status === "ADMIT_CARD_OUT"
+      ? job.examDate ? `Admit card out · exam ${formatDate(job.examDate)}` : "Admit card out"
+      : job.status === "RESULT_OUT"
+        ? "Result out"
+        : job.currentStage || (open ? "Last date: see notification" : "Applications closed");
+  return <span className={cn("font-bold", STATUS_STYLE[job.status]?.text || "text-ink-2")}>{text}</span>;
+}
+
+interface Props {
+  job: JobNotification;
+  /** Extra chips after the facts (district quota, etc.). */
+  extra?: React.ReactNode;
+  /** Top-right control (e.g. save button); sits above the card's link. */
+  action?: React.ReactNode;
+  className?: string;
+}
+
+/**
+ * Job card with a stage-coloured stripe: organisation, title, key facts as chips, then the
+ * deadline (or the stage). The whole card is the link; `action` stays clickable on top.
+ */
+export function JobListCard({ job, extra, action, className }: Props) {
+  const style = STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING;
+  const qual = qualificationLabel(job);
+  const age = job.ageKnown !== false && job.maxAge > 0 ? formatAgeRange(job) : null;
+  const chips = [
+    job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} post${job.totalVacancies === 1 ? "" : "s"}` : null,
+    qual,
+    age,
+  ].filter(Boolean) as string[];
+
+  return (
+    <article
+      className={cn(
+        "group relative h-full flex flex-col rounded-xl bg-surface border border-line shadow-2xs overflow-hidden pl-5 pr-4 py-3.5 transition-colors hover:border-navy/50",
+        className
+      )}
+    >
+      <span className={cn("absolute left-0 inset-y-0 w-1.5", style.stripe)} aria-hidden />
+
+      <div className="flex items-center justify-between gap-2">
+        <span className="flex items-center gap-1.5 min-w-0">
+          <span className="shrink-0 px-1.5 py-0.5 rounded bg-navy-tint text-navy font-bold text-[12px] leading-none border border-navy-line">
+            {job.orgShortCode}
+          </span>
+          <span className="text-[12px] text-muted truncate">{job.isCentral ? "Central" : job.stateSlug.toUpperCase()}</span>
+        </span>
+        <span className="flex items-center gap-1.5 shrink-0">
+          <span className={cn("text-[12px] font-bold", style.text)}>{style.label}</span>
+          {action && <span className="relative z-10">{action}</span>}
+        </span>
+      </div>
+
+      <h3 className="mt-1.5 font-serif font-bold text-[15px] sm:text-base leading-snug text-ink line-clamp-2 group-hover:text-navy">
+        <Link href={getJobCanonicalPath(job)} className="after:absolute after:inset-0">
+          {/* "(196 Posts)" at the end repeats the posts chip */}
+          {(job.shortTitle || job.title).replace(/\s*\(\s*[\d,]+\s+posts?\s*\)\s*$/i, "")}
+        </Link>
+      </h3>
+
+      {(chips.length > 0 || extra) && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {chips.map((c) => (
+            <span key={c} className="px-2 py-0.5 rounded-full bg-subtle border border-line-soft text-[12px] text-ink-2">
+              {c}
+            </span>
+          ))}
+          {extra}
+        </div>
+      )}
+
+      <div className="mt-auto pt-2.5">
+        <div className="pt-2.5 border-t border-line-soft flex items-center justify-between gap-2 text-[13px]">
+          <Bottom job={job} />
+        </div>
+      </div>
+    </article>
+  );
+}

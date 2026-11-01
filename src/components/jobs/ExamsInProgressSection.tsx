@@ -1,5 +1,7 @@
 import React from "react";
 import Link from "next/link";
+import { STATUS_STYLE } from "./JobListCard";
+import { cn } from "@/lib/utils";
 import { Hourglass, ArrowRight } from "lucide-react";
 import { JobNotification, getJobCanonicalPath, stageText } from "@/data/jobs";
 
@@ -35,14 +37,20 @@ export function ExamsInProgressSection({ jobs, limit = 12 }: Props) {
             <li key={job.id}>
               <Link
                 href={getJobCanonicalPath(job)}
-                className="block h-full p-4 rounded-xl bg-surface border border-line hover:border-navy shadow-2xs transition-colors"
+                className="relative block h-full pl-5 pr-4 py-4 rounded-xl bg-surface border border-line hover:border-navy shadow-2xs transition-colors overflow-hidden"
               >
+                <span
+                  aria-hidden
+                  className={cn("absolute left-0 inset-y-0 w-1.5", (STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING).stripe)}
+                />
                 <span className="inline-block px-2 py-0.5 rounded bg-navy-tint text-navy font-bold text-[12px] border border-navy-line">
                   {job.orgShortCode}
                 </span>
                 <p className="mt-2 text-sm font-bold text-ink leading-snug line-clamp-2">{job.shortTitle}</p>
                 {job.currentStage && (
-                  <p className="mt-1.5 text-xs font-bold text-saffron">{job.currentStage}</p>
+                  <p className={cn("mt-1.5 text-xs font-bold", (STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING).text)}>
+                    {job.currentStage}
+                  </p>
                 )}
                 {last && <p className="mt-1 text-xs text-muted line-clamp-1">Latest: {stageText(last).main}</p>}
                 <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-navy">
