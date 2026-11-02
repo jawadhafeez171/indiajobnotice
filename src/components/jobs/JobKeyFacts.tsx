@@ -16,6 +16,16 @@ function Fact({ label, children, wide }: { label: string; children: React.ReactN
   );
 }
 
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September",
+  "October", "November", "December"];
+
+/** "08 Jan 2027", "January 2027", or the notice's words ("to be announced later"). */
+function examWhen(e: NonNullable<JobNotification["exams"]>[number]): string {
+  if (e.precision === "day") return formatDate(e.date);
+  if (e.precision === "month") return `${MONTHS[Number(e.date.slice(5, 7)) - 1]} ${e.date.slice(0, 4)}`;
+  return e.text || "To be announced";
+}
+
 // The answers a candidate looks for first: can I still apply, by when, how many posts, am I
 // eligible, what does it cost. Only facts from the notification; unknown ones say so.
 export function JobKeyFacts({ job }: Props) {
@@ -77,7 +87,21 @@ export function JobKeyFacts({ job }: Props) {
         {job.applicationStartDate && !job.isWalkIn && (
           <Fact label="Applications open">{formatDate(job.applicationStartDate)}</Fact>
         )}
-        {job.examDate && <Fact label="Exam date">{iso.test(job.examDate) ? formatDate(job.examDate) : job.examDate}</Fact>}
+        {job.exams?.length ? (
+          <Fact label={job.exams.length > 1 ? "Exam dates" : "Exam date"} wide={job.exams.length > 1}>
+            <ul className="space-y-0.5">
+              {job.exams.map((e, i) => (
+                <li key={i}>
+                  {e.stage && <span className="font-normal text-ink-2">{e.stage}: </span>}
+                  {examWhen(e)}
+                  {e.tentative && <span className="font-normal text-muted"> (tentative)</span>}
+                </li>
+              ))}
+            </ul>
+          </Fact>
+        ) : job.examDate ? (
+          <Fact label="Exam date">{iso.test(job.examDate) ? formatDate(job.examDate) : job.examDate}</Fact>
+        ) : null}
         {job.advtNo && <Fact label="Advertisement no.">{job.advtNo}</Fact>}
       </dl>
     </section>

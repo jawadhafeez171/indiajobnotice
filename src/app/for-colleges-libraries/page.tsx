@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { 
   GraduationCap, 
   Calendar, 
@@ -58,13 +57,6 @@ export default function ForCollegesLibrariesPage() {
       {/* Hero Header */}
       <section className="border-b border-line bg-subtle py-10 sm:py-12 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-2.5">
-            <TricolorCapsule className="w-14 h-1.5" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-navy font-bold">
-              Educational & Public Interest Initiative
-            </span>
-          </div>
-
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
             Free Recruitment Resources for College Placement Cells, Libraries & Coaching Centres
           </h1>
@@ -102,7 +94,7 @@ export default function ForCollegesLibrariesPage() {
                 <span className="w-10 h-10 rounded-lg bg-navy-tint text-navy flex items-center justify-center font-bold">
                   <Calendar className="w-5 h-5" />
                 </span>
-                <span className="text-[11px] font-mono font-bold text-navy bg-navy-tint px-2 py-0.5 rounded border border-navy-line">
+                <span className="text-[11px] font-bold text-navy bg-navy-tint px-2 py-0.5 rounded border border-navy-line">
                   Resource #1
                 </span>
               </div>
@@ -116,7 +108,7 @@ export default function ForCollegesLibrariesPage() {
               </p>
 
               <div className="bg-subtle p-3 rounded-lg border border-line text-xs space-y-1.5 text-ink-2">
-                <span className="font-bold text-navy block font-mono text-[11px] uppercase">
+                <span className="font-bold text-navy block text-[11px]">
                   Institutional Utilities:
                 </span>
                 <p>• One-click <code>.ics</code> calendar feed download for student smartphone sync.</p>
@@ -144,7 +136,7 @@ export default function ForCollegesLibrariesPage() {
                 <span className="w-10 h-10 rounded-lg bg-saffron-tint text-saffron flex items-center justify-center font-bold">
                   <GraduationCap className="w-5 h-5" />
                 </span>
-                <span className="text-[11px] font-mono font-bold text-saffron bg-saffron-tint px-2 py-0.5 rounded border border-saffron-line">
+                <span className="text-[11px] font-bold text-saffron bg-saffron-tint px-2 py-0.5 rounded border border-saffron-line">
                   Resource #2
                 </span>
               </div>
@@ -158,7 +150,7 @@ export default function ForCollegesLibrariesPage() {
               </p>
 
               <div className="bg-subtle p-3 rounded-lg border border-line text-xs space-y-1.5 text-ink-2">
-                <span className="font-bold text-saffron block font-mono text-[11px] uppercase">
+                <span className="font-bold text-saffron block text-[11px]">
                   Institutional Utilities:
                 </span>
                 <p>• TPO placement officers can instantly see how many active posts match their graduating batch.</p>
@@ -186,7 +178,7 @@ export default function ForCollegesLibrariesPage() {
                 <span className="w-10 h-10 rounded-lg bg-green-tint text-green flex items-center justify-center font-bold">
                   <Calculator className="w-5 h-5" />
                 </span>
-                <span className="text-[11px] font-mono font-bold text-green bg-green-tint px-2 py-0.5 rounded border border-green-line">
+                <span className="text-[11px] font-bold text-green bg-green-tint px-2 py-0.5 rounded border border-green-line">
                   Resource #3
                 </span>
               </div>
@@ -200,7 +192,7 @@ export default function ForCollegesLibrariesPage() {
               </p>
 
               <div className="bg-subtle p-3 rounded-lg border border-line text-xs space-y-1.5 text-ink-2">
-                <span className="font-bold text-green block font-mono text-[11px] uppercase">
+                <span className="font-bold text-green block text-[11px]">
                   Institutional Utilities:
                 </span>
                 <p>• Eliminates candidate disqualifications caused by edge-case cutoff date miscalculations.</p>
@@ -228,7 +220,7 @@ export default function ForCollegesLibrariesPage() {
                 <span className="w-10 h-10 rounded-lg bg-subtle text-navy flex items-center justify-center font-bold">
                   <Building2 className="w-5 h-5" />
                 </span>
-                <span className="text-[11px] font-mono font-bold text-navy bg-subtle px-2 py-0.5 rounded border border-line">
+                <span className="text-[11px] font-bold text-navy bg-subtle px-2 py-0.5 rounded border border-line">
                   Resource #4
                 </span>
               </div>
@@ -242,7 +234,7 @@ export default function ForCollegesLibrariesPage() {
               </p>
 
               <div className="bg-subtle p-3 rounded-lg border border-line text-xs space-y-1.5 text-ink-2">
-                <span className="font-bold text-navy block font-mono text-[11px] uppercase">
+                <span className="font-bold text-navy block text-[11px]">
                   Institutional Utilities:
                 </span>
                 <p>• Verified official <code>.gov.in</code> and <code>.nic.in</code> portals to protect students from scam sites.</p>
@@ -289,20 +281,20 @@ export default function ForCollegesLibrariesPage() {
 
           {/* Quick Copy Snippets */}
           <div className="pt-3 border-t border-line-soft space-y-2">
-            <span className="font-mono text-[12px] uppercase font-bold text-ink block">
+            <span className="text-[12px] font-bold text-ink block">
               Suggested Clean Anchor Text for College Career Portals:
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              <div className="p-2.5 rounded bg-subtle border border-line font-mono text-[12px] text-navy">
+              <div className="p-2.5 rounded bg-subtle border border-line font-mono text-[12px] text-navy break-all">
                 &lt;a href=&quot;https://www.indiajobnotice.com/calendar&quot;&gt;Government Exam &amp; Deadline Calendar 2026&lt;/a&gt;
               </div>
-              <div className="p-2.5 rounded bg-subtle border border-line font-mono text-[12px] text-navy">
+              <div className="p-2.5 rounded bg-subtle border border-line font-mono text-[12px] text-navy break-all">
                 &lt;a href=&quot;https://www.indiajobnotice.com/calculator&quot;&gt;Government Job Cut-off Date Age Calculator&lt;/a&gt;
               </div>
-              <div className="p-2.5 rounded bg-subtle border border-line font-mono text-[12px] text-navy">
+              <div className="p-2.5 rounded bg-subtle border border-line font-mono text-[12px] text-navy break-all">
                 &lt;a href=&quot;https://www.indiajobnotice.com/vacancies&quot;&gt;Qualification-Wise Government Vacancy Tracker&lt;/a&gt;
               </div>
-              <div className="p-2.5 rounded bg-subtle border border-line font-mono text-[12px] text-navy">
+              <div className="p-2.5 rounded bg-subtle border border-line font-mono text-[12px] text-navy break-all">
                 &lt;a href=&quot;https://www.indiajobnotice.com/directory&quot;&gt;State Public Service Commissions Directory&lt;/a&gt;
               </div>
             </div>

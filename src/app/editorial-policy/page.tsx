@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { 
   FileCheck, 
   ShieldCheck, 
@@ -51,13 +50,6 @@ export default function EditorialPolicyPage() {
             <span className="text-ink font-bold">Editorial Standards</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <TricolorCapsule className="w-10 h-1.5" />
-            <span className="text-xs font-mono uppercase tracking-wider text-navy font-bold">
-              Fact-Checking &amp; Verification Protocol
-            </span>
-          </div>
-
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-ink tracking-tight">
             Editorial &amp; Gazette Verification Policy
           </h1>
@@ -66,7 +58,7 @@ export default function EditorialPolicyPage() {
             In competitive government examinations, a single inaccurate date or miscalculated age cut-off can disqualify a student. Our rigorous 5-stage verification methodology ensures every notification published on IndiaJobNotice is authentic, verified, and backed by primary public records.
           </p>
 
-          <p className="text-xs text-muted font-mono pt-1">
+          <p className="text-xs text-muted pt-1 font-semibold">
             Policy Effective: <strong>{lastUpdated}</strong> • Governed by Editorial Standards Board
           </p>
         </div>
@@ -92,7 +84,7 @@ export default function EditorialPolicyPage() {
             {/* Stage 1 */}
             <div className="bg-surface p-5 rounded-lg border border-line shadow-2xs space-y-2">
               <div className="flex items-center gap-2 text-navy font-serif font-bold text-base">
-                <span className="w-6 h-6 rounded-full bg-navy-tint text-navy font-mono text-xs flex items-center justify-center border border-navy-line">
+                <span className="w-6 h-6 rounded-full bg-navy-tint text-navy text-xs flex items-center justify-center border border-navy-line font-semibold">
                   1
                 </span>
                 <h3>Primary Source Authentication Only</h3>
@@ -105,7 +97,7 @@ export default function EditorialPolicyPage() {
             {/* Stage 2 */}
             <div className="bg-surface p-5 rounded-lg border border-line shadow-2xs space-y-2">
               <div className="flex items-center gap-2 text-navy font-serif font-bold text-base">
-                <span className="w-6 h-6 rounded-full bg-navy-tint text-navy font-mono text-xs flex items-center justify-center border border-navy-line">
+                <span className="w-6 h-6 rounded-full bg-navy-tint text-navy text-xs flex items-center justify-center border border-navy-line font-semibold">
                   2
                 </span>
                 <h3>Vacancy Matrix &amp; Category Roster Verification</h3>
@@ -118,7 +110,7 @@ export default function EditorialPolicyPage() {
             {/* Stage 3 */}
             <div className="bg-surface p-5 rounded-lg border border-line shadow-2xs space-y-2">
               <div className="flex items-center gap-2 text-navy font-serif font-bold text-base">
-                <span className="w-6 h-6 rounded-full bg-navy-tint text-navy font-mono text-xs flex items-center justify-center border border-navy-line">
+                <span className="w-6 h-6 rounded-full bg-navy-tint text-navy text-xs flex items-center justify-center border border-navy-line font-semibold">
                   3
                 </span>
                 <h3>Crucial Date &amp; Age-Reckoning Algorithm Validation</h3>
@@ -131,7 +123,7 @@ export default function EditorialPolicyPage() {
             {/* Stage 4 */}
             <div className="bg-surface p-5 rounded-lg border border-line shadow-2xs space-y-2">
               <div className="flex items-center gap-2 text-navy font-serif font-bold text-base">
-                <span className="w-6 h-6 rounded-full bg-navy-tint text-navy font-mono text-xs flex items-center justify-center border border-navy-line">
+                <span className="w-6 h-6 rounded-full bg-navy-tint text-navy text-xs flex items-center justify-center border border-navy-line font-semibold">
                   4
                 </span>
                 <h3>Direct Official PDF Preservation</h3>
@@ -144,7 +136,7 @@ export default function EditorialPolicyPage() {
             {/* Stage 5 */}
             <div className="bg-surface p-5 rounded-lg border border-line shadow-2xs space-y-2">
               <div className="flex items-center gap-2 text-navy font-serif font-bold text-base">
-                <span className="w-6 h-6 rounded-full bg-navy-tint text-navy font-mono text-xs flex items-center justify-center border border-navy-line">
+                <span className="w-6 h-6 rounded-full bg-navy-tint text-navy text-xs flex items-center justify-center border border-navy-line font-semibold">
                   5
                 </span>
                 <h3>Continuous Corrigendum &amp; Postponement Tracking</h3>

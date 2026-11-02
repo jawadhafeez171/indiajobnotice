@@ -4,26 +4,15 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { JobCard } from "@/components/jobs/JobCard";
+import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
-import { getStateBySlug, getStateBadgeColor } from "@/config/states";
-import { 
-  VERIFIED_STATE_QUAL_HUBS, 
-  getStateQualHub, 
-  getJobsForStateQualHub 
+import { getStateBySlug } from "@/config/states";
+import {
+  VERIFIED_STATE_QUAL_HUBS,
+  getStateQualHub,
+  getJobsForStateQualHub
 } from "@/data/state-qualification-hubs";
 import { getAllJobs } from "@/lib/jobs-store";
-import { 
-  Building2, 
-  GraduationCap, 
-  ShieldCheck, 
-  ArrowRight, 
-  Compass, 
-  MapPin,
-  CheckCircle2,
-  AlertCircle
-} from "lucide-react";
 
 interface Props {
   params: Promise<{ state: string; qualification: string }>;
@@ -75,8 +64,9 @@ export default async function StateQualificationPage({ params }: Props) {
   }
 
   const jobs = getJobsForStateQualHub(await getAllJobs(), hub);
-  const badgeStyle = getStateBadgeColor(state.code);
-  const totalPosts = jobs.reduce((sum, j) => sum + (j.totalVacancies || 0), 0);
+  const open = jobs.filter((j) => j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR");
+  const openPosts = open.reduce((n, j) => n + (j.totalVacancies || 0), 0);
+  const underWay = jobs.filter((j) => j.inProgress).length;
 
   // Schema.org CollectionPage + BreadcrumbList JSON-LD
   const canonicalUrl = `https://www.indiajobnotice.com/government-jobs/${hub.stateSlug}/${hub.qualSlug}`;
@@ -136,7 +126,7 @@ export default async function StateQualificationPage({ params }: Props) {
 
       <Navbar currentStateSlug={state.slug} />
 
-      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-8">
+      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-7 flex-1 w-full space-y-8">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted">
           <Link href="/" className="hover:text-navy font-medium transition-colors">Home</Link>
@@ -148,130 +138,38 @@ export default async function StateQualificationPage({ params }: Props) {
           <span className="text-ink font-bold">{hub.qualLabel}</span>
         </nav>
 
-        {/* Editorial Header */}
-        <section className="bg-surface rounded-xl border border-line border-t-4 border-t-navy p-6 sm:p-8 shadow-2xs">
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-            <div className="max-w-3xl">
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <TricolorCapsule className="w-12 h-1.5" />
-                <span className="text-[11px] font-mono uppercase tracking-wider text-navy font-bold">
-                  Curated Candidate Hub
-                </span>
-                <span className="text-faint">·</span>
-                <span className={`text-[12px] font-mono font-bold px-2 py-0.5 rounded border ${badgeStyle.bg} ${badgeStyle.text} ${badgeStyle.border}`}>
-                  {state.name} ({state.code})
-                </span>
-                <span className="text-[12px] font-mono font-bold text-navy bg-navy-tint px-2 py-0.5 rounded border border-navy-line">
-                  {hub.qualLabel}
-                </span>
-              </div>
+        <header className="max-w-3xl">
+          <h1 className="font-serif text-[24px] sm:text-4xl font-bold text-ink tracking-tight leading-tight text-balance">
+            {hub.h1}
+          </h1>
+          <p className="mt-2 text-sm text-ink-2">
+            <b className="text-ink">{open.length} open now</b>
+            {openPosts > 0 && <> ({openPosts.toLocaleString("en-IN")} posts)</>}
+            {underWay > 0 && <> · {underWay} more with exams or results to come</>}
+            , {state.name} and central jobs, each read from its official notice.
+          </p>
+          <p className="mt-3 text-sm text-muted leading-relaxed max-w-[68ch]">{hub.subtitle}</p>
+        </header>
 
-              <h1 className="font-serif text-2xl sm:text-4xl font-bold text-ink tracking-tight">
-                {hub.h1}
-              </h1>
+        <MajorRecruitmentsSection jobs={jobs} hideSearch showLayoutSwitch={false} />
 
-              <p className="mt-2 text-sm sm:text-base text-ink-2 leading-relaxed">
-                {hub.subtitle}
-              </p>
-            </div>
-
-            {/* Quick Metrics */}
-            <div className="grid grid-cols-2 md:grid-cols-1 gap-2.5 shrink-0 w-full md:w-56">
-              <div className="p-3 rounded-lg bg-subtle border border-line">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-muted font-bold block">
-                  Active Posts
-                </span>
-                <span className="text-xl font-serif font-bold text-navy block mt-0.5">
-                  {totalPosts.toLocaleString("en-IN")}+ Vacancies
-                </span>
-              </div>
-
-              <div className="p-3 rounded-lg bg-subtle border border-line">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-muted font-bold block">
-                  Recruiting Boards
-                </span>
-                <span className="text-xs font-mono font-bold text-green block mt-0.5">
-                  {state.majorExams.slice(0, 2).join(", ")}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Domicile, Language & Eligibility Directive */}
-          <div className="mt-6 pt-5 border-t border-line-soft bg-subtle p-4 rounded-xl border border-line">
-            <div className="flex items-start gap-2.5">
-              <ShieldCheck className="w-5 h-5 text-navy shrink-0 mt-0.5" />
-              <div>
-                <span className="font-serif font-bold text-xs text-ink block">
-                  {state.name} domicile and eligibility rules for {hub.qualLabel} candidates:
-                </span>
-                <p className="text-xs text-ink-2 mt-1 leading-relaxed">
-                  {hub.stateDomicileNote}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Reserved Ad Slot (0.00 CLS Protection) */}
         <ReservedAdSlot slotType="leaderboard" slotId={`state-qual-${state.slug}-${hub.qualSlug}`} />
 
-        {/* Verified Listings Section */}
-        <section className="space-y-4">
-          <div className="flex items-baseline justify-between border-b border-line pb-2">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-navy-solid" />
-              <h2 className="font-serif text-xl font-bold text-ink">
-                Recruitments ({jobs.length})
-              </h2>
-            </div>
-            <span className="text-xs text-muted font-mono">
-              Live Openings
-            </span>
-          </div>
-
-          {jobs.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {jobs.map((job) => (
-                <JobCard 
-                  key={job.id} 
-                  job={job} 
-                  currentStateSlug={job.isCentral ? "central" : job.stateSlug} 
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="p-8 text-center bg-surface rounded-lg border border-line">
-              <p className="text-xs text-muted">
-                New circulars under this category for {state.name} are expected shortly. Check national central drives open to {state.name} candidates.
-              </p>
-            </div>
-          )}
-        </section>
-
-        {/* Bidirectional Permanent Pathways */}
-        <section className="bg-surface rounded-xl border border-line p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
-          <div>
-            <span className="font-bold text-sm text-ink block">
-              Looking for other streams or national openings?
-            </span>
-            <span className="text-muted">
-              Browse all {state.name} departments or explore all-India openings for this qualification.
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 shrink-0">
-            <Link
-              href={`/government-jobs/${state.slug}`}
-              className="px-3.5 py-2 rounded-lg bg-subtle border border-line text-navy font-bold hover:bg-navy-tint transition-colors"
-            >
-              All {state.name} jobs →
+        <section aria-labelledby="domicile" className="border-t border-line pt-6 max-w-3xl">
+          <h2 id="domicile" className="font-serif text-xl font-bold text-ink">
+            {state.name} rules for {hub.qualLabel} candidates
+          </h2>
+          <p className="mt-2 text-sm text-ink-2 leading-relaxed">{hub.stateDomicileNote}</p>
+          <p className="mt-1 text-[13px] text-muted">The usual rules; each notification sets its own, so check it before you apply.</p>
+          <div className="mt-4 flex flex-wrap gap-x-6">
+            <Link href={`/government-jobs/${state.slug}`} className="inline-flex items-center min-h-[44px] text-sm font-semibold text-navy hover:underline">
+              All {state.name} jobs
             </Link>
             <Link
               href={hub.qualSlug === "engineering" ? "/engineering-jobs" : `/qualification/${hub.qualSlug}`}
-              className="px-3.5 py-2 rounded-lg bg-navy-solid text-white font-bold hover:bg-navy-strong transition-colors"
+              className="inline-flex items-center min-h-[44px] text-sm font-semibold text-navy hover:underline"
             >
-              All-India {hub.qualLabel} Hub →
+              {hub.qualLabel} jobs across India
             </Link>
           </div>
         </section>

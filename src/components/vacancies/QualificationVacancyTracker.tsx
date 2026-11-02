@@ -2,26 +2,10 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { JobNotification, isJobApplicationClosed, formatAgeRange } from "@/data/jobs";
-import { JobStatusBadge } from "@/components/jobs/JobStatusBadge";
-import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
-import { 
-  GraduationCap, 
-  Building2, 
-  Users, 
-  Briefcase, 
-  ArrowRight, 
-  Printer, 
-  Download, 
-  Share2, 
-  CheckCircle2, 
-  FileText, 
-  Sparkles, 
-  Layers, 
-  Calendar,
-  Code
-} from "lucide-react";
+import { JobNotification, formatAgeRange, getJobCanonicalPath } from "@/data/jobs";
+import { STATUS_STYLE, qualificationLabel, rowTitle, placeLabel } from "@/components/jobs/JobListCard";
+import { formatDateShort, getDaysRemaining, cn } from "@/lib/utils";
+import { ArrowRight, Printer } from "lucide-react";
 
 export interface QualificationTier {
   id: string;
@@ -110,280 +94,155 @@ export const QUALIFICATION_TIERS: QualificationTier[] = [
   },
 ];
 
+const SCREEN_ROWS = 25;
+const isOpen = (j: JobNotification) => j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR";
+
+/**
+ * Vacancies by qualification: pick a level, see its recruitments (nearest last date first) and print
+ * the list for a college or library notice board. The screen shows 25 rows; the printout has all.
+ */
 export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] }) {
   const [selectedTierId, setSelectedTierId] = useState<string>("all");
-  const [activeOnly, setActiveOnly] = useState<boolean>(true);
+  const [openOnly, setOpenOnly] = useState<boolean>(true);
+  const [showAll, setShowAll] = useState(false);
 
-  const currentTier = useMemo(() => {
-    return QUALIFICATION_TIERS.find((t) => t.id === selectedTierId) || QUALIFICATION_TIERS[0];
-  }, [selectedTierId]);
+  const currentTier = QUALIFICATION_TIERS.find((t) => t.id === selectedTierId) || QUALIFICATION_TIERS[0];
 
-  // Aggregate metrics across all tiers
-  const tierStats = useMemo(() => {
-    return QUALIFICATION_TIERS.map((tier) => {
-      const matching = jobs.filter((job) => {
-        if (activeOnly && isJobApplicationClosed(job)) return false;
-        return tier.matcher(job);
-      });
-      const totalVacancies = matching.reduce((sum, j) => sum + (j.totalVacancies || 0), 0);
-      return {
-        ...tier,
-        jobCount: matching.length,
-        totalVacancies,
-      };
-    });
-  }, [activeOnly, jobs]);
+  const tierStats = useMemo(() => QUALIFICATION_TIERS.map((tier) => {
+    const matching = jobs.filter((job) => (!openOnly || isOpen(job)) && tier.matcher(job));
+    return { ...tier, jobCount: matching.length, posts: matching.reduce((n, j) => n + (j.totalVacancies || 0), 0) };
+  }), [openOnly, jobs]);
 
-  // Jobs matching selected tier
-  const filteredJobs = useMemo(() => {
-    return jobs.filter((job) => {
-      if (activeOnly && isJobApplicationClosed(job)) return false;
-      return currentTier.matcher(job);
-    }).sort((a, b) => b.totalVacancies - a.totalVacancies);
-  }, [currentTier, activeOnly, jobs]);
-
-  const totalFilteredVacancies = useMemo(() => {
-    return filteredJobs.reduce((sum, j) => sum + (j.totalVacancies || 0), 0);
-  }, [filteredJobs]);
+  const rows = useMemo(() => jobs
+    .filter((job) => (!openOnly || isOpen(job)) && currentTier.matcher(job))
+    .sort((a, b) => (a.applicationEndDate || "9999").localeCompare(b.applicationEndDate || "9999")
+      || b.totalVacancies - a.totalVacancies), [currentTier, openOnly, jobs]);
+  const posts = rows.reduce((n, j) => n + (j.totalVacancies || 0), 0);
 
   return (
-    <div className="space-y-8">
-      {/* Top Controls & Institutional Print Button */}
-      <div className="bg-surface rounded-xl border border-line p-5 sm:p-6 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line-soft pb-4">
-          <div>
-            <span className="text-[11px] font-mono uppercase tracking-wider text-navy font-bold block mb-1">
-              From official notifications
-            </span>
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-ink">
-              Qualification-Wise Vacancy Breakdown
-            </h2>
-            <p className="text-xs text-muted mt-0.5">
-              Filter government jobs by educational criteria. Used by college placement cells, coaching faculties, and public library desks.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 self-start sm:self-auto">
+    <div className="space-y-5">
+      {/* level picker: open jobs and posts per qualification */}
+      <div role="group" aria-label="Qualification" className="flex flex-wrap gap-2 print:hidden">
+        {tierStats.map((tier) => {
+          const on = tier.id === selectedTierId;
+          return (
             <button
-              onClick={() => window.print()}
-              className="px-3.5 py-2 rounded-lg bg-navy-solid hover:bg-navy-strong text-white text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5"
+              key={tier.id}
+              aria-pressed={on}
+              onClick={() => { setSelectedTierId(tier.id); setShowAll(false); }}
+              className={cn(
+                "px-3.5 min-h-[44px] rounded-full border text-[13px] font-semibold text-left transition-colors",
+                on ? "bg-navy-solid text-white border-navy" : "bg-surface text-ink-2 border-control hover:border-navy"
+              )}
             >
-              <Printer className="w-3.5 h-3.5" />
-              <span>Print Campus Notice Board Bulletin</span>
+              {tier.shortLabel}
+              <span className={cn("ml-1.5 font-normal tabular-nums", on ? "text-white/85" : "text-muted")}>
+                {tier.jobCount} · {tier.posts.toLocaleString("en-IN")} posts
+              </span>
             </button>
-          </div>
-        </div>
+          );
+        })}
+      </div>
 
-        {/* Live Qualification Tier Metric Cards */}
-        <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-          {tierStats.map((tier) => {
-            const isSelected = tier.id === selectedTierId;
-            return (
-              <button
-                key={tier.id}
-                onClick={() => setSelectedTierId(tier.id)}
-                className={cn(
-                  "p-3 rounded-lg border text-left transition-all flex flex-col justify-between group",
-                  isSelected
-                    ? "bg-navy-tint border-navy ring-2 ring-navy/20 shadow-2xs"
-                    : "bg-subtle border-line hover:bg-surface hover:border-navy-line"
-                )}
-              >
-                <div>
-                  <span className={cn(
-                    "text-[11px] font-mono uppercase font-bold block mb-1 truncate",
-                    isSelected ? "text-navy" : "text-muted"
-                  )}>
-                    {tier.shortLabel}
-                  </span>
-                  <span className="font-serif font-bold text-lg text-ink block leading-tight">
-                    {tier.totalVacancies.toLocaleString("en-IN")}
-                  </span>
-                  <span className="text-[11px] text-muted block mt-0.5">
-                    Vacancies
-                  </span>
-                </div>
-
-                <div className="mt-2.5 pt-2 border-t border-line/60 flex items-center justify-between text-[11px] font-bold">
-                  <span className={isSelected ? "text-navy" : "text-ink-2"}>
-                    {tier.jobCount} jobs
-                  </span>
-                  <ArrowRight className={cn(
-                    "w-3 h-3 transition-transform",
-                    isSelected ? "text-navy translate-x-0.5" : "text-faint group-hover:translate-x-0.5"
-                  )} />
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Active Toggle & Summary Bar */}
-        <div className="mt-4 pt-4 border-t border-line-soft flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-ink">Showing:</span>
-            <span className="px-2.5 py-0.5 rounded bg-navy-tint text-navy font-bold border border-navy-line">
-              {currentTier.label}
-            </span>
-            <span className="text-muted">
-              ({totalFilteredVacancies.toLocaleString("en-IN")} Total Posts in {filteredJobs.length} Drives)
-            </span>
-          </div>
-
-          <label className="flex items-center gap-2 text-xs font-medium cursor-pointer text-ink-2">
-            <input
-              type="checkbox"
-              checked={activeOnly}
-              onChange={(e) => setActiveOnly(e.target.checked)}
-              className="rounded border-line text-navy focus:ring-navy"
-            />
-            <span>Active & Upcoming Openings Only</span>
+      <div className="flex flex-wrap items-center justify-between gap-3 text-[13px]">
+        <p className="text-ink-2" aria-live="polite">
+          <b className="text-ink">{rows.length}</b> {openOnly ? "open" : ""} recruitments for{" "}
+          <b className="text-ink">{currentTier.label}</b>
+          {posts > 0 && <> · {posts.toLocaleString("en-IN")} posts</>} · nearest last date first
+        </p>
+        <div className="flex items-center gap-4 print:hidden">
+          <label className="inline-flex items-center gap-2 min-h-[44px] cursor-pointer text-ink-2 font-medium">
+            <input type="checkbox" checked={openOnly} onChange={(e) => setOpenOnly(e.target.checked)} className="w-4 h-4" />
+            Open now only
           </label>
+          <button
+            onClick={() => { setShowAll(true); requestAnimationFrame(() => window.print()); }}
+            className="inline-flex items-center gap-1.5 px-4 min-h-[44px] rounded-lg bg-navy-solid hover:bg-navy-strong text-white font-bold"
+          >
+            <Printer className="w-4 h-4" aria-hidden />
+            Print notice-board list
+          </button>
         </div>
       </div>
 
-      {/* Vacancy Table / Printable Gazette Listing */}
-      <div className="bg-surface rounded-xl border border-line p-6 shadow-2xs space-y-4">
-        <div className="flex items-center justify-between border-b border-line pb-3">
-          <div className="flex items-center gap-2">
-            <GraduationCap className="w-5 h-5 text-navy" />
-            <h3 className="font-serif text-base sm:text-lg font-bold text-ink">
-              {currentTier.label} — Live Recruitment Openings
-            </h3>
-          </div>
-
-          {currentTier.id !== "all" && (
-            <Link
-              href={currentTier.hubUrl}
-              className="text-xs font-bold text-navy hover:underline flex items-center gap-1"
-            >
-              <span>Permanent {currentTier.shortLabel} Hub</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          )}
+      {rows.length === 0 ? (
+        <p className="py-10 text-center text-sm text-muted bg-surface rounded-xl border border-line">
+          Nothing open for this qualification right now.{" "}
+          <Link href="/calendar" className="font-semibold text-navy underline underline-offset-2">See the calendar of last dates and exams</Link>
+        </p>
+      ) : (
+        <div className="bg-surface rounded-xl border border-line overflow-x-auto">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr className="bg-subtle border-b border-line text-[12px] font-semibold text-muted">
+                <th className="py-2.5 pl-5 pr-4">Recruitment</th>
+                <th className="py-2.5 px-4 text-right">Posts</th>
+                <th className="py-2.5 px-4">Eligibility</th>
+                <th className="py-2.5 px-4">Last date</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-line-soft">
+              {rows.map((job, i) => {
+                const style = STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING;
+                const days = getDaysRemaining(job.applicationEndDate);
+                const qual = qualificationLabel(job);
+                const age = job.ageKnown !== false && job.maxAge > 0 ? formatAgeRange(job) : null;
+                return (
+                  <tr key={job.id} className={cn("align-top", i >= SCREEN_ROWS && !showAll && "hidden print:table-row")}>
+                    <td className="py-3 pl-5 pr-4">
+                      <div className="flex items-center gap-1.5 text-[12px]">
+                        <b className="text-navy">{job.orgShortCode}</b>
+                        <span className="text-muted">{placeLabel(job)}</span>
+                        {!isOpen(job) && <span className={cn("font-bold", style.text)}>· {style.label}</span>}
+                      </div>
+                      <Link href={getJobCanonicalPath(job)} className="mt-0.5 block font-semibold text-ink hover:text-navy leading-snug line-clamp-2 print:line-clamp-none">
+                        {rowTitle(job)}
+                      </Link>
+                    </td>
+                    <td className="py-3 px-4 text-right tabular-nums whitespace-nowrap">
+                      {job.totalVacancies ? <b className="text-ink">{job.totalVacancies.toLocaleString("en-IN")}</b> : <span className="text-[12px] text-faint">See notice</span>}
+                    </td>
+                    <td className="py-3 px-4 text-[13px] text-ink-2 whitespace-nowrap">
+                      {[qual, age].filter(Boolean).join(" · ") || <span className="text-[12px] text-faint">See notice</span>}
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      {job.applicationEndDate ? (
+                        <>
+                          <b className="text-ink">{formatDateShort(job.applicationEndDate)}</b>
+                          {isOpen(job) && days >= 0 && (
+                            <span className={cn("block text-[12px] font-semibold", job.status === "LAST_DATE_NEAR" ? "text-saffron" : "text-green")}>
+                              {days === 0 ? "Closes today" : `${days} day${days === 1 ? "" : "s"} left`}
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <span className="text-[12px] text-faint">See notice</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
+      )}
 
-        {filteredJobs.length === 0 ? (
-          <div className="text-center py-10 text-xs text-muted bg-subtle rounded-lg border border-line">
-            No active positions currently open under this qualification tier. Check upcoming gazettes on the{" "}
-            <Link href="/calendar" className="text-navy font-bold hover:underline">
-              Exam Calendar
-            </Link>.
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border border-line rounded-lg overflow-hidden bg-surface">
-              <thead>
-                <tr className="bg-subtle border-b border-line font-mono text-[12px] text-muted uppercase">
-                  <th className="py-3 px-4 font-bold text-navy">Recruiting Commission & Post</th>
-                  <th className="py-3 px-4 font-bold text-center">Vacancies</th>
-                  <th className="py-3 px-4 font-semibold">Eligibility Details</th>
-                  <th className="py-3 px-4 font-semibold">Pay Scale</th>
-                  <th className="py-3 px-4 font-semibold">Deadline</th>
-                  <th className="py-3 px-4 font-bold text-right print:hidden">Notification</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line-soft">
-                {filteredJobs.map((job) => {
-                  const jobHref = job.isCentral
-                    ? `/jobs/${job.slug}`
-                    : `/state/${job.stateSlug}/jobs/${job.slug}`;
-
-                  const daysLeft = getDaysRemaining(job.applicationEndDate);
-
-                  return (
-                    <tr key={job.id} className="hover:bg-subtle transition-colors">
-                      {/* Commission & Title */}
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-navy-tint text-navy border border-navy-line">
-                            {job.orgShortCode}
-                          </span>
-                          <JobStatusBadge status={job.status} />
-                        </div>
-                        <Link href={jobHref} className="font-serif font-bold text-xs text-ink hover:text-navy block leading-snug">
-                          {job.title}
-                        </Link>
-                        <span className="text-[11px] text-muted block mt-0.5">
-                          {job.isCentral ? "All-India Central" : `${job.stateSlug.toUpperCase()} State`} · {job.category}
-                        </span>
-                      </td>
-
-                      {/* Vacancies */}
-                      <td className="py-3.5 px-4 text-center">
-                        <span className="font-mono font-bold text-sm text-ink block">
-                          {job.totalVacancies.toLocaleString("en-IN")}
-                        </span>
-                        <span className="text-[11px] text-muted">Posts</span>
-                      </td>
-
-                      {/* Eligibility Details */}
-                      <td className="py-3.5 px-4 max-w-xs">
-                        <div className="space-y-1">
-                          <span className="font-medium text-ink block line-clamp-2">
-                            {job.qualifications.join(", ")}
-                          </span>
-                          <span className="text-[11px] font-mono text-muted block">
-                            Age: {formatAgeRange(job)}
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* Pay Scale */}
-                      <td className="py-3.5 px-4 font-mono font-bold text-xs text-green">
-                        {job.salary ? job.salary.split("(")[0] : "See notification"}
-                      </td>
-
-                      {/* Deadline */}
-                      <td className="py-3.5 px-4 font-mono text-xs">
-                        <span className="text-ink block font-semibold">{formatDate(job.applicationEndDate)}</span>
-                        {daysLeft > 0 ? (
-                          <span className="text-[11px] text-saffron font-bold block">
-                            {daysLeft} days left
-                          </span>
-                        ) : (
-                          <span className="text-[11px] text-muted block">Closed</span>
-                        )}
-                      </td>
-
-                      {/* Action */}
-                      <td className="py-3.5 px-4 text-right print:hidden">
-                        <Link
-                          href={jobHref}
-                          className="px-3 py-1.5 rounded bg-subtle border border-line hover:border-navy hover:text-navy text-xs font-bold transition-all inline-flex items-center gap-1"
-                        >
-                          <span>Notification</span>
-                          <ArrowRight className="w-3 h-3" />
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Campus Notice Board Notice Box */}
-      <div className="p-5 rounded-xl bg-subtle border border-line flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
-        <div>
-          <span className="font-bold text-sm text-ink block">
-            Placement Cell & Library Notice Board Kit
-          </span>
-          <span className="text-muted mt-0.5 block">
-            Print this bulletin weekly or display on campus digital kiosks. Updates are verified directly against official Union and State gazettes.
-          </span>
+      {rows.length > SCREEN_ROWS && !showAll && (
+        <div className="text-center print:hidden">
+          <button
+            onClick={() => setShowAll(true)}
+            className="px-4 min-h-[44px] rounded-lg border border-navy-line bg-surface text-sm font-bold text-navy hover:border-navy"
+          >
+            Show all {rows.length}
+          </button>
         </div>
+      )}
 
-        <button
-          onClick={() => window.print()}
-          className="px-4 py-2 rounded-md bg-navy-solid text-white font-bold hover:bg-navy-strong transition-colors shrink-0 flex items-center gap-1.5 self-start sm:self-auto"
-        >
-          <Printer className="w-3.5 h-3.5" />
-          <span>Print Weekly Bulletin</span>
-        </button>
-      </div>
+      {currentTier.id !== "all" && (
+        <Link href={currentTier.hubUrl} className="inline-flex items-center gap-1.5 min-h-[44px] text-sm font-semibold text-navy hover:underline print:hidden">
+          All {currentTier.shortLabel} jobs, with exams and results <ArrowRight className="w-4 h-4" aria-hidden />
+        </Link>
+      )}
     </div>
   );
 }

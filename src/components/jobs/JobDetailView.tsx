@@ -35,6 +35,7 @@ import {
 } from "@/lib/exam-details";
 import { ExecutiveNotificationDigest } from "./ExecutiveNotificationDigest";
 import { JobKeyFacts } from "./JobKeyFacts";
+import { ReservationTable } from "./ReservationTable";
 import { StageDocumentsPanel } from "./StageDocumentsPanel";
 import { ExaminationLifecycleBar } from "./ExaminationLifecycleBar";
 import { ClosedRecruitmentAlert } from "./ClosedRecruitmentAlert";
@@ -285,6 +286,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
 
       {/* Posts, category-wise fees and relaxations, selection process (when the notice gives them) */}
       <ExecutiveNotificationDigest job={job} />
+      <ReservationTable job={job} />
 
       {/* Reserved Ad Space in Job Details (CLS Protected) */}
       <ReservedAdSlot slotType="leaderboard" slotId={`job-detail-${job.slug}`} className="print:hidden" />

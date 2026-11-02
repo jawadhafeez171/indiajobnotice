@@ -3,7 +3,6 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { ShieldCheck, Lock, Eye, FileText, ExternalLink, Mail } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -40,18 +39,11 @@ export default function PrivacyPolicyPage() {
             <span className="text-ink font-bold">Privacy Policy</span>
           </div>
 
-          <div className="flex items-center gap-2 mb-2">
-            <TricolorCapsule className="w-10 h-1.5" />
-            <span className="text-xs font-mono uppercase tracking-wider text-navy font-bold">
-              Compliance & User Trust
-            </span>
-          </div>
-
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
             Privacy Policy
           </h1>
 
-          <p className="mt-2 text-xs text-muted font-mono">
+          <p className="mt-2 text-xs text-muted font-semibold">
             Effective Date & Last Updated: <strong>{lastUpdated}</strong>
           </p>
         </div>
@@ -203,7 +195,7 @@ export default function PrivacyPolicyPage() {
           <p className="text-xs text-ink-2">
             If you have any questions, concerns, or requests regarding this Privacy Policy or our compliance practices, please contact our designated Grievance Officer:
           </p>
-          <div className="text-xs font-mono space-y-1 bg-subtle p-3 rounded border border-line text-ink">
+          <div className="text-xs space-y-1 bg-subtle p-3 rounded border border-line text-ink font-semibold">
             <p><strong>Entity:</strong> IndiaJobNotice.com Editorial & Compliance Team</p>
             <p><strong>Email:</strong> <a href="mailto:contact@indiajobnotice.com" className="text-navy underline">contact@indiajobnotice.com</a></p>
             <p><strong>Response Time:</strong> Within 48 hours for privacy or errata queries.</p>

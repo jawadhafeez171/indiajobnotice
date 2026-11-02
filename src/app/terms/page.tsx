@@ -3,7 +3,6 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { AlertTriangle, FileText, Scale, CheckCircle2, ShieldAlert, Mail } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -40,18 +39,11 @@ export default function TermsPage() {
             <span className="text-ink font-bold">Terms of Service</span>
           </div>
 
-          <div className="flex items-center gap-2 mb-2">
-            <TricolorCapsule className="w-10 h-1.5" />
-            <span className="text-xs font-mono uppercase tracking-wider text-navy font-bold">
-              Legal Terms & Gazette Disclaimer
-            </span>
-          </div>
-
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
             Terms of Service & Usage
           </h1>
 
-          <p className="mt-2 text-xs text-muted font-mono">
+          <p className="mt-2 text-xs text-muted font-semibold">
             Effective Date & Last Updated: <strong>{lastUpdated}</strong>
           </p>
         </div>
@@ -176,7 +168,7 @@ export default function TermsPage() {
           <p className="text-xs text-ink-2">
             We welcome corrections from candidates, educators, and departmental officials. If you spot a factual error in any published circular, please inform our editorial team:
           </p>
-          <div className="text-xs font-mono space-y-1 bg-subtle p-3 rounded border border-line text-ink">
+          <div className="text-xs space-y-1 bg-subtle p-3 rounded border border-line text-ink font-semibold">
             <p><strong>Editorial Desk:</strong> <a href="mailto:contact@indiajobnotice.com" className="text-navy underline">contact@indiajobnotice.com</a></p>
             <p><strong>Corrections SLA:</strong> Verified corrections are updated within 24 to 48 hours.</p>
           </div>

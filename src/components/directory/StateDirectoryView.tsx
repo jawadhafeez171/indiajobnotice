@@ -137,7 +137,7 @@ export function StateDirectoryView() {
                       <span className={cn("px-2 py-0.5 rounded text-[11px] font-mono font-bold border", badgeStyle.bg, badgeStyle.text, badgeStyle.border)}>
                         {rec.state.code}
                       </span>
-                      <span className="text-[12px] font-mono font-bold text-muted uppercase">
+                      <span className="text-[12px] font-bold text-muted">
                         {rec.region} India · Capital: {rec.state.capital}
                       </span>
                     </div>
@@ -154,7 +154,7 @@ export function StateDirectoryView() {
                 {/* Official Apex PSC */}
                 <div className="p-3.5 rounded-lg bg-subtle border border-line space-y-2 mb-3">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[11px] uppercase font-mono font-bold text-navy flex items-center gap-1">
+                    <span className="text-[11px] font-bold text-navy flex items-center gap-1">
                       <Building2 className="w-3.5 h-3.5" />
                       <span>Apex Public Service Commission</span>
                     </span>
@@ -189,7 +189,7 @@ export function StateDirectoryView() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs mb-4">
                   {rec.subordinateBoard && (
                     <div className="p-2.5 rounded bg-surface border border-line">
-                      <span className="text-[11px] font-mono uppercase text-muted block font-bold">
+                      <span className="text-[11px] text-muted block font-bold">
                         Staff Selection Board
                       </span>
                       <a
@@ -206,7 +206,7 @@ export function StateDirectoryView() {
 
                   {rec.policeBoard && (
                     <div className="p-2.5 rounded bg-surface border border-line">
-                      <span className="text-[11px] font-mono uppercase text-muted block font-bold">
+                      <span className="text-[11px] text-muted block font-bold">
                         Police Recruitment Board
                       </span>
                       <a

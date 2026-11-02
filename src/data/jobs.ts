@@ -77,6 +77,14 @@ export interface JobNotification {
   publishedAt?: string;
   /** Applications closed, exams or results under way: listed under "Exams in progress". */
   inProgress?: boolean;
+  /** Exam dates the notification gives: a day or only a month, tentative or not (agent, 2 Nov). */
+  exams?: { stage: string; date: string; precision: "day" | "month" | ""; tentative: boolean; text: string }[];
+  /** Vacancies by category as printed; sent only when each post's categories add up. */
+  reservation?: {
+    categories: string[];
+    rows: { post: string; counts: Record<string, number>; total: number }[];
+    horizontal: { post: string; category: string; count: number }[];
+  };
 }
 
 export interface DistrictVacancyBreakout {

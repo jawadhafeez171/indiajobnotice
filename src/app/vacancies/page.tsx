@@ -6,7 +6,6 @@ import { QualificationVacancyTracker } from "@/components/vacancies/Qualificatio
 import { getListingJobs } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
 
-import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 
@@ -50,28 +49,16 @@ export default async function VacanciesPage() {
 
       <Navbar currentStateSlug="central" />
 
-      {/* Editorial Header */}
-      <section className="border-b border-line bg-subtle py-8 sm:py-10 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-2 mb-2">
-            <TricolorCapsule className="w-14 h-1.5" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-navy font-bold">
-              Vacancies by qualification
-            </span>
-          </div>
-
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
-            Qualification-Wise Government Job Vacancy Tracker
+      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-7 flex-1 w-full space-y-6">
+        <header className="max-w-3xl">
+          <h1 className="font-serif text-[24px] sm:text-4xl font-bold text-ink tracking-tight leading-tight text-balance">
+            Government job vacancies by qualification
           </h1>
-
-          <p className="text-sm sm:text-base text-ink-2 mt-2 max-w-3xl leading-relaxed">
-            Consolidated directory of all active and upcoming Central & State government vacancies classified by minimum educational eligibility criteria. Maintained as a public resource for candidates, university career centers, coaching faculty, and public libraries.
+          <p className="mt-2 text-sm text-ink-2 leading-relaxed max-w-[68ch]">
+            Central and state recruitments grouped by the education they ask for, each read from its official
+            notice. Colleges and libraries print this list for their notice boards.
           </p>
-        </div>
-      </section>
-
-      {/* Main Content Area */}
-      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-8">
+        </header>
         <QualificationVacancyTracker jobs={getListingJobs(await getAllJobs())} />
 
         {/* Reserved Ad Slot (0.00 CLS Protection) */}

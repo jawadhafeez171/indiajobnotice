@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { WhatsAppLogo, TelegramLogo } from "@/components/common/SocialIcons";
 import { 
   Mail, 
@@ -52,13 +51,6 @@ export default function ContactPage() {
             <span className="text-ink font-bold">Contact &amp; Grievance</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <TricolorCapsule className="w-10 h-1.5" />
-            <span className="text-xs font-mono uppercase tracking-wider text-navy font-bold">
-              Accountability &amp; Support
-            </span>
-          </div>
-
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-ink tracking-tight">
             Contact Editorial Desk &amp; Grievance Officer
           </h1>
@@ -86,7 +78,7 @@ export default function ContactPage() {
               </p>
             </div>
             <div className="pt-2 border-t border-line-soft space-y-1">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-muted block">Primary Email</span>
+              <span className="text-[11px] text-muted block font-semibold">Primary Email</span>
               <a href="mailto:contact@indiajobnotice.com" className="text-xs font-bold text-navy hover:underline block break-all">
                 contact@indiajobnotice.com
               </a>
@@ -106,7 +98,7 @@ export default function ContactPage() {
               </p>
             </div>
             <div className="pt-2 border-t border-line-soft space-y-1">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-muted block">Grievance Desk</span>
+              <span className="text-[11px] text-muted block font-semibold">Grievance Desk</span>
               <a href="mailto:grievance@indiajobnotice.com" className="text-xs font-bold text-saffron hover:underline block break-all">
                 grievance@indiajobnotice.com
               </a>
@@ -126,7 +118,7 @@ export default function ContactPage() {
               </p>
             </div>
             <div className="pt-2 border-t border-line-soft space-y-1">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-muted block">Institutional Desk</span>
+              <span className="text-[11px] text-muted block font-semibold">Institutional Desk</span>
               <a href="mailto:institutions@indiajobnotice.com" className="text-xs font-bold text-green hover:underline block break-all">
                 institutions@indiajobnotice.com
               </a>
@@ -200,7 +192,7 @@ export default function ContactPage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-ink-2">
-            <div className="space-y-1.5 font-mono bg-subtle p-4 rounded border border-line">
+            <div className="space-y-1.5 bg-subtle p-4 rounded border border-line font-semibold">
               <p className="font-bold text-ink">IndiaJobNotice Editorial Desk</p>
               <p>Independent Educational Publishing &amp; Civic Career Intelligence</p>
               <p>New Delhi &amp; Bengaluru, India</p>

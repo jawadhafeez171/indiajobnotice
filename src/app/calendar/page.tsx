@@ -6,7 +6,6 @@ import { getListingJobs } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
 
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
 
 export const metadata = {
   title: "Government Exam Schedule & Calendar 2026-2027",
@@ -29,28 +28,16 @@ export default async function CalendarPage() {
     <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar currentStateSlug="central" />
 
-      {/* Editorial Calendar Header */}
-      <section className="border-b border-line bg-subtle py-10 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-2 mb-2">
-            <TricolorCapsule className="w-14 h-1.5" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-navy font-bold">
-              Exam and last-date calendar
-            </span>
-          </div>
-
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
-            Government Exam Schedule & Calendar 2026
+      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-7 flex-1 w-full space-y-8">
+        <header className="max-w-3xl">
+          <h1 className="font-serif text-[24px] sm:text-4xl font-bold text-ink tracking-tight leading-tight text-balance">
+            Calendar of last dates and exams
           </h1>
-
-          <p className="text-sm sm:text-base text-ink-2 mt-2 max-w-3xl leading-relaxed">
-            Consolidated timeline of all verified recruitment deadlines, CBT test schedules, hall ticket dates, and result announcements for UPSC, SSC, Railways, Banking, and State PSCs. Sync directly to your smartphone calendar with one click.
+          <p className="mt-2 text-sm text-ink-2 leading-relaxed max-w-[68ch]">
+            Last dates of open recruitments, exam dates from admit cards and schedules, and recent results, each
+            from an official document. Add any date to your phone&apos;s calendar.
           </p>
-        </div>
-      </section>
-
-      {/* Main Calendar Experience */}
-      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-10">
+        </header>
         <ExamCalendarView jobs={getListingJobs(await getAllJobs())} />
 
         <SocialAlertBar />

@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { StateDirectoryView } from "@/components/directory/StateDirectoryView";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 
@@ -50,13 +49,6 @@ export default function DirectoryPage() {
       {/* Editorial Header */}
       <section className="border-b border-line bg-subtle py-8 sm:py-10 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-2 mb-2">
-            <TricolorCapsule className="w-14 h-1.5" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-navy font-bold">
-              Authoritative Commission Register
-            </span>
-          </div>
-
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
             All-India State Recruitment Commissions Directory
           </h1>

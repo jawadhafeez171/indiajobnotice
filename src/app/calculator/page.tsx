@@ -6,7 +6,6 @@ import { getCalculatorJobs } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
 
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
 
 export const metadata = {
   title: "Government Job Age & Eligibility Calculator 2026",
@@ -30,12 +29,6 @@ export default async function CalculatorPage() {
       <Navbar currentStateSlug="central" />
       <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-8">
         <div className="max-w-3xl">
-          <div className="flex items-center gap-2 mb-2">
-            <TricolorCapsule className="w-14 h-1.5" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-navy font-bold">
-              Age eligibility calculator
-            </span>
-          </div>
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
             Government Job Eligibility & Age Calculator
           </h1>

@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
 import { 
   ShieldCheck, 
   Target, 
@@ -48,13 +47,6 @@ export default function AboutPage() {
             </Link>
             <span>/</span>
             <span className="text-ink font-bold">About Us</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <TricolorCapsule className="w-10 h-1.5" />
-            <span className="text-xs font-mono uppercase tracking-wider text-navy font-bold">
-              Public Career Intelligence & Transparency
-            </span>
           </div>
 
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-ink tracking-tight">
@@ -147,7 +139,7 @@ export default function AboutPage() {
           <p>
             IndiaJobNotice is managed by an independent team of educational researchers, civic-data technologists, and civil service examination mentors. Our editorial desk monitors daily publications from:
           </p>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono text-ink-2 pt-1">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-ink-2 pt-1 font-semibold">
             <li className="p-2.5 rounded bg-surface border border-line flex items-center gap-2">
               <Building2 className="w-4 h-4 text-navy" />
               <span>Union Public Service Commission (UPSC)</span>
