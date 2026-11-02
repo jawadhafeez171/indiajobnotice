@@ -1,25 +1,32 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
-import { 
-  JobNotification, 
+import {
+  JobNotification,
   formatAgeRange,
   nextExamDate,
   getJobCanonicalPath,
+  daysUntil,
+  stageText,
+  todayIST,
+  type JobStage,
 } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
-import { JobListCard, JobRow, JobDeadline, STATUS_STYLE, qualificationLabel, cleanTitle, placeLabel } from "./JobListCard";
+import { JobListCard, JobRow, JobDeadline, STATUS_STYLE, qualificationLabel, rowTitle, placeLabel, sourceHost } from "./JobListCard";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
 import { useWatchlist } from "@/lib/watchlist";
 import { getStateBySlug } from "@/config/states";
-import { 
-  Table, 
-  LayoutTemplate, 
-  LayoutGrid, 
-  FileText, 
-  ArrowRight, 
+import {
+  Table,
+  LayoutTemplate,
+  LayoutGrid,
+  FileText,
+  ArrowRight,
   CheckCircle2,
+  ExternalLink,
+  Send,
+  MapPin,
   Search,
   SlidersHorizontal,
   X,
@@ -31,27 +38,31 @@ interface Props {
   currentStateSlug?: string;
   /** The page has its own search with every filter (home page): no search box or filter row here. */
   hideSearch?: boolean;
+  /** List / Featured / Cards switch (desktop); off on the home page. */
+  showLayoutSwitch?: boolean;
 }
 
 type ViewMode = "ledger" | "spotlight" | "bulletin";
 
-export type StatusCategoryKey = 
+export type StatusCategoryKey =
   | "ALL"
   | "APPLY_OPEN"
   | "CLOSING_SOON"
   | "ADMIT_CARD"
   | "EXAM_DATES"
-  | "RESULT";
+  | "RESULT"
+  | "UNDER_WAY";
 
 // one row of tabs; the active one takes its stage colour (same as the card stripes)
-export const TAB_ORDER: StatusCategoryKey[] = ["APPLY_OPEN", "CLOSING_SOON", "EXAM_DATES", "ADMIT_CARD", "RESULT", "ALL"];
+export const TAB_ORDER: StatusCategoryKey[] = ["APPLY_OPEN", "CLOSING_SOON", "EXAM_DATES", "RESULT", "UNDER_WAY", "ALL"];
 export const TABS: Record<StatusCategoryKey, { label: string; short: string; active: string; order?: string }> = {
-  APPLY_OPEN: { label: "Open", short: "Open", active: "bg-green-solid", order: "closing soonest first" },
-  CLOSING_SOON: { label: "Closing soon", short: "Closing", active: "bg-saffron-solid", order: "closing soonest first" },
-  EXAM_DATES: { label: "Exam dates", short: "Exams", active: "bg-navy-solid", order: "soonest exam first" },
+  APPLY_OPEN: { label: "Open", short: "Open", active: "bg-green-solid", order: "by last date, biggest first" },
+  CLOSING_SOON: { label: "Closing this week", short: "Closing", active: "bg-saffron-solid", order: "part of Open · by last date, biggest first" },
+  EXAM_DATES: { label: "Exams & admit cards", short: "Exams", active: "bg-navy-solid", order: "soonest exam first" },
   ADMIT_CARD: { label: "Admit cards", short: "Admit card", active: "bg-navy-solid" },
-  RESULT: { label: "Results", short: "Results", active: "bg-purple-solid" },
-  ALL: { label: "All", short: "All", active: "bg-ink-2", order: "open jobs first" },
+  RESULT: { label: "Results", short: "Results", active: "bg-purple-solid", order: "latest result first" },
+  UNDER_WAY: { label: "Under way", short: "Under way", active: "bg-teal-solid", order: "applications closed, exams or results to come · latest document first" },
+  ALL: { label: "All", short: "All", active: "bg-navy-strong", order: "open jobs first" },
 };
 
 export const JOB_CATEGORIES = [
@@ -75,15 +86,72 @@ export const QUALIFICATIONS = [
   { label: "Teaching (B.Ed / CTET)", value: "teaching" },
 ];
 
+// Open and Closing tabs: grouped by how soon applications close; inside a group, bigger recruitments
+// first, so a 6,574-post recruitment is not buried under 1-post contract jobs closing a day earlier.
+const BUCKETS = ["Closing today", "Closing tomorrow", "Closes in 2–6 days", "Closes in 1–2 weeks", "Closes later", "Last date not stated"];
+function bucketOf(job: JobNotification): number {
+  if (!job.applicationEndDate) return 5;
+  const d = daysUntil(job.applicationEndDate);
+  return d <= 0 ? 0 : d === 1 ? 1 : d < 7 ? 2 : d < 14 ? 3 : 4;
+}
+// a body with this many jobs in one group shows its biggest and folds the rest behind one row
+const FOLD_AT = 3;
+const MAJOR_POSTS = 100;
+
+/** One body however it is written ("X Court" / "X Court (Principal District and Sessions Court)"). */
+function orgKey(j: JobNotification): string {
+  return j.organization.split("(")[0].replace(/[,.]+$/, "").trim().toLowerCase();
+}
+
+/** Search words, each matched at the start of a word ("police" does not match "policy" inside a word). */
+function searchWords(q: string): RegExp[] {
+  return q.trim().split(/\s+/).filter(Boolean)
+    .map((w) => new RegExp(`(^|[^\\p{L}\\p{N}])${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "iu"));
+}
+
+// search looks at the body, its code, the title, sector and place first; highlights and
+// qualifications only when nothing matches there (so "UPSC" never lands on a UKPSC notice's text)
+function primaryText(j: JobNotification): string {
+  return `${j.title} ${j.shortTitle} ${j.organization} ${j.orgShortCode} ${j.category} ${placeLabel(j)}`;
+}
+function secondaryText(j: JobNotification): string {
+  return `${j.keyHighlights.join(" ")} ${j.qualifications.join(" ")}`;
+}
+
+/** The newest official document of a recruitment (results and documents views). */
+function latestDoc(job: JobNotification): JobStage | null {
+  const s = [...(job.stages || [])].sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+  return s.length ? s[s.length - 1] : null;
+}
+const latestDate = (j: JobNotification) => (j.stages || []).map((x) => x.date || "").sort().pop() || "";
+
+const TELEGRAM = "https://t.me/Indiajobnotice1";
+
+// bodies the agent cannot read automatically: say so when a search names them
+const KNOWN_GAPS: { test: RegExp; text: string; href: string; site: string }[] = [
+  {
+    test: /\b(upsc|union public service)/i,
+    text: "UPSC's website blocks automated readers, so its notices are checked by hand and may appear late.",
+    href: "https://upsc.gov.in",
+    site: "upsc.gov.in",
+  },
+];
+
+type ListItem =
+  | { kind: "head"; key: string; label: string; count: number }
+  | { kind: "job"; key: string; job: JobNotification }
+  | { kind: "more"; key: string; org: string; count: number; posts: number; firstId: string };
+
 /** Stage names in links (/?stage=closing) <-> tab keys. */
 export const STAGE_PARAM: Record<string, StatusCategoryKey> = {
-  open: "APPLY_OPEN", closing: "CLOSING_SOON", exams: "EXAM_DATES", admit: "ADMIT_CARD", results: "RESULT", all: "ALL",
+  open: "APPLY_OPEN", closing: "CLOSING_SOON", exams: "EXAM_DATES", admit: "EXAM_DATES", results: "RESULT",
+  underway: "UNDER_WAY", all: "ALL",
 };
 
-export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = false }: Props) {
+export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = false, showLayoutSwitch = true }: Props) {
   const [viewMode, setViewMode] = useState<ViewMode>("ledger");
   const [activeCategory, setActiveCategory] = useState<StatusCategoryKey>("APPLY_OPEN");
-  
+
   // Search & Multi-Faceted Filters State
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
@@ -94,16 +162,31 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
   const [showFilters, setShowFilters] = useState(false);
   // a page of jobs at a time: the full list made the home page 40 phone screens long
   const [visible, setVisible] = useState(20);
+  const [majorOnly, setMajorOnly] = useState(false);
+  const [unfolded, setUnfolded] = useState<Set<string>>(new Set());
 
   // Watchlist hook
   const { isSaved, toggleSave } = useWatchlist();
+
+  // phones: the tab strip scrolls sideways; keep the active tab in view (a search switches to All)
+  const tabsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const c = tabsRef.current;
+    const b = c?.querySelector<HTMLElement>('[aria-pressed="true"]');
+    if (!c || !b || c.scrollWidth <= c.clientWidth) return;
+    const cr = c.getBoundingClientRect();
+    const br = b.getBoundingClientRect();
+    c.scrollTo({ left: c.scrollLeft + br.left - cr.left - (cr.width - br.width) / 2, behavior: "smooth" });
+  }, [activeCategory]);
 
   // Listen to hash changes (e.g., from hero counter clicks)
   useEffect(() => {
     const handleHash = () => {
       const hash = window.location.hash.toLowerCase();
       if (hash === "#admit-cards" || hash === "#admit-card") {
-        setActiveCategory("ADMIT_CARD");
+        setActiveCategory("EXAM_DATES");
+      } else if (hash === "#under-way" || hash === "#recruitments-under-way") {
+        setActiveCategory("UNDER_WAY");
       } else if (hash === "#results" || hash === "#result") {
         setActiveCategory("RESULT");
       } else if (hash === "#closing-soon") {
@@ -122,10 +205,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
     };
     handleHash();
     // search from the home page hero: /?q=...
-    const applyQuery = () => {
+    const applyQuery = (fromSearch = false, focus = false) => {
       const u = new URLSearchParams(window.location.search);
       const keys = ["q", "state", "qual", "sector", "scope", "stage", "age"];
-      if (!keys.some((k) => u.get(k))) return;
+      if (!fromSearch && !keys.some((k) => u.get(k))) return;
       const q = u.get("q") || "";
       const stage = STAGE_PARAM[u.get("stage") || ""];
       const qual = u.get("qual") || "";
@@ -133,18 +216,32 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       const scope = (u.get("scope") || "").toUpperCase();
       const age = Number(u.get("age"));
       setSearchQuery(q);
-      if (u.get("state")) setSelectedState(u.get("state") as string);
-      if (QUALIFICATIONS.some((x) => x.value === qual)) setSelectedQualification(qual);
-      if (JOB_CATEGORIES.includes(sector)) setSelectedCategory(sector);
-      if (scope === "CENTRAL" || scope === "STATE") setSelectedScope(scope);
-      if (age >= 14 && age <= 70) setMyAge(age);
+      setSelectedState(u.get("state") || "ALL");
+      setSelectedQualification(QUALIFICATIONS.some((x) => x.value === qual) ? qual : "ALL");
+      setSelectedCategory(JOB_CATEGORIES.includes(sector) ? sector : "ALL");
+      setSelectedScope(scope === "CENTRAL" || scope === "STATE" ? scope : "ALL");
+      setMyAge(age >= 14 && age <= 70 ? age : null);
       // a search looks at every stage unless one was chosen
       setActiveCategory(stage || (q ? "ALL" : "APPLY_OPEN"));
-      document.getElementById("major-recruitments")?.scrollIntoView();
+      // two frames: the new list is drawn and the search panel above has closed, then scroll to the
+      // count line (its scroll margin clears the pinned header and tabs)
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        const count = document.getElementById("results-count");
+        count?.scrollIntoView({ block: "start" });
+        if (focus) count?.focus({ preventScroll: true });
+      }));
     };
     applyQuery();
+    const onSearch = () => applyQuery(true, true);
+    const onBack = () => applyQuery(true);
+    window.addEventListener("ijn:query", onSearch);
+    window.addEventListener("popstate", onBack);
     window.addEventListener("hashchange", handleHash);
-    return () => window.removeEventListener("hashchange", handleHash);
+    return () => {
+      window.removeEventListener("ijn:query", onSearch);
+      window.removeEventListener("popstate", onBack);
+      window.removeEventListener("hashchange", handleHash);
+    };
   }, []);
 
   // Helper to test if a job matches a status category
@@ -162,7 +259,9 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       case "RESULT":
         return job.status === "RESULT_OUT";
       case "EXAM_DATES":
-        return nextExamDate(job) !== null;
+        return job.status === "ADMIT_CARD_OUT" || nextExamDate(job) !== null;
+      case "UNDER_WAY":
+        return !!job.inProgress;
       case "ALL":
       default:
         return true;
@@ -175,6 +274,14 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
   const facetCount = [selectedCategory !== "ALL", selectedQualification !== "ALL", selectedScope !== "ALL",
     selectedState !== "ALL", myAge !== null].filter(Boolean).length;
 
+  useEffect(() => {
+    const reset = () => {
+      setUnfolded(new Set());
+      setVisible(20);
+    };
+    reset();
+  }, [activeCategory, majorOnly]);
+
   const resetAllFilters = () => {
     setSearchQuery("");
     setSelectedCategory("ALL");
@@ -185,12 +292,21 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
     setActiveCategory("ALL");
   };
 
+  const words = useMemo(() => searchWords(searchQuery), [searchQuery]);
+  const gap = KNOWN_GAPS.find((g) => searchQuery && g.test.test(searchQuery));
+  // wider text only when no body, code or title matches, and never for a body we know we miss
+  const broad = useMemo(
+    () => words.length > 0 && !gap && !jobs.some((j) => words.every((w) => w.test(primaryText(j)))),
+    [words, gap, jobs]
+  );
+  const openTab = activeCategory === "APPLY_OPEN" || activeCategory === "CLOSING_SOON";
+  const majorOn = majorOnly && openTab;
+
   // every filter except the stage tab: used for the list and for the tab counts
   const passesFacets = (j: JobNotification): boolean => {
-    if (searchQuery.trim() !== "") {
-      const q = searchQuery.toLowerCase().trim();
-      const textToMatch = `${j.title} ${j.shortTitle} ${j.organization} ${j.orgShortCode} ${j.category} ${j.stateSlug} ${j.keyHighlights.join(" ")} ${j.qualifications.join(" ")}`.toLowerCase();
-      if (!textToMatch.includes(q)) return false;
+    if (words.length) {
+      const text = broad ? `${primaryText(j)} ${secondaryText(j)}` : primaryText(j);
+      if (!words.every((w) => w.test(text))) return false;
     }
     if (selectedCategory !== "ALL" && j.category !== selectedCategory) return false;
     if (selectedQualification !== "ALL") {
@@ -214,7 +330,16 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
 
   // Filtered jobs matching all criteria
   const filteredJobs = useMemo(() => {
-    return jobs.filter((j) => matchesStatus(j, activeCategory) && passesFacets(j)).sort((a, b) => {
+    return jobs.filter((j) => matchesStatus(j, activeCategory) && passesFacets(j)
+      && (!majorOn || j.totalVacancies >= MAJOR_POSTS)).sort((a, b) => {
+      if (activeCategory === "APPLY_OPEN" || activeCategory === "CLOSING_SOON") {
+        return bucketOf(a) - bucketOf(b)
+          || b.totalVacancies - a.totalVacancies
+          || (a.applicationEndDate || "9999").localeCompare(b.applicationEndDate || "9999");
+      }
+      if (activeCategory === "UNDER_WAY" || activeCategory === "RESULT") {
+        return latestDate(b).localeCompare(latestDate(a));
+      }
       if (activeCategory === "EXAM_DATES") {
         return (nextExamDate(a)?.date || "9999").localeCompare(nextExamDate(b)?.date || "9999");
       }
@@ -226,7 +351,93 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
         || b.totalVacancies - a.totalVacancies;
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobs, activeCategory, searchQuery, selectedCategory, selectedQualification, selectedScope, selectedState, myAge]);
+  }, [jobs, activeCategory, words, broad, selectedCategory, selectedQualification, selectedScope, selectedState, myAge, majorOn]);
+
+  // what the list draws: day headings, jobs, and "N more from <body>" rows (Open / Closing tabs)
+  const grouped = viewMode === "ledger" && (activeCategory === "APPLY_OPEN" || activeCategory === "CLOSING_SOON");
+  const listItems = useMemo((): ListItem[] => {
+    if (!grouped) return filteredJobs.map((job) => ({ kind: "job", key: job.id, job }));
+    const items: ListItem[] = [];
+    const byBucket = new Map<number, JobNotification[]>();
+    for (const j of filteredJobs) {
+      const b = bucketOf(j);
+      if (!byBucket.has(b)) byBucket.set(b, []);
+      byBucket.get(b)!.push(j);
+    }
+    for (const [b, group] of [...byBucket.entries()].sort((x, y) => x[0] - y[0])) {
+      items.push({ kind: "head", key: `h${b}`, label: BUCKETS[b], count: group.length });
+      // fold by the full organisation name: generic codes ("District Court") cover unrelated bodies
+      const perOrg = new Map<string, JobNotification[]>();
+      for (const j of group) {
+        const o = orgKey(j);
+        if (!perOrg.has(o)) perOrg.set(o, []);
+        perOrg.get(o)!.push(j);
+      }
+      const shownOrgs = new Set<string>();
+      for (const j of group) {
+        const same = perOrg.get(orgKey(j))!;
+        const key = `${b}:${orgKey(j)}`;
+        const fold = same.length >= FOLD_AT && !unfolded.has(key);
+        if (!fold) {
+          items.push({ kind: "job", key: j.id, job: j });
+          continue;
+        }
+        if (shownOrgs.has(orgKey(j))) continue;
+        shownOrgs.add(orgKey(j));
+        items.push({ kind: "job", key: j.id, job: j });
+        const rest = same.slice(1);
+        items.push({
+          kind: "more", key, org: j.orgShortCode, count: rest.length, firstId: rest[0].id,
+          posts: rest.reduce((n, r) => n + (r.totalVacancies || 0), 0),
+        });
+      }
+    }
+    return items;
+  }, [grouped, filteredJobs, unfolded]);
+
+  // two rows of one body that read the same: the advert number (or year) goes in front
+  const titleOf = useMemo(() => {
+    const key = (j: JobNotification) => `${orgKey(j)}|${rowTitle(j).slice(0, 60)}`;
+    const seen = new Map<string, number>();
+    for (const j of filteredJobs) seen.set(key(j), (seen.get(key(j)) || 0) + 1);
+    return (j: JobNotification): string => {
+      const t = rowTitle(j);
+      if ((seen.get(key(j)) || 0) < 2) return t;
+      const tag = j.advtNo ? `Advt ${j.advtNo}` : (j.applicationEndDate || j.publishedAt || "").slice(0, 4);
+      return tag && !t.includes(j.advtNo || tag) ? `${tag} · ${t}` : t;
+    };
+  }, [filteredJobs]);
+
+  // "Show more" counts jobs, not headings
+  const shownItems = useMemo(() => {
+    const out: ListItem[] = [];
+    let jobsShown = 0;
+    for (const it of listItems) {
+      if (it.kind === "job") {
+        if (jobsShown >= visible) break;
+        jobsShown += 1;
+      }
+      out.push(it);
+    }
+    while (out.length && out[out.length - 1].kind === "head") out.pop();
+    return out;
+  }, [listItems, visible]);
+  const jobsInList = listItems.filter((i) => i.kind === "job").length;
+  // jobs not on screen yet (a folded body's jobs are on screen behind its "Show N more" row)
+  const jobsLeft = filteredJobs.length
+    - shownItems.reduce((n, it) => n + (it.kind === "job" ? 1 : it.kind === "more" ? it.count : 0), 0);
+  // open a fold, then put keyboard focus on the first job it revealed
+  const unfold = (key: string, firstId?: string) => {
+    setUnfolded((prev) => new Set(prev).add(key));
+    if (firstId) {
+      requestAnimationFrame(() => {
+        const row = document.querySelector<HTMLElement>(`[data-job="${firstId}"]:not([hidden]) a, [data-job="${firstId}"] a`);
+        const visibleRow = [...document.querySelectorAll<HTMLElement>(`[data-job="${firstId}"] a`)].find((a) => a.offsetParent !== null);
+        (visibleRow || row)?.focus();
+      });
+    }
+  };
+
 
   // Counts for each status category (respecting text search and facet filters)
   const categoryCounts = useMemo(() => {
@@ -237,22 +448,104 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       ADMIT_CARD: 0,
       EXAM_DATES: 0,
       RESULT: 0,
+      UNDER_WAY: 0,
     };
 
     jobs.forEach((j) => {
       if (!passesFacets(j)) return;
+      // "100+ posts" narrows the open tabs only
+      const big = !majorOn || j.totalVacancies >= MAJOR_POSTS;
 
       counts.ALL += 1;
-      if (matchesStatus(j, "APPLY_OPEN")) counts.APPLY_OPEN += 1;
-      if (matchesStatus(j, "CLOSING_SOON")) counts.CLOSING_SOON += 1;
+      if (matchesStatus(j, "APPLY_OPEN") && big) counts.APPLY_OPEN += 1;
+      if (matchesStatus(j, "CLOSING_SOON") && big) counts.CLOSING_SOON += 1;
       if (matchesStatus(j, "ADMIT_CARD")) counts.ADMIT_CARD += 1;
       if (matchesStatus(j, "EXAM_DATES")) counts.EXAM_DATES += 1;
       if (matchesStatus(j, "RESULT")) counts.RESULT += 1;
+      if (matchesStatus(j, "UNDER_WAY")) counts.UNDER_WAY += 1;
     });
 
     return counts;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobs, selectedCategory, selectedQualification, selectedScope, selectedState, myAge, searchQuery]);
+  }, [jobs, selectedCategory, selectedQualification, selectedScope, selectedState, myAge, words, broad, majorOn]);
+
+  // the home page's own search box shows what the list is filtered by (cleared chip, Back button)
+  useEffect(() => {
+    if (!hideSearch) return;
+    const box = document.querySelector<HTMLInputElement>('form[role="search"] input[name="q"]');
+    if (box && box.value !== searchQuery) box.value = searchQuery;
+  }, [searchQuery, hideSearch]);
+
+  // no results: say what was searched and offer the next step
+  const emptyHelp = (
+    <div className="space-y-3">
+      {gap && (
+        <p className="text-[14px] text-ink max-w-md mx-auto px-4 py-3 rounded-lg bg-saffron-tint text-left">
+          {gap.text}{" "}
+          <a href={gap.href} target="_blank" rel="noreferrer" className="font-semibold text-navy underline underline-offset-2">
+            See {gap.site}
+          </a>
+        </p>
+      )}
+      <p className="text-ink-2">
+        {activeCategory === "ALL" ? "Nothing" : <>Nothing in <b>{TABS[activeCategory].label}</b></>} matches
+        {searchQuery ? <> &ldquo;{searchQuery}&rdquo;</> : " these filters"}.
+      </p>
+      <div className="flex flex-wrap justify-center gap-2">
+        {activeCategory !== "ALL" && categoryCounts.ALL > 0 && (
+          <button onClick={() => setActiveCategory("ALL")} className="px-4 min-h-[44px] rounded-lg bg-navy-solid text-white font-semibold">
+            See {categoryCounts.ALL} in all stages
+          </button>
+        )}
+        {majorOn && (
+          <button onClick={() => setMajorOnly(false)} className="px-4 min-h-[44px] rounded-lg border border-control text-navy font-semibold">
+            Include smaller recruitments
+          </button>
+        )}
+        {hasActiveFilters && (
+          <button onClick={resetAllFilters} className="px-4 min-h-[44px] rounded-lg border border-control text-navy font-semibold">
+            Clear search and filters
+          </button>
+        )}
+      </div>
+      {searchQuery && !gap && (
+        <p className="text-[13px] text-muted">
+          Try{" "}
+          {["SSC", "police", "teacher", "railway"].map((q) => (
+            <button
+              key={q}
+              type="button"
+              onClick={() => {
+                window.history.pushState(null, "", `${window.location.pathname}?q=${encodeURIComponent(q)}#major-recruitments`);
+                window.dispatchEvent(new Event("ijn:query"));
+              }}
+              className="mx-0.5 px-3 min-h-[36px] rounded-full border border-control text-navy font-semibold hover:border-navy"
+            >
+              {q}
+            </button>
+          ))}
+        </p>
+      )}
+      <p className="text-[13px] text-muted">
+        Not listed yet?{" "}
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event("ijn:open-states"))}
+          className="inline-flex items-center gap-1 font-semibold text-navy underline underline-offset-2 py-2"
+        >
+          <MapPin className="w-3.5 h-3.5" aria-hidden />Pick your state
+        </button>{" "}
+        or{" "}
+        <a href={TELEGRAM} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-navy underline underline-offset-2 py-2">
+          <Send className="w-3.5 h-3.5" aria-hidden />get new notices on Telegram
+        </a>
+      </p>
+    </div>
+  );
+  // results and recruitments under way: the newest official document instead of posts and eligibility
+  // exams: the admit card or schedule that gives the date
+  const docMode = activeCategory === "UNDER_WAY" || activeCategory === "RESULT" || activeCategory === "EXAM_DATES";
+  const cols = docMode ? 4 : 5;
 
 
   const heroJob = filteredJobs[0] || jobs[0];
@@ -261,21 +554,18 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
   return (
     <section id="major-recruitments" className="space-y-4 scroll-mt-20">
       {/* Section Header with Live View Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-line">
+      <div className={cn("flex flex-col sm:flex-row sm:items-center justify-between gap-3", showLayoutSwitch ? "pb-3 border-b border-line" : "sr-only")}>
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-navy-solid" />
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-ink">
+            {showLayoutSwitch && <span className="w-2.5 h-2.5 rounded-full bg-navy-solid" />}
+            <h2 className={cn("font-serif font-bold text-ink", showLayoutSwitch ? "text-xl sm:text-2xl" : "text-lg sm:text-xl")}>
               Latest government jobs
             </h2>
           </div>
-          <p className="text-xs text-muted mt-0.5">
-            From official notifications, checked twice a day
-          </p>
         </div>
 
         {/* View Mode Switcher Toggle */}
-        <div className="hidden md:flex items-center gap-1 p-1 rounded-md bg-navy-tint border border-navy-line self-start sm:self-auto text-xs">
+        <div className={cn("hidden items-center gap-1 p-1 rounded-md bg-navy-tint border border-navy-line self-start sm:self-auto text-xs", showLayoutSwitch && "md:flex")}>
           <span className="text-[11px] uppercase font-mono text-navy font-bold px-2 hidden md:inline">
             Layout:
           </span>
@@ -325,20 +615,25 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       </div>
 
       {/* ================= STAGE TABS: one row, kept in view under the header while scrolling ================= */}
-      <div className="sticky top-[109px] z-20 -mx-4 px-4 sm:mx-0 sm:px-0 py-2 bg-canvas/95 backdrop-blur-sm">
-        <div role="tablist" aria-label="Job stages" className="grid grid-cols-3 gap-1.5 md:flex md:gap-2">
+      <div className="sticky top-[68px] md:top-[109px] z-20 -mx-4 px-4 sm:mx-0 sm:px-0 py-2 bg-canvas/95 backdrop-blur-sm">
+        <div
+          ref={tabsRef}
+          role="group"
+          aria-label="Show jobs by stage"
+          className="relative flex gap-1.5 pr-10 overflow-x-auto [scrollbar-width:none] [mask-image:linear-gradient(to_right,black_86%,transparent)] md:pr-0 md:overflow-visible md:gap-2 md:[mask-image:none]"
+        >
           {TAB_ORDER.map((key) => {
             const isActive = activeCategory === key;
             const t = TABS[key];
             return (
               <button
                 key={key}
-                role="tab"
-                aria-selected={isActive}
+                aria-pressed={isActive}
+                title={key === "UNDER_WAY" ? "Applications closed, exams or results still to come" : undefined}
                 onClick={() => setActiveCategory(key)}
                 className={cn(
-                  "flex items-center justify-between md:justify-start gap-1.5 pl-2.5 pr-1.5 md:pl-3 md:pr-2 min-h-[38px] rounded-lg md:rounded-full border text-[13px] font-semibold whitespace-nowrap transition-colors",
-                  isActive ? cn(t.active, "text-white border-transparent") : "bg-surface border-line text-ink-2 hover:border-navy"
+                  "shrink-0 flex items-center gap-1.5 pl-3 pr-2 min-h-[44px] md:min-h-[38px] rounded-full border text-[13px] font-semibold whitespace-nowrap transition-colors",
+                  isActive ? cn(t.active, "text-white border-transparent") : "bg-surface border-control text-ink-2 hover:border-navy"
                 )}
               >
                 <span className="md:hidden">{t.short}</span>
@@ -346,11 +641,12 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 <span
                   className={cn(
                     "min-w-[22px] px-1.5 py-0.5 rounded-full text-[12px] font-bold leading-none tabular-nums",
-                    isActive ? "bg-white/20 text-white" : "bg-subtle text-muted"
+                    isActive ? "bg-black/20 text-white" : "bg-subtle text-muted"
                   )}
                 >
                   {categoryCounts[key]}
                 </span>
+                <span className="sr-only"> jobs</span>
               </button>
             );
           })}
@@ -360,13 +656,13 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       {/* ================= COUNT, FILTERS ================= */}
       <div className="space-y-2.5">
         <div className="flex items-center justify-between gap-3 text-[13px]">
-          <p className="text-ink-2 min-w-0">
+          <p id="results-count" tabIndex={-1} className="scroll-mt-[140px] md:scroll-mt-[176px] text-ink-2 min-w-0 focus:outline-none" aria-live="polite">
             <b className="text-ink">{filteredJobs.length}</b> {filteredJobs.length === 1 ? "job" : "jobs"}
-            {TABS[activeCategory].order && <span className="text-muted"> · {TABS[activeCategory].order}</span>}
+            {filteredJobs.length > 0 && TABS[activeCategory].order && <span className="text-muted"> · {TABS[activeCategory].order}</span>}
             {selectedState !== "ALL" && (
               <span className="ml-2 inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded-full text-[12px] font-bold border border-navy-line align-middle">
                 {getStateBySlug(selectedState)?.name || selectedState} + central
-                <button onClick={() => setSelectedState("ALL")} aria-label="Clear state" className="hover:text-danger">
+                <button onClick={() => setSelectedState("ALL")} aria-label="Clear state" className="p-2 -m-2 hover:text-danger">
                   <X className="w-3 h-3" />
                 </button>
               </span>
@@ -374,7 +670,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
             {myAge !== null && (
               <span className="ml-2 inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded-full text-[12px] font-bold border border-navy-line align-middle">
                 Age {myAge}
-                <button onClick={() => setMyAge(null)} aria-label="Clear age" className="hover:text-danger">
+                <button onClick={() => setMyAge(null)} aria-label="Clear age" className="p-2 -m-2 hover:text-danger">
                   <X className="w-3 h-3" />
                 </button>
               </span>
@@ -394,7 +690,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
               return (
                 <span key={chip.label} className="ml-2 inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded-full text-[12px] font-bold border border-navy-line align-middle">
                   {chip.label}
-                  <button onClick={chip.clear} aria-label={`Clear ${chip.label}`} className="hover:text-danger">
+                  <button onClick={chip.clear} aria-label={`Clear ${chip.label}`} className="p-2 -m-2 hover:text-danger">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
@@ -403,15 +699,28 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
             {searchQuery && (
               <span className="ml-2 inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded-full text-[12px] font-bold border border-navy-line align-middle">
                 &ldquo;{searchQuery}&rdquo;
-                <button onClick={() => setSearchQuery("")} aria-label="Clear search" className="hover:text-danger">
+                <button onClick={() => setSearchQuery("")} aria-label="Clear search" className="p-2 -m-2 hover:text-danger">
                   <X className="w-3 h-3" />
                 </button>
               </span>
             )}
           </p>
           <div className="flex items-center gap-3 shrink-0">
+            {openTab && (
+              <button
+                onClick={() => setMajorOnly(!majorOnly)}
+                aria-pressed={majorOnly}
+                title={`Show only recruitments with ${MAJOR_POSTS} or more posts`}
+                className={cn(
+                  "px-3 min-h-[44px] md:min-h-[36px] rounded-full border text-[13px] font-semibold whitespace-nowrap transition-colors",
+                  majorOnly ? "bg-navy-solid text-white border-navy" : "bg-surface text-ink-2 border-control hover:border-navy"
+                )}
+              >
+                {MAJOR_POSTS}+ posts only
+              </button>
+            )}
             {hasActiveFilters && (
-              <button onClick={resetAllFilters} className="text-[13px] font-semibold text-danger hover:underline">
+              <button onClick={resetAllFilters} className="text-[13px] font-semibold text-navy hover:underline py-3 -my-3">
                 Clear filters
               </button>
             )}
@@ -428,6 +737,14 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
             </button>)}
           </div>
         </div>
+        {filteredJobs.length > 0 && gap && (
+          <p className="text-[13px] text-ink-2 px-3 py-2 rounded-lg bg-saffron-tint">
+            {gap.text}{" "}
+            <a href={gap.href} target="_blank" rel="noreferrer" className="font-semibold text-navy underline underline-offset-2">
+              See {gap.site}
+            </a>
+          </p>
+        )}
 
         {/* phones: behind the Filters button; wider screens: one slim row */}
         {!hideSearch && (<div className={cn(showFilters ? "grid" : "hidden", "grid-cols-1 gap-2 p-3 rounded-xl bg-surface border border-line md:flex md:items-center md:p-0 md:border-0 md:bg-transparent")}>
@@ -483,90 +800,162 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
 
       {/* ================= LIST VIEW: cards on phones, a table on wider screens ================= */}
       {viewMode === "ledger" && (
-        <ul className={cn(
-          "bg-surface rounded-xl border border-line divide-y divide-line-soft overflow-hidden",
-          activeCategory === "EXAM_DATES" ? "" : "lg:hidden"
-        )}>
+        <ul className="lg:hidden bg-surface rounded-xl border border-line divide-y divide-line-soft overflow-hidden">
           {filteredJobs.length === 0 && (
-            <li className="col-span-full py-8 text-center text-sm text-muted">
-              No jobs match these filters.{" "}
-              <button onClick={resetAllFilters} className="font-bold text-navy underline">Clear filters</button>
+            <li className="col-span-full px-4 py-8 text-center text-sm text-muted">
+              {emptyHelp}
             </li>
           )}
-          {filteredJobs.slice(0, visible).map((job) => (
-            <li key={job.id}>
+          {shownItems.map((it) => it.kind === "head" ? (
+            <li key={it.key} className="bg-subtle">
+              <h3 className="px-3 pt-3 pb-1.5 text-[12px] font-bold text-ink-2 flex justify-between">
+                <span>{it.label}</span>
+                <span className="font-semibold text-muted tabular-nums">{it.count}</span>
+              </h3>
+            </li>
+          ) : it.kind === "more" ? (
+            <li key={it.key}>
+              <button
+                onClick={() => unfold(it.key, it.firstId)}
+                className="w-full min-h-[44px] px-3 pl-8 text-left text-[13px] font-semibold text-navy hover:bg-subtle"
+              >
+                Show {it.count} more from {it.org}
+                {it.posts > 0 && <span className="font-normal text-muted"> · {it.posts.toLocaleString("en-IN")} posts</span>}
+              </button>
+            </li>
+          ) : (() => { const job = it.job; return (
+            <li key={job.id} data-job={job.id}>
               <JobRow
                 job={job}
+                title={titleOf(job)}
                 exam={activeCategory === "EXAM_DATES" || job.status === "ADMIT_CARD_OUT" ? nextExamDate(job) : undefined}
+                showStage={!grouped}
                 action={
                   <button
                     onClick={() => toggleSave(job.id)}
-                    className={cn("p-1.5 -m-1 rounded", isSaved(job.id) ? "text-saffron" : "text-faint hover:text-navy")}
+                    className={cn("w-11 h-11 -m-3 flex items-center justify-center rounded-lg", isSaved(job.id) ? "text-saffron" : "text-faint hover:text-navy")}
                     title={isSaved(job.id) ? "Remove from saved" : "Save this job"}
-                    aria-label={isSaved(job.id) ? "Remove from saved" : "Save this job"}
+                    aria-label={`Save: ${rowTitle(job)}`}
+                    aria-pressed={isSaved(job.id)}
                   >
                     <Bookmark className={cn("w-4 h-4", isSaved(job.id) && "fill-saffron-bright")} />
                   </button>
                 }
               />
             </li>
-          ))}
+          ); })())}
         </ul>
       )}
-      {viewMode === "ledger" && activeCategory !== "EXAM_DATES" && (
-        <div className="hidden lg:block bg-surface rounded-xl border border-line overflow-hidden shadow-2xs">
+      {viewMode === "ledger" && (
+        <div className="hidden lg:block bg-surface rounded-xl border border-line overflow-clip shadow-2xs">
           <table className="w-full text-left border-collapse text-sm">
-            <thead>
-              <tr className="bg-subtle border-b border-line text-[12px] font-semibold text-muted">
+            <thead className={filteredJobs.length === 0 ? "hidden" : undefined}>
+              <tr className="bg-subtle border-b border-line text-[12px] font-semibold text-muted [&>th]:sticky [&>th]:top-[162px] [&>th]:z-20 [&>th]:bg-subtle">
                 <th className="py-2.5 pl-6 pr-4">Recruitment</th>
-                <th className="py-2.5 px-4 text-right">Posts</th>
-                <th className="py-2.5 px-4">Eligibility</th>
-                <th className="py-2.5 px-4">Last date / exam</th>
+                {docMode ? (
+                  <th className="py-2.5 px-4">{activeCategory === "EXAM_DATES" ? "Admit card or exam notice" : "Latest official document"}</th>
+                ) : (
+                  <>
+                    <th className="py-2.5 px-4 text-right">Posts</th>
+                    <th className="py-2.5 px-4">Eligibility</th>
+                  </>
+                )}
+                <th className="py-2.5 px-4">{activeCategory === "EXAM_DATES" ? "Exam" : docMode ? "Where it stands" : "Last date / exam"}</th>
                 <th className="py-2.5 pl-2 pr-4"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line-soft">
               {filteredJobs.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-sm text-muted">
-                    No jobs match these filters.{" "}
-                    <button onClick={resetAllFilters} className="font-bold text-navy underline">Clear filters</button>
+                  <td colSpan={cols} className="px-4 py-12 text-center text-sm text-muted">
+                    {emptyHelp}
                   </td>
                 </tr>
               ) : (
-                filteredJobs.slice(0, visible).map((job) => {
+                shownItems.map((it) => {
+                  if (it.kind === "head") {
+                    return (
+                      <tr key={it.key} className="bg-subtle">
+                        <th colSpan={cols} scope="colgroup" className="py-2 pl-6 pr-4 text-left text-[12px] font-bold text-ink-2">
+                          {it.label} <span className="font-semibold text-muted tabular-nums">· {it.count}</span>
+                        </th>
+                      </tr>
+                    );
+                  }
+                  if (it.kind === "more") {
+                    return (
+                      <tr key={it.key}>
+                        <td colSpan={cols} className="p-0">
+                          <button
+                            onClick={() => unfold(it.key, it.firstId)}
+                            className="w-full py-2.5 pl-6 pr-4 text-left text-[13px] font-semibold text-navy hover:bg-subtle"
+                          >
+                            Show {it.count} more from {it.org}
+                            {it.posts > 0 && <span className="font-normal text-muted"> · {it.posts.toLocaleString("en-IN")} posts</span>}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  }
+                  const job = it.job;
                   const style = STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING;
                   const detailLink = getJobCanonicalPath(job);
                   const saved = isSaved(job.id);
                   const qual = qualificationLabel(job);
                   const age = job.ageKnown !== false && job.maxAge > 0 ? formatAgeRange(job) : null;
+                  const host = sourceHost(job);
+                  const doc = !docMode ? null : activeCategory === "EXAM_DATES" ? nextExamDate(job)?.stage || null : latestDoc(job);
+                  const exam = activeCategory === "EXAM_DATES" || job.status === "ADMIT_CARD_OUT" ? nextExamDate(job) : undefined;
                   return (
-                    <tr key={job.id} className="group hover:bg-subtle transition-colors">
+                    <tr key={job.id} data-job={job.id} className="group hover:bg-subtle transition-colors">
                       {/* recruitment, with the stage stripe on the left edge */}
                       <td className="relative py-3 pl-6 pr-4">
                         <span className={cn("absolute left-0 inset-y-0 w-1.5", style.stripe)} aria-hidden />
                         <div className="flex items-center gap-1.5 text-[12px]">
-                          <span className="px-1.5 py-0.5 rounded bg-navy-tint text-navy font-bold leading-none border border-navy-line">
+                          <abbr title={job.organization} className="no-underline px-1.5 py-0.5 rounded bg-navy-tint text-navy font-bold leading-none border border-navy-line">
                             {job.orgShortCode}
-                          </span>
+                          </abbr>
                           <span className="text-muted">{placeLabel(job)}</span>
-                          <span className="text-faint" aria-hidden>·</span>
-                          <span className={cn("font-bold", style.text)}>{style.label}</span>
+                          {/* inside Open / Closing the tab already says it; the days-left pill carries urgency */}
+                          {!grouped && (
+                            <>
+                              <span className="text-faint" aria-hidden>·</span>
+                              <span className={cn("font-bold", style.text)}>{style.label}</span>
+                            </>
+                          )}
                         </div>
                         <Link
                           href={detailLink}
                           className="mt-1 block font-serif font-bold text-[15px] leading-snug text-ink group-hover:text-navy line-clamp-2"
                         >
-                          {cleanTitle(job)}
+                          {titleOf(job)}
                         </Link>
-                        <p className="text-[12px] text-muted line-clamp-1 mt-0.5">{job.organization}</p>
+                        <p className="text-[12px] text-muted truncate mt-0.5">
+                          {job.organization}
+                          {host && <span className="text-faint"> · {host}</span>}
+                        </p>
                       </td>
 
+                      {docMode ? (
+                        <td className="py-3 px-4 max-w-[22rem]">
+                          {doc ? (
+                            <a href={doc.url} target="_blank" rel="noreferrer" className="text-[13px] text-ink-2 hover:text-navy">
+                              <span className="line-clamp-2">{stageText(doc).main}</span>
+                              <span className="mt-0.5 inline-flex items-center gap-1 text-[12px] text-muted">
+                                {doc.date ? (doc.date > todayIST() ? `dated ${formatDate(doc.date)}` : formatDate(doc.date)) : "Official PDF"} <ExternalLink className="w-3 h-3" aria-hidden />
+                              </span>
+                            </a>
+                          ) : (
+                            <span className="text-[12px] text-faint">See notice</span>
+                          )}
+                        </td>
+                      ) : (
+                      <>
                       <td className="py-3 px-4 text-right whitespace-nowrap tabular-nums">
                         {job.totalVacancies ? (
                           <b className="text-ink">{job.totalVacancies.toLocaleString("en-IN")}</b>
                         ) : (
-                          <span className="text-faint">—</span>
+                          <span className="text-[12px] text-faint">See notice</span>
                         )}
                       </td>
 
@@ -577,13 +966,15 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                               {c}
                             </span>
                           ))}
-                          {!qual && !age && <span className="text-[12px] text-faint">See notification</span>}
+                          {!qual && !age && <span className="text-[12px] text-faint">See notice</span>}
                         </div>
                       </td>
+                      </>
+                      )}
 
                       <td className="py-3 px-4">
                         <div className="flex flex-col items-start gap-1 text-[13px] whitespace-nowrap">
-                          <JobDeadline job={job} exam={job.status === "ADMIT_CARD_OUT" ? nextExamDate(job) : undefined} />
+                          <JobDeadline job={job} exam={exam} />
                         </div>
                       </td>
 
@@ -596,16 +987,11 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                               saved ? "text-saffron bg-saffron-tint" : "text-faint hover:text-navy hover:bg-navy-tint"
                             )}
                             title={saved ? "Remove from saved jobs" : "Save this job"}
-                            aria-label={saved ? "Remove from saved jobs" : "Save this job"}
+                            aria-label={`Save: ${rowTitle(job)}`}
+                            aria-pressed={saved}
                           >
                             <Bookmark className={cn("w-4 h-4", saved && "fill-saffron-bright")} />
                           </button>
-                          <Link
-                            href={detailLink}
-                            className="px-3 py-1.5 rounded-lg border border-line text-navy font-semibold text-[13px] hover:border-navy hover:bg-navy-tint transition-colors inline-flex items-center gap-1"
-                          >
-                            Details <ArrowRight className="w-3.5 h-3.5" />
-                          </Link>
                         </div>
                       </td>
                     </tr>
@@ -617,13 +1003,13 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
         </div>
       )}
 
-      {viewMode === "ledger" && filteredJobs.length > visible && (
+      {viewMode === "ledger" && jobsInList > visible && (
         <div className="text-center">
           <button
             onClick={() => setVisible((v) => v + 20)}
             className="px-4 py-2.5 rounded-lg border border-navy-line bg-surface text-sm font-bold text-navy hover:border-navy"
           >
-            Show more ({filteredJobs.length - visible} more)
+            Show more · {jobsLeft} {jobsLeft === 1 ? "job" : "jobs"} left
           </button>
         </div>
       )}
@@ -631,12 +1017,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       {/* ================= OPTION 2: THE EDITORIAL SPOTLIGHT (SPLIT) ================= */}
       {viewMode === "spotlight" && (
         filteredJobs.length === 0 ? (
-          <div className="py-12 text-center text-xs text-muted bg-surface rounded-lg border border-line">
-            <p className="font-serif text-base font-bold text-ink">No circulars found matching criteria</p>
-            <button onClick={resetAllFilters} className="mt-2 px-3 py-1.5 rounded bg-navy-solid text-white font-bold text-xs">
-              Reset Filters
-            </button>
-          </div>
+          <div className="py-10 text-center text-sm text-muted bg-surface rounded-lg border border-line">{emptyHelp}</div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
             {/* Main Hero Spotlight (7 Cols) */}
@@ -810,12 +1191,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       {viewMode === "bulletin" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredJobs.length === 0 ? (
-            <div className="col-span-full py-12 text-center text-xs text-muted bg-surface rounded-lg border border-line">
-              <p className="font-serif text-base font-bold text-ink">No circulars found matching criteria</p>
-              <button onClick={resetAllFilters} className="mt-2 px-3 py-1.5 rounded bg-navy-solid text-white font-bold text-xs">
-                Reset Filters
-              </button>
-            </div>
+            <div className="col-span-full py-10 text-center text-sm text-muted bg-surface rounded-lg border border-line">{emptyHelp}</div>
           ) : (
             filteredJobs.map((job) => {
               const saved = isSaved(job.id);

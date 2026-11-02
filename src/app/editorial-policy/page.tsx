@@ -73,7 +73,7 @@ export default function EditorialPolicyPage() {
       </section>
 
       {/* Main Content Area */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-12 text-sm text-ink-2 leading-relaxed">
+      <main id="main-content" className="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-12 text-sm text-ink-2 leading-relaxed">
         
         {/* The 5-Stage Verification Pipeline */}
         <section className="space-y-4">

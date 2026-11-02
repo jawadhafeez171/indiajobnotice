@@ -73,6 +73,8 @@ export interface JobNotification {
   stages?: JobStage[];
   /** One line on where the recruitment stands, e.g. "Answer key out · result awaited (14 Sep 2026)". */
   currentStage?: string;
+  /** When the site published this notice (database time), set by the loader. */
+  publishedAt?: string;
   /** Applications closed, exams or results under way: listed under "Exams in progress". */
   inProgress?: boolean;
 }
@@ -155,13 +157,22 @@ export function stageStatus(stages: JobStage[], today: string): JobStatus | null
     return "ADMIT_CARD_OUT";
   }
   const cutoff = new Date(Date.parse(today) - 45 * 86400 * 1000).toISOString().slice(0, 10);
-  if (stages.some((s) => (s.kind === "result" || s.kind === "final_result") && s.date && s.date >= cutoff && s.date <= today)) {
+  // the newest result decides: a shortlist after an earlier result means the next round is on
+  const recent = stages
+    .filter((s) => (s.kind === "result" || s.kind === "final_result") && s.date && s.date >= cutoff && s.date <= today)
+    .sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+  if (recent.length && isResult(recent[recent.length - 1])) {
     return "RESULT_OUT";
   }
   return null;
 }
 
 export type StageKind = "schedule" | "admit_card" | "answer_key" | "result" | "final_result";
+
+/** A result candidates wait for; a shortlist for the next stage (interview, mains) is not one. */
+function isResult(s: JobStage): boolean {
+  return (s.kind === "result" || s.kind === "final_result") && !s.shortlist;
+}
 
 export interface JobStage {
   kind: StageKind;
@@ -174,6 +185,8 @@ export interface JobStage {
   examDates?: string[];
   /** One English sentence on what the document is (the agent read it); titles are often not English. */
   summary?: string;
+  /** A result that only lists who goes on to the next stage (shortlist for interview, qualified for mains). */
+  shortlist?: boolean;
 }
 
 /** The text to show for a stage document: its English summary when the title is in another script. */
@@ -252,13 +265,53 @@ export function daysUntil(date: string, today = todayIST()): number {
   return Math.round((Date.parse(date) - Date.parse(today)) / 86400000);
 }
 
+const STAGE_LABEL: Record<StageKind, string> = {
+  schedule: "Exam dates announced",
+  admit_card: "Admit card out",
+  answer_key: "Answer key out",
+  result: "Result out",
+  final_result: "Final result out",
+};
+
+/**
+ * Where a recruitment stands, from its latest official document: "Answer key out · result awaited",
+ * "Admit card out · exam 06 Nov". The document's own date is shown only when it is not in the
+ * future (a future date there is the exam the document announces, so it is shown as the exam).
+ */
+export function stageSummary(job: JobNotification, today = todayIST()): string | null {
+  const stages = job.stages || [];
+  if (!stages.length) return job.currentStage || null;
+  const last = stages[stages.length - 1];
+  const exam = nextExamDate(job, today);
+  // an admit card or schedule whose exam has passed: say so, not "Admit card out"
+  if (!exam && (last.kind === "admit_card" || last.kind === "schedule")) {
+    const held = (last.examDates || []).filter((d) => d < today).sort().pop();
+    if (held) return `Exam held ${shortDay(held, today)} · result awaited`;
+    if (last.date && last.date <= today) {
+      return `${last.kind === "admit_card" ? "Admit card issued" : "Exam dates announced"} ${shortDay(last.date, today)}`;
+    }
+  }
+  const parts = [last.shortlist ? "Shortlist out" : STAGE_LABEL[last.kind] || "Update"];
+  if (last.kind === "answer_key") parts.push("result awaited");
+  if (last.shortlist && !exam) parts.push("next round to come");
+  if (exam) parts.push(`exam ${shortDay(exam.date, today)}`);
+  else if (last.date && last.date <= today) parts.push(shortDay(last.date, today));
+  return parts.join(" · ");
+}
+
+const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function shortDay(iso: string, today: string): string {
+  const d = `${iso.slice(8, 10)} ${MON[Number(iso.slice(5, 7)) - 1]}`;
+  return iso.slice(0, 4) === today.slice(0, 4) ? d : `${d} ${iso.slice(0, 4)}`;
+}
+
 /** Results (any stage) dated within the last `days` days, newest first. */
 export function getLatestResults(jobs: JobNotification[], days = 45, today = todayIST()): { job: JobNotification; stage: JobStage }[] {
   const cutoff = new Date(Date.parse(today) - days * 86400 * 1000).toISOString().slice(0, 10);
   const out: { job: JobNotification; stage: JobStage }[] = [];
   for (const job of jobs) {
     const recent = (job.stages || [])
-      .filter((s) => (s.kind === "result" || s.kind === "final_result") && s.date && s.date >= cutoff && s.date <= today)
+      .filter((s) => isResult(s) && s.date && s.date >= cutoff && s.date <= today)
       .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
     if (recent.length) out.push({ job, stage: recent[0] });
   }
@@ -277,6 +330,7 @@ export function todayIST(): string {
 /** "18–35 yrs", "Up to 35 yrs", or "See notification" when the notice states no age limit. */
 export function formatAgeRange(job: JobNotification, unit = "yrs"): string {
   if (job.ageKnown === false || !job.maxAge) return "See notification";
+  if (job.minAge && job.minAge === job.maxAge) return `${job.maxAge} ${unit}`;
   return job.minAge ? `${job.minAge}–${job.maxAge} ${unit}` : `Up to ${job.maxAge} ${unit}`;
 }
 

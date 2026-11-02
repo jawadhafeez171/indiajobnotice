@@ -19,6 +19,8 @@ export function ReservedAdSlot({
   slotId,
   className = "",
 }: ReservedAdSlotProps) {
+  // no ads yet: render nothing (set NEXT_PUBLIC_ADS_ENABLED=1 when AdSense goes live)
+  if (process.env.NEXT_PUBLIC_ADS_ENABLED !== "1") return null;
   // Height reservations tailored for standard Google Publisher / IAB ad sizes
   const config = {
     leaderboard: {

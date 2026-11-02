@@ -1,6 +1,7 @@
 import "server-only";
 import postgres from "postgres";
 import { unstable_cache } from "next/cache";
+import { getStateBySlug } from "@/config/states";
 import { computeJobStatus, JobNotification } from "@/data/jobs";
 
 // Notices published by the notice agent (indiajobnotice-agent, stage 4) live in the Supabase table
@@ -22,10 +23,10 @@ async function loadJobs(): Promise<JobNotification[]> {
     console.warn("JOBS_DATABASE_URL is not set: no jobs to show");
     return [];
   }
-  const rows = await conn<{ data: string }[]>`
-    select data from notices where status = 'published'
+  const rows = await conn<{ data: string; at: string | null }[]>`
+    select data, coalesce(published_at, created_at)::text as at from notices where status = 'published'
     order by coalesce(published_at, created_at) desc`;
-  return rows.map((r) => JSON.parse(r.data) as JobNotification);
+  return rows.map((r) => ({ ...(JSON.parse(r.data) as JobNotification), publishedAt: r.at || undefined }));
 }
 
 // Cached for an hour and refreshed at once when the agent publishes (POST /api/revalidate, tag "jobs").
@@ -34,6 +35,10 @@ const cachedJobs = unstable_cache(loadJobs, ["published-jobs"], { tags: ["jobs"]
 /** Every published job, with its status worked out from today's date. */
 const SMALL_WORDS = new Set(["of", "the", "and", "for", "in", "&", "at", "to", "office"]);
 const KEEP_WORDS = new Set(["District Court", "High Court"]);
+const RESERVED_CODES: Record<string, { name: RegExp; suffix: string }> = {
+  UPSC: { name: /union public service/i, suffix: "PSC" },
+  SSC: { name: /^staff selection commission/i, suffix: "SSC" },
+};
 
 /**
  * The short code shown on cards and tags. Some sources store a place name ("BENGALURURURAL",
@@ -42,12 +47,22 @@ const KEEP_WORDS = new Set(["District Court", "High Court"]);
  * itself gives in brackets (MAHAGENCO) is kept.
  */
 function cleanOrgCode(job: JobNotification): string {
+  const code = bodyCode(job);
+  // a central body's code on a state body (UP Public Service Commission -> UPSC): state code + rest (UPPSC)
+  const reserved = RESERVED_CODES[code];
+  const st = !job.isCentral ? getStateBySlug(job.stateSlug)?.code : null;
+  return reserved && !reserved.name.test(job.organization || "") && st ? `${st}${reserved.suffix}` : code;
+}
+
+function bodyCode(job: JobNotification): string {
   const code = (job.orgShortCode || "").trim();
   const org = job.organization || "";
   if (KEEP_WORDS.has(code)) return code;
+  // a bare state code ("UP") is not a body: build the body's initials (UPPSC)
+  const stateCodeOnly = /^[A-Z]{2}$/.test(code) && org.split(/\s+/).length > 2;
   const looksRight = /^[A-Z][A-Z0-9&.-]{1,6}$/.test(code);
   const statedInName = /^[A-Z0-9&.-]+$/.test(code) && org.includes(`(${code})`);
-  if (code && (looksRight || statedInName)) return code;
+  if (code && !stateCodeOnly && (looksRight || statedInName)) return code;
   // the name in brackets when it is the body itself ("Office of the DGP, Nagaland (Nagaland Police)")
   const bracket = org.match(/\(([^)]+)\)/)?.[1] || "";
   const base = /police|commission|board|court/i.test(bracket) && !/court/i.test(org.split("(")[0])
@@ -61,7 +76,33 @@ function cleanOrgCode(job: JobNotification): string {
   return code || initials.slice(0, 6);
 }
 
+/**
+ * One badge, one body: when a code stands for different bodies (MPSC is Manipur, Meghalaya and
+ * Maharashtra PSC), add the state's code ("MPSC · MN").
+ */
+function disambiguateCodes(jobs: JobNotification[]): JobNotification[] {
+  const bodies = new Map<string, Set<string>>();
+  const norm = (o: string) => o.split("(")[0].replace(/[,.]+$/, "").trim().toLowerCase();
+  for (const j of jobs) {
+    if (!bodies.has(j.orgShortCode)) bodies.set(j.orgShortCode, new Set());
+    bodies.get(j.orgShortCode)!.add(norm(j.organization || ""));
+  }
+  return jobs.map((j) => {
+    const many = (bodies.get(j.orgShortCode)?.size || 0) > 1 && !KEEP_WORDS.has(j.orgShortCode);
+    const st = !j.isCentral ? getStateBySlug(j.stateSlug)?.code : null;
+    return many && st ? { ...j, orgShortCode: `${j.orgShortCode} · ${st}` } : j;
+  });
+}
+
 export async function getAllJobs(): Promise<JobNotification[]> {
   const jobs = await cachedJobs();
-  return jobs.map((job) => ({ ...job, orgShortCode: cleanOrgCode(job), status: computeJobStatus(job) }));
+  const cleaned = jobs.map((job) => {
+    const code = cleanOrgCode(job);
+    // the stored short title starts with the stored code ("UPSC Uttarakhand..."): use the cleaned one
+    const old = (job.orgShortCode || "").trim();
+    const shortTitle = old && code !== old && job.shortTitle?.startsWith(old + " ")
+      ? code + job.shortTitle.slice(old.length) : job.shortTitle;
+    return { ...job, orgShortCode: code, shortTitle, status: computeJobStatus(job) };
+  });
+  return disambiguateCodes(cleaned);
 }

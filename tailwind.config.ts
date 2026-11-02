@@ -21,6 +21,7 @@ const config: Config = {
         "subtle": "rgb(var(--c-subtle) / <alpha-value>)",
         "sunken": "rgb(var(--c-sunken) / <alpha-value>)",
         "line": "rgb(var(--c-line) / <alpha-value>)",
+        "control": "rgb(var(--c-control) / <alpha-value>)",
         "line-soft": "rgb(var(--c-line-soft) / <alpha-value>)",
         "ink": "rgb(var(--c-ink) / <alpha-value>)",
         "ink-2": "rgb(var(--c-ink-2) / <alpha-value>)",

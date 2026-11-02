@@ -58,7 +58,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-8 text-sm text-ink-2 leading-relaxed">
+      <main id="main-content" className="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-8 text-sm text-ink-2 leading-relaxed">
         
         {/* Core Commitment Box */}
         <div className="bg-surface rounded-lg border border-line p-5 shadow-2xs space-y-3">

@@ -71,7 +71,7 @@ export default async function VacanciesPage() {
       </section>
 
       {/* Main Content Area */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-8">
+      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-8">
         <QualificationVacancyTracker jobs={getListingJobs(await getAllJobs())} />
 
         {/* Reserved Ad Slot (0.00 CLS Protection) */}

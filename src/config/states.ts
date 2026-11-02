@@ -609,3 +609,6 @@ export function getStatesByZone(zoneId: string): StateInfo[] {
 }
 
 
+
+/** The states covered most thoroughly, by name in the state bar and the home page hero. */
+export const POPULAR_STATES = ["karnataka", "tn", "kerala", "ap", "telangana", "maharashtra", "bihar", "wb", "up"];

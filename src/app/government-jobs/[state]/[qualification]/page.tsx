@@ -136,7 +136,7 @@ export default async function StateQualificationPage({ params }: Props) {
 
       <Navbar currentStateSlug={state.slug} />
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-8">
+      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-8">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted">
           <Link href="/" className="hover:text-navy font-medium transition-colors">Home</Link>

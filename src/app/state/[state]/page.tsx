@@ -134,7 +134,7 @@ export default async function StateHomePage({ params }: PageProps) {
       </section>
 
       {/* Main Content Area */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-10">
+      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-10">
         {/* Social Alert Bar */}
         <SocialAlertBar state={state} />
 

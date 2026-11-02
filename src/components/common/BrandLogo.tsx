@@ -23,7 +23,7 @@ export function BrandLogo({
   const logoSrc = isLight ? "/logo-white.png" : "/logo-transparent.png";
   
   // Aspect ratio of the tight transparent logo: 926 / 135 ≈ 6.86
-  const width = Math.round(height * 6.86);
+  const width = Math.round((height * 926) / 135);
 
   return (
     <div className={`inline-flex items-center gap-1.5 select-none ${className}`}>
@@ -34,6 +34,7 @@ export function BrandLogo({
         width={width}
         height={height}
         priority
+        style={{ width: "auto" }}
         className={`h-7 sm:h-9 w-auto object-contain transition-opacity group-hover:opacity-95 ${isLight ? "" : "dark:hidden"}`}
       />
       {!isLight && (
@@ -43,6 +44,7 @@ export function BrandLogo({
           aria-hidden
           width={width}
           height={height}
+          style={{ width: "auto" }}
           className="hidden dark:block h-7 sm:h-9 w-auto object-contain"
         />
       )}
@@ -71,7 +73,7 @@ export function TricolorCapsule({ className = "w-24 h-1.5" }: { className?: stri
   return (
     <div className={`inline-flex items-center rounded-full overflow-hidden shadow-2xs ${className}`}>
       <div className="h-full flex-1 bg-saffron-solid" />
-      <div className="h-full flex-1 bg-white" />
+      <div className="h-full flex-1 bg-white shadow-[inset_0_0_0_1px_rgb(var(--c-line))]" />
       <div className="h-full flex-1 bg-green-solid" />
     </div>
   );

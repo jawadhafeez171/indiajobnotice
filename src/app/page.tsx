@@ -1,35 +1,50 @@
 import React from "react";
 import Link from "next/link";
+import { ArrowDown } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
-import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { getListingJobs, getExamsInProgress, todayIST, getJobCanonicalPath } from "@/data/jobs";
-import { cleanTitle } from "@/components/jobs/JobListCard";
+import { rowTitle } from "@/components/jobs/JobListCard";
 import type { JobNotification } from "@/data/jobs";
-import { ExamsInProgressSection } from "@/components/jobs/ExamsInProgressSection";
-import { ExamCalendarSections } from "@/components/jobs/ExamCalendarSections";
 import { getAllJobs } from "@/lib/jobs-store";
-import { StepsArt } from "@/components/home/StepsArt";
 import { HomeSearch } from "@/components/home/HomeSearch";
-
-import { STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
-import { cn } from "@/lib/utils";
-import { getStateSubdomainUrl } from "@/lib/subdomains";
+import { NewsTicker } from "@/components/home/NewsTicker";
 
 
-// ticker text: the title without the body's name in front (it is shown in bold) and cut short
+
+// ticker text: the post (the body's code is shown in bold before it), cut short
 function tickerTitle(j: JobNotification): string {
-  const t = cleanTitle(j);
-  const rest = t.startsWith(j.orgShortCode + " ") ? t.slice(j.orgShortCode.length + 1) : t;
-  return rest.length > 60 ? rest.slice(0, 58).trimEnd() + "…" : rest;
+  const t = rowTitle(j);
+  return t.length > 60 ? t.slice(0, 58).trimEnd() + "…" : t;
 }
 
-const AGE_GLOW = {
-  backgroundImage: "radial-gradient(520px 220px at 100% 100%, rgb(var(--c-green-solid) / 0.10), transparent 70%), radial-gradient(420px 200px at 0% 0%, rgb(var(--c-saffron-bright) / 0.08), transparent 70%)",
-};
+// what the list needs of a job: the page sends every listed job to the browser, so the long
+// texts only the job page shows stay behind
+function forList(j: JobNotification): JobNotification {
+  return {
+    ...j,
+    salary: "", ageRelaxation: "", syllabusSummary: "", selectionProcess: [], updates: undefined,
+    districtWiseVacancies: undefined, verificationSource: undefined,
+    posts: j.posts?.map((p) => ({ postName: p.postName, vacancies: 0, qualification: p.qualification, ageLimit: "", pay: "" })),
+    stages: j.stages?.map((s) => ({ ...s, title: s.summary && /[ऀ-෿]/.test(s.title) ? s.title.slice(0, 80) : s.title })),
+  };
+}
+
+const EXAMPLE_AGE = 25;
+
+const MONTHS3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+/** "2 Nov, 18:52 IST" from a database timestamp. */
+function istStamp(ts: string): string | null {
+  const t = Date.parse(ts.replace(" ", "T").replace(/([+-]\d\d)$/, "$1:00"));
+  if (Number.isNaN(t)) return null;
+  const d = new Date(t + 5.5 * 3600 * 1000);
+  const hh = String(d.getUTCHours()).padStart(2, "0");
+  const mm = String(d.getUTCMinutes()).padStart(2, "0");
+  return `${d.getUTCDate()} ${MONTHS3[d.getUTCMonth()]}, ${hh}:${mm} IST`;
+}
+
 
 // the year in the title follows the calendar (set when the page is built)
 const YEAR = new Date().getFullYear();
@@ -42,7 +57,7 @@ export const metadata = {
   },
   openGraph: {
     title: "India Job Notice - Central & State Government Jobs",
-    description: "Official notifications, admit cards and results from all 36 states and union territories.",
+    description: "Official notifications, admit cards and results from official websites, central and state.",
     url: "https://www.indiajobnotice.com",
     siteName: "India Job Notice",
     locale: "en_IN",
@@ -61,6 +76,23 @@ export default async function HomePage() {
   // recruitments whose applications opened in the last 7 days (the date the site added a notice
   // says little: everything already open was added when the site started publishing)
 
+  // age box example: open jobs that state an age limit, and how many take a 25-year-old
+  const openWithAge = listedJobs.filter((j) => (j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR")
+    && j.ageKnown !== false && j.maxAge > 0);
+  const openCount = openWithAge.length;
+  const openNow = listedJobs.filter((j) => j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR").length;
+  const exampleCount = openWithAge.filter((j) => EXAMPLE_AGE <= j.maxAge && (!j.minAge || EXAMPLE_AGE >= j.minAge)).length;
+
+  // when the newest notice was published (IST), for the proof line
+  const newest = allJobs.map((j) => j.publishedAt || "").sort().pop();
+  const latestAdded = newest ? istStamp(newest) : null;
+
+  // one list: listed jobs plus recruitments under way, each once
+  const listedIds = new Set(listedJobs.map((j) => j.id));
+  const listJobs = [...listedJobs, ...getExamsInProgress(allJobs).filter((j) => !listedIds.has(j.id))].map(forList);
+  // the same numbers as the Open and Under way tabs
+  const underWay = listJobs.filter((j) => j.inProgress).length;
+
   // ticker: newest open notifications first
   const latest = listedJobs
     .filter((j) => (j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR") && j.applicationStartDate)
@@ -69,173 +101,104 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-canvas">
+      <a
+        href="#results-count"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-3 focus:rounded-lg focus:bg-navy-solid focus:text-white focus:font-bold"
+      >
+        Skip to the job list
+      </a>
       <Navbar currentStateSlug="central" />
 
-      {/* Hero: label, heading and one line on the left; the main states on the right */}
-      <section className="border-b border-line bg-subtle py-6 sm:py-8 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-          <div>
-            <div className="flex items-center gap-2 mb-2 flex-wrap text-xs">
-              <TricolorCapsule className="w-12 h-1.5" />
-              <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-navy">
-                Central &amp; state government jobs
-              </span>
-              <span className="text-faint" aria-hidden>·</span>
-              <span className="text-[11px] font-mono text-green bg-green-tint px-2 py-0.5 rounded font-bold border border-green-line">
-                Official sources
-              </span>
-            </div>
-            <h1 className="font-serif text-[26px] sm:text-4xl lg:text-[40px] font-bold text-ink tracking-tight leading-tight text-balance">
-              Government Job Notifications &amp; Exam Schedules
+      <main id="main-content" className="flex-1 w-full flex flex-col">
+      {/* Hero: heading, proof line and search; the age check has its own section above the footer */}
+      <section className="border-b border-line bg-subtle py-5 sm:py-7 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex-1 min-w-0">
+            <h1 className="font-serif text-[22px] sm:text-4xl lg:text-[40px] font-bold text-ink tracking-tight leading-tight text-balance">
+              Government jobs, read from the official notice
             </h1>
             <p className="mt-2 text-sm text-ink-2 max-w-2xl">
-              Last dates, eligibility, admit cards and results, taken from official notifications.
+              <b className="text-ink">{openNow} open now</b> · {underWay} more with exams or results to come, each read from its official notice.{" "}
+              {latestAdded && <>Latest added {latestAdded}. </>}
+              <Link href="/editorial-policy" className="font-semibold text-navy underline underline-offset-2">
+                How we verify
+              </Link>
             </p>
-          </div>
 
-          {/* Jobs by state */}
-          <div className="flex flex-col lg:items-end gap-1.5 shrink-0">
-            <span className="text-[11px] font-mono text-muted font-semibold">Jobs by state:</span>
-            <div className="flex flex-wrap gap-1.5 max-w-md lg:justify-end">
-              {STATES_REGISTRY.slice(0, 6).map((st) => {
-                const badge = getStateBadgeColor(st.code);
-                return (
+            {/* search sits in the hero: the first job is one screen closer */}
+            <div className="mt-4 max-w-2xl">
+              <HomeSearch
+                extra={
                   <a
-                    key={st.slug}
-                    href={getStateSubdomainUrl(st.slug)}
-                    className={cn(
-                      "px-2 py-0.5 rounded text-xs font-semibold border transition-colors flex items-center gap-1 hover:border-navy",
-                      badge.bg,
-                      badge.text,
-                      badge.border
-                    )}
+                    href="#age-check"
+                    className="inline-flex items-center gap-1.5 min-h-[44px] text-[13px] font-semibold text-navy hover:underline"
                   >
-                    <span>{st.name}</span>
-                    <span className="text-[10px] font-mono opacity-70">{st.code}</span>
+                    Check jobs for your age <ArrowDown className="w-4 h-4" aria-hidden />
                   </a>
-                );
-              })}
-              <a
-                href="#all-states"
-                className="px-2 py-0.5 text-xs text-saffron hover:underline font-bold flex items-center gap-0.5"
-              >
-                All 36 States →
-              </a>
+                }
+              />
             </div>
           </div>
+
         </div>
       </section>
 
-      {/* Search: one box, and "Advanced search" with every filter */}
-      <HomeSearch />
+      {/* Latest notices ticker (tablets and up): stops on hover, focus, touch or the Pause button */}
+      <NewsTicker
+        items={latest.map((j) => ({
+          id: j.id,
+          href: getJobCanonicalPath(j),
+          code: j.orgShortCode,
+          title: tickerTitle(j),
+          posts: j.totalVacancies || 0,
+        }))}
+      />
 
-      {/* Latest notices ticker: moves slowly, stops on hover/touch; still for reduced motion */}
-      {latest.length > 0 && (
-        <div className="border-b border-line bg-surface">
-          <div className="max-w-6xl mx-auto flex items-center">
-            <span className="shrink-0 z-10 flex items-center gap-1.5 pl-4 sm:pl-6 pr-3 py-2.5 bg-surface text-[12px] font-bold text-saffron">
-              <span className="w-1.5 h-1.5 rounded-full bg-saffron-bright motion-safe:animate-pulse" aria-hidden />
-              NEW
-            </span>
-            <div className="group relative flex-1 overflow-hidden motion-reduce:overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_24px,black_calc(100%-24px),transparent)]">
-              <ul className="flex w-max motion-safe:animate-marquee group-hover:[animation-play-state:paused] group-active:[animation-play-state:paused]">
-                {[0, 1].map((copy) =>
-                  latest.map((j) => (
-                    <li key={`${copy}-${j.id}`} aria-hidden={copy === 1 || undefined} className="shrink-0">
-                      <Link
-                        href={getJobCanonicalPath(j)}
-                        tabIndex={copy === 1 ? -1 : undefined}
-                        className="flex items-center gap-2 px-4 py-2.5 text-[13px] text-ink-2 hover:text-navy whitespace-nowrap"
-                      >
-                        <b className="text-navy">{j.orgShortCode}</b>
-                        <span>{tickerTitle(j)}</span>
-                        {j.totalVacancies > 0 && (
-                          <span className="text-muted">· {j.totalVacancies.toLocaleString("en-IN")} posts</span>
-                        )}
-                        <span className="text-faint" aria-hidden>•</span>
-                      </Link>
-                    </li>
-                  ))
-                )}
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6 flex-1 w-full space-y-12">
         {/* Jobs: search, filters and the list come first */}
-        <MajorRecruitmentsSection jobs={listedJobs} currentStateSlug="central" hideSearch />
+        <MajorRecruitmentsSection jobs={listJobs} currentStateSlug="central" hideSearch showLayoutSwitch={false} />
 
         {/* Alerts */}
         <SocialAlertBar />
 
-        {/* Exams coming (admit cards out) and latest results, from the official documents */}
-        <ExamCalendarSections jobs={allJobs} limit={5} />
-
-        {/* Applications closed, exams or results under way */}
-        <ExamsInProgressSection jobs={getExamsInProgress(allJobs)} limit={6} />
-
-        {/* Reserved Ad Space (0.00 CLS Protected) */}
-        <ReservedAdSlot slotType="leaderboard" slotId="home-leaderboard" />
-
-        {/* Age check: date of birth here, the full calculator on its own page */}
+        {/* Age check: date of birth -> the open jobs whose age limit includes it */}
         <section
-          aria-labelledby="age-check"
-          className="relative overflow-hidden rounded-2xl border border-line bg-surface shadow-2xs"
-          style={AGE_GLOW}
+          id="age-check"
+          aria-labelledby="age-check-title"
+          className="scroll-mt-24 rounded-2xl border border-line bg-surface p-5 sm:p-6 grid gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-end"
         >
-          <div className="grid md:grid-cols-[1fr_auto] items-center gap-4 md:gap-8 p-5 sm:p-7">
-            <div>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-tint text-green text-[12px] font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-solid" aria-hidden /> Free · takes 10 seconds
-              </span>
-              <h2 id="age-check" className="mt-3 font-serif text-2xl sm:text-3xl font-bold text-ink leading-tight text-balance">
-                Am I eligible? Check your age
-              </h2>
-              <p className="mt-1.5 text-sm text-ink-2 max-w-md">
-                Enter your date of birth and see which open jobs you can apply for, with age relaxation
-                for your category.
-              </p>
-              <form action="/calculator" method="get" className="mt-4 flex flex-col sm:flex-row gap-2 max-w-md">
-                <label className="flex-1">
-                  <span className="sr-only">Date of birth</span>
-                  <input
-                    type="date"
-                    name="dob"
-                    required
-                    max={todayIST()}
-                    className="w-full h-12 px-3 rounded-xl border-2 border-line bg-surface text-[15px] text-ink focus:outline-none focus:border-navy"
-                  />
-                </label>
-                <button
-                  type="submit"
-                  className="h-12 px-5 rounded-xl bg-navy-solid hover:bg-navy-strong text-white font-bold text-sm whitespace-nowrap"
-                >
-                  Check jobs for me →
-                </button>
-              </form>
-            </div>
-            <StepsArt className="hidden md:block w-64 lg:w-80 h-auto" />
+          <div>
+            <h2 id="age-check-title" className="font-serif text-xl sm:text-2xl font-bold text-ink">Am I eligible?</h2>
+            <p className="mt-1.5 text-sm text-ink-2 max-w-[60ch]">
+              Enter your date of birth to see the open jobs whose age limit includes you.
+              {exampleCount > 0 && (
+                <> For example, a {EXAMPLE_AGE}-year-old is within the age limit of <b className="text-ink">{exampleCount}</b> of
+                the {openCount} open jobs that give one.</>
+              )}
+            </p>
           </div>
+          <form action="/calculator" method="get" className="flex flex-col sm:flex-row gap-2 sm:items-start">
+            <label className="block">
+              <span className="block text-[12px] font-semibold text-muted mb-1">Your date of birth</span>
+              <input
+                type="date"
+                name="dob"
+                required
+                max={todayIST()}
+                aria-describedby="dob-hint"
+                className="w-full sm:w-52 h-11 px-3 rounded-lg border border-control bg-surface text-[15px] text-ink focus:border-navy"
+              />
+              <span id="dob-hint" className="block text-[12px] text-muted mt-1">Day, month, year, e.g. 15-08-2000</span>
+            </label>
+            <button
+              type="submit"
+              className="h-11 px-5 sm:mt-[22px] rounded-lg bg-navy-solid hover:bg-navy-strong text-white font-bold text-sm whitespace-nowrap"
+            >
+              Check jobs for my age
+            </button>
+          </form>
         </section>
-
-        {/* Jobs by state */}
-        <section id="all-states" className="bg-surface rounded-lg border border-line p-5 shadow-2xs">
-          <h2 className="font-serif text-lg font-bold text-ink mb-3">Jobs by state and union territory</h2>
-          <div className="flex flex-wrap gap-2 text-xs">
-            {STATES_REGISTRY.map((st) => (
-              <a
-                key={st.slug}
-                href={getStateSubdomainUrl(st.slug)}
-                className="px-2.5 py-1.5 rounded border border-line hover:border-navy hover:bg-navy-tint/40 font-semibold text-ink"
-              >
-                {st.name}
-              </a>
-            ))}
-          </div>
-        </section>
+      </div>
       </main>
 
       <Footer />

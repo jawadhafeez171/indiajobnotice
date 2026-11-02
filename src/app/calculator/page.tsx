@@ -28,7 +28,7 @@ export default async function CalculatorPage() {
   return (
     <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar currentStateSlug="central" />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-8">
+      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-8">
         <div className="max-w-3xl">
           <div className="flex items-center gap-2 mb-2">
             <TricolorCapsule className="w-14 h-1.5" />

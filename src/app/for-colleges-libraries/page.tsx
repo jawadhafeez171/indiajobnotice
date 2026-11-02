@@ -93,7 +93,7 @@ export default function ForCollegesLibrariesPage() {
       </section>
 
       {/* 4 Core Link-Worthy Resources */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-10">
+      <main id="main-content" className="max-w-5xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Resource 1: Recruitment Deadline Calendar */}
           <div className="bg-surface rounded-xl border border-line p-6 shadow-2xs flex flex-col justify-between hover:border-navy transition-all">

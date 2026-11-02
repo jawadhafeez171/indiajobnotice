@@ -54,7 +54,7 @@ export function JobLifecycleTracker({ job }: Props) {
         },
     ...(job.stages || []).map((s, i) => ({
       id: `stage-${i}`,
-      label: KIND_LABEL[s.kind],
+      label: s.shortlist ? "Shortlist" : KIND_LABEL[s.kind],
       subtext: s.date ? formatDate(s.date) : s.title,
       isDone: true,
       isCurrent: false,

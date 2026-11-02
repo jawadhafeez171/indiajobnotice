@@ -250,7 +250,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
             href="https://t.me/Indiajobnotice1"
             target="_blank"
             rel="noreferrer"
-            className="p-3 rounded-lg bg-[#24A1DE] text-white hover:bg-[#1D8FCA] transition-colors shadow-xs ml-auto"
+            className="p-3 rounded-lg bg-[#1A7DB0] text-white hover:bg-[#156C99] transition-colors shadow-xs ml-auto"
             title="Get new jobs on our Telegram channel"
           >
             <TelegramLogo className="w-5 h-5" />
@@ -260,7 +260,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related }: Props) {
             href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Check ${job.title} on IndiaJobNotice.com: ${job.applyOnlineUrl}`)}`}
             target="_blank"
             rel="noreferrer"
-            className="p-3 rounded-lg bg-[#25D366] text-white hover:bg-[#20BA5A] transition-colors shadow-xs"
+            className="p-3 rounded-lg bg-[#13853F] text-white hover:bg-[#0E7A3E] transition-colors shadow-xs"
             title="Share on WhatsApp"
           >
             <WhatsAppLogo className="w-5 h-5" />

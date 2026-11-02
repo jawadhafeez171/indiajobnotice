@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { getStateBySlug } from "@/config/states";
+import { getStateBySlug, POPULAR_STATES } from "@/config/states";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
 import { MapPin, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,6 @@ interface Props {
 }
 
 // the states we cover most thoroughly, by name; the rest are one click away in the picker
-const POPULAR = ["karnataka", "tn", "kerala", "ap", "telangana", "maharashtra", "bihar", "wb", "up"];
 
 export function StateQuickStrip({ currentStateSlug, onOpenSelector }: Props) {
   const isCentralActive = !currentStateSlug || currentStateSlug === "central";
@@ -26,11 +25,11 @@ export function StateQuickStrip({ currentStateSlug, onOpenSelector }: Props) {
       className="bg-subtle border-b border-line text-xs select-none relative z-30 py-1 px-2 sm:px-3 lg:px-4 overflow-hidden"
     >
       {/* 1. Mobile View: Sleek 1-line bar that triggers the Bottom Sheet */}
-      <div className="md:hidden max-w-7xl mx-auto flex items-center justify-between h-8 gap-2">
+      <div className="md:hidden max-w-7xl mx-auto flex items-center justify-between h-11 gap-2">
         <button
           type="button"
           onClick={onOpenSelector}
-          className="flex items-center gap-1.5 text-ink text-left flex-1 min-w-0 cursor-pointer py-1"
+          className="flex items-center gap-1.5 text-ink text-left flex-1 min-w-0 cursor-pointer min-h-[44px]"
           title="Tap to select your state portal"
         >
           <MapPin className="w-3.5 h-3.5 text-navy shrink-0" />
@@ -45,7 +44,7 @@ export function StateQuickStrip({ currentStateSlug, onOpenSelector }: Props) {
         <button
           type="button"
           onClick={onOpenSelector}
-          className="flex items-center gap-1 px-3 py-1 rounded-full bg-navy-solid hover:bg-navy-strong text-white text-[12px] font-bold shadow-xs active:scale-95 transition-all shrink-0 cursor-pointer min-h-[30px]"
+          className="flex items-center gap-1 px-3 py-1 rounded-full bg-navy-solid hover:bg-navy-strong text-white text-[12px] font-bold shadow-xs active:scale-95 transition-all shrink-0 cursor-pointer min-h-[44px]"
           aria-label="Switch State or Union Territory"
         >
           <span>All 36 states</span>
@@ -68,7 +67,7 @@ export function StateQuickStrip({ currentStateSlug, onOpenSelector }: Props) {
               All India
             </a>
           )}
-          {POPULAR.map((slug, i) => {
+          {POPULAR_STATES.map((slug, i) => {
             const st = getStateBySlug(slug);
             if (!st || slug === currentStateSlug) return null;
             return (

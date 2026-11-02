@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Menu, X, Bookmark, Briefcase, CalendarDays, CalendarClock, BarChart3, Calculator, Building2, MapPin, ChevronRight,
@@ -46,24 +46,56 @@ export function Navbar({ currentStateSlug }: Props) {
     : null;
   const jobsHref = currentState ? getStateSubdomainUrl(currentState.slug) : getCentralPortalUrl();
 
-  // menu open: Esc closes it and the page behind does not scroll
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuCloseRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLElement>(null);
+
+  // menu open: focus goes into it and stays there, Esc closes it, the page behind does not scroll
+  // and cannot be reached; on close focus returns to the menu button
   useEffect(() => {
     if (!mobileMenuOpen) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMobileMenuOpen(false);
+    const trigger = menuButtonRef.current;
+    menuCloseRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") return setMobileMenuOpen(false);
+      if (e.key !== "Tab" || !menuRef.current) return;
+      const items = [...menuRef.current.querySelectorAll<HTMLElement>("a[href], button:not([disabled])")];
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
     document.addEventListener("keydown", onKey);
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const behind = [document.querySelector("header"), document.getElementById("main-content"), document.querySelector("footer")];
+    behind.forEach((el) => el?.setAttribute("inert", ""));
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = overflow;
+      behind.forEach((el) => el?.removeAttribute("inert"));
+      trigger?.focus();
     };
   }, [mobileMenuOpen]);
+
+  // other parts of the page can open the state picker ("Choose your state")
+  useEffect(() => {
+    const open = () => setIsModalOpen(true);
+    window.addEventListener("ijn:open-states", open);
+    return () => window.removeEventListener("ijn:open-states", open);
+  }, []);
 
   const close = () => setMobileMenuOpen(false);
   const menuLinks = [
     { href: jobsHref, label: currentState ? `${currentState.name} jobs` : "All jobs", icon: Briefcase },
     { href: "/exam-dates", label: "Exam dates", icon: CalendarClock },
-    { href: "/calendar", label: "Exam calendar", icon: CalendarDays },
+    { href: "/calendar", label: "Calendar of last dates and exams", icon: CalendarDays },
     { href: "/vacancies", label: "Vacancies by qualification", icon: BarChart3 },
     { href: "/calculator", label: "Age calculator", icon: Calculator },
     { href: "/directory", label: "Commissions & boards", icon: Building2 },
@@ -71,17 +103,23 @@ export function Navbar({ currentStateSlug }: Props) {
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-3 focus:rounded-lg focus:bg-navy-solid focus:text-white focus:font-bold"
+      >
+        Skip to main content
+      </a>
       <header className="sticky top-0 z-40 bg-surface/95 backdrop-blur-md border-b border-line shadow-xs">
         <div className="flex h-[3px]" aria-hidden>
           <span className="flex-1 bg-saffron-bright" />
-          <span className="flex-1 bg-white" />
+          <span className="flex-1 bg-white shadow-[inset_0_-1px_0_rgb(var(--c-line))]" />
           <span className="flex-1 bg-green-solid" />
         </div>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between gap-3 h-16">
             {/* Logo */}
             <a href={getCentralPortalUrl()} className="flex flex-col min-w-0 shrink group transition-transform hover:opacity-95" title="India Job Notice Home">
-              <BrandLogo height={32} className="!h-6 sm:!h-8 [&_img]:!h-6 sm:[&_img]:!h-8" />
+              <BrandLogo height={30} className="!h-6 sm:!h-8 [&_img]:!h-6 sm:[&_img]:!h-8" />
               <span className="mt-0.5 text-[11px] sm:text-[12px] leading-none font-semibold tracking-wide text-muted whitespace-nowrap">
                 Verified government job alerts
               </span>
@@ -89,19 +127,19 @@ export function Navbar({ currentStateSlug }: Props) {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm text-ink-2 font-semibold">
-              <a href={jobsHref} className="hover:text-navy transition-colors whitespace-nowrap">
+              <a href={jobsHref} className="hover:text-navy transition-colors whitespace-nowrap py-3 -my-3">
                 Jobs
               </a>
-              <Link href="/calendar" className="hover:text-navy transition-colors whitespace-nowrap">
-                Exam calendar
+              <Link href="/calendar" className="hover:text-navy transition-colors whitespace-nowrap py-3 -my-3">
+                Calendar
               </Link>
-              <Link href="/exam-dates" className="hover:text-navy transition-colors whitespace-nowrap">
+              <Link href="/exam-dates" className="hover:text-navy transition-colors whitespace-nowrap py-3 -my-3">
                 Exam dates
               </Link>
-              <Link href="/calculator" className="hover:text-navy transition-colors whitespace-nowrap">
+              <Link href="/calculator" className="hover:text-navy transition-colors whitespace-nowrap py-3 -my-3">
                 Age calculator
               </Link>
-              <Link href="/directory" className="hover:text-navy transition-colors whitespace-nowrap">
+              <Link href="/directory" className="hover:text-navy transition-colors whitespace-nowrap py-3 -my-3">
                 Directory
               </Link>
               <span className="flex items-center gap-2">
@@ -109,7 +147,7 @@ export function Navbar({ currentStateSlug }: Props) {
                   href={TELEGRAM}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#229ED9] hover:bg-[#1D88BC] text-white transition-colors whitespace-nowrap"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-control text-ink-2 hover:border-navy hover:text-navy transition-colors whitespace-nowrap [&>svg]:text-[#1A7DB0]"
                   title="Free job alerts on Telegram"
                 >
                   <TelegramLogo className="w-4 h-4" />
@@ -137,14 +175,14 @@ export function Navbar({ currentStateSlug }: Props) {
                 href={TELEGRAM}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-lg bg-[#229ED9] active:bg-[#1D88BC] text-white"
+                className="w-11 h-11 flex items-center justify-center rounded-lg bg-[#1A7DB0] active:bg-[#156C99] text-white"
                 aria-label="Free job alerts on Telegram"
               >
                 <TelegramLogo className="w-5 h-5" />
               </a>
               <button
                 onClick={() => setIsWatchlistOpen(true)}
-                className="relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-lg border border-line text-ink active:bg-subtle"
+                className="relative w-11 h-11 flex items-center justify-center rounded-lg border border-line text-ink active:bg-subtle"
                 aria-label="Saved jobs"
               >
                 <Bookmark className={`w-5 h-5 ${savedCount > 0 ? "fill-saffron-bright text-saffron" : "text-muted"}`} />
@@ -155,8 +193,9 @@ export function Navbar({ currentStateSlug }: Props) {
                 )}
               </button>
               <button
+                ref={menuButtonRef}
                 onClick={() => setMobileMenuOpen(true)}
-                className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-lg border border-line text-navy active:bg-subtle"
+                className="w-11 h-11 flex items-center justify-center rounded-lg border border-line text-navy active:bg-subtle"
                 aria-label="Open menu"
                 aria-expanded={mobileMenuOpen}
                 aria-controls="site-menu"
@@ -167,11 +206,15 @@ export function Navbar({ currentStateSlug }: Props) {
           </div>
         </div>
 
-        <StateQuickStrip
-          currentStateSlug={currentStateSlug}
-          onOpenSelector={() => setIsModalOpen(true)}
-        />
+        {/* desktop: the state bar is part of the pinned header */}
+        <div className="hidden md:block">
+          <StateQuickStrip currentStateSlug={currentStateSlug} onOpenSelector={() => setIsModalOpen(true)} />
+        </div>
       </header>
+      {/* phones: the state bar scrolls away (only the top row stays pinned) */}
+      <div className="md:hidden">
+        <StateQuickStrip currentStateSlug={currentStateSlug} onOpenSelector={() => setIsModalOpen(true)} />
+      </div>
 
       {/* Menu: a panel that slides in from the right (outside the header, whose blur would clip it) */}
       <div
@@ -181,6 +224,7 @@ export function Navbar({ currentStateSlug }: Props) {
       >
         <div className="absolute inset-0 bg-navy-deep/60" onClick={close} />
         <nav
+          ref={menuRef}
           id="site-menu"
           aria-label="Menu"
           className={`absolute right-0 inset-y-0 w-[86%] max-w-sm bg-surface shadow-2xl flex flex-col transition-transform duration-200 ${mobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}
@@ -188,6 +232,7 @@ export function Navbar({ currentStateSlug }: Props) {
           <div className="flex items-center justify-between px-4 h-16 border-b border-line shrink-0">
             <span className="font-serif text-lg font-bold text-ink">Menu</span>
             <button
+              ref={menuCloseRef}
               onClick={close}
               className="w-11 h-11 -mr-2 flex items-center justify-center rounded-lg text-muted hover:text-ink hover:bg-subtle"
               aria-label="Close menu"
@@ -274,7 +319,7 @@ export function Navbar({ currentStateSlug }: Props) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={close}
-                  className="flex items-center justify-center gap-2 min-h-[46px] rounded-xl bg-[#229ED9] active:bg-[#1D88BC] text-white font-bold text-sm"
+                  className="flex items-center justify-center gap-2 min-h-[46px] rounded-xl bg-[#1A7DB0] active:bg-[#156C99] text-white font-bold text-sm"
                 >
                   <TelegramLogo className="w-4 h-4" />
                   Telegram
@@ -284,7 +329,7 @@ export function Navbar({ currentStateSlug }: Props) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={close}
-                  className="flex items-center justify-center gap-2 min-h-[46px] rounded-xl bg-[#25D366] active:bg-[#20BA5A] text-white font-bold text-sm"
+                  className="flex items-center justify-center gap-2 min-h-[46px] rounded-xl bg-[#13853F] active:bg-[#0E7A3E] text-white font-bold text-sm"
                 >
                   <WhatsAppLogo className="w-4 h-4" />
                   WhatsApp

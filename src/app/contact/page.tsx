@@ -70,7 +70,7 @@ export default function ContactPage() {
       </section>
 
       {/* Main Content Area */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-10 text-sm text-ink-2 leading-relaxed">
+      <main id="main-content" className="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-10 text-sm text-ink-2 leading-relaxed">
         
         {/* Contact Department Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -155,7 +155,7 @@ export default function ContactPage() {
               className="p-4 rounded-lg border border-[#25D366]/40 bg-green-tint hover:bg-green-tint transition-colors flex items-center justify-between group"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-full bg-[#25D366] text-white">
+                <div className="p-2.5 rounded-full bg-[#13853F] text-white">
                   <WhatsAppLogo className="w-5 h-5" />
                 </div>
                 <div>
@@ -176,7 +176,7 @@ export default function ContactPage() {
               className="p-4 rounded-lg border border-[#24A1DE]/40 bg-sky-tint hover:bg-sky-tint transition-colors flex items-center justify-between group"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-full bg-[#24A1DE] text-white">
+                <div className="p-2.5 rounded-full bg-[#1A7DB0] text-white">
                   <TelegramLogo className="w-5 h-5" />
                 </div>
                 <div>

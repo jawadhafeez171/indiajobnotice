@@ -43,7 +43,7 @@ export default async function CentralJobResultPage({ params }: Props) {
   return (
     <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar currentStateSlug="central" />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         <ResultView job={job} stateSlug="central" />
       </main>
       <Footer />

@@ -2,17 +2,17 @@ import React from "react";
 import Link from "next/link";
 import { STATES_REGISTRY, STATE_ZONES, StateInfo } from "@/config/states";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
-import { ShieldCheck, MapPin, Landmark } from "lucide-react";
+import { ShieldCheck, MapPin, Landmark, ChevronDown } from "lucide-react";
 import { TelegramLogo, WhatsAppLogo } from "./SocialIcons";
 import { BrandLogo } from "./BrandLogo";
 
 export function Footer() {
   return (
-    <footer className="bg-navy-deep text-on-navy border-t-2 border-navy mt-20 relative">
+    <footer className="on-dark bg-navy-deep text-on-navy border-t-2 border-on-navy-2/25 mt-20 relative">
       {/* Top Tricolor Accent Line extending across the entire page */}
       <div className="h-1 w-full flex">
         <div className="flex-1 bg-saffron-solid" />
-        <div className="flex-1 bg-surface" />
+        <div className="flex-1 bg-white" />
         <div className="flex-1 bg-green-solid" />
       </div>
 
@@ -24,9 +24,10 @@ export function Footer() {
             <a href={getCentralPortalUrl()} className="inline-block transition-transform hover:opacity-95" title="India Job Notice Home">
               <BrandLogo variant="light" height={34} />
             </a>
-            
+
             <p className="text-xs text-on-navy leading-relaxed">
-              India&apos;s dedicated multi-state government job notification network. Providing verified official gazette circulars, syllabus, admit cards, and scam-free direct links across all 36 Indian states & UTs.
+              Government job notifications from official websites, with last dates, eligibility, admit
+              cards and results, and a link to each official notification.
             </p>
 
             <div className="flex items-center gap-2 pt-1">
@@ -34,7 +35,7 @@ export function Footer() {
                 href="https://t.me/Indiajobnotice1"
                 target="_blank"
                 rel="noreferrer"
-                className="p-2 rounded-lg bg-[#24A1DE] text-white hover:bg-[#1D8FCA] transition-colors shadow-xs"
+                className="p-2 rounded-lg bg-[#1A7DB0] text-white hover:bg-[#156C99] transition-colors shadow-xs"
                 aria-label="Telegram Channel"
                 title="Join Telegram Channel"
               >
@@ -44,9 +45,9 @@ export function Footer() {
                 href="https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C"
                 target="_blank"
                 rel="noreferrer"
-                className="p-2 rounded-lg bg-[#25D366] text-white hover:bg-[#20BA5A] transition-colors shadow-xs"
+                className="p-2 rounded-lg bg-[#13853F] text-white hover:bg-[#0E7A3E] transition-colors shadow-xs"
                 aria-label="WhatsApp Channel"
-                title="Follow IndiaJobNotice on WhatsApp Channel"
+                title="Follow India Job Notice on WhatsApp"
               >
                 <WhatsAppLogo className="w-4 h-4" />
               </a>
@@ -57,18 +58,18 @@ export function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-3.5">
               <span className="w-2 h-2 rounded-full bg-saffron-solid" />
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+              <h3 className="text-sm font-semibold text-white">
                 Central Recruitment
               </h3>
             </div>
-            <ul className="space-y-1.5 text-xs text-on-navy">
-              <li><Link href="/organisations/upsc" className="hover:text-saffron-light font-medium">UPSC Civil Services & NDA</Link></li>
-              <li><Link href="/organisations/ssc" className="hover:text-saffron-light font-medium">SSC CGL, CHSL, GD, MTS</Link></li>
-              <li><Link href="/railway-jobs" className="hover:text-saffron-light font-medium">Railway RRB NTPC, ALP, Group D</Link></li>
-              <li><Link href="/banking-jobs" className="hover:text-saffron-light font-medium">Banking: SBI, IBPS, RBI</Link></li>
-              <li><Link href="/police-defense-jobs" className="hover:text-saffron-light font-medium">Police & Defence (Agniveer)</Link></li>
-              <li><Link href="/engineering-jobs" className="hover:text-saffron-light font-medium">Engineering (B.Tech & Diploma)</Link></li>
-              <li><Link href="/teaching-jobs" className="hover:text-saffron-light font-medium">Teaching (CTET, KVS, NVS)</Link></li>
+            <ul className="space-y-1.5 text-xs text-on-navy [&_a]:inline-block [&_a]:py-2 md:[&_a]:py-0">
+              <li><Link href="/organisations/upsc" className="hover:text-saffron-light font-medium">UPSC</Link></li>
+              <li><Link href="/organisations/ssc" className="hover:text-saffron-light font-medium">SSC</Link></li>
+              <li><Link href="/railway-jobs" className="hover:text-saffron-light font-medium">Railways</Link></li>
+              <li><Link href="/banking-jobs" className="hover:text-saffron-light font-medium">Banks</Link></li>
+              <li><Link href="/police-defense-jobs" className="hover:text-saffron-light font-medium">Police and defence</Link></li>
+              <li><Link href="/engineering-jobs" className="hover:text-saffron-light font-medium">Engineering</Link></li>
+              <li><Link href="/teaching-jobs" className="hover:text-saffron-light font-medium">Teaching</Link></li>
             </ul>
           </div>
 
@@ -76,38 +77,38 @@ export function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-3.5">
               <span className="w-2 h-2 rounded-full bg-green-solid" />
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                Candidate Resources
+              <h3 className="text-sm font-semibold text-white">
+                Tools
               </h3>
             </div>
-            <ul className="space-y-1.5 text-xs text-on-navy">
+            <ul className="space-y-1.5 text-xs text-on-navy [&_a]:inline-block [&_a]:py-2 md:[&_a]:py-0">
               <li>
-                <Link href="/calculator" className="text-saffron-light hover:underline font-bold flex items-center gap-1">
-                  <span>🧮 Crucial Date Age Calculator</span>
+                <Link href="/calculator" className="text-on-navy hover:text-saffron-light font-medium flex items-center gap-1">
+                  <span>Age calculator</span>
                 </Link>
               </li>
               <li>
                 <Link href="/calendar" className="text-on-navy hover:text-saffron-light font-medium flex items-center gap-1">
-                  <span>📅 Exam & Deadline Calendar 2026</span>
+                  <span>Exam calendar</span>
                 </Link>
               </li>
               <li>
                 <Link href="/vacancies" className="text-on-navy hover:text-saffron-light font-medium flex items-center gap-1">
-                  <span>📊 Qualification Vacancy Tracker</span>
+                  <span>Vacancies by qualification</span>
                 </Link>
               </li>
               <li>
                 <Link href="/directory" className="text-on-navy hover:text-saffron-light font-medium flex items-center gap-1">
-                  <span>🏛️ State PSCs & Police Directory</span>
+                  <span>Commissions and boards</span>
                 </Link>
               </li>
               <li>
-                <Link href="/for-colleges-libraries" className="text-green-pop hover:text-white font-bold flex items-center gap-1">
-                  <span>🎓 For Colleges, TPOs & Libraries</span>
+                <Link href="/for-colleges-libraries" className="text-on-navy hover:text-saffron-light font-medium flex items-center gap-1">
+                  <span>For colleges and libraries</span>
                 </Link>
               </li>
-              <li className="pt-2 border-t border-navy/60">
-                <a href={getCentralPortalUrl()} className="text-white hover:text-saffron-light font-bold flex items-center gap-1">
+              <li className="pt-2 border-t border-on-navy-2/25">
+                <a href={getCentralPortalUrl()} className="text-on-navy hover:text-saffron-light font-medium flex items-center gap-1">
                   <span>All India (central jobs)</span>
                 </a>
               </li>
@@ -118,17 +119,17 @@ export function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-3.5">
               <span className="w-2 h-2 rounded-full bg-navy-solid" />
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+              <h3 className="text-sm font-semibold text-white">
                 By Qualification
               </h3>
             </div>
-            <ul className="space-y-1.5 text-xs text-on-navy">
+            <ul className="space-y-1.5 text-xs text-on-navy [&_a]:inline-block [&_a]:py-2 md:[&_a]:py-0">
               <li><Link href="/qualification/10th-pass" className="hover:text-saffron-light font-medium">10th Pass Govt Jobs</Link></li>
               <li><Link href="/qualification/12th-pass" className="hover:text-saffron-light font-medium">12th Pass Govt Jobs</Link></li>
               <li><Link href="/qualification/diploma" className="hover:text-saffron-light font-medium">Polytechnic & Diploma Jobs</Link></li>
               <li><Link href="/qualification/graduate" className="hover:text-saffron-light font-medium">Graduate Degree Jobs</Link></li>
               <li><Link href="/engineering-jobs" className="hover:text-saffron-light font-medium">Civil, Mech, Electrical Engineers</Link></li>
-              <li className="pt-2 border-t border-navy/60 text-[12px] text-on-navy">
+              <li className="pt-2 border-t border-on-navy-2/25 text-[12px] text-on-navy">
                 <span>State + Qualification Hubs:</span>
                 <div className="flex flex-wrap gap-1.5 pt-1 text-white">
                   <Link href="/government-jobs/karnataka/12th-pass" className="hover:text-saffron-light">KA 12th</Link>
@@ -144,38 +145,53 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Jobs by state */}
-        <div className="mt-12 pt-8 border-t border-navy/80">
+        {/* Jobs by state (the home page's "All 36 states" link lands here) */}
+        <div id="all-states" className="mt-12 pt-8 border-t border-on-navy-2/25 scroll-mt-28">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-2">
             <div className="flex items-center gap-2">
               <Landmark className="w-4 h-4 text-saffron" />
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
-                Government jobs in all 36 states and union territories
+              <h3 className="text-base font-semibold text-white">
+                Jobs by state and union territory
               </h3>
             </div>
-            <span className="text-xs font-mono text-green-pop font-bold bg-navy-deep px-2.5 py-1 rounded border border-navy">
-              36 Regional Hubs Active
-            </span>
           </div>
 
           <p className="text-xs text-on-navy mb-6 max-w-4xl">
-            Direct access to dedicated state gazettes covering Public Service Commissions (PSCs), Staff Selection Boards, Police Recruitment Boards, High Courts, and Departmental vacancies with state-specific reservations and cutoff dates.
+            Each state page lists recruitments from that state&apos;s public service commission, staff selection
+            and police boards, courts and departments, with the official link for each.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 text-xs">
+          {/* phones: one list behind a tap (the region cards stacked were ~4 screens) */}
+          <details className="md:hidden group rounded-lg border border-on-navy-2/25 bg-navy-deep/60">
+            <summary className="flex items-center justify-between px-4 min-h-[48px] cursor-pointer list-none text-sm font-semibold text-white">
+              Show all 36 states and union territories
+              <ChevronDown aria-hidden className="w-4 h-4 text-saffron-light transition-transform group-open:rotate-180" />
+            </summary>
+            <ul className="grid grid-cols-2 gap-x-3 px-4 pb-4 text-[13px]">
+              {[...STATES_REGISTRY].sort((x, y) => x.name.localeCompare(y.name)).map((st) => (
+                <li key={st.slug}>
+                  <a href={getStateSubdomainUrl(st.slug)} className="block py-2.5 text-on-navy hover:text-white">
+                    {st.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+
+          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 text-xs">
             {STATE_ZONES.map((zone) => {
               const zoneStates = zone.slugs
                 .map((slug) => STATES_REGISTRY.find((s) => s.slug === slug))
                 .filter((s): s is StateInfo => Boolean(s));
 
               return (
-                <div key={zone.id} className="bg-navy-deep/60 rounded-lg p-3.5 border border-navy/70 space-y-2">
-                  <div className="flex items-center justify-between pb-1.5 border-b border-navy">
-                    <span className="font-mono font-bold text-white text-[12px] uppercase tracking-wider flex items-center gap-1">
+                <div key={zone.id} className="bg-navy-deep/60 rounded-lg p-3.5 border border-on-navy-2/25 space-y-2">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-on-navy-2/25">
+                    <span className="font-semibold text-white text-[13px] flex items-center gap-1">
                       <MapPin className="w-3 h-3 text-saffron" />
                       {zone.name}
                     </span>
-                    <span className="text-[11px] font-mono text-saffron-light">({zoneStates.length})</span>
+                    <span className="text-[12px] text-on-navy-2 tabular-nums">{zoneStates.length}</span>
                   </div>
 
                   <ul className="space-y-1.5 pt-1">
@@ -189,7 +205,7 @@ export function Footer() {
                           <span className="group-hover:translate-x-0.5 transition-transform">
                             {st.name}
                           </span>
-                          <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-navy-deep text-on-navy border border-navy group-hover:text-white group-hover:border-saffron-light">
+                          <span className="text-[11px] font-mono px-1 py-0.2 rounded bg-navy-deep text-on-navy border border-on-navy-2/25 group-hover:text-white group-hover:border-saffron-light">
                             {st.code}
                           </span>
                         </a>
@@ -205,31 +221,30 @@ export function Footer() {
 
       {/* About this site */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="rounded-xl bg-navy-deep p-5 border border-navy text-xs text-on-navy flex flex-col md:flex-row gap-4 items-start md:items-center">
+        <div className="rounded-xl bg-navy-deep p-5 border border-on-navy-2/25 text-xs text-on-navy flex flex-col md:flex-row gap-4 items-start md:items-center">
           <ShieldCheck className="w-8 h-8 text-green shrink-0" />
-          <div className="space-y-1 text-[12px] leading-relaxed">
+          <div className="space-y-1 text-[13px] leading-relaxed max-w-[68ch]">
             <p className="font-bold text-white flex items-center gap-2">
-              <span>About IndiaJobNotice</span>
-              <span className="text-[11px] font-mono text-green bg-green-solid/20 px-1.5 py-0.2 rounded font-bold">
+              <span>About India Job Notice</span>
+              <span className="text-[11px] text-green-pop border border-green-pop/40 px-1.5 py-0.2 rounded font-semibold">
                 Free
               </span>
             </p>
             <p>
-              <strong>IndiaJobNotice</strong> is not a government website. We list recruitments from the official websites of commissions, boards and departments, with a link to each official notification. The site is free and paid for by advertisements. We never ask for money, bank details or passwords. Always check the official notification before you apply.
+              <strong>India Job Notice</strong> is not a government website. We list recruitments from the official websites of commissions, boards and departments, with a link to each official notification. The site is free to use. We never ask for money, bank details or passwords. Always check the official notification before you apply.
             </p>
           </div>
         </div>
 
         {/* Bottom copyright */}
-        <div className="mt-8 pt-6 border-t border-navy/40 flex flex-col sm:flex-row items-center justify-between text-xs text-on-navy-2 gap-4">
-          <p>© {new Date().getFullYear()} IndiaJobNotice.com</p>
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-on-navy">
-            <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
-            <Link href="/editorial-policy" className="hover:text-white transition-colors">Editorial Policy</Link>
+        <div className="mt-8 pt-6 border-t border-on-navy-2/25 flex flex-col sm:flex-row items-center justify-between text-xs text-on-navy-2 gap-4">
+          <p>© {new Date().getFullYear()} India Job Notice · indiajobnotice.com</p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 sm:gap-6 text-on-navy [&_a]:inline-block [&_a]:py-2.5 md:[&_a]:py-0">
+            <Link href="/about" className="hover:text-white transition-colors">About</Link>
+            <Link href="/editorial-policy" className="hover:text-white transition-colors">How we verify</Link>
             <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
-            <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link>
-            <Link href="/directory" className="hover:text-white transition-colors">State PSC Directory</Link>
+            <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy policy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms of use</Link>
           </div>
         </div>
       </div>

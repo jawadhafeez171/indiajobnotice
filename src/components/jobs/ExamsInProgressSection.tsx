@@ -1,9 +1,10 @@
 import React from "react";
 import Link from "next/link";
+import { OpenStatePicker } from "@/components/common/OpenStatePicker";
 import { STATUS_STYLE } from "./JobListCard";
 import { cn } from "@/lib/utils";
 import { Hourglass, ArrowRight } from "lucide-react";
-import { JobNotification, getJobCanonicalPath, stageText } from "@/data/jobs";
+import { JobNotification, getJobCanonicalPath, stageText, stageSummary } from "@/data/jobs";
 
 interface Props {
   jobs: JobNotification[];
@@ -18,13 +19,13 @@ export function ExamsInProgressSection({ jobs, limit = 12 }: Props) {
   const shown = jobs.slice(0, limit);
 
   return (
-    <section className="space-y-4 -mx-4 sm:mx-0 px-4 py-6 sm:p-6 bg-navy-tint border-y sm:border border-navy-line sm:rounded-2xl" aria-labelledby="exams-in-progress">
+    <section className="space-y-4 -mx-4 sm:mx-0 px-4 py-6 sm:p-6 bg-navy-tint border-y sm:border border-navy-line sm:rounded-2xl" aria-labelledby="exams-in-progress" id="recruitments-under-way">
       <div className="flex items-center gap-2">
         <Hourglass className="w-5 h-5 text-saffron" />
         <h2 id="exams-in-progress" className="font-serif text-xl sm:text-2xl font-bold text-ink">
-          Exams in progress
+          Recruitments under way
         </h2>
-        <span className="text-xs font-mono text-muted">{jobs.length}</span>
+        <span className="text-xs text-muted">{jobs.length} past the application stage</span>
       </div>
       <p className="text-sm text-muted -mt-2">
         Applications have closed; admit cards, answer keys or results are coming out. Each entry links to the
@@ -47,12 +48,12 @@ export function ExamsInProgressSection({ jobs, limit = 12 }: Props) {
                   {job.orgShortCode}
                 </span>
                 <p className="mt-2 text-sm font-bold text-ink leading-snug line-clamp-2">{job.shortTitle}</p>
-                {job.currentStage && (
+                {stageSummary(job) && (
                   <p className={cn("mt-1.5 text-xs font-bold", (STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING).text)}>
-                    {job.currentStage}
+                    {stageSummary(job)}
                   </p>
                 )}
-                {last && <p className="mt-1 text-xs text-muted line-clamp-1">Latest: {stageText(last).main}</p>}
+                {last && <p className="mt-1 text-xs text-muted line-clamp-1">Latest: {last.summary || stageText(last).main}</p>}
                 <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-navy">
                   Stages & documents <ArrowRight className="w-3 h-3" />
                 </span>
@@ -62,7 +63,11 @@ export function ExamsInProgressSection({ jobs, limit = 12 }: Props) {
         })}
       </ul>
       {jobs.length > shown.length && (
-        <p className="text-xs text-muted">and {jobs.length - shown.length} more on the state pages.</p>
+        <p className="text-sm text-muted">
+          Showing {shown.length} of {jobs.length}.{" "}
+          <OpenStatePicker className="font-semibold text-navy underline underline-offset-2">Choose your state</OpenStatePicker>{" "}
+          to see the rest for that state.
+        </p>
       )}
     </section>
   );

@@ -12,11 +12,12 @@
     --c-subtle: 248 250 252;
     --c-sunken: 238 241 245;
     --c-line: 211 217 226;
+    --c-control: 135 143 158;
     --c-line-soft: 229 233 239;
     --c-ink: 15 23 42;
     --c-ink-2: 51 65 85;
     --c-muted: 75 85 101;
-    --c-faint: 107 115 133;
+    --c-faint: 95 103 121;
     --c-navy: 18 38 122;
     --c-navy-solid: 18 38 122;
     --c-navy-strong: 12 28 94;
@@ -65,6 +66,7 @@
       --c-subtle: 24 32 53;
       --c-sunken: 30 39 64;
       --c-line: 46 56 84;
+      --c-control: 100 112 142;
       --c-line-soft: 36 45 69;
       --c-ink: 232 236 244;
       --c-ink-2: 199 207 221;
@@ -172,3 +174,32 @@ a, button {
   }
 }
 
+
+/* Keyboard focus: a clear ring in the brand navy, on every control */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid rgb(var(--c-navy));
+  outline-offset: 2px;
+}
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid rgb(var(--c-navy)) !important;
+  outline-offset: 1px;
+}
+
+/* Browser surfaces in the site's palette */
+:root {
+  accent-color: rgb(var(--c-navy-solid));
+  caret-color: rgb(var(--c-navy));
+}
+::selection {
+  background: rgb(var(--c-saffron-bright) / 0.28);
+  color: rgb(var(--c-ink));
+}
+
+/* Wrapping: no single word stranded on a last line; headings balanced */
+p, li, figcaption { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
+
+/* On navy surfaces (alerts banner, footer) the navy ring would vanish: use saffron there */
+.on-dark :where(a, button, summary, [tabindex]):focus-visible {
+  outline-color: rgb(var(--c-saffron-light));
+}

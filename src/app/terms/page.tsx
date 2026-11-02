@@ -58,7 +58,7 @@ export default function TermsPage() {
       </section>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-8 text-sm text-ink-2 leading-relaxed">
+      <main id="main-content" className="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-8 text-sm text-ink-2 leading-relaxed">
         
         {/* Prominent Statutory Disclaimer */}
         <div className="bg-saffron-tint rounded-lg border-2 border-saffron-bright p-5 shadow-2xs space-y-3">

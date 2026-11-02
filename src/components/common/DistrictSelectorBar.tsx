@@ -145,7 +145,7 @@ export function DistrictSelectorBar({
             <div className="p-4 overflow-y-auto max-h-[55vh] divide-y divide-line/50">
               {filteredDistricts.length === 0 ? (
                 <div className="py-8 text-center text-xs text-faint">
-                  No districts match "{searchQuery}".
+                  No districts match &ldquo;{searchQuery}&rdquo;.
                 </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">

@@ -108,7 +108,7 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
       />
       <Navbar currentStateSlug={state.slug} />
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-8">
+      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-8">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center gap-2 text-xs text-muted">
           <Link href="/" className="hover:text-navy font-medium transition-colors">

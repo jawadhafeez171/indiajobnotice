@@ -26,7 +26,7 @@ export function StageDocumentsPanel({ job }: { job: JobNotification }) {
           <li key={d.url + d.title} className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="min-w-0">
               <span className="text-[11px] font-mono font-bold uppercase text-muted">
-                {LABEL[d.kind]}
+                {d.shortlist ? "Shortlist" : LABEL[d.kind]}
                 {d.date ? ` · ${formatDate(d.date)}` : ""}
               </span>
               <p className="text-sm font-bold text-ink break-words">{stageText(d).main}</p>
