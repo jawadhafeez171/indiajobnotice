@@ -6,6 +6,7 @@ import { Footer } from "@/components/common/Footer";
 import { JobDetailView } from "@/components/jobs/JobDetailView";
 import { getJobBySlug, getJobCanonicalPath, getActiveOpportunities } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
+import { jobSeoTitle, jobSeoDescription } from "@/lib/seo";
 import { getGenuinelyRelatedOpportunities } from "@/lib/internal-links";
 
 interface Props {
@@ -26,13 +27,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}`;
 
   return {
-    title: `${job.shortTitle} 2026 Notification PDF: ${job.totalVacancies.toLocaleString("en-IN")} Vacancies, Eligibility, Last Date & Apply Link`,
-    description: `Official ${job.organization} ${job.shortTitle} recruitment notification. ${job.totalVacancies.toLocaleString("en-IN")} vacancies announced. Check official PDF circular, crucial cut-off date, age limit, syllabus, and online application portal.`,
+    title: jobSeoTitle(job),
+    description: jobSeoDescription(job),
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${job.shortTitle} 2026 Notification PDF - ${job.organization}`,
+      title: jobSeoTitle(job),
       description: `${job.organization}: ${job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} posts. ` : ""}${job.isWalkIn ? "Walk-in" : "Last date"}: ${job.applicationEndDate || "see the notification"}. Eligibility, fee and the official notification link.`,
       url: canonicalUrl,
       siteName: "India Job Notice",
@@ -41,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${job.shortTitle} 2026 Notification PDF`,
+      title: jobSeoTitle(job),
       description: `Official ${job.organization} notification. Vacancies: ${job.totalVacancies.toLocaleString("en-IN")}.`,
     },
   };

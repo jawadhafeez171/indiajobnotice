@@ -2,6 +2,7 @@ import { JobNotification, isJobApplicationClosed, getJobAgeCutoffDate, formatAge
 import { getStateBySlug } from "@/config/states";
 import { getJobTaxonomyLinks } from "@/lib/internal-links";
 import { formatDate } from "@/lib/utils";
+import { salaryRange, jobSeoDescription } from "@/lib/seo";
 
 export interface FAQItem {
   question: string;
@@ -63,12 +64,30 @@ export function getJobFaqs(job: JobNotification): FAQItem[] {
  * - Active listings: Google JobPosting + BreadcrumbList + FAQPage
  * - Closed listings: WebPage (Expired Job compliant) + BreadcrumbList + FAQPage
  */
+/** JobPosting description: Google wants the job described, not just named. Facts from the notice only. */
+function jobPostingDescription(job: JobNotification): string {
+  const lines = [`<p>${job.title}, notified by ${job.organization}.</p>`];
+  const facts: string[] = [];
+  if (job.totalVacancies) facts.push(`Vacancies: ${job.totalVacancies.toLocaleString("en-IN")}`);
+  if (job.posts?.length) facts.push(`Posts: ${job.posts.slice(0, 12).map((p) => `${p.postName}${p.vacancies ? ` (${p.vacancies})` : ""}`).join("; ")}`);
+  if (job.qualifications.length) facts.push(`Qualification: ${job.qualifications.join("; ")}`);
+  if (job.ageKnown !== false && job.maxAge) facts.push(`Age limit: ${formatAgeRange(job, "years")}`);
+  if (job.salary) facts.push(`Pay: ${job.salary}`);
+  if (job.feeKnown !== false) facts.push(`Application fee: ${formatFee(job)}`);
+  if (job.selectionProcess.length) facts.push(`Selection: ${job.selectionProcess.join(", ")}`);
+  if (job.applicationEndDate) facts.push(`${job.isWalkIn ? "Walk-in date" : "Last date"}: ${formatDate(job.applicationEndDate)}`);
+  if (facts.length) lines.push(`<ul>${facts.map((f) => `<li>${f}</li>`).join("")}</ul>`);
+  lines.push("<p>Apply on the official website; see the official notification for full details.</p>");
+  return lines.join("");
+}
+
 export function generateJobStructuredData(job: JobNotification, canonicalUrl: string) {
   const isClosed = isJobApplicationClosed(job);
   const taxonomy = getJobTaxonomyLinks(job);
   const faqs = getJobFaqs(job);
   const state = job.stateSlug !== "central" ? getStateBySlug(job.stateSlug) : null;
   const locationRegion = state ? state.name : "National / All-India";
+  const pay = salaryRange(job);
 
   // 1. BreadcrumbList Schema
   const breadcrumbListSchema = {
@@ -99,8 +118,9 @@ export function generateJobStructuredData(job: JobNotification, canonicalUrl: st
     ? {
         "@type": "JobPosting",
         title: job.title,
-        description: `${job.title} officially announced by ${job.organization}. Total Vacancies: ${job.totalVacancies.toLocaleString("en-IN")}. ${job.syllabusSummary}`,
-        datePosted: job.applicationStartDate ? new Date(job.applicationStartDate).toISOString() : new Date().toISOString(),
+        description: jobPostingDescription(job),
+        // a fixed date: the notice's own start date, else the day the site added it
+        datePosted: new Date(job.applicationStartDate || job.lastVerifiedDate || "2026-10-30").toISOString(),
         dateModified: new Date(job.lastVerifiedDate || "2026-10-23").toISOString(),
         validThrough: job.applicationEndDate ? new Date(`${job.applicationEndDate}T23:59:59Z`).toISOString() : undefined,
         employmentType: "FULL_TIME",
@@ -117,22 +137,24 @@ export function generateJobStructuredData(job: JobNotification, canonicalUrl: st
             addressRegion: locationRegion,
           },
         },
-        baseSalary: {
-          "@type": "MonetaryAmount",
-          currency: "INR",
-          value: {
-            "@type": "QuantitativeValue",
-            unitText: "MONTH",
+        // pay only when the notification states it (an empty amount is an error in Search Console)
+        ...(pay ? {
+          baseSalary: {
+            "@type": "MonetaryAmount",
+            currency: "INR",
+            value: { "@type": "QuantitativeValue", unitText: "MONTH", minValue: pay.min, ...(pay.max ? { maxValue: pay.max } : {}) },
           },
-        },
+        } : {}),
+        ...(job.advtNo ? { identifier: { "@type": "PropertyValue", name: job.organization, value: job.advtNo } } : {}),
         qualifications: job.qualifications.join(", "),
-        directApply: true,
+        // applications are made on the official website, not here
+        directApply: false,
         url: canonicalUrl,
       }
     : {
         "@type": "WebPage",
-        name: `${job.title} (Archived Official Gazette)`,
-        description: `Official archive for ${job.title} by ${job.organization}. Applications closed on ${job.applicationEndDate}. Master record of syllabus, exam pattern, eligibility and previous cut-offs.`,
+        name: job.title,
+        description: jobSeoDescription(job),
         url: canonicalUrl,
         dateModified: new Date().toISOString(),
       };

@@ -6,8 +6,8 @@ import { Footer } from "@/components/common/Footer";
 import { EligibilityView } from "@/components/jobs/EligibilityView";
 import { getJobBySlug, getJobAgeCutoffDate, getJobCanonicalPath } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
+import { eligibilityTitle } from "@/lib/seo";
 import { getCalculatorJobs, formatAgeRange } from "@/data/jobs";
-import { getStateBySlug } from "@/config/states";
 import { formatDate } from "@/lib/utils";
 
 interface Props {
@@ -23,21 +23,20 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
-  const state = getStateBySlug(resolvedParams.state);
   if (!job) return { title: "Eligibility Details Not Found" };
 
-  const stateName = state ? state.name : resolvedParams.state.toUpperCase();
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/eligibility`;
   const cutoffDate = getJobAgeCutoffDate(job);
 
   return {
-    title: `${job.shortTitle} 2026 (${stateName}) Age Limit, Cut-off Date & Qualification`,
-    description: `Official statutory eligibility criteria for ${job.shortTitle} (${stateName}). Age limit: ${formatAgeRange(job, "years")} on cut-off date (${formatDate(cutoffDate)}). Category relaxation (OBC, SC/ST, domicile) and educational degree requirements.`,
+    title: `${eligibilityTitle(job)}`,
+    description: `${job.organization}: age limit ${formatAgeRange(job, "years")} as on ${formatDate(cutoffDate)}, educational qualification and category relaxation as stated in the official notification.`,
     alternates: {
       canonical: canonicalUrl,
     },
+    robots: job.ageKnown !== false && job.maxAge > 0 ? undefined : { index: false, follow: true },
     openGraph: {
-      title: `${job.shortTitle} (${stateName}) Age Limit & Qualification 2026`,
+      title: eligibilityTitle(job),
       description: `Official statutory eligibility, cut-off date, age relaxation, and educational qualifications for ${job.organization}.`,
       url: canonicalUrl,
       siteName: "India Job Notice",

@@ -164,12 +164,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const base = `${baseUrl}${getJobCanonicalPath(job)}`;
 
     return [
-      {
-        url: `${base}/eligibility`,
-        lastModified: now,
-        changeFrequency: "weekly" as const,
-        priority: 0.78,
-      },
+      // the eligibility page only when the notice states an age limit (else it is noindex)
+      ...(job.ageKnown !== false && job.maxAge > 0
+        ? [{ url: `${base}/eligibility`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 }]
+        : []),
       // stage pages only once the official document is out (until then they are noindex)
       ...(["admit-card", "answer-key", "result"] as const)
         .filter((path) => getStages(job, path.replace("-", "_") as StageKind).length > 0)

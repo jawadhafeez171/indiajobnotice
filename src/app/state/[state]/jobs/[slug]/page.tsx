@@ -6,8 +6,8 @@ import { Footer } from "@/components/common/Footer";
 import { JobDetailView } from "@/components/jobs/JobDetailView";
 import { getJobBySlug, getJobCanonicalPath, getActiveOpportunities } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
+import { jobSeoTitle, jobSeoDescription } from "@/lib/seo";
 import { getGenuinelyRelatedOpportunities } from "@/lib/internal-links";
-import { getStateBySlug } from "@/config/states";
 
 interface Props {
   params: Promise<{ state: string; slug: string }>;
@@ -22,20 +22,18 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
-  const state = getStateBySlug(resolvedParams.state);
   if (!job) return { title: "Job Notification Not Found" };
 
-  const stateName = state ? state.name : resolvedParams.state.toUpperCase();
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}`;
 
   return {
-    title: `${job.shortTitle} 2026 (${stateName}): Notification PDF, ${job.totalVacancies.toLocaleString("en-IN")} Posts, Eligibility & Apply Link`,
-    description: `Official ${job.organization} ${job.shortTitle} recruitment notification for ${stateName} candidates. ${job.totalVacancies.toLocaleString("en-IN")} vacancies. Download official PDF circular, verify crucial cut-off date, age limit, syllabus, and apply online.`,
+    title: jobSeoTitle(job),
+    description: jobSeoDescription(job),
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${job.shortTitle} 2026 (${stateName}) Notification PDF`,
+      title: jobSeoTitle(job),
       description: `${job.organization}: ${job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} posts. ` : ""}${job.isWalkIn ? "Walk-in" : "Last date"}: ${job.applicationEndDate || "see the notification"}. Eligibility, fee and the official notification link.`,
       url: canonicalUrl,
       siteName: "India Job Notice",
@@ -44,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${job.shortTitle} (${stateName}) Notification PDF`,
+      title: jobSeoTitle(job),
       description: `Official notification for ${job.organization}. Vacancies: ${job.totalVacancies.toLocaleString("en-IN")}.`,
     },
   };

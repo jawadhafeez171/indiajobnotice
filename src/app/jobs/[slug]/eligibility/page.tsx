@@ -6,6 +6,7 @@ import { Footer } from "@/components/common/Footer";
 import { EligibilityView } from "@/components/jobs/EligibilityView";
 import { getJobBySlug, getJobAgeCutoffDate, getJobCanonicalPath } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
+import { eligibilityTitle } from "@/lib/seo";
 import { getCalculatorJobs, formatAgeRange } from "@/data/jobs";
 import { formatDate } from "@/lib/utils";
 
@@ -28,13 +29,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cutoffDate = getJobAgeCutoffDate(job);
 
   return {
-    title: `${job.shortTitle} 2026 Age Limit, Cut-off Date & Qualification`,
-    description: `Complete eligibility criteria for ${job.shortTitle}. Age limit: ${formatAgeRange(job, "years")} on crucial cut-off date (${formatDate(cutoffDate)}). Category relaxation (OBC +3y, SC/ST +5y) and educational degree requirements.`,
+    title: `${eligibilityTitle(job)}`,
+    description: `${job.organization}: age limit ${formatAgeRange(job, "years")} as on ${formatDate(cutoffDate)}, educational qualification and category relaxation as stated in the official notification.`,
     alternates: {
       canonical: canonicalUrl,
     },
+    robots: job.ageKnown !== false && job.maxAge > 0 ? undefined : { index: false, follow: true },
     openGraph: {
-      title: `${job.shortTitle} Age Limit and Qualification 2026`,
+      title: eligibilityTitle(job),
       description: `Official statutory eligibility, cut-off date, age relaxation, and educational qualifications for ${job.organization}.`,
       url: canonicalUrl,
       siteName: "India Job Notice",
