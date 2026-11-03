@@ -20,13 +20,20 @@ import { formatDate, formatDateShort, cn } from "@/lib/utils";
 import { rowTitle, placeLabel } from "@/components/jobs/JobListCard";
 import { generateGoogleCalendarUrl, downloadIcsFile, downloadCombinedIcsFile, CalendarEventParams } from "@/lib/calendar";
 import { useWatchlist } from "@/lib/watchlist";
+import { upcomingUpscDates, UPSC_CALENDAR_SOURCE } from "@/data/upsc-calendar";
 
-export type EventType = "DEADLINE" | "EXAM" | "ADMIT_CARD" | "RESULT";
+export type EventType = "DEADLINE" | "EXAM" | "ADMIT_CARD" | "RESULT" | "PLANNED";
 
 export interface CalendarEventItem {
   id: string;
   jobId: string;
-  job: JobNotification;
+  /** The published notice; absent for a date from a body's planned calendar (UPSC). */
+  job?: JobNotification;
+  /** Body code and place, shown on the row. */
+  code: string;
+  place: string;
+  /** Planned dates: what is planned ("Notification expected", "Exam (planned)"). */
+  plannedLabel?: string;
   eventType: EventType;
   title: string;
   organization: string;
@@ -64,6 +71,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
     const base = (job: JobNotification) => ({
       jobId: job.id, job, title: rowTitle(job), organization: job.organization,
       applyUrl: job.applyOnlineUrl || job.officialPdfUrl, noticeUrl: notice(job),
+      code: job.orgShortCode, place: placeLabel(job),
     });
     for (const job of jobs) {
       const open = job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
@@ -91,6 +99,21 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
       events.push({ ...base(r.job), id: `${r.job.id}-result`, eventType: "RESULT",
         dateStr: r.stage.date || today, rawDateLabel: formatDate(r.stage.date || today) });
     }
+    // UPSC's own planned calendar (its site blocks our reader): planned dates still ahead, unless the
+    // notification itself is already listed here
+    const norm = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    const upscListed = jobs.filter((j) => /union public service/i.test(j.organization)).map((j) => norm(j.title));
+    const WHAT = { notification: "Notification expected", lastDate: "Last date (planned)", exam: "Exam (planned)" };
+    for (const p of upcomingUpscDates(today)) {
+      const key = norm(p.plan.exam).slice(0, 28);
+      if (upscListed.some((t) => t.includes(key))) continue;
+      events.push({
+        id: `upsc-${p.what}-${p.date}-${key}`, jobId: "", code: "UPSC", place: "Central",
+        eventType: "PLANNED", plannedLabel: WHAT[p.what], title: p.plan.exam,
+        organization: "Union Public Service Commission", dateStr: p.date, rawDateLabel: formatDate(p.date),
+        applyUrl: UPSC_CALENDAR_SOURCE.url, noticeUrl: "/organisations/upsc#upsc-calendar",
+      });
+    }
     return events.sort((x, y) => x.dateStr.localeCompare(y.dateStr));
   }, [jobs]);
 
@@ -98,8 +121,9 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
   const filteredEvents = useMemo(() => {
     return allEvents.filter((ev) => {
       if (selectedType !== "ALL" && ev.eventType !== selectedType) return false;
-      if (selectedScope === "CENTRAL" && !ev.job.isCentral) return false;
-      if (selectedScope === "STATE" && ev.job.isCentral) return false;
+      const central = ev.job ? ev.job.isCentral : true;
+      if (selectedScope === "CENTRAL" && !central) return false;
+      if (selectedScope === "STATE" && central) return false;
       if (selectedDate && ev.dateStr !== selectedDate) return false;
       return true;
     }).sort((x, y) => {
@@ -113,10 +137,12 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
   // Bulk download all filtered events as an .ics calendar file
   const handleExportAllCalendar = () => {
     const paramsList: CalendarEventParams[] = filteredEvents.map((ev) => ({
-      title: `${ev.title} (${ev.organization})`,
-      description: `Official IndiaJobNotice Notification for ${ev.job.title}.\nPosts: ${ev.job.totalVacancies.toLocaleString()}\nApply: ${ev.applyUrl}`,
+      title: `${ev.plannedLabel ? `${ev.plannedLabel}: ` : ""}${ev.title} (${ev.organization})`,
+      description: ev.job
+        ? `${ev.job.title}${ev.job.totalVacancies ? `\nPosts: ${ev.job.totalVacancies.toLocaleString("en-IN")}` : ""}\nOfficial: ${ev.applyUrl}`
+        : `Planned in UPSC's calendar; dates may change.\n${ev.applyUrl}`,
       startDate: ev.dateStr,
-      location: ev.job.isCentral ? "All India / Central" : `${ev.job.stateSlug.toUpperCase()} State`,
+      location: ev.place,
       url: ev.applyUrl,
     }));
 
@@ -197,6 +223,15 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
           badge: "bg-purple-solid text-white",
           dot: "bg-purple-solid",
           label: "Result",
+        };
+      case "PLANNED":
+        return {
+          bg: "bg-subtle",
+          text: "text-ink-2",
+          border: "border-line",
+          badge: "bg-sunken text-ink-2",
+          dot: "bg-faint",
+          label: "UPSC plan",
         };
     }
   };
@@ -311,6 +346,18 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
             >
               <span className="w-1.5 h-1.5 rounded-full bg-current" />
               <span>Admit Cards</span>
+            </button>
+
+            <button
+              onClick={() => setSelectedType("PLANNED")}
+              className={cn(
+                "px-2.5 py-1 rounded text-xs font-bold border transition-colors flex items-center gap-1.5",
+                selectedType === "PLANNED" ? "bg-ink-2 text-white border-ink-2" : "bg-subtle text-ink-2 border-line hover:border-navy"
+              )}
+              title="Dates from UPSC's own calendar of examinations; they may change"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-current" />
+              <span>UPSC plan</span>
             </button>
           </div>
 
@@ -432,7 +479,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                           className={cn("px-1 py-0.5 rounded text-[9px] font-bold truncate leading-tight border", style.bg, style.text, style.border)}
                           title={`${ev.title} (${ev.organization})`}
                         >
-                          {ev.job.orgShortCode}: {style.label}
+                          {ev.code}: {style.label}
                         </div>
                       );
                     })}
@@ -497,12 +544,14 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
               {filteredEvents.slice(0, shown).map((ev) => {
                 const styles = getEventTypeStyles(ev.eventType);
                 const days = daysUntil(ev.dateStr);
-                const saved = isSaved(ev.job.id);
+                const job = ev.job;
+                const saved = job ? isSaved(job.id) : false;
+                const label = ev.plannedLabel || styles.label;
                 const googleCalUrl = generateGoogleCalendarUrl({
-                  title: `${styles.label}: ${ev.title}`,
-                  description: `${ev.job.title}\n\nOfficial notice: ${ev.applyUrl}`,
+                  title: `${label}: ${ev.title}`,
+                  description: job ? `${job.title}\n\nOfficial notice: ${ev.applyUrl}` : `Planned in UPSC's calendar; dates may change.\n${ev.applyUrl}`,
                   startDate: ev.dateStr,
-                  location: placeLabel(ev.job),
+                  location: ev.place,
                   url: ev.applyUrl,
                 });
                 return (
@@ -516,24 +565,26 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 text-[12px] flex-wrap">
-                        <span className={cn("font-bold", styles.text)}>{styles.label}{ev.isTentative ? " (tentative)" : ""}</span>
+                        <span className={cn("font-bold", styles.text)}>{label}{ev.isTentative ? " (tentative)" : ""}</span>
                         <span className="text-faint" aria-hidden>·</span>
-                        <b className="text-navy">{ev.job.orgShortCode}</b>
-                        <span className="text-muted">{placeLabel(ev.job)}</span>
+                        <b className="text-navy">{ev.code}</b>
+                        <span className="text-muted">{ev.place}</span>
                       </div>
                       <Link href={ev.noticeUrl} className="mt-0.5 block font-semibold text-ink hover:text-navy leading-snug line-clamp-2">
                         {ev.title}
                       </Link>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
-                      <button
-                        onClick={() => toggleSave(ev.job.id)}
-                        aria-pressed={saved}
-                        aria-label={`Save: ${ev.title}`}
-                        className={cn("w-11 h-11 flex items-center justify-center rounded-lg", saved ? "text-saffron" : "text-faint hover:text-navy")}
-                      >
-                        <Bookmark className={cn("w-4 h-4", saved && "fill-saffron-bright")} />
-                      </button>
+                      {job && (
+                        <button
+                          onClick={() => toggleSave(job.id)}
+                          aria-pressed={saved}
+                          aria-label={`Save: ${ev.title}`}
+                          className={cn("w-11 h-11 flex items-center justify-center rounded-lg", saved ? "text-saffron" : "text-faint hover:text-navy")}
+                        >
+                          <Bookmark className={cn("w-4 h-4", saved && "fill-saffron-bright")} />
+                        </button>
+                      )}
                       <a
                         href={googleCalUrl}
                         target="_blank"
@@ -545,12 +596,12 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
                       </a>
                       <button
                         onClick={() => downloadIcsFile({
-                          title: `${styles.label}: ${ev.title}`,
-                          description: `${ev.job.title}\nOfficial notice: ${ev.applyUrl}`,
+                          title: `${label}: ${ev.title}`,
+                          description: job ? `${job.title}\nOfficial notice: ${ev.applyUrl}` : `Planned in UPSC's calendar; dates may change.\n${ev.applyUrl}`,
                           startDate: ev.dateStr,
-                          location: placeLabel(ev.job),
+                          location: ev.place,
                           url: ev.applyUrl,
-                        }, `${ev.job.slug}-event.ics`)}
+                        }, `${job ? job.slug : ev.id}-event.ics`)}
                         aria-label={`Download calendar file: ${ev.title}`}
                         className="w-11 h-11 flex items-center justify-center rounded-lg text-navy hover:bg-navy-tint"
                       >

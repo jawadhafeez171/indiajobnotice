@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
+import { UpscCalendarTable } from "@/components/category/UpscCalendarTable";
 import { 
   ORGANISATION_HUBS, 
   getOrganisationHubBySlug 
@@ -64,6 +65,8 @@ export default async function OrganisationPage({ params }: Props) {
           hub={hub} 
           parentCrumb={{ label: "Recruiting Bodies", href: "/" }} 
         />
+        {/* UPSC's own calendar: its site blocks our reader, so its planned dates are shown here */}
+        {slug === "upsc" && <UpscCalendarTable />}
       </main>
       <Footer />
     </div>
