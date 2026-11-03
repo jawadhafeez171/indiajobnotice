@@ -21,8 +21,9 @@ const KNOWN_GAPS: Record<string, { text: string; href: string; site: string }> =
 };
 
 /**
- * A sector, recruiting body or qualification page: heading and live counts, the same job list as
- * the home page (stage tabs, closing-date groups), then the general rules for this kind of job.
+ * A sector, recruiting body or qualification page: heading and live counts, then the same job list
+ * as the home page (stage tabs, closing-date groups). No general advice: each notice sets its own
+ * rules, and its job page shows them as the notice gives them.
  */
 export async function CategoryHubView({ hub, parentCrumb }: Props) {
   const jobs = getJobsForHub(await getAllJobs(), hub);
@@ -30,7 +31,6 @@ export async function CategoryHubView({ hub, parentCrumb }: Props) {
   const openPosts = open.reduce((n, j) => n + (j.totalVacancies || 0), 0);
   const underWay = jobs.filter((j) => j.inProgress).length;
   const gap = KNOWN_GAPS[hub.slug];
-  const g = hub.eligibilityGuidance;
 
   // Schema.org CollectionPage + BreadcrumbList JSON-LD
   const jsonLd = {
@@ -96,50 +96,18 @@ export async function CategoryHubView({ hub, parentCrumb }: Props) {
 
       <ReservedAdSlot slotType="leaderboard" slotId={`category-${hub.slug}-top`} />
 
-      {/* general rules for this kind of job; each notification sets its own */}
+      {/* no general rules here: each notice sets its own, shown on its job page */}
       <section aria-labelledby="hub-rules" className="border-t border-line pt-6">
-        <h2 id="hub-rules" className="font-serif text-xl font-bold text-ink">Eligibility, age limits and how to apply</h2>
-        <p className="mt-1 text-[13px] text-muted max-w-[68ch]">
-          The usual rules for these jobs. Each notification sets its own, so check it before you apply.
+        <h2 id="hub-rules" className="font-serif text-xl font-bold text-ink">Age limits, qualification and fee</h2>
+        <p className="mt-1 text-sm text-ink-2 max-w-[68ch]">
+          Each notification sets its own, often different for each category and post. Open a job to see
+          them as its notification gives them, with the link to the notification itself.
         </p>
-        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 text-sm text-ink-2">
-          <div className="space-y-5">
-            <div>
-              <h3 className="font-semibold text-ink">Education</h3>
-              <p className="mt-1 leading-relaxed">{g.minimumQualification}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-ink">Age limits and relaxations</h3>
-              <p className="mt-1 leading-relaxed">{g.typicalAgeLimit}</p>
-              <p className="mt-1 leading-relaxed text-muted">Relaxations: {g.ageRelaxations}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-ink">Selection</h3>
-              <ol className="mt-1 space-y-1 list-decimal pl-5 marker:text-muted">
-                {g.selectionRounds.map((round) => <li key={round}>{round}</li>)}
-              </ol>
-            </div>
-          </div>
-          <div className="space-y-5">
-            <div>
-              <h3 className="font-semibold text-ink">Documents you will need</h3>
-              <ul className="mt-1 space-y-1 list-disc pl-5 marker:text-muted">
-                {g.keyDocumentsRequired.map((doc) => <li key={doc}>{doc}</li>)}
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-ink">Tips</h3>
-              <ul className="mt-1 space-y-1 list-disc pl-5 marker:text-muted">
-                {g.expertTips.map((tip) => <li key={tip}>{tip}</li>)}
-              </ul>
-            </div>
-          </div>
-        </div>
         <Link
           href="/calculator"
-          className="mt-6 inline-flex items-center gap-1.5 min-h-[44px] text-sm font-semibold text-navy hover:underline"
+          className="mt-3 inline-flex items-center gap-1.5 min-h-[44px] text-sm font-semibold text-navy hover:underline"
         >
-          Check which jobs fit your age, with relaxations <ArrowRight className="w-4 h-4" aria-hidden />
+          Check which open jobs fit your age <ArrowRight className="w-4 h-4" aria-hidden />
         </Link>
       </section>
     </div>

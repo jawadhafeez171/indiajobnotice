@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
@@ -189,34 +190,34 @@ export default async function StateHomePage({ params }: PageProps) {
 
           {/* Links to qualification and sector pages */}
           <div className="pt-2 border-t border-line-soft grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-            <a
+            <Link
               href="/engineering-jobs"
               className="p-2.5 rounded bg-subtle border border-line hover:border-navy transition-colors block text-center"
             >
               <span className="font-bold text-ink block truncate">Engineering Jobs</span>
               <span className="text-[11px] text-muted">B.Tech & Diploma</span>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/police-defense-jobs"
               className="p-2.5 rounded bg-subtle border border-line hover:border-saffron-bright transition-colors block text-center"
             >
               <span className="font-bold text-ink block truncate">Police & Defense</span>
               <span className="text-[11px] text-muted">SI & Constable</span>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/qualification/graduate"
               className="p-2.5 rounded bg-subtle border border-line hover:border-navy transition-colors block text-center"
             >
               <span className="font-bold text-ink block truncate">Graduate Jobs</span>
               <span className="text-[11px] text-muted">Any Degree</span>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/qualification/12th-pass"
               className="p-2.5 rounded bg-subtle border border-line hover:border-green transition-colors block text-center"
             >
               <span className="font-bold text-ink block truncate">12th Pass Jobs</span>
               <span className="text-[11px] text-muted">Clerk & Assistant</span>
-            </a>
+            </Link>
           </div>
         </section>
       </main>

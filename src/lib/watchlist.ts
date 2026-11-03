@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
 import { JobNotification } from "@/data/jobs";
 
 const STORAGE_KEY = "indiajobnotice_watchlist_ids";
@@ -29,58 +29,53 @@ export function saveWatchlistIds(ids: string[]): void {
   }
 }
 
+// The saved ids live in the browser's storage: read them as an external store, so every component
+// using the hook (and other tabs, through the "storage" event) sees the same list.
+const NONE: string[] = [];
+let cache: { raw: string | null; ids: string[] } = { raw: null, ids: NONE };
+
+function readIds(): string[] {
+  let raw: string | null = null;
+  try {
+    raw = localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return NONE;
+  }
+  // the same array while the stored text is unchanged (the store must not hand out a new one each read)
+  if (raw !== cache.raw) cache = { raw, ids: raw ? getStoredWatchlistIds() : NONE };
+  return cache.ids;
+}
+
+function subscribe(onChange: () => void): () => void {
+  window.addEventListener(WATCHLIST_EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(WATCHLIST_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
+const noSubscribe = () => () => {};
+
 /** withJobs: also load the saved jobs themselves (the watchlist drawer); other users need ids only. */
 export function useWatchlist({ withJobs = false }: { withJobs?: boolean } = {}) {
-  const [savedIds, setSavedIds] = useState<string[]>([]);
+  const savedIds = useSyncExternalStore(subscribe, readIds, () => NONE);
+  // false while rendering on the server and before the browser has read the storage
+  const isLoaded = useSyncExternalStore(noSubscribe, () => true, () => false);
   const [fetchedJobs, setFetchedJobs] = useState<JobNotification[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
-    // Initial read
-    setSavedIds(getStoredWatchlistIds());
-    setIsLoaded(true);
+  const isSaved = useCallback((id: string) => savedIds.includes(id), [savedIds]);
 
-    const handleUpdate = () => {
-      setSavedIds(getStoredWatchlistIds());
-    };
-
-    window.addEventListener(WATCHLIST_EVENT, handleUpdate);
-    window.addEventListener("storage", handleUpdate);
-
-    return () => {
-      window.removeEventListener(WATCHLIST_EVENT, handleUpdate);
-      window.removeEventListener("storage", handleUpdate);
-    };
+  const toggleSave = useCallback((id: string) => {
+    const prev = readIds();
+    saveWatchlistIds(prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]);
   }, []);
 
-  const isSaved = useCallback(
-    (id: string) => {
-      return savedIds.includes(id);
-    },
-    [savedIds]
-  );
-
-  const toggleSave = useCallback(
-    (id: string) => {
-      setSavedIds((prev) => {
-        const next = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id];
-        saveWatchlistIds(next);
-        return next;
-      });
-    },
-    []
-  );
-
   const removeJob = useCallback((id: string) => {
-    setSavedIds((prev) => {
-      const next = prev.filter((item) => item !== id);
-      saveWatchlistIds(next);
-      return next;
-    });
+    saveWatchlistIds(readIds().filter((item) => item !== id));
   }, []);
 
   const clearAll = useCallback(() => {
-    setSavedIds([]);
     saveWatchlistIds([]);
   }, []);
 

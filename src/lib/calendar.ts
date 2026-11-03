@@ -58,7 +58,7 @@ export function generateGoogleCalendarUrl(event: CalendarEventParams): string {
 export function generateIcsContent(events: CalendarEventParams[]): string {
   const timestamp = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
 
-  let ics = [
+  const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     "PRODID:-//IndiaJobNotice//Govt Recruitment Calendar 2026//EN",
