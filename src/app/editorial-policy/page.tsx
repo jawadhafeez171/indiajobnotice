@@ -15,6 +15,7 @@ import {
   Mail,
   ArrowRight
 } from "lucide-react";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "Editorial & Verification Policy",
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/editorial-policy",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Editorial & Verification Standards - India Job Notice",
     description: "How IndiaJobNotice verifies government employment notifications, calculates age criteria, and upholds primary source integrity.",
     url: "https://www.indiajobnotice.com/editorial-policy",

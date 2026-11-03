@@ -5,6 +5,7 @@ import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { ExamDatesView } from "@/components/jobs/ExamDatesView";
 import { getExamDates, JobNotification, ExamDateEntry } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const revalidate = 3600;
 
@@ -14,6 +15,7 @@ export const metadata = {
     "Upcoming government exam, physical test and interview dates from official admit cards and exam schedules, soonest first, for central and state recruitments.",
   alternates: { canonical: "https://www.indiajobnotice.com/exam-dates" },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Upcoming Government Exam Dates - India Job Notice",
     description: "Exam dates from official admit cards and exam schedules, soonest first.",
     url: "https://www.indiajobnotice.com/exam-dates",

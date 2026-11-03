@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { ShieldCheck, Lock, Eye, FileText, ExternalLink, Mail } from "lucide-react";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/privacy-policy",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Privacy Policy - India Job Notice",
     description: "Data protection, cookies, and transparency practices on IndiaJobNotice.com.",
     url: "https://www.indiajobnotice.com/privacy-policy",

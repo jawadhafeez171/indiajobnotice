@@ -19,6 +19,7 @@ import {
   School,
   Library
 } from "lucide-react";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "Free Resources for College Placement Cells, Libraries & Coaching Centres",
@@ -27,6 +28,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/for-colleges-libraries",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Institutional Resources for Placement Cells & Libraries - India Job Notice",
     description: "Equip your students with verified recruitment tools: deadline calendar, qualification tracker, cutoff age calculator, and state directory.",
     url: "https://www.indiajobnotice.com/for-colleges-libraries",

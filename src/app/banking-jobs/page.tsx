@@ -5,6 +5,7 @@ import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "Bank Jobs 2026 - SBI, IBPS PO, Clerk & RBI Grade B Recruitment",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/banking-jobs",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Banking & Insurance Government Jobs 2026",
     description: "Verified Recruitment Circulars for State Bank of India, Public Sector Banks & RBI.",
     url: "https://www.indiajobnotice.com/banking-jobs",

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { AlertTriangle, FileText, Scale, CheckCircle2, ShieldAlert, Mail } from "lucide-react";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "Terms of Service & Gazette Disclaimer",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/terms",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Terms of Service - India Job Notice",
     description: "Terms and conditions of use for IndiaJobNotice.com.",
     url: "https://www.indiajobnotice.com/terms",

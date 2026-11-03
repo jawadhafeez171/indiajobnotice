@@ -5,6 +5,7 @@ import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "Government Teaching Jobs 2026 - CTET, KVS, DSSSB & State TET Vacancies",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/teaching-jobs",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Government Teaching Jobs 2026 - PRT, TGT, PGT Vacancies",
     description: "Verified Vacancies for PRT, TGT, PGT Teachers, Lecturers & Central School Educators.",
     url: "https://www.indiajobnotice.com/teaching-jobs",

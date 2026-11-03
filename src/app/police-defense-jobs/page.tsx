@@ -5,6 +5,7 @@ import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "Police & Defense Govt Jobs 2026 - Army, Navy, Air Force & Police Constables",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/police-defense-jobs",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Police & Defense Govt Jobs 2026 - Army, Navy, Air Force & Police Constables",
     description: "Official Circulars for Central Armed Police Forces (CAPF), Defense Services & State Police.",
     url: "https://www.indiajobnotice.com/police-defense-jobs",

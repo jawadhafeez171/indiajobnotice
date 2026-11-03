@@ -28,8 +28,8 @@ export const metadata: Metadata = {
     "www.indiajobnotice.com",
   ],
   openGraph: {
-    title: "India Job Notice - Central & State Government Jobs",
-    description: "Official repository of Central and State government recruitment notifications, exam schedules, admit cards, and results.",
+    title: "India Job Notice: Verified Government Job Alerts",
+    description: "Central and state government jobs with last dates, eligibility and the official notification link, read from each recruiting body's own notice.",
     url: "https://www.indiajobnotice.com",
     siteName: "India Job Notice",
     locale: "en_IN",
@@ -37,8 +37,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "India Job Notice - Government Job Notifications",
-    description: "Verified Central & State Government job circulars, syllabus, admit cards, and results across all 36 states & UTs.",
+    title: "India Job Notice: Verified Government Job Alerts",
+    description: "Central and state government jobs with last dates, eligibility and the official notification link, read from each recruiting body's own notice.",
   },
   robots: {
     index: true,

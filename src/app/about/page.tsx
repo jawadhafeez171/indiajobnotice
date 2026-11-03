@@ -16,6 +16,7 @@ import {
   Building2,
   Mail
 } from "lucide-react";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "About Us - Independent Public Employment Gazette",
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/about",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "About India Job Notice - Independent Public Career Intelligence",
     description: "Empowering 40M+ Indian youth with verified government job gazettes, exam dates, syllabus patterns, and district-level notices.",
     url: "https://www.indiajobnotice.com/about",

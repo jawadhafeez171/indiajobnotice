@@ -15,7 +15,7 @@ const GREEN = "#1f9a4a";
 const CREAM = "#fbf8ee";
 
 /** A Google Font as TrueType, only the glyphs the card uses (Vercel's documented way for next/og). */
-async function googleFont(family: string, weight: number, text: string): Promise<ArrayBuffer | null> {
+export async function googleFont(family: string, weight: number, text: string): Promise<ArrayBuffer | null> {
   try {
     const url = `https://fonts.googleapis.com/css2?family=${family.replace(/ /g, "+")}:wght@${weight}&text=${encodeURIComponent(text)}`;
     const css = await (await fetch(url)).text();

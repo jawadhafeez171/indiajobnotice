@@ -6,6 +6,7 @@ import { getCalculatorJobs } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
 
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata = {
   title: "Government Job Age & Eligibility Calculator 2026",
@@ -14,6 +15,7 @@ export const metadata = {
     canonical: "https://www.indiajobnotice.com/calculator",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Sarkari Job Age & Eligibility Calculator 2026 - India Job Notice",
     description: "Automatic category age relaxation calculator (SC/ST/OBC/EWS) matching open government recruitment drives.",
     url: "https://www.indiajobnotice.com/calculator",

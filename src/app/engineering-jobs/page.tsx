@@ -5,6 +5,7 @@ import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "Government Engineering Jobs 2026 - B.Tech, B.E. & Diploma Vacancies",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/engineering-jobs",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Government Engineering Jobs 2026 - B.Tech, B.E. & Diploma Vacancies",
     description: "Explore Government Engineering Jobs in 2026. Railway RRB JE, State PSC Assistant Engineers, PSUs, Defense DRDO & ISRO notifications.",
     url: "https://www.indiajobnotice.com/engineering-jobs",

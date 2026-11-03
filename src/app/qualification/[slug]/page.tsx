@@ -8,6 +8,7 @@ import {
   QUALIFICATION_HUBS, 
   getQualificationHubBySlug 
 } from "@/data/permanent-categories";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -33,6 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: canonicalUrl,
     },
     openGraph: {
+      images: SITE_OG_IMAGES,
       title: hub.title,
       description: hub.metaDescription,
       url: canonicalUrl,

@@ -22,6 +22,7 @@ import {
   CheckCircle2 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 interface Props {
   params: Promise<{ state: string }>;
@@ -47,6 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: canonicalUrl,
     },
     openGraph: {
+      images: SITE_OG_IMAGES,
       title: `Government Jobs in ${state.name} 2026 - Notifications & Syllabus`,
       description: `Official employment gazette circulars for ${state.name}. Domicile rules, capital: ${state.capital}, and commission updates.`,
       url: canonicalUrl,

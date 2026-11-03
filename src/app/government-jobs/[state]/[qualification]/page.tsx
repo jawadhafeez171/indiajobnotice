@@ -13,6 +13,7 @@ import {
   getJobsForStateQualHub
 } from "@/data/state-qualification-hubs";
 import { getAllJobs } from "@/lib/jobs-store";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 interface Props {
   params: Promise<{ state: string; qualification: string }>;
@@ -39,6 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: canonicalUrl,
     },
     openGraph: {
+      images: SITE_OG_IMAGES,
       title: hub.title,
       description: hub.metaDescription,
       url: canonicalUrl,

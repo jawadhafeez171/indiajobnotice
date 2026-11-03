@@ -29,6 +29,7 @@ import {
   Info,
   CheckCircle2
 } from "lucide-react";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 interface PageProps {
   params: Promise<{
@@ -62,6 +63,7 @@ export async function generateMetadata({ params }: PageProps) {
       canonical: canonicalUrl,
     },
     openGraph: {
+      images: SITE_OG_IMAGES,
       title: `${district.name} Government Jobs - India Job Notice`,
       description: `Official job alerts, exam schedules, and circulars for ${district.name}, ${state.name}.`,
       url: canonicalUrl,

@@ -18,6 +18,7 @@ import { getAllJobs } from "@/lib/jobs-store";
 
 import { getCentralPortalUrl } from "@/lib/subdomains";
 import { cn } from "@/lib/utils";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 interface PageProps {
   params: Promise<{ state: string }>;
@@ -43,6 +44,7 @@ export async function generateMetadata({ params }: PageProps) {
       canonical: canonicalUrl,
     },
     openGraph: {
+      images: SITE_OG_IMAGES,
       title: `${state.name} Government Jobs - India Job Notice`,
       description: `Official job alerts, exam schedules, and circulars for ${state.name}.`,
       url: canonicalUrl,

@@ -15,6 +15,7 @@ import {
   Building2,
   ExternalLink
 } from "lucide-react";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "Contact & Grievance Redressal",
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/contact",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Contact India Job Notice",
     description: "Official contact emails, grievance officer details, and errata correction procedures for IndiaJobNotice.com.",
     url: "https://www.indiajobnotice.com/contact",

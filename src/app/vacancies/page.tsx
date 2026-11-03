@@ -8,6 +8,7 @@ import { getAllJobs } from "@/lib/jobs-store";
 
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "Qualification-Wise Government Job Vacancy Tracker 2026",
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/vacancies",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Qualification-Wise Government Vacancy Tracker 2026",
     description: "Track live verified government job vacancies categorized by educational qualification. 100% verified gazette circulars.",
     url: "https://www.indiajobnotice.com/vacancies",

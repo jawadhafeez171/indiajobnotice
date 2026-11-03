@@ -5,6 +5,7 @@ import { Footer } from "@/components/common/Footer";
 import { StateDirectoryView } from "@/components/directory/StateDirectoryView";
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "All-India State Public Service Commissions & Police Boards Directory 2026",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/directory",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "All-India State Recruitment Commissions Directory 2026",
     description: "Verified official portal URLs, physical headquarters, and candidate helpdesk numbers for all 28 State PSCs and Police Recruitment Boards.",
     url: "https://www.indiajobnotice.com/directory",

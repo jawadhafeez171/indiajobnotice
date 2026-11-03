@@ -5,6 +5,7 @@ import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "Railway Recruitment 2026 - RRB NTPC, Group D, ALP & JE Notifications",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     canonical: "https://www.indiajobnotice.com/railway-jobs",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Railway Government Jobs 2026 (RRB & RRC)",
     description: "Official Notifications & Exam Schedules Across 21 Railway Recruitment Boards.",
     url: "https://www.indiajobnotice.com/railway-jobs",

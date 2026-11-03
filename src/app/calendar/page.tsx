@@ -6,6 +6,7 @@ import { getListingJobs } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
 
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
+import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata = {
   title: "Government Exam Schedule & Calendar 2026-2027",
@@ -14,6 +15,7 @@ export const metadata = {
     canonical: "https://www.indiajobnotice.com/calendar",
   },
   openGraph: {
+    images: SITE_OG_IMAGES,
     title: "Government Exam Calendar & Timeline 2026 - India Job Notice",
     description: "Export exam dates to Google Calendar and download .ics schedules for UPSC, SSC, Railways, and State PSCs.",
     url: "https://www.indiajobnotice.com/calendar",
