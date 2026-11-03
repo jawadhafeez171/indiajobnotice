@@ -76,7 +76,8 @@ export interface JobNotification {
   howToApply?: string;
   advtNo?: string;
   isWalkIn?: boolean;
-  updates?: { date: string; text: string; url: string }[];
+  /** Corrigenda applied (date changes); found = the day the agent applied it (India time). */
+  updates?: { date: string; text: string; url: string; found?: string }[];
   posts?: { postName: string; vacancies: number; qualification: string; ageLimit: string; pay: string }[];
   /** Later documents of this recruitment found on the official site (admit cards, answer keys,
    * results, exam schedules), oldest first; set by the notice agent. */
@@ -205,6 +206,8 @@ export interface JobStage {
   summary?: string;
   /** A result that only lists who goes on to the next stage (shortlist for interview, qualified for mains). */
   shortlist?: boolean;
+  /** The day the official site's document was found (India time, YYYY-MM-DD). */
+  found?: string;
 }
 
 /** The text to show for a stage document: its English summary when the title is in another script. */
@@ -351,6 +354,50 @@ export function ofThisRecruitment(
   const end = job.applicationEndDate || "";
   if (s.date && start && s.date < start) return false;
   return !(end && end >= today && (!s.date || s.date < end));
+}
+
+export type TodayKind = "new" | "admit_card" | "answer_key" | "result" | "schedule" | "dates";
+export const TODAY_LABEL: Record<TodayKind, string> = {
+  new: "New notice",
+  admit_card: "Admit card",
+  answer_key: "Answer key",
+  result: "Result",
+  schedule: "Exam schedule",
+  dates: "Dates changed",
+};
+/** The order the Today list shows them in: new notices first. */
+export const TODAY_ORDER: TodayKind[] = ["new", "dates", "admit_card", "result", "answer_key", "schedule"];
+
+/** India date (YYYY-MM-DD) of a database timestamp ("2026-11-03 04:47:12.1+00"). */
+export function istDate(ts?: string): string {
+  if (!ts) return "";
+  const t = Date.parse(ts.replace(" ", "T").replace(/([+-]\d\d)$/, "$1:00"));
+  return Number.isNaN(t) ? "" : new Date(t + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
+}
+
+/**
+ * What changed on this recruitment today (India time), the most important first: published today,
+ * a corrigendum applied today, or an official document found today. Null when nothing did.
+ */
+export function todayChange(job: JobNotification, today = todayIST()): { kind: TodayKind; label: string } | null {
+  // a recruitment under way approved today is not a new notice: only its documents found today count
+  if (!job.inProgress && istDate(job.publishedAt) === today) return { kind: "new", label: TODAY_LABEL.new };
+  if ((job.updates || []).some((u) => u.found === today)) return { kind: "dates", label: TODAY_LABEL.dates };
+  const found = (job.stages || []).filter((s) => s.found === today);
+  if (!found.length) return null;
+  const s = found[found.length - 1];
+  const kind: TodayKind = s.kind === "final_result" ? "result" : s.kind;
+  return { kind, label: s.shortlist ? "Shortlist" : TODAY_LABEL[kind] };
+}
+
+/** Today's changes by kind, for the home page's one-line summary. */
+export function todayCounts(jobs: JobNotification[], today = todayIST()): { kind: TodayKind; count: number }[] {
+  const n = new Map<TodayKind, number>();
+  for (const j of jobs) {
+    const c = todayChange(j, today);
+    if (c) n.set(c.kind, (n.get(c.kind) || 0) + 1);
+  }
+  return TODAY_ORDER.filter((k) => n.get(k)).map((k) => ({ kind: k, count: n.get(k)! }));
 }
 
 /** Official documents of one kind for this job; a final result counts as a result. */

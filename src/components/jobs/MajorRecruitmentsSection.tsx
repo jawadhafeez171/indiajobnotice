@@ -10,9 +10,12 @@ import {
   daysUntil,
   stageText,
   todayIST,
+  todayChange,
+  TODAY_ORDER,
   type JobStage,
 } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
+import { noticeArea } from "@/lib/internal-links";
 import { JobListCard, JobRow, JobDeadline, STATUS_STYLE, qualificationLabel, rowTitle, placeLabel, sourceHost } from "./JobListCard";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
 import { useWatchlist } from "@/lib/watchlist";
@@ -45,6 +48,7 @@ interface Props {
 type ViewMode = "ledger" | "spotlight" | "bulletin";
 
 export type StatusCategoryKey =
+  | "TODAY"
   | "ALL"
   | "APPLY_OPEN"
   | "CLOSING_SOON"
@@ -54,8 +58,10 @@ export type StatusCategoryKey =
   | "UNDER_WAY";
 
 // one row of tabs; the active one takes its stage colour (same as the card stripes)
-export const TAB_ORDER: StatusCategoryKey[] = ["APPLY_OPEN", "CLOSING_SOON", "EXAM_DATES", "RESULT", "UNDER_WAY", "ALL"];
+// "Today" leads, and only shows on a day something changed
+export const TAB_ORDER: StatusCategoryKey[] = ["TODAY", "APPLY_OPEN", "CLOSING_SOON", "EXAM_DATES", "RESULT", "UNDER_WAY", "ALL"];
 export const TABS: Record<StatusCategoryKey, { label: string; short: string; active: string; order?: string }> = {
+  TODAY: { label: "Today", short: "Today", active: "bg-saffron-solid", order: "found on the official sites today · new notices first" },
   APPLY_OPEN: { label: "Open", short: "Open", active: "bg-green-solid", order: "by last date, biggest first" },
   CLOSING_SOON: { label: "Closing this week", short: "Closing", active: "bg-saffron-solid", order: "part of Open · by last date, biggest first" },
   EXAM_DATES: { label: "Exams & admit cards", short: "Exams", active: "bg-navy-solid", order: "soonest exam first" },
@@ -144,7 +150,7 @@ type ListItem =
 
 /** Stage names in links (/?stage=closing) <-> tab keys. */
 export const STAGE_PARAM: Record<string, StatusCategoryKey> = {
-  open: "APPLY_OPEN", closing: "CLOSING_SOON", exams: "EXAM_DATES", admit: "EXAM_DATES", results: "RESULT",
+  today: "TODAY", open: "APPLY_OPEN", closing: "CLOSING_SOON", exams: "EXAM_DATES", admit: "EXAM_DATES", results: "RESULT",
   underway: "UNDER_WAY", all: "ALL",
 };
 
@@ -183,7 +189,9 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
   useEffect(() => {
     const handleHash = () => {
       const hash = window.location.hash.toLowerCase();
-      if (hash === "#admit-cards" || hash === "#admit-card") {
+      if (hash === "#today") {
+        setActiveCategory("TODAY");
+      } else if (hash === "#admit-cards" || hash === "#admit-card") {
         setActiveCategory("EXAM_DATES");
       } else if (hash === "#under-way" || hash === "#recruitments-under-way") {
         setActiveCategory("UNDER_WAY");
@@ -247,6 +255,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
   // Helper to test if a job matches a status category
   const matchesStatus = (job: JobNotification, cat: StatusCategoryKey): boolean => {
     switch (cat) {
+      case "TODAY":
+        return todayChange(job) !== null;
       case "APPLY_OPEN":
         return job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
       case "CLOSING_SOON": {
@@ -343,6 +353,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       if (activeCategory === "EXAM_DATES") {
         return (nextExamDate(a)?.date || "9999").localeCompare(nextExamDate(b)?.date || "9999");
       }
+      if (activeCategory === "TODAY") {
+        const rank = (j: JobNotification) => TODAY_ORDER.indexOf(todayChange(j)?.kind || "schedule");
+        return rank(a) - rank(b) || b.totalVacancies - a.totalVacancies;
+      }
       const rank = (j: JobNotification) =>
         j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR" ? 0
           : j.status === "ADMIT_CARD_OUT" || j.status === "RESULT_OUT" ? 1 : 2;
@@ -403,7 +417,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
     return (j: JobNotification): string => {
       const t = rowTitle(j);
       if ((seen.get(key(j)) || 0) < 2) return t;
-      const tag = j.advtNo ? `Advt ${j.advtNo}` : (j.applicationEndDate || j.publishedAt || "").slice(0, 4);
+      // a round's KK / RPC notices differ by that alone; else the advert number (or year)
+      const area = noticeArea(j)?.code;
+      const tag = area || (j.advtNo ? `Advt ${j.advtNo}` : (j.applicationEndDate || j.publishedAt || "").slice(0, 4));
+      if (area) return `${area} · ${t.replace(new RegExp(`\\s*\\(${area}\\)\\s*$`), "")}`;
       return tag && !t.includes(j.advtNo || tag) ? `${tag} · ${t}` : t;
     };
   }, [filteredJobs]);
@@ -442,6 +459,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
   // Counts for each status category (respecting text search and facet filters)
   const categoryCounts = useMemo(() => {
     const counts: Record<StatusCategoryKey, number> = {
+      TODAY: 0,
       ALL: 0,
       APPLY_OPEN: 0,
       CLOSING_SOON: 0,
@@ -457,6 +475,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       const big = !majorOn || j.totalVacancies >= MAJOR_POSTS;
 
       counts.ALL += 1;
+      if (matchesStatus(j, "TODAY")) counts.TODAY += 1;
       if (matchesStatus(j, "APPLY_OPEN") && big) counts.APPLY_OPEN += 1;
       if (matchesStatus(j, "CLOSING_SOON") && big) counts.CLOSING_SOON += 1;
       if (matchesStatus(j, "ADMIT_CARD")) counts.ADMIT_CARD += 1;
@@ -624,6 +643,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
         >
           {TAB_ORDER.map((key) => {
             const isActive = activeCategory === key;
+            // no Today tab on a day with nothing new
+            if (key === "TODAY" && !categoryCounts.TODAY && !isActive) return null;
             const t = TABS[key];
             return (
               <button
@@ -829,7 +850,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 job={job}
                 title={titleOf(job)}
                 exam={activeCategory === "EXAM_DATES" || job.status === "ADMIT_CARD_OUT" ? nextExamDate(job) : undefined}
-                showStage={!grouped}
+                showStage={!grouped && activeCategory !== "TODAY"}
+                note={activeCategory === "TODAY" ? todayChange(job)?.label : undefined}
                 action={
                   <button
                     onClick={() => toggleSave(job.id)}
@@ -920,7 +942,11 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                           {!grouped && (
                             <>
                               <span className="text-faint" aria-hidden>·</span>
-                              <span className={cn("font-bold", style.text)}>{style.label}</span>
+                              {activeCategory === "TODAY" ? (
+                                <span className="font-bold text-saffron">{todayChange(job)?.label}</span>
+                              ) : (
+                                <span className={cn("font-bold", style.text)}>{style.label}</span>
+                              )}
                             </>
                           )}
                         </div>

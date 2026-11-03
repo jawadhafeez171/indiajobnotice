@@ -290,7 +290,7 @@ function deadlineText(job: JobNotification, exam?: ExamDateEntry | null): string
  * Compact list row (phones and tablets): stage dot, title, one grey line of facts, the date on
  * the right. No box; rows are separated by lines. The whole row is the link; `action` sits on top.
  */
-export function JobRow({ job, exam, action, title, showStage = false }: {
+export function JobRow({ job, exam, action, title, showStage = false, note }: {
   job: JobNotification;
   exam?: ExamDateEntry | null;
   action?: React.ReactNode;
@@ -298,6 +298,8 @@ export function JobRow({ job, exam, action, title, showStage = false }: {
   title?: string;
   /** Say the stage in words (lists that mix stages: All, search results); the dot alone is colour only. */
   showStage?: boolean;
+  /** What changed today ("New notice", "Result"), shown before the title in the Today list. */
+  note?: string;
 }) {
   const style = STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING;
   const qual = qualificationLabel(job);
@@ -319,6 +321,7 @@ export function JobRow({ job, exam, action, title, showStage = false }: {
           href={getJobCanonicalPath(job)}
           className="font-semibold text-[15px] leading-snug text-ink line-clamp-2 after:absolute after:inset-0"
         >
+          {note && <span className="text-saffron font-bold">{note} · </span>}
           <b className="text-navy">{job.orgShortCode}</b> {title ?? rowTitle(job)}
           <span className="sr-only">, {job.organization}, {deadlineText(job, exam)}</span>
         </Link>

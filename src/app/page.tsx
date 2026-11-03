@@ -5,27 +5,21 @@ import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
-import { getListingJobs, getExamsInProgress, todayIST, getJobCanonicalPath } from "@/data/jobs";
-import { rowTitle } from "@/components/jobs/JobListCard";
+import { getListingJobs, getExamsInProgress, todayIST } from "@/data/jobs";
 import type { JobNotification } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
 import { HomeSearch } from "@/components/home/HomeSearch";
-import { NewsTicker } from "@/components/home/NewsTicker";
+import { TodaySummary } from "@/components/home/TodaySummary";
 
-
-
-// ticker text: the post (the body's code is shown in bold before it), cut short
-function tickerTitle(j: JobNotification): string {
-  const t = rowTitle(j);
-  return t.length > 60 ? t.slice(0, 58).trimEnd() + "…" : t;
-}
 
 // what the list needs of a job: the page sends every listed job to the browser, so the long
 // texts only the job page shows stay behind
 function forList(j: JobNotification): JobNotification {
   return {
     ...j,
-    salary: "", ageRelaxation: "", syllabusSummary: "", selectionProcess: [], updates: undefined,
+    salary: "", ageRelaxation: "", syllabusSummary: "", selectionProcess: [],
+    // only the date changes' days (the Today tab), not their text
+    updates: j.updates?.filter((u) => u.found).map((u) => ({ date: u.date, text: "", url: "", found: u.found })),
     districtWiseVacancies: undefined, verificationSource: undefined,
     posts: j.posts?.map((p) => ({ postName: p.postName, vacancies: 0, qualification: p.qualification, ageLimit: "", pay: "" })),
     stages: j.stages?.map((s) => ({ ...s, title: s.summary && /[ऀ-෿]/.test(s.title) ? s.title.slice(0, 80) : s.title })),
@@ -93,12 +87,6 @@ export default async function HomePage() {
   // the same numbers as the Open and Under way tabs
   const underWay = listJobs.filter((j) => j.inProgress).length;
 
-  // ticker: newest open notifications first
-  const latest = listedJobs
-    .filter((j) => (j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR") && j.applicationStartDate)
-    .sort((a, b) => b.applicationStartDate.localeCompare(a.applicationStartDate))
-    .slice(0, 12);
-
   return (
     <div className="min-h-screen flex flex-col bg-canvas">
       <a
@@ -143,16 +131,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Latest notices ticker (tablets and up): stops on hover, focus, touch or the Pause button */}
-      <NewsTicker
-        items={latest.map((j) => ({
-          id: j.id,
-          href: getJobCanonicalPath(j),
-          code: j.orgShortCode,
-          title: tickerTitle(j),
-          posts: j.totalVacancies || 0,
-        }))}
-      />
+      {/* What changed today: one line, opening the Today tab of the list */}
+      <TodaySummary jobs={listJobs} />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6 flex-1 w-full space-y-12">
         {/* Jobs: search, filters and the list come first */}
