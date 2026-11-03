@@ -36,7 +36,7 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
       id: "eligibility",
       label: "Eligibility",
       subLabel: "Age and qualifications",
-      href: `${basePrefix}/eligibility`,
+      href: `${basePrefix}#eligibility`,
       icon: GraduationCap,
       badge: "",
       badgeColor: "",

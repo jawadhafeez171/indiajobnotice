@@ -159,15 +159,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: job.featured ? 0.9 : 0.75,
   }));
 
-  // Distinct lifecycle & intent search routes (Eligibility, Admit Card, Answer Key, Result)
+  // Stage pages (admit card, answer key, result); eligibility is part of the job page itself
   const lifecycleRoutes: MetadataRoute.Sitemap = jobs.flatMap((job) => {
     const base = `${baseUrl}${getJobCanonicalPath(job)}`;
 
     return [
-      // the eligibility page only when the notice states an age limit (else it is noindex)
-      ...(job.ageKnown !== false && job.maxAge > 0
-        ? [{ url: `${base}/eligibility`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 }]
-        : []),
       // stage pages only once the official document is out (until then they are noindex)
       ...(["admit-card", "answer-key", "result"] as const)
         .filter((path) => getStages(job, path.replace("-", "_") as StageKind).length > 0)

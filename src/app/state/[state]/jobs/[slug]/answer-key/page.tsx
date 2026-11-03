@@ -46,7 +46,7 @@ export default async function StateJobAnswerKeyPage({ params }: Props) {
 
   return (
     <div className="min-h-screen flex flex-col bg-canvas">
-      <Navbar currentStateSlug={resolvedParams.state} />
+      <Navbar currentStateSlug={resolvedParams.state} compact />
       <main id="main-content" className="flex-1">
         <AnswerKeyView job={job} stateSlug={resolvedParams.state} />
       </main>

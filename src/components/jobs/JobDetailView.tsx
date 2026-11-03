@@ -22,7 +22,7 @@ import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { useWatchlist } from "@/lib/watchlist";
 import { generateGoogleCalendarUrl } from "@/lib/calendar";
 import { ExecutiveNotificationDigest } from "./ExecutiveNotificationDigest";
-import { JobKeyFacts } from "./JobKeyFacts";
+import { ApplicationFee, HowToApply, ImportantDates, WhoCanApply } from "./JobFactSections";
 import { ReservationTable } from "./ReservationTable";
 import { StageDocumentsPanel } from "./StageDocumentsPanel";
 import { ClosedRecruitmentAlert } from "./ClosedRecruitmentAlert";
@@ -65,13 +65,14 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
   const { isSaved, toggleSave, isLoaded } = useWatchlist();
   const saved = isLoaded ? isSaved(job.id) : false;
 
-  // On phones, the last date and Apply stay in reach once the header's buttons scroll away
+  // On phones, the last date and Apply stay in reach whenever the top card's Apply is off screen
+  // (scrolled past, or not yet reached on a small phone)
   const actionsRef = useRef<HTMLDivElement>(null);
   const [actionsGone, setActionsGone] = useState(false);
   useEffect(() => {
     const el = actionsRef.current;
     if (!el || isClosed || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(([e]) => setActionsGone(!e.isIntersecting && e.boundingClientRect.top < 0));
+    const io = new IntersectionObserver(([e]) => setActionsGone(!e.isIntersecting));
     io.observe(el);
     return () => io.disconnect();
   }, [isClosed]);
@@ -98,6 +99,32 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
 
   const canonicalUrl = `https://www.indiajobnotice.com${basePrefix}`;
   const structuredData = generateJobStructuredData(job, canonicalUrl);
+  const hasPosts = (job.posts || []).length > 0 || job.totalVacancies > 0 || Boolean(job.salary);
+  const sections = [
+    { id: "dates", label: "Dates" },
+    { id: "eligibility", label: "Who can apply" },
+    { id: "fee", label: "Fee" },
+    ...(hasPosts ? [{ id: "posts", label: "Posts" }] : []),
+    { id: "apply", label: "How to apply" },
+    { id: "progress", label: "Progress" },
+  ];
+  // the section being read, highlighted in the jump links
+  const [here, setHere] = useState("");
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+    const els = sections.map((x) => document.getElementById(x.id)).filter((el): el is HTMLElement => Boolean(el));
+    const io = new IntersectionObserver(
+      (entries) => {
+        const seen = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (seen[0]) setHere(seen[0].target.id);
+      },
+      { rootMargin: "-140px 0px -55% 0px" },
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+    // the section list only changes with the job
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [job.id]);
   const back = stateInfo
     ? { href: `/state/${stateInfo.slug}`, label: `${stateInfo.name} jobs` }
     : { href: "/", label: "All jobs" };
@@ -149,46 +176,44 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
       </nav>
 
       {/* Header: what, who, and the actions */}
-      <div className="bg-surface rounded-xl border border-line p-6 sm:p-8 shadow-2xs print:border-none print:shadow-none print:p-0">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="px-2.5 py-1 rounded bg-navy-tint text-navy font-bold text-xs flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5 text-navy" />
-              {job.orgShortCode}
-            </span>
-            <span
-              className={cn(
-                "text-xs font-bold px-2.5 py-1 rounded",
-                job.isCentral ? "bg-navy-tint text-navy" : "bg-saffron-tint text-saffron"
-              )}
-            >
-              {job.isCentral ? "Central government" : stateInfo?.name}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <JobStatusBadge
-              status={isClosed && job.status !== "RESULT_OUT" && job.status !== "ADMIT_CARD_OUT" ? "APPLICATIONS_CLOSED" : job.status}
-            />
-            <button
-              type="button"
-              onClick={() => toggleSave(job.id)}
-              aria-pressed={saved}
-              className={cn(
-                "min-h-[36px] px-3 rounded-md border text-xs font-bold transition-colors flex items-center gap-1.5 print:hidden",
-                saved
-                  ? "bg-saffron-tint text-saffron border-saffron-line"
-                  : "bg-surface text-muted border-line hover:border-navy hover:text-navy"
-              )}
-              title={saved ? "Remove from saved jobs" : "Save this job on this device"}
-            >
-              <Bookmark className={cn("w-3.5 h-3.5", saved && "fill-saffron-bright")} />
-              <span>{saved ? "Saved" : "Save"}</span>
-            </button>
-          </div>
+      <div className="bg-surface rounded-xl border border-line p-5 sm:p-8 shadow-2xs print:border-none print:shadow-none print:p-0">
+        {/* one row: who, where, status, save */}
+        <div className="flex items-center gap-2 mb-3 sm:mb-4">
+          <span className="px-2 py-1 rounded bg-navy-tint text-navy font-bold text-xs flex items-center gap-1.5 shrink-0">
+            <Building2 className="w-3.5 h-3.5 text-navy" aria-hidden />
+            {job.orgShortCode}
+          </span>
+          <span
+            className={cn(
+              // phones: the code (KEA · KA) and the breadcrumb already name the state
+              "hidden sm:inline-block text-xs font-bold px-2 py-1 rounded truncate min-w-0",
+              job.isCentral ? "bg-navy-tint text-navy" : "bg-saffron-tint text-saffron"
+            )}
+          >
+            {job.isCentral ? "Central" : stateInfo?.name}
+          </span>
+          <JobStatusBadge
+            className="shrink-0"
+            status={isClosed && job.status !== "RESULT_OUT" && job.status !== "ADMIT_CARD_OUT" ? "APPLICATIONS_CLOSED" : job.status}
+          />
+          <button
+            type="button"
+            onClick={() => toggleSave(job.id)}
+            aria-pressed={saved}
+            aria-label={saved ? "Saved. Remove from saved jobs" : "Save this job on this device"}
+            className={cn(
+              "ml-auto shrink-0 w-10 h-10 sm:w-auto sm:px-3 rounded-lg border text-xs font-bold transition-colors flex items-center justify-center gap-1.5 print:hidden",
+              saved
+                ? "bg-saffron-tint text-saffron border-saffron-line"
+                : "bg-surface text-muted border-line hover:border-navy hover:text-navy"
+            )}
+          >
+            <Bookmark className={cn("w-4 h-4", saved && "fill-saffron-bright")} aria-hidden />
+            <span className="hidden sm:inline">{saved ? "Saved" : "Save"}</span>
+          </button>
         </div>
 
-        <h1 className="font-serif text-2xl sm:text-4xl font-bold text-ink leading-tight text-balance">
+        <h1 className="font-serif text-[22px] sm:text-4xl font-bold text-ink leading-tight text-balance">
           {job.title}
         </h1>
 
@@ -276,22 +301,54 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
         </div>
       </div>
 
-      {/* Last date, posts, eligibility, fee, exam dates */}
-      <JobKeyFacts job={job} />
-
-      {/* Where the recruitment stands, and its official documents */}
-      <div className="print:hidden">
-        <JobLifecycleTracker job={job} />
-      </div>
-      <StageDocumentsPanel job={job} />
-
       {isClosed && !job.inProgress && (
         <ClosedRecruitmentAlert job={job} stateSlug={stateSlug} activeJobs={activeJobs} />
       )}
 
-      {/* Posts, selection process, and vacancies by category (when the notice gives them) */}
+      {/* Jump links: the sections a candidate looks for, in the order they come */}
+      {/* stays under the site header while reading; the right edge fades so the row reads as scrollable */}
+      <nav
+        aria-label="On this page"
+        className="print:hidden sticky top-[68px] md:top-[109px] z-20 -mx-4 sm:-mx-6 lg:-mx-8 bg-canvas/95 border-b border-line-soft"
+      >
+        <div className="overflow-x-auto [mask-image:linear-gradient(to_right,black_85%,transparent)] sm:[mask-image:none]">
+          <ul className="flex gap-2 px-4 sm:px-6 lg:px-8 py-2 w-max sm:w-auto sm:flex-wrap">
+            {sections.map((x) => (
+              <li key={x.id}>
+                <a
+                  href={`#${x.id}`}
+                  aria-current={here === x.id ? "location" : undefined}
+                  className={cn(
+                    "inline-flex items-center min-h-[40px] px-3.5 rounded-full border text-sm font-semibold whitespace-nowrap transition-colors",
+                    here === x.id
+                      ? "bg-navy-solid border-navy text-white"
+                      : "bg-surface border-line text-ink hover:border-navy hover:text-navy"
+                  )}
+                >
+                  {x.label}
+                </a>
+              </li>
+            ))}
+            <li aria-hidden className="w-6 sm:hidden" />
+          </ul>
+        </div>
+      </nav>
+
+      <ImportantDates job={job} />
+      <WhoCanApply job={job} />
+      <ApplicationFee job={job} />
+
+      {/* Posts (with pay), vacancies by category, selection process: when the notice gives them */}
       <ExecutiveNotificationDigest job={job} />
       <ReservationTable job={job} />
+
+      <HowToApply job={job} applyHost={applyHost} />
+
+      {/* Where the recruitment stands, and its official documents */}
+      <div id="progress" className="print:hidden scroll-mt-32 md:scroll-mt-44">
+        <JobLifecycleTracker job={job} />
+      </div>
+      <StageDocumentsPanel job={job} />
 
       {/* Sharing and alerts, after the facts rather than among the apply buttons */}
       <div className="flex flex-wrap items-center gap-2 print:hidden">
@@ -318,7 +375,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
       <ReservedAdSlot slotType="leaderboard" slotId={`job-detail-${job.slug}`} className="print:hidden" />
 
       {/* Similar jobs, then more jobs by state, qualification and organisation */}
-      <RelatedOpportunitiesSection currentJob={job} related={related} />
+      <RelatedOpportunitiesSection currentJob={job} related={related.filter((r) => !siblings.some((x) => x.id === r.job.id))} />
       <JobTaxonomyBar job={job} />
 
       <p className="text-xs text-muted flex items-start gap-2 max-w-prose">

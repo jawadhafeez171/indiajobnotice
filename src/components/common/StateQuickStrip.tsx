@@ -21,34 +21,25 @@ export function StateQuickStrip({ currentStateSlug, onOpenSelector }: Props) {
 
   return (
     <nav
-      aria-label="36 States and Union Territories Quick Access"
-      className="bg-subtle border-b border-line text-xs select-none relative z-30 py-1 px-2 sm:px-3 lg:px-4 overflow-hidden"
+      aria-label="States"
+      className="bg-subtle border-b border-line text-xs select-none relative z-30 px-4 md:py-1 md:px-3 lg:px-4 overflow-hidden"
     >
-      {/* 1. Mobile View: Sleek 1-line bar that triggers the Bottom Sheet */}
-      <div className="md:hidden max-w-7xl mx-auto flex items-center justify-between h-11 gap-2">
+      {/* 1. Phones: one row, one target: the state you are on, and Change */}
+      <div className="md:hidden max-w-7xl mx-auto">
         <button
           type="button"
           onClick={onOpenSelector}
-          className="flex items-center gap-1.5 text-ink text-left flex-1 min-w-0 cursor-pointer min-h-[44px]"
-          title="Tap to select your state portal"
+          className="w-full flex items-center gap-1.5 min-h-[44px] text-left cursor-pointer"
+          aria-label={`Your state: ${currentState ? currentState.name : "All India"}. Change state`}
         >
-          <MapPin className="w-3.5 h-3.5 text-navy shrink-0" />
-          <span className="text-[11px] font-mono uppercase font-bold text-muted shrink-0">
-            State:
+          <MapPin className="w-4 h-4 text-navy shrink-0" aria-hidden />
+          <span className="font-bold text-sm text-navy truncate">
+            {currentState ? currentState.name : "All India"}
           </span>
-          <span className="font-bold text-xs text-navy truncate">
-            {currentState ? `${currentState.name} (${currentState.code})` : "All India"}
+          <span className="ml-auto inline-flex items-center gap-0.5 text-sm font-semibold text-navy shrink-0">
+            Change
+            <ChevronDown className="w-4 h-4" aria-hidden />
           </span>
-        </button>
-
-        <button
-          type="button"
-          onClick={onOpenSelector}
-          className="flex items-center gap-1 px-3 py-1 rounded-full bg-navy-solid hover:bg-navy-strong text-white text-[12px] font-bold shadow-xs active:scale-95 transition-all shrink-0 cursor-pointer min-h-[44px]"
-          aria-label="Switch State or Union Territory"
-        >
-          <span>All 36 states</span>
-          <ChevronDown className="w-3 h-3 text-white/80" />
         </button>
       </div>
 
@@ -63,7 +54,7 @@ export function StateQuickStrip({ currentStateSlug, onOpenSelector }: Props) {
         <span className="h-4 w-px bg-line shrink-0" aria-hidden />
         <div className="flex-1 min-w-0 flex items-center gap-4 overflow-hidden text-[13px]">
           {!isCentralActive && (
-            <a href={getCentralPortalUrl()} className="shrink-0 text-ink-2 hover:text-navy whitespace-nowrap">
+            <a href={getCentralPortalUrl()} className="shrink-0 py-1.5 text-ink-2 hover:text-navy whitespace-nowrap">
               All India
             </a>
           )}

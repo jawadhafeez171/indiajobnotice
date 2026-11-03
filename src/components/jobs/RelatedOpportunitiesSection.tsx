@@ -11,8 +11,11 @@ interface Props {
 
 // Similar jobs as plain rows: the part that tells look-alike notices apart (KK / RPC) first, the
 // facts that decide whether to open one, and stage links only for documents that exist.
-export function RelatedOpportunitiesSection({ related }: Props) {
+export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
   if (!related || related.length === 0) return null;
+  // a title shared with this job or another row gets its advertisement number, so the rows differ
+  const titles = [currentJob.title, ...related.map((r) => r.job.title)];
+  const repeated = (t: string) => titles.filter((x) => x === t).length > 1;
 
   return (
     <section aria-labelledby="similar" className="bg-surface rounded-xl border border-line p-5 sm:p-6 shadow-2xs print:hidden">
@@ -32,6 +35,7 @@ export function RelatedOpportunitiesSection({ related }: Props) {
                 <span className="block text-sm font-bold text-ink group-hover:text-navy leading-snug line-clamp-2">
                   {area && <span className="text-saffron">{area.code} · </span>}
                   {job.title}
+                  {repeated(job.title) && job.advtNo && <span className="font-normal text-muted"> · Advt. {job.advtNo}</span>}
                 </span>
                 <span className="mt-1 block text-xs text-muted">
                   {job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} posts · ` : ""}

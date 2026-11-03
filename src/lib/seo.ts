@@ -64,11 +64,3 @@ export function salaryRange(job: JobNotification): { min: number; max?: number }
   return max > min ? { min, max } : { min };
 }
 
-/** "KEA Junior Engineer (Civil) 2026: Age Limit 18–40 years, Qualification" */
-export function eligibilityTitle(job: JobNotification): string {
-  let t = baseTitle(job);
-  const year = jobYear(job);
-  if (!t.includes(year)) t += ` ${year}`;
-  const age = job.ageKnown !== false && job.maxAge > 0 ? `Age Limit ${formatAgeRange(job, "years")}` : "Age Limit";
-  return `${t}: ${age}, Qualification`;
-}

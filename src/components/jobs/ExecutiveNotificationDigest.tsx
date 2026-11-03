@@ -8,7 +8,7 @@ import {
   PostVacancyBreakdown,
   CategoryStatutoryMatrixItem,
 } from "@/lib/exam-details";
-import { GraduationCap, ShieldCheck, Layers } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 interface Props {
   job: JobNotification;
@@ -26,8 +26,9 @@ export function ExecutiveNotificationDigest({ job }: Props) {
     .map((t) => t.trim().replace(/[,;:.]+$/, ""))
     .filter(Boolean)
     .map((t) => t.charAt(0).toUpperCase() + t.slice(1));
-  // A value every post shares is said once above the list, and not at all when the key facts
-  // already say it (null: it differs by post, so it gets a column; "": already in the key facts)
+  // A value every post shares is said once above the list, and not at all when "Who can apply"
+  // already says it (null: it differs by post, so it gets a column; "": already said above). Pay is
+  // said only here.
   const quals = job.qualifications.filter(Boolean);
   const sharedOf = (k: "qualification" | "ageLimit" | "payLevel", inKeyFacts: string[]): string | null => {
     const vals = new Set(posts.map((p) => p[k]));
@@ -38,17 +39,14 @@ export function ExecutiveNotificationDigest({ job }: Props) {
   const shared: SharedValues = {
     qualification: sharedOf("qualification", [quals[0] || "", quals.join("; ")]),
     ageLimit: sharedOf("ageLimit", [ageText(job)]),
-    payLevel: sharedOf("payLevel", [job.salary || ""]),
+    payLevel: ((v) => (v ? payText(v) : v))(sharedOf("payLevel", [])),
   };
 
   return (
     <section className="space-y-6" id="details">
       {posts.length > 0 && (
-        <div className={`${card} scroll-mt-28`} id="posts">
-          <h2 className="font-serif text-lg font-bold text-ink flex items-center gap-2">
-            <GraduationCap className="w-5 h-5 text-navy" />
-            Posts and eligibility
-          </h2>
+        <div className={`${card} scroll-mt-32 md:scroll-mt-44`} id="posts">
+          <h2 className="font-serif text-lg font-bold text-ink">Posts and pay</h2>
           <PostList
             rows={posts.map((p: PostVacancyBreakdown) => ({
               ...p,
@@ -57,6 +55,23 @@ export function ExecutiveNotificationDigest({ job }: Props) {
             }))}
             shared={shared}
           />
+        </div>
+      )}
+      {posts.length === 0 && (job.totalVacancies > 0 || job.salary) && (
+        <div className={`${card} scroll-mt-32 md:scroll-mt-44`} id="posts">
+          <h2 className="font-serif text-lg font-bold text-ink">Posts and pay</h2>
+          <dl className="text-sm text-ink-2 space-y-1">
+            <div>
+              <dt className="inline font-bold text-ink">Posts: </dt>
+              <dd className="inline">{job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "See notification"}</dd>
+            </div>
+            {job.salary && (
+              <div>
+                <dt className="inline font-bold text-ink">Pay: </dt>
+                <dd className="inline">{payText(job.salary)}</dd>
+              </div>
+            )}
+          </dl>
         </div>
       )}
 
@@ -100,21 +115,13 @@ export function ExecutiveNotificationDigest({ job }: Props) {
 
       {steps.length > 0 && (
         <div className={card}>
-          <h2 className="font-serif text-lg font-bold text-ink flex items-center gap-2">
-            <Layers className="w-5 h-5 text-navy" />
-            Selection process
-          </h2>
+          <h2 className="font-serif text-lg font-bold text-ink">Selection process</h2>
           {steps.length === 1 ? (
             <p className="text-sm text-ink max-w-prose">{steps[0]}</p>
           ) : (
-          <ol className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+          <ol className="list-decimal pl-5 space-y-1 text-sm text-ink max-w-prose marker:font-bold marker:text-navy">
             {steps.map((step, idx) => (
-              <li key={idx} className="p-3.5 rounded-lg bg-subtle border border-line text-xs text-ink">
-                <span className="w-5 h-5 rounded-full bg-navy-solid text-white text-[12px] font-bold flex items-center justify-center mb-2">
-                  {idx + 1}
-                </span>
-                <span className="font-semibold leading-snug">{step}</span>
-              </li>
+              <li key={idx}>{step}</li>
             ))}
           </ol>
           )}

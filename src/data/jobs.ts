@@ -66,6 +66,14 @@ export interface JobNotification {
   applicationFeeText?: string;
   /** The notice's own age wording (limits by category, relaxations), as printed. */
   ageLimitText?: string;
+  /** The date on which age is reckoned, as the notice gives it (YYYY-MM-DD). */
+  ageAsOn?: string;
+  /** Upper (and lower) age limits as printed, per category and post ("" = all). */
+  ageLimits?: { post: string; category: string; min: number; max: number }[];
+  /** Last date for paying the fee, when the notice gives one apart from the last date. */
+  feeLastDate?: string;
+  /** How to apply, in the notice's words (English). */
+  howToApply?: string;
   advtNo?: string;
   isWalkIn?: boolean;
   updates?: { date: string; text: string; url: string }[];
@@ -361,9 +369,15 @@ export function formatAgeRange(job: JobNotification, unit = "yrs"): string {
   return job.minAge ? `${job.minAge}–${job.maxAge} ${unit}` : `Up to ${job.maxAge} ${unit}`;
 }
 
-/** Pay as printed, with the rupee sign: "34100-67600" and "Rs 54175-99400" read "₹34100-67600". */
+/**
+ * Pay as printed, with the rupee sign and Indian digit grouping: "34100-67600" reads "₹34,100-67,600",
+ * "Rs (102300-2980/4-114220)" reads "₹(1,02,300-2,980/4-1,14,220)". Nothing else is changed.
+ */
 export function payText(pay: string): string {
-  return pay.replace(/\bRs\.?\s*/gi, "₹").replace(/^(\d)/, "₹$1");
+  return pay
+    .replace(/\bRs\.?\s*/gi, "₹")
+    .replace(/^(\d)/, "₹$1")
+    .replace(/\d{4,}/g, (n) => Number(n).toLocaleString("en-IN"));
 }
 
 /** The age limit as the notice words it (categories and relaxations included), else the range. */

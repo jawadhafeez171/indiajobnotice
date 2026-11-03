@@ -13,13 +13,13 @@ export function JobStatusBadge({ status, className }: Props) {
     { label: string; bg: string; text: string; border: string }
   > = {
     APPLY_OPEN: {
-      label: "Applications Open",
+      label: "Applications open",
       bg: "bg-green-solid",
       text: "text-white",
       border: "border-green",
     },
     LAST_DATE_NEAR: {
-      label: "Closing Soon",
+      label: "Closing soon",
       bg: "bg-saffron-solid",
       text: "text-white",
       border: "border-saffron",
@@ -31,19 +31,19 @@ export function JobStatusBadge({ status, className }: Props) {
       border: "border-navy-line",
     },
     ADMIT_CARD_OUT: {
-      label: "Admit Card Out",
+      label: "Admit card out",
       bg: "bg-navy-solid",
       text: "text-white",
       border: "border-navy",
     },
     RESULT_OUT: {
-      label: "Result Out",
+      label: "Result out",
       bg: "bg-purple-solid",
       text: "text-white",
       border: "border-purple",
     },
     APPLICATIONS_CLOSED: {
-      label: "Applications Closed",
+      label: "Applications closed",
       bg: "bg-sunken",
       text: "text-ink-2",
       border: "border-line",
