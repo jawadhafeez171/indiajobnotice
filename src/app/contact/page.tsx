@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   const whatsappChannel = "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C";
-  const telegramChannel = "https://t.me/Indiajobnotice1";
+  const telegramChannel = "https://t.me/india_jobnotice";
 
   return (
     <div className="min-h-screen flex flex-col bg-canvas">

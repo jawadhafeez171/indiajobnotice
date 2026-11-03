@@ -362,7 +362,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
           Share on WhatsApp
         </a>
         <a
-          href="https://t.me/Indiajobnotice1"
+          href="https://t.me/india_jobnotice"
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center gap-2 min-h-[44px] px-4 rounded-lg border border-line hover:border-navy text-ink text-sm font-semibold transition-colors"

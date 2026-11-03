@@ -15,7 +15,7 @@ import { useWatchlist } from "@/lib/watchlist";
 import { getStateBySlug } from "@/config/states";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
 
-const TELEGRAM = "https://t.me/Indiajobnotice1";
+const TELEGRAM = "https://t.me/india_jobnotice";
 const WHATSAPP = "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C";
 
 // the six most asked for first; the rest behind "More"

@@ -503,8 +503,8 @@ export function getStateBySlug(slug: string): StateInfo | undefined {
   return {
     ...found,
     telegramGroup: found.telegramGroup?.includes("IndiaJobNotice_")
-      ? "https://t.me/Indiajobnotice1"
-      : found.telegramGroup || "https://t.me/Indiajobnotice1",
+      ? "https://t.me/india_jobnotice"
+      : found.telegramGroup || "https://t.me/india_jobnotice",
   };
 }
 
@@ -517,8 +517,8 @@ export function getStateBySlugOrCode(val: string): StateInfo | undefined {
   return {
     ...found,
     telegramGroup: found.telegramGroup?.includes("IndiaJobNotice_")
-      ? "https://t.me/Indiajobnotice1"
-      : found.telegramGroup || "https://t.me/Indiajobnotice1",
+      ? "https://t.me/india_jobnotice"
+      : found.telegramGroup || "https://t.me/india_jobnotice",
   };
 }
 
@@ -532,7 +532,7 @@ export const CENTRAL_INFO = {
   name: "All India Central Govt Jobs",
   shortName: "Central / All-India",
   domain: "indiajobnotice.com",
-  telegramGroup: "https://t.me/Indiajobnotice1",
+  telegramGroup: "https://t.me/india_jobnotice",
   majorBodies: ["UPSC Civil Services", "SSC CGL/CHSL/GD", "Railway RRB NTPC/ALP", "IBPS Banking", "Defense (NDA/CDS/Agniveer)"],
   description: "Official notifications for Central Govt recruitments across India (UPSC, SSC, Railways, Banking, Defense, PSUs).",
 };

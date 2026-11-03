@@ -7,7 +7,7 @@ interface Props {
 }
 
 export function SocialAlertBar({ state }: Props) {
-  const telegramLink = "https://t.me/Indiajobnotice1";
+  const telegramLink = "https://t.me/india_jobnotice";
   const stateLabel = state ? state.name : "all of India";
 
   return (

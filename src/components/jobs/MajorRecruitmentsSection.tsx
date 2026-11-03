@@ -131,7 +131,7 @@ function latestDoc(job: JobNotification): JobStage | null {
 }
 const latestDate = (j: JobNotification) => (j.stages || []).map((x) => x.date || "").sort().pop() || "";
 
-const TELEGRAM = "https://t.me/Indiajobnotice1";
+const TELEGRAM = "https://t.me/india_jobnotice";
 
 // bodies the agent cannot read automatically: say so when a search names them
 const KNOWN_GAPS: { test: RegExp; text: string; href: string; site: string }[] = [
