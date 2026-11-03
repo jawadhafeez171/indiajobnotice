@@ -6,9 +6,101 @@ import { ShieldCheck, MapPin, Landmark, ChevronDown } from "lucide-react";
 import { TelegramLogo, WhatsAppLogo } from "./SocialIcons";
 import { BrandLogo } from "./BrandLogo";
 
+type FooterLink = { href: string; label: string; external?: boolean; divider?: boolean };
+type FooterGroup = { title: string; dot: string; links: FooterLink[] };
+
+const GROUPS: FooterGroup[] = [
+  {
+    title: "Central Recruitment",
+    dot: "bg-saffron-solid",
+    links: [
+      { href: "/organisations/upsc", label: "UPSC" },
+      { href: "/organisations/ssc", label: "SSC" },
+      { href: "/railway-jobs", label: "Railways" },
+      { href: "/banking-jobs", label: "Banks" },
+      { href: "/police-defense-jobs", label: "Police and defence" },
+      { href: "/engineering-jobs", label: "Engineering" },
+      { href: "/teaching-jobs", label: "Teaching" },
+    ],
+  },
+  {
+    title: "Tools",
+    dot: "bg-green-solid",
+    links: [
+      { href: "/calculator", label: "Age calculator" },
+      { href: "/calendar", label: "Exam calendar" },
+      { href: "/vacancies", label: "Vacancies by qualification" },
+      { href: "/directory", label: "Commissions and boards" },
+      { href: "/for-colleges-libraries", label: "For colleges and libraries" },
+      { href: getCentralPortalUrl(), label: "All India (central jobs)", external: true, divider: true },
+    ],
+  },
+  {
+    title: "By Qualification",
+    dot: "bg-navy-solid",
+    links: [
+      { href: "/qualification/10th-pass", label: "10th Pass Govt Jobs" },
+      { href: "/qualification/12th-pass", label: "12th Pass Govt Jobs" },
+      { href: "/qualification/diploma", label: "Polytechnic & Diploma Jobs" },
+      { href: "/qualification/graduate", label: "Graduate Degree Jobs" },
+      { href: "/engineering-jobs", label: "Civil, Mech, Electrical Engineers" },
+    ],
+  },
+];
+
+const HUBS: FooterLink[] = [
+  { href: "/government-jobs/karnataka/12th-pass", label: "KA 12th" },
+  { href: "/government-jobs/karnataka/engineering", label: "KA Engg" },
+  { href: "/government-jobs/up/12th-pass", label: "UP 12th" },
+  { href: "/government-jobs/bihar/12th-pass", label: "BR 12th" },
+];
+
+function FooterAnchor({ link, className }: { link: FooterLink; className: string }) {
+  return link.external ? (
+    <a href={link.href} className={className}>{link.label}</a>
+  ) : (
+    <Link href={link.href} className={className}>{link.label}</Link>
+  );
+}
+
+function Hubs({ className }: { className: string }) {
+  return (
+    <div className={className}>
+      <span className="text-[12px] text-on-navy">State + Qualification Hubs:</span>
+      <div className="flex flex-wrap gap-x-1.5 text-white text-[13px] md:text-[12px]">
+        {HUBS.map((h, i) => (
+          <React.Fragment key={h.href}>
+            {i > 0 && <span aria-hidden className="self-center">·</span>}
+            <Link href={h.href} className="hover:text-saffron-light flex items-center min-h-[44px] px-1 md:inline md:min-h-0 md:p-0">{h.label}</Link>
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SocialButtons() {
+  // phones: labelled buttons a thumb can hit; desktop: the compact icons
+  const base = "inline-flex items-center justify-center gap-2 rounded-lg text-white transition-colors shadow-xs min-h-[44px] px-4 text-sm font-semibold md:min-h-0 md:p-2";
+  return (
+    <div className="grid grid-cols-2 gap-2 pt-1 md:flex md:items-center">
+      <a href="https://t.me/india_jobnotice" target="_blank" rel="noreferrer" aria-label="Telegram Channel"
+        title="Join Telegram Channel" className={`${base} bg-[#1A7DB0] hover:bg-[#156C99]`}>
+        <TelegramLogo className="w-4 h-4" />
+        <span className="md:sr-only">Telegram</span>
+      </a>
+      <a href="https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C" target="_blank" rel="noreferrer"
+        aria-label="WhatsApp Channel" title="Follow India Job Notice on WhatsApp" className={`${base} bg-[#13853F] hover:bg-[#0E7A3E]`}>
+        <WhatsAppLogo className="w-4 h-4" />
+        <span className="md:sr-only">WhatsApp</span>
+      </a>
+    </div>
+  );
+}
+
 export function Footer() {
   return (
-    <footer className="on-dark bg-navy-deep text-on-navy border-t-2 border-on-navy-2/25 mt-20 relative">
+    <footer className="on-dark bg-navy-deep text-on-navy border-t-2 border-on-navy-2/25 mt-12 md:mt-20 relative">
       {/* Top Tricolor Accent Line extending across the entire page */}
       <div className="h-1 w-full flex">
         <div className="flex-1 bg-saffron-solid" />
@@ -17,8 +109,8 @@ export function Footer() {
       </div>
 
       {/* Main Footer Links */}
-      <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
           {/* Brand Info */}
           <div className="md:col-span-1 space-y-4">
             <a href={getCentralPortalUrl()} className="inline-block transition-transform hover:opacity-95" title="India Job Notice Home">
@@ -30,123 +122,57 @@ export function Footer() {
               cards and results, and a link to each official notification.
             </p>
 
-            <div className="flex items-center gap-2 pt-1">
-              <a
-                href="https://t.me/india_jobnotice"
-                target="_blank"
-                rel="noreferrer"
-                className="p-2 rounded-lg bg-[#1A7DB0] text-white hover:bg-[#156C99] transition-colors shadow-xs"
-                aria-label="Telegram Channel"
-                title="Join Telegram Channel"
-              >
-                <TelegramLogo className="w-4 h-4" />
-              </a>
-              <a
-                href="https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C"
-                target="_blank"
-                rel="noreferrer"
-                className="p-2 rounded-lg bg-[#13853F] text-white hover:bg-[#0E7A3E] transition-colors shadow-xs"
-                aria-label="WhatsApp Channel"
-                title="Follow India Job Notice on WhatsApp"
-              >
-                <WhatsAppLogo className="w-4 h-4" />
-              </a>
-            </div>
+            <SocialButtons />
           </div>
 
-          {/* Central Recruitment */}
-          <div>
-            <div className="flex items-center gap-2 mb-3.5">
-              <span className="w-2 h-2 rounded-full bg-saffron-solid" />
-              <h3 className="text-sm font-semibold text-white">
-                Central Recruitment
-              </h3>
-            </div>
-            <ul className="space-y-1.5 text-xs text-on-navy [&_a]:inline-block [&_a]:py-2 md:[&_a]:py-0">
-              <li><Link href="/organisations/upsc" className="hover:text-saffron-light font-medium">UPSC</Link></li>
-              <li><Link href="/organisations/ssc" className="hover:text-saffron-light font-medium">SSC</Link></li>
-              <li><Link href="/railway-jobs" className="hover:text-saffron-light font-medium">Railways</Link></li>
-              <li><Link href="/banking-jobs" className="hover:text-saffron-light font-medium">Banks</Link></li>
-              <li><Link href="/police-defense-jobs" className="hover:text-saffron-light font-medium">Police and defence</Link></li>
-              <li><Link href="/engineering-jobs" className="hover:text-saffron-light font-medium">Engineering</Link></li>
-              <li><Link href="/teaching-jobs" className="hover:text-saffron-light font-medium">Teaching</Link></li>
-            </ul>
+          {/* phones: each group folds behind a tap (the three lists stacked were over a screen) */}
+          <div className="md:hidden rounded-lg border border-on-navy-2/25 divide-y divide-on-navy-2/25">
+            {GROUPS.map((g) => (
+              <details key={g.title} className="group">
+                <summary className="flex items-center justify-between px-4 min-h-[48px] cursor-pointer list-none text-sm font-semibold text-white">
+                  <span className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${g.dot}`} />
+                    {g.title}
+                  </span>
+                  <ChevronDown aria-hidden className="w-4 h-4 text-saffron-light transition-transform group-open:rotate-180" />
+                </summary>
+                <ul className="grid grid-cols-2 gap-x-3 px-4 pb-3 text-[13px]">
+                  {g.links.map((l) => (
+                    <li key={l.href + l.label}>
+                      <FooterAnchor link={l} className="flex items-center min-h-[44px] text-on-navy hover:text-white font-medium" />
+                    </li>
+                  ))}
+                </ul>
+                {g.title === "By Qualification" && <Hubs className="px-4 pb-3 pt-2 border-t border-on-navy-2/25" />}
+              </details>
+            ))}
           </div>
 
-          {/* Recruitment Tools & Direct Portals */}
-          <div>
-            <div className="flex items-center gap-2 mb-3.5">
-              <span className="w-2 h-2 rounded-full bg-green-solid" />
-              <h3 className="text-sm font-semibold text-white">
-                Tools
-              </h3>
+          {/* desktop: the three columns */}
+          {GROUPS.map((g) => (
+            <div key={g.title} className="hidden md:block">
+              <div className="flex items-center gap-2 mb-3.5">
+                <span className={`w-2 h-2 rounded-full ${g.dot}`} />
+                <h3 className="text-sm font-semibold text-white">{g.title}</h3>
+              </div>
+              <ul className="space-y-1.5 text-xs text-on-navy">
+                {g.links.map((l) => (
+                  <li key={l.href + l.label} className={l.divider ? "pt-2 border-t border-on-navy-2/25" : undefined}>
+                    <FooterAnchor link={l} className="text-on-navy hover:text-saffron-light font-medium" />
+                  </li>
+                ))}
+                {g.title === "By Qualification" && (
+                  <li className="pt-2 border-t border-on-navy-2/25">
+                    <Hubs className="space-y-1" />
+                  </li>
+                )}
+              </ul>
             </div>
-            <ul className="space-y-1.5 text-xs text-on-navy [&_a]:inline-block [&_a]:py-2 md:[&_a]:py-0">
-              <li>
-                <Link href="/calculator" className="text-on-navy hover:text-saffron-light font-medium flex items-center gap-1">
-                  <span>Age calculator</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/calendar" className="text-on-navy hover:text-saffron-light font-medium flex items-center gap-1">
-                  <span>Exam calendar</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/vacancies" className="text-on-navy hover:text-saffron-light font-medium flex items-center gap-1">
-                  <span>Vacancies by qualification</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/directory" className="text-on-navy hover:text-saffron-light font-medium flex items-center gap-1">
-                  <span>Commissions and boards</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/for-colleges-libraries" className="text-on-navy hover:text-saffron-light font-medium flex items-center gap-1">
-                  <span>For colleges and libraries</span>
-                </Link>
-              </li>
-              <li className="pt-2 border-t border-on-navy-2/25">
-                <a href={getCentralPortalUrl()} className="text-on-navy hover:text-saffron-light font-medium flex items-center gap-1">
-                  <span>All India (central jobs)</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Jobs By Qualification */}
-          <div>
-            <div className="flex items-center gap-2 mb-3.5">
-              <span className="w-2 h-2 rounded-full bg-navy-solid" />
-              <h3 className="text-sm font-semibold text-white">
-                By Qualification
-              </h3>
-            </div>
-            <ul className="space-y-1.5 text-xs text-on-navy [&_a]:inline-block [&_a]:py-2 md:[&_a]:py-0">
-              <li><Link href="/qualification/10th-pass" className="hover:text-saffron-light font-medium">10th Pass Govt Jobs</Link></li>
-              <li><Link href="/qualification/12th-pass" className="hover:text-saffron-light font-medium">12th Pass Govt Jobs</Link></li>
-              <li><Link href="/qualification/diploma" className="hover:text-saffron-light font-medium">Polytechnic & Diploma Jobs</Link></li>
-              <li><Link href="/qualification/graduate" className="hover:text-saffron-light font-medium">Graduate Degree Jobs</Link></li>
-              <li><Link href="/engineering-jobs" className="hover:text-saffron-light font-medium">Civil, Mech, Electrical Engineers</Link></li>
-              <li className="pt-2 border-t border-on-navy-2/25 text-[12px] text-on-navy">
-                <span>State + Qualification Hubs:</span>
-                <div className="flex flex-wrap gap-1.5 pt-1 text-white">
-                  <Link href="/government-jobs/karnataka/12th-pass" className="hover:text-saffron-light">KA 12th</Link>
-                  <span>·</span>
-                  <Link href="/government-jobs/karnataka/engineering" className="hover:text-saffron-light">KA Engg</Link>
-                  <span>·</span>
-                  <Link href="/government-jobs/up/12th-pass" className="hover:text-saffron-light">UP 12th</Link>
-                  <span>·</span>
-                  <Link href="/government-jobs/bihar/12th-pass" className="hover:text-saffron-light">BR 12th</Link>
-                </div>
-              </li>
-            </ul>
-          </div>
+          ))}
         </div>
 
         {/* Jobs by state (the home page's "All 36 states" link lands here) */}
-        <div id="all-states" className="mt-12 pt-8 border-t border-on-navy-2/25 scroll-mt-28">
+        <div id="all-states" className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-on-navy-2/25 scroll-mt-28">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-2">
             <div className="flex items-center gap-2">
               <Landmark className="w-4 h-4 text-saffron" />
@@ -156,7 +182,7 @@ export function Footer() {
             </div>
           </div>
 
-          <p className="text-xs text-on-navy mb-6 max-w-4xl">
+          <p className="text-xs text-on-navy mb-4 md:mb-6 max-w-4xl">
             Each state page lists recruitments from that state&apos;s public service commission, staff selection
             and police boards, courts and departments, with the official link for each.
           </p>
@@ -170,7 +196,7 @@ export function Footer() {
             <ul className="grid grid-cols-2 gap-x-3 px-4 pb-4 text-[13px]">
               {[...STATES_REGISTRY].sort((x, y) => x.name.localeCompare(y.name)).map((st) => (
                 <li key={st.slug}>
-                  <a href={getStateSubdomainUrl(st.slug)} className="block py-2.5 text-on-navy hover:text-white">
+                  <a href={getStateSubdomainUrl(st.slug)} className="flex items-center min-h-[44px] text-on-navy hover:text-white">
                     {st.name}
                   </a>
                 </li>
@@ -221,8 +247,8 @@ export function Footer() {
 
       {/* About this site */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="rounded-xl bg-navy-deep p-5 border border-on-navy-2/25 text-xs text-on-navy flex flex-col md:flex-row gap-4 items-start md:items-center">
-          <ShieldCheck className="w-8 h-8 text-green shrink-0" />
+        <div className="rounded-xl bg-navy-deep p-4 md:p-5 border border-on-navy-2/25 text-xs text-on-navy flex flex-row gap-3 md:gap-4 items-start md:items-center">
+          <ShieldCheck className="w-6 h-6 md:w-8 md:h-8 text-green shrink-0" />
           <div className="space-y-1 text-[13px] leading-relaxed max-w-[68ch]">
             <p className="font-bold text-white flex items-center gap-2">
               <span>About India Job Notice</span>
@@ -237,9 +263,9 @@ export function Footer() {
         </div>
 
         {/* Bottom copyright */}
-        <div className="mt-8 pt-6 border-t border-on-navy-2/25 flex flex-col sm:flex-row items-center justify-between text-xs text-on-navy-2 gap-4">
-          <p>© {new Date().getFullYear()} India Job Notice · indiajobnotice.com</p>
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 sm:gap-6 text-on-navy [&_a]:inline-block [&_a]:py-2.5 md:[&_a]:py-0">
+        <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-on-navy-2/25 flex flex-col-reverse sm:flex-row items-center justify-between text-xs text-on-navy-2 gap-3 sm:gap-4">
+          <p className="pt-1 sm:pt-0">© {new Date().getFullYear()} India Job Notice · indiajobnotice.com</p>
+          <div className="grid grid-cols-3 w-full text-center sm:w-auto sm:flex sm:flex-wrap sm:items-center sm:gap-6 text-on-navy [&_a]:flex [&_a]:items-center [&_a]:justify-center [&_a]:min-h-[44px] sm:[&_a]:min-h-0 sm:[&_a]:inline-block">
             <Link href="/about" className="hover:text-white transition-colors">About</Link>
             <Link href="/editorial-policy" className="hover:text-white transition-colors">How we verify</Link>
             <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>

@@ -365,9 +365,9 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
           href="https://t.me/india_jobnotice"
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 min-h-[44px] px-4 rounded-lg border border-line hover:border-navy text-ink text-sm font-semibold transition-colors"
+          className="inline-flex items-center gap-2 min-h-[44px] px-4 rounded-lg bg-[#1A7DB0] hover:bg-[#156C99] text-white text-sm font-semibold transition-colors"
         >
-          <TelegramLogo className="w-4 h-4 text-[#1A7DB0]" />
+          <TelegramLogo className="w-4 h-4" />
           New jobs on Telegram
         </a>
       </div>

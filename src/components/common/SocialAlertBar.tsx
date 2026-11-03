@@ -22,12 +22,12 @@ export function SocialAlertBar({ state }: Props) {
       </div>
 
       <div className="flex items-center gap-2.5 shrink-0">
-        {/* quiet on the navy band: the heading carries the message */}
+        {/* each in its own brand colour (the deeper shades, so white text stays readable) */}
         <a
           href={telegramLink}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1.5 px-3.5 min-h-[44px] rounded-md bg-white/10 hover:bg-white/20 border border-white/30 text-white text-xs font-bold transition-colors"
+          className="inline-flex items-center gap-1.5 px-3.5 min-h-[44px] rounded-md bg-[#1A7DB0] hover:bg-[#156C99] text-white text-xs font-bold transition-colors"
         >
           <TelegramLogo className="w-4 h-4" />
           <span>Telegram Alerts</span>
@@ -37,7 +37,7 @@ export function SocialAlertBar({ state }: Props) {
           href="https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C"
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1.5 px-3.5 min-h-[44px] rounded-md bg-white/10 hover:bg-white/20 border border-white/30 text-white text-xs font-bold transition-colors"
+          className="inline-flex items-center gap-1.5 px-3.5 min-h-[44px] rounded-md bg-[#13853F] hover:bg-[#0E7A3E] text-white text-xs font-bold transition-colors"
         >
           <WhatsAppLogo className="w-4 h-4" />
           <span>WhatsApp Channel</span>
