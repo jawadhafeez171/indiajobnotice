@@ -55,7 +55,7 @@ export function JobStatusBadge({ status, className }: Props) {
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2 py-0.5 rounded text-[12px] font-bold border",
+        "inline-flex items-center px-2 py-0.5 rounded text-[12px] font-bold border whitespace-nowrap",
         current.bg,
         current.text,
         current.border,

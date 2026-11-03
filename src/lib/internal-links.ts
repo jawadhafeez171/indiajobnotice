@@ -110,10 +110,10 @@ export function getJobTaxonomyLinks(job: JobNotification): {
       label: "IBPS & Bank Recruitment Hub",
       href: "/organisations/banking-ibps",
       type: "organisation",
-      badge: "Banking IBPS",
+      badge: "Banks",
       description: "SBI PO, Clerk, IBPS CRP, and Regional Rural Bank examinations",
     };
-  } else if (stateInfo) {
+  } else if (stateInfo && /public service commission/.test(orgName)) {
     result.organisationHub = {
       label: `${stateInfo.name} Public Service Commissions`,
       href: `/organisations/state-psc`,
@@ -126,8 +126,10 @@ export function getJobTaxonomyLinks(job: JobNotification): {
   // 3. QUALIFICATION LINKS
   const qStr = job.qualifications.join(" ").toLowerCase();
   const titleStr = job.title.toLowerCase();
+  // whole words only: "po" is in "posts", "je" in "subject"
+  const titleHas = (w: string) => new RegExp(`\\b${w}\\b`).test(titleStr);
 
-  if (qStr.includes("graduate") || qStr.includes("degree") || qStr.includes("bachelor") || titleStr.includes("cgl") || titleStr.includes("po")) {
+  if (qStr.includes("graduate") || qStr.includes("degree") || qStr.includes("bachelor") || titleHas("cgl") || titleHas("po")) {
     result.qualificationHubs.push({
       label: "Graduate (Degree) Govt Jobs",
       href: "/qualification/graduate",
@@ -136,7 +138,7 @@ export function getJobTaxonomyLinks(job: JobNotification): {
       description: "Premier administrative and officer cadre recruitments",
     });
   }
-  if (qStr.includes("12th") || qStr.includes("10+2") || qStr.includes("intermediate") || titleStr.includes("chsl") || titleStr.includes("constable")) {
+  if (qStr.includes("12th") || qStr.includes("10+2") || qStr.includes("intermediate") || /\bpuc\b|pre-university|higher secondary/.test(qStr) || titleHas("chsl") || titleStr.includes("constable")) {
     result.qualificationHubs.push({
       label: "12th Pass (10+2) Govt Jobs",
       href: "/qualification/12th-pass",
@@ -145,7 +147,7 @@ export function getJobTaxonomyLinks(job: JobNotification): {
       description: "Clerical, police constable, and technical entry circulars",
     });
   }
-  if (qStr.includes("diploma") || qStr.includes("polytechnic") || titleStr.includes("junior engineer") || titleStr.includes("je")) {
+  if (qStr.includes("diploma") || qStr.includes("polytechnic") || titleStr.includes("junior engineer") || titleHas("je")) {
     result.qualificationHubs.push({
       label: "Diploma Polytechnic Govt Jobs",
       href: "/qualification/diploma",
@@ -164,18 +166,10 @@ export function getJobTaxonomyLinks(job: JobNotification): {
     });
   }
 
-  // Fallback if none matched
-  if (result.qualificationHubs.length === 0) {
-    result.qualificationHubs.push({
-      label: "Graduate Govt Jobs 2026",
-      href: "/qualification/graduate",
-      type: "qualification",
-      badge: "Degree",
-    });
-  }
+  // no fallback: a qualification hub only when the notice's qualification names one
 
   // 4. SECTOR / DOMAIN LINKS
-  if (job.category === "Engineering / Technical" || titleStr.includes("engineer") || titleStr.includes("je")) {
+  if (job.category === "Engineering / Technical" || titleStr.includes("engineer") || titleHas("je")) {
     result.sectorHub = {
       label: "Government Engineering Jobs 2026",
       href: "/engineering-jobs",
@@ -290,20 +284,25 @@ export function getGenuinelyRelatedOpportunities(
     // 1. Same Organisation (Highest Relevance)
     if (candidate.orgShortCode.toUpperCase() === currentJob.orgShortCode.toUpperCase() && currentJob.orgShortCode !== "Central") {
       score += 50;
-      reason = `Same Commission: ${currentJob.organization}`;
+      reason = "Same organisation";
       type = "organisation";
     }
     // 2. Same State (High Relevance for State Aspirants)
     else if (!currentJob.isCentral && candidate.stateSlug === currentJob.stateSlug) {
       const state = getStateBySlug(currentJob.stateSlug);
       score += 40;
-      reason = `Same State: ${state ? state.name : currentJob.stateSlug.toUpperCase()} Government Drive`;
+      reason = `Also in ${state ? state.name : currentJob.stateSlug.toUpperCase()}`;
       type = "state";
+    }
+    // 3 and 4 only within the same reach (central with central, or the same state): an Andhra
+    // engineering post is not "similar" to an all-India bank post
+    else if (candidate.isCentral !== currentJob.isCentral || (!currentJob.isCentral && candidate.stateSlug !== currentJob.stateSlug)) {
+      continue;
     }
     // 3. Same Category / Sector
     else if (candidate.category === currentJob.category) {
       score += 30;
-      reason = `Same Sector: ${currentJob.category}`;
+      reason = `Also ${currentJob.category.toLowerCase()}`;
       type = "sector";
     }
     // 4. Same Minimum Qualification
@@ -313,14 +312,17 @@ export function getGenuinelyRelatedOpportunities(
       );
       if (hasSharedQual) {
         score += 20;
-        reason = `Same Qualification: ${currentJob.qualifications[0] || "Eligibility Match"}`;
+        reason = "Same qualification";
         type = "qualification";
       }
     }
 
-    // Boost if currently accepting applications
-    if (candidate.status === "APPLY_OPEN" || candidate.status === "LAST_DATE_NEAR") {
+    // Boost if currently accepting applications; other bodies' closed notices are not suggested
+    const candidateOpen = candidate.status === "APPLY_OPEN" || candidate.status === "LAST_DATE_NEAR";
+    if (candidateOpen) {
       score += 15;
+    } else if (type !== "organisation") {
+      continue;
     }
 
     if (score > 0) {
@@ -339,4 +341,32 @@ export function getGenuinelyRelatedOpportunities(
     relationshipReason: s.reason,
     relationshipType: s.type,
   }));
+}
+
+/**
+ * Karnataka recruitments come as two notices of one round: posts in the Kalyana Karnataka local
+ * cadre (KK) and in the residual parent cadre (RPC). Which one this is, from its title.
+ */
+export function noticeArea(job: Pick<JobNotification, "title">): { code: "KK" | "RPC"; label: string } | null {
+  if (/\bKK\b|kalyana[ -]karnataka/i.test(job.title)) return { code: "KK", label: "Kalyana Karnataka local cadre (KK)" };
+  if (/\bRPC\b|residual parent cadre/i.test(job.title)) return { code: "RPC", label: "residual parent cadre (RPC)" };
+  return null;
+}
+
+/** The title without its KK / RPC part: the same for both notices of one round. */
+function roundKey(title: string): string {
+  return title
+    .replace(/\b(KK|RPC)\b|kalyana[ -]karnataka|residual parent cadre/gi, "")
+    .replace(/[^a-z0-9]+/gi, " ")
+    .trim()
+    .toLowerCase();
+}
+
+/** The other notice(s) of the same round (KK for an RPC notice and the other way round). */
+export function getSiblingNotices(jobs: JobNotification[], job: JobNotification): JobNotification[] {
+  const area = noticeArea(job);
+  if (!area) return [];
+  const key = roundKey(job.title);
+  return jobs.filter((j) => j.id !== job.id && j.organization === job.organization
+    && noticeArea(j)?.code !== undefined && noticeArea(j)!.code !== area.code && roundKey(j.title) === key);
 }

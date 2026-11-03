@@ -19,27 +19,27 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
     return docs.length
       ? { subLabel: last.date ? `Out ${last.date.split("-").reverse().join("/")}` : "Released",
           badge: "Out", badgeColor: "bg-green-tint text-green" }
-      : { subLabel: "Not released yet", badge: "Awaited", badgeColor: "bg-subtle text-muted" };
+      : { subLabel: "Not released yet", badge: "", badgeColor: "" };
   };
 
   const stages = [
     {
       id: "notice",
-      label: "Official Notice",
-      subLabel: "Vacancies & PDF",
+      label: "Notification",
+      subLabel: "Dates, posts, fee",
       href: basePrefix,
       icon: FileText,
-      badge: "Notice",
-      badgeColor: "bg-navy-tint text-navy",
+      badge: "",
+      badgeColor: "",
     },
     {
       id: "eligibility",
-      label: "Eligibility & Age",
-      subLabel: "Age & qualifications",
+      label: "Eligibility",
+      subLabel: "Age and qualifications",
       href: `${basePrefix}/eligibility`,
       icon: GraduationCap,
-      badge: "Rule Guide",
-      badgeColor: "bg-purple-tint text-purple",
+      badge: "",
+      badgeColor: "",
     },
     {
       id: "admit-card",
@@ -65,10 +65,7 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
   ];
 
   return (
-    <div className="bg-surface rounded-xl border border-line p-2.5 shadow-2xs print:hidden">
-      <div className="flex items-center justify-between mb-2 px-2 text-[11px] font-mono uppercase tracking-wider text-muted font-bold">
-        <span>This recruitment</span>
-      </div>
+    <nav aria-label="Pages of this recruitment" className="bg-surface rounded-xl border border-line p-2.5 shadow-2xs print:hidden">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
         {stages.map((st) => {
           const Icon = st.icon;
@@ -78,6 +75,7 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
             <Link
               key={st.id}
               href={st.href}
+              aria-current={isActive ? "page" : undefined}
               className={cn(
                 "p-2.5 rounded-lg border transition-all flex flex-col justify-between group min-h-[56px]",
                 "[&:nth-child(5)]:col-span-2 sm:[&:nth-child(5)]:col-span-1",
@@ -93,16 +91,16 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
                     isActive ? "text-saffron" : "text-navy group-hover:text-saffron"
                   )}
                 />
-                <span
-                  className={cn(
-                    "text-[8.5px] font-mono font-bold px-1.5 py-0.2 rounded border shrink-0",
-                    isActive
-                      ? "bg-white/20 text-white border-white/30"
-                      : `${st.badgeColor} border-line`
-                  )}
-                >
-                  {st.badge}
-                </span>
+                {st.badge && (
+                  <span
+                    className={cn(
+                      "text-[12px] font-bold px-1.5 py-0.5 rounded shrink-0 leading-none",
+                      isActive ? "bg-white/20 text-white" : st.badgeColor
+                    )}
+                  >
+                    {st.badge}
+                  </span>
+                )}
               </div>
               <div>
                 <span
@@ -126,6 +124,6 @@ export function ExaminationLifecycleBar({ job, activeStage }: Props) {
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 }

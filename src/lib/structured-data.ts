@@ -1,4 +1,4 @@
-import { JobNotification, isJobApplicationClosed, getJobAgeCutoffDate, formatAgeRange, formatFee } from "@/data/jobs";
+import { JobNotification, isJobApplicationClosed, getJobAgeCutoffDate, formatAgeRange, formatFee, ageText } from "@/data/jobs";
 import { getStateBySlug } from "@/config/states";
 import { getJobTaxonomyLinks } from "@/lib/internal-links";
 import { formatDate } from "@/lib/utils";
@@ -18,19 +18,23 @@ export function getJobFaqs(job: JobNotification): FAQItem[] {
   const state = job.stateSlug !== "central" ? getStateBySlug(job.stateSlug) : null;
   const stateLabel = state ? state.name : "Central Government";
 
+  // the short title without its "(2,070 Posts)": each question stays one or two lines on a phone
+  const name = job.shortTitle.replace(/\s*\([\d,]+ Posts?\)$/, "").replace(/…$/, "");
   return [
     {
-      question: `What is the total vacancy and post name in ${job.shortTitle}?`,
-      answer: `${job.organization} has announced ${job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} vacancies` : "vacancies"} for ${job.title}. Category-wise vacancies are given in the official notification.`,
+      question: `How many vacancies are there in ${name}?`,
+      answer: `${job.organization} has announced ${job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} vacancies` : "vacancies"} for ${job.title}.${job.reservation ? " The table of vacancies by category on this page is copied from the notification." : " Category-wise vacancies are given in the official notification."}`,
     },
     {
-      question: `What is the age limit and cut-off date for ${job.shortTitle}?`,
-      answer: job.ageKnown === false || !job.maxAge
+      question: `What is the age limit for ${name}?`,
+      answer: job.ageLimitText?.trim()
+        ? `As stated in the notification: ${job.ageLimitText.trim()}`
+        : job.ageKnown === false || !job.maxAge
         ? `The age limit is given in the official notification of ${job.organization}.`
         : `Age limit: ${formatAgeRange(job, "years")} as on ${formatDate(cutoffDate)}.${job.ageRelaxation ? ` ${job.ageRelaxation}` : " Relaxation for reserved categories is as per the notification."}`,
     },
     {
-      question: `What educational qualification is required to apply for ${job.shortTitle}?`,
+      question: `What educational qualification is required for ${name}?`,
       answer: job.qualifications.length
         ? `As stated in the notification: ${job.qualifications.join("; ")}.`
         : "The educational qualification is given in the official notification.",
@@ -42,13 +46,13 @@ export function getJobFaqs(job: JobNotification): FAQItem[] {
         : "The selection process is given in the official notification.",
     },
     {
-      question: `What is the application fee for ${job.shortTitle}?`,
-      answer: job.feeKnown === false
-        ? job.applicationFeeText || "The application fee, if any, is given in the official notification."
-        : `Application fee: ${formatFee(job)}.`,
+      question: `What is the application fee for ${name}?`,
+      answer: formatFee(job) === "See notification"
+        ? "The application fee, if any, is given in the official notification."
+        : `Application fee: ${formatFee(job)}`,
     },
     {
-      question: `What is the last date to apply online for ${job.shortTitle}?`,
+      question: `What is the last date to apply for ${name}?`,
       answer: !job.applicationEndDate
         ? "The last date is given in the official notification."
         : job.isWalkIn
@@ -71,9 +75,9 @@ function jobPostingDescription(job: JobNotification): string {
   if (job.totalVacancies) facts.push(`Vacancies: ${job.totalVacancies.toLocaleString("en-IN")}`);
   if (job.posts?.length) facts.push(`Posts: ${job.posts.slice(0, 12).map((p) => `${p.postName}${p.vacancies ? ` (${p.vacancies})` : ""}`).join("; ")}`);
   if (job.qualifications.length) facts.push(`Qualification: ${job.qualifications.join("; ")}`);
-  if (job.ageKnown !== false && job.maxAge) facts.push(`Age limit: ${formatAgeRange(job, "years")}`);
+  if (job.ageLimitText?.trim() || (job.ageKnown !== false && job.maxAge)) facts.push(`Age limit: ${ageText(job)}`);
   if (job.salary) facts.push(`Pay: ${job.salary}`);
-  if (job.feeKnown !== false) facts.push(`Application fee: ${formatFee(job)}`);
+  if (formatFee(job) !== "See notification") facts.push(`Application fee: ${formatFee(job)}`);
   if (job.selectionProcess.length) facts.push(`Selection: ${job.selectionProcess.join(", ")}`);
   if (job.applicationEndDate) facts.push(`${job.isWalkIn ? "Walk-in date" : "Last date"}: ${formatDate(job.applicationEndDate)}`);
   if (facts.length) lines.push(`<ul>${facts.map((f) => `<li>${f}</li>`).join("")}</ul>`);
@@ -84,7 +88,6 @@ function jobPostingDescription(job: JobNotification): string {
 export function generateJobStructuredData(job: JobNotification, canonicalUrl: string) {
   const isClosed = isJobApplicationClosed(job);
   const taxonomy = getJobTaxonomyLinks(job);
-  const faqs = getJobFaqs(job);
   const state = job.stateSlug !== "central" ? getStateBySlug(job.stateSlug) : null;
   const locationRegion = state ? state.name : "National / All-India";
   const pay = salaryRange(job);
@@ -100,20 +103,10 @@ export function generateJobStructuredData(job: JobNotification, canonicalUrl: st
     })),
   };
 
-  // 2. FAQPage Schema (Targets striking distance positions 8-20 with accordion rich snippets)
-  const faqPageSchema = {
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
+  // No FAQPage: the job page shows no questions, and FAQ markup must match what the page shows.
+  // The JobPosting below carries the same facts.
 
-  // 3. Primary Entity: JobPosting or WebPage
+  // 2. Primary Entity: JobPosting or WebPage
   const primaryEntity = !isClosed
     ? {
         "@type": "JobPosting",
@@ -164,7 +157,6 @@ export function generateJobStructuredData(job: JobNotification, canonicalUrl: st
     "@graph": [
       primaryEntity,
       breadcrumbListSchema,
-      faqPageSchema,
     ],
   };
 }

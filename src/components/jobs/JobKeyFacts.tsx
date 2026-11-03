@@ -1,6 +1,7 @@
 import React from "react";
 import { BellRing } from "lucide-react";
-import { JobNotification, formatAgeRange, formatFee, isJobApplicationClosed } from "@/data/jobs";
+import Link from "next/link";
+import { JobNotification, ageText, formatFee, getJobCanonicalPath, isJobApplicationClosed, payText } from "@/data/jobs";
 import { formatDate, getDaysRemaining } from "@/lib/utils";
 
 interface Props {
@@ -33,8 +34,12 @@ export function JobKeyFacts({ job }: Props) {
   const daysLeft = getDaysRemaining(job.applicationEndDate);
   const end = job.applicationEndDate ? formatDate(job.applicationEndDate) : "";
   const qualifications = (job.qualifications || []).filter(Boolean);
-  const manyPosts = (job.posts || []).length > 1;
-  const clip = (t: string) => (t.length > 170 ? `${t.slice(0, 167).trimEnd()}…` : t);
+  // "varies by post" only when the posts' own qualifications actually differ
+  const postQuals = new Set((job.posts || []).map((p) => p.qualification.trim()).filter(Boolean));
+  const varies = postQuals.size > 1 || qualifications.length > 1;
+  const clip = (t: string, n = 170) => (t.length > n ? `${t.slice(0, n - 3).trimEnd()}…` : t);
+  const age = ageText(job);
+  const fee = formatFee(job);
   const iso = /^\d{4}-\d{2}-\d{2}$/;
   const latestUpdate = (job.updates || [])[(job.updates || []).length - 1];
 
@@ -71,19 +76,31 @@ export function JobKeyFacts({ job }: Props) {
         <Fact label="Posts">
           {job.totalVacancies ? job.totalVacancies.toLocaleString("en-IN") : "See notification"}
         </Fact>
-        <Fact label="Age limit">{formatAgeRange(job, "years")}</Fact>
-        <Fact label="Qualification" wide>
-          {qualifications.length
-            ? <>
-                {clip(qualifications[0])}
-                {(manyPosts || qualifications.length > 1) && (
-                  <span className="block text-xs font-normal text-muted mt-0.5">Varies by post: see the table below.</span>
-                )}
-              </>
-            : "See notification"}
+        <Fact label="Age limit" wide={age.length > 40}>
+          {age}
+          <Link
+            href={`${getJobCanonicalPath(job)}/eligibility`}
+            className="flex items-center w-fit min-h-[28px] text-xs font-semibold text-navy underline underline-offset-2 hover:text-saffron"
+          >
+            Age and eligibility details
+          </Link>
         </Fact>
-        <Fact label="Application fee">{formatFee(job)}</Fact>
-        {job.salary && <Fact label="Pay">{job.salary}</Fact>}
+        <Fact label="Qualification" wide>
+          {varies && (job.posts || []).length > 1 ? (
+            <>
+              Differs by post.{" "}
+              <a href="#posts" className="text-navy underline underline-offset-2 hover:text-saffron">
+                See each post&apos;s qualification
+              </a>
+            </>
+          ) : qualifications.length ? (
+            clip(qualifications.join("; "), 260)
+          ) : (
+            "See notification"
+          )}
+        </Fact>
+        <Fact label="Application fee" wide={fee.length > 40}>{clip(fee, 300)}</Fact>
+        {job.salary && <Fact label="Pay">{payText(job.salary)}</Fact>}
         {job.applicationStartDate && !job.isWalkIn && (
           <Fact label="Applications open">{formatDate(job.applicationStartDate)}</Fact>
         )}

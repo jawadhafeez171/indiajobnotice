@@ -41,6 +41,8 @@ export function ScrollToTop() {
       title="Scroll to top"
       className={cn(
         "fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40",
+        // moves above a job page's Apply bar on phones (globals.css, data-apply-bar)
+        "scroll-top-btn",
         "flex items-center justify-center w-10 h-10 rounded-full",
         "bg-surface/90 hover:bg-surface text-navy hover:text-navy",
         "border border-line hover:border-navy/40",

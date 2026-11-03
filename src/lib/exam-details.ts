@@ -1,4 +1,4 @@
-import { JobNotification, formatAgeRange } from "@/data/jobs";
+import { JobNotification } from "@/data/jobs";
 
 export interface ExamStageSubject {
   name: string;
@@ -990,7 +990,7 @@ export function getJobPostBreakdown(job: JobNotification): PostVacancyBreakdown[
       department: job.organization,
       vacancies: p.vacancies ? p.vacancies.toLocaleString("en-IN") : "See notification",
       qualification: p.qualification || "See notification",
-      ageLimit: p.ageLimit || formatAgeRange(job, "Years"),
+      ageLimit: p.ageLimit || "See notification",
       payLevel: p.pay || "See notification",
     }));
   }

@@ -44,7 +44,7 @@ export function StageView({ job, kind, stateSlug }: Props) {
 
       <ExaminationLifecycleBar job={job} activeStage={active} stateSlug={stateSlug} />
 
-      <div className="bg-surface rounded-xl border border-line border-t-4 border-t-navy p-6 sm:p-8 shadow-2xs space-y-4">
+      <div className="bg-surface rounded-xl border border-line p-6 sm:p-8 shadow-2xs space-y-4">
         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-navy-tint text-navy font-bold text-xs border border-navy-line">
           <Building2 className="w-3.5 h-3.5" />
           {job.orgShortCode}

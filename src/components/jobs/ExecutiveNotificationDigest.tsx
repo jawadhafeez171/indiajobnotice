@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { JobNotification } from "@/data/jobs";
+import { JobNotification, ageText, payText } from "@/data/jobs";
+import { PostList, SharedValues } from "./PostList";
 import {
   getJobPostBreakdown,
   getJobCategoryMatrix,
@@ -21,57 +22,41 @@ const th = "py-2.5 px-3.5 font-bold";
 export function ExecutiveNotificationDigest({ job }: Props) {
   const posts = getJobPostBreakdown(job);
   const categories = getJobCategoryMatrix(job);
-  const steps = (job.selectionProcess || []).filter(Boolean).map((t) => t.charAt(0).toUpperCase() + t.slice(1));
+  const steps = (job.selectionProcess || [])
+    .map((t) => t.trim().replace(/[,;:.]+$/, ""))
+    .filter(Boolean)
+    .map((t) => t.charAt(0).toUpperCase() + t.slice(1));
+  // A value every post shares is said once above the list, and not at all when the key facts
+  // already say it (null: it differs by post, so it gets a column; "": already in the key facts)
+  const quals = job.qualifications.filter(Boolean);
+  const sharedOf = (k: "qualification" | "ageLimit" | "payLevel", inKeyFacts: string[]): string | null => {
+    const vals = new Set(posts.map((p) => p[k]));
+    if (vals.size !== 1) return null;
+    const v = [...vals][0];
+    return v === "See notification" || inKeyFacts.includes(v) ? "" : v;
+  };
+  const shared: SharedValues = {
+    qualification: sharedOf("qualification", [quals[0] || "", quals.join("; ")]),
+    ageLimit: sharedOf("ageLimit", [ageText(job)]),
+    payLevel: sharedOf("payLevel", [job.salary || ""]),
+  };
 
   return (
     <section className="space-y-6" id="details">
       {posts.length > 0 && (
-        <div className={card}>
+        <div className={`${card} scroll-mt-28`} id="posts">
           <h2 className="font-serif text-lg font-bold text-ink flex items-center gap-2">
             <GraduationCap className="w-5 h-5 text-navy" />
             Posts and eligibility
           </h2>
-          <ul className="md:hidden space-y-2.5">
-            {posts.map((post: PostVacancyBreakdown, idx: number) => (
-              <li key={idx} className="p-3.5 rounded-lg bg-subtle border border-line text-xs space-y-1.5">
-                <p className="font-bold text-sm text-navy">
-                  {post.postName}
-                  {typeof post.vacancies === "number" ? (post.vacancies ? ` · ${post.vacancies} posts` : "") : ` · ${post.vacancies}`}
-                </p>
-                <p><span className="font-bold text-muted">Qualification: </span>{post.qualification}</p>
-                <p><span className="font-bold text-muted">Age: </span>{post.ageLimit}</p>
-                <p><span className="font-bold text-muted">Pay: </span>{post.payLevel}</p>
-              </li>
-            ))}
-          </ul>
-          <div className="hidden md:block overflow-x-auto rounded-lg border border-line">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-subtle border-b border-line text-[12px] uppercase tracking-wide text-muted">
-                <tr>
-                  <th className={th}>Post</th>
-                  <th className={`${th} text-center`}>Posts</th>
-                  <th className={`${th} min-w-[200px]`}>Qualification</th>
-                  <th className={th}>Age limit</th>
-                  <th className={th}>Pay</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line-soft text-ink">
-                {posts.map((post: PostVacancyBreakdown, idx: number) => (
-                  <tr key={idx} className="align-top">
-                    <td className="py-3 px-3.5 font-bold text-navy">{post.postName}</td>
-                    <td className="py-3 px-3.5 font-bold text-center">
-                      {typeof post.vacancies === "number"
-                        ? post.vacancies ? post.vacancies.toLocaleString("en-IN") : "—"
-                        : post.vacancies}
-                    </td>
-                    <td className="py-3 px-3.5 leading-relaxed">{post.qualification}</td>
-                    <td className="py-3 px-3.5 text-ink-2">{post.ageLimit}</td>
-                    <td className="py-3 px-3.5 text-ink-2">{post.payLevel}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <PostList
+            rows={posts.map((p: PostVacancyBreakdown) => ({
+              ...p,
+              vacancies: String(p.vacancies),
+              payLevel: p.payLevel === "See notification" ? p.payLevel : payText(p.payLevel),
+            }))}
+            shared={shared}
+          />
         </div>
       )}
 
@@ -119,6 +104,9 @@ export function ExecutiveNotificationDigest({ job }: Props) {
             <Layers className="w-5 h-5 text-navy" />
             Selection process
           </h2>
+          {steps.length === 1 ? (
+            <p className="text-sm text-ink max-w-prose">{steps[0]}</p>
+          ) : (
           <ol className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             {steps.map((step, idx) => (
               <li key={idx} className="p-3.5 rounded-lg bg-subtle border border-line text-xs text-ink">
@@ -129,6 +117,7 @@ export function ExecutiveNotificationDigest({ job }: Props) {
               </li>
             ))}
           </ol>
+          )}
         </div>
       )}
     </section>

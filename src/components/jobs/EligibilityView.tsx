@@ -83,7 +83,7 @@ export function EligibilityView({ job, stateSlug, calculatorJobs }: Props) {
       <ExaminationLifecycleBar job={job} activeStage="eligibility" stateSlug={stateSlug} />
 
       {/* Main Eligibility Header Banner */}
-      <div className="bg-surface rounded-xl border border-line border-t-4 border-t-navy p-6 sm:p-8 shadow-2xs space-y-4">
+      <div className="bg-surface rounded-xl border border-line p-6 sm:p-8 shadow-2xs space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="px-2.5 py-1 rounded bg-navy-tint text-navy font-bold text-xs flex items-center gap-1.5 border border-navy-line">

@@ -7,7 +7,7 @@ import { JobDetailView } from "@/components/jobs/JobDetailView";
 import { getJobBySlug, getJobCanonicalPath, getActiveOpportunities } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
 import { jobSeoTitle, jobSeoDescription } from "@/lib/seo";
-import { getGenuinelyRelatedOpportunities } from "@/lib/internal-links";
+import { getGenuinelyRelatedOpportunities, getSiblingNotices } from "@/lib/internal-links";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -72,6 +72,7 @@ export default async function JobPage({ params }: Props) {
           stateSlug="central"
           activeJobs={getActiveOpportunities(allJobs, job.id, job.category, job.stateSlug, 3)}
           related={getGenuinelyRelatedOpportunities(allJobs, job, 4)}
+          siblings={getSiblingNotices(allJobs, job)}
         />
       </main>
       <Footer />

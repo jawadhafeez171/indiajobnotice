@@ -203,3 +203,10 @@ h1, h2, h3 { text-wrap: balance; }
 .on-dark :where(a, button, summary, [tabindex]):focus-visible {
   outline-color: rgb(var(--c-saffron-light));
 }
+
+/* A job page's Apply bar (JobDetailView) sits at the bottom on phones: the back-to-top button moves above it */
+@media (max-width: 767px) {
+  body[data-apply-bar="1"] .scroll-top-btn {
+    bottom: 84px;
+  }
+}

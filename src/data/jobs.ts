@@ -64,6 +64,8 @@ export interface JobNotification {
   ageKnown?: boolean;
   feeKnown?: boolean;
   applicationFeeText?: string;
+  /** The notice's own age wording (limits by category, relaxations), as printed. */
+  ageLimitText?: string;
   advtNo?: string;
   isWalkIn?: boolean;
   updates?: { date: string; text: string; url: string }[];
@@ -326,6 +328,23 @@ export function getLatestResults(jobs: JobNotification[], days = 45, today = tod
   return out.sort((a, b) => (b.stage.date || "").localeCompare(a.stage.date || ""));
 }
 
+/**
+ * Could this document be a stage of the recruitment, going by its dates? An admit card, answer key or
+ * result cannot come before applications open, nor while they are still open (a previous year's
+ * paper with its answer key was once linked to a notice still taking applications). Schedules may.
+ */
+export function ofThisRecruitment(
+  s: JobStage,
+  job: Pick<JobNotification, "applicationStartDate" | "applicationEndDate">,
+  today = todayIST(),
+): boolean {
+  if (s.kind === "schedule") return true;
+  const start = job.applicationStartDate || "";
+  const end = job.applicationEndDate || "";
+  if (s.date && start && s.date < start) return false;
+  return !(end && end >= today && (!s.date || s.date < end));
+}
+
 /** Official documents of one kind for this job; a final result counts as a result. */
 export function getStages(job: JobNotification, kind: StageKind): JobStage[] {
   return (job.stages || []).filter((s) => s.kind === kind || (kind === "result" && s.kind === "final_result"));
@@ -342,9 +361,23 @@ export function formatAgeRange(job: JobNotification, unit = "yrs"): string {
   return job.minAge ? `${job.minAge}–${job.maxAge} ${unit}` : `Up to ${job.maxAge} ${unit}`;
 }
 
-/** Application fee in words for listings and FAQs. */
+/** Pay as printed, with the rupee sign: "34100-67600" and "Rs 54175-99400" read "₹34100-67600". */
+export function payText(pay: string): string {
+  return pay.replace(/\bRs\.?\s*/gi, "₹").replace(/^(\d)/, "₹$1");
+}
+
+/** The age limit as the notice words it (categories and relaxations included), else the range. */
+export function ageText(job: JobNotification): string {
+  return job.ageLimitText?.trim() || formatAgeRange(job, "years");
+}
+
+/**
+ * Application fee in words, as the notice gives it: a state notice's categories (GM, 2A, Cat-1…)
+ * are not UR/OBC, so the notice's own wording comes first and the two-band summary is a fallback.
+ */
 export function formatFee(job: JobNotification): string {
-  if (job.feeKnown === false) return job.applicationFeeText || "See notification";
+  if (job.applicationFeeText?.trim()) return job.applicationFeeText.trim();
+  if (job.feeKnown === false) return "See notification";
   const { ur_obc_ews, sc_st } = job.applicationFee;
   if (!ur_obc_ews && !sc_st) return "No application fee";
   return `₹${ur_obc_ews} (UR/OBC/EWS), ₹${sc_st} (SC/ST)`;

@@ -2,7 +2,7 @@ import "server-only";
 import postgres from "postgres";
 import { unstable_cache } from "next/cache";
 import { getStateBySlug } from "@/config/states";
-import { computeJobStatus, JobNotification } from "@/data/jobs";
+import { computeJobStatus, JobNotification, ofThisRecruitment, stageSummary } from "@/data/jobs";
 
 // Notices published by the notice agent (indiajobnotice-agent, stage 4) live in the Supabase table
 // `notices`; `data` holds the job in the JobNotification shape. JOBS_DATABASE_URL is a read-only
@@ -96,7 +96,12 @@ function disambiguateCodes(jobs: JobNotification[]): JobNotification[] {
 
 export async function getAllJobs(): Promise<JobNotification[]> {
   const jobs = await cachedJobs();
-  const cleaned = jobs.map((job) => {
+  const cleaned = jobs.map((stored) => {
+    // a document the recruitment's dates rule out is not one of its stages (the agent checks too)
+    const stages = stored.stages?.filter((s) => ofThisRecruitment(s, stored));
+    const job = stages && stages.length !== stored.stages?.length
+      ? { ...stored, stages, currentStage: stages.length ? stageSummary({ ...stored, stages }) || undefined : undefined }
+      : stored;
     const code = cleanOrgCode(job);
     // the stored short title starts with the stored code ("UPSC Uttarakhand..."): use the cleaned one
     const old = (job.orgShortCode || "").trim();
