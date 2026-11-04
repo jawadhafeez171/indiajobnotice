@@ -36,7 +36,8 @@ function istStamp(ts: string): string | null {
   const d = new Date(t + 5.5 * 3600 * 1000);
   const hh = String(d.getUTCHours()).padStart(2, "0");
   const mm = String(d.getUTCMinutes()).padStart(2, "0");
-  return `${d.getUTCDate()} ${MONTHS3[d.getUTCMonth()]}, ${hh}:${mm} IST`;
+  // no line break inside the day or the time
+  return `${d.getUTCDate()}\u00a0${MONTHS3[d.getUTCMonth()]}, ${hh}:${mm}\u00a0IST`;
 }
 
 
@@ -101,33 +102,30 @@ export default async function HomePage() {
       {/* Hero: heading, proof line and search; the age check has its own section above the footer */}
       <section className="border-b border-line bg-subtle py-5 sm:py-7 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="flex-1 min-w-0">
-            <h1 className="font-serif text-[22px] sm:text-4xl lg:text-[40px] font-bold text-ink tracking-tight leading-tight text-balance">
-              Government jobs, read from the official notice
-            </h1>
-            <p className="mt-2 text-sm text-ink-2 max-w-2xl">
-              <b className="text-ink">{openNow} open now</b> · {underWay} more with exams or results to come, each read from its official notice.{" "}
-              {latestAdded && <>Latest added {latestAdded}. </>}
-              <Link href="/editorial-policy" className="font-semibold text-navy underline underline-offset-2">
-                How we verify
-              </Link>
-            </p>
+          <h1 className="font-serif text-[22px] sm:text-4xl lg:text-[40px] font-bold text-ink tracking-tight leading-tight sm:leading-[1.12] text-balance">
+            Government jobs, read from the official notice
+          </h1>
+          <p className="mt-2 text-sm text-ink-2 max-w-2xl">
+            <b className="text-ink">{openNow} open now</b> · {underWay} more with exams or results to come, each read from its official notice.{" "}
+            {latestAdded && <>Latest added {latestAdded}. </>}
+            <Link href="/editorial-policy" className="py-2.5 font-semibold text-navy underline underline-offset-2">
+              How we verify
+            </Link>
+          </p>
 
-            {/* search sits in the hero: the first job is one screen closer */}
-            <div className="mt-4 max-w-2xl">
-              <HomeSearch
-                extra={
-                  <a
-                    href="#age-check"
-                    className="inline-flex items-center gap-1.5 min-h-[44px] text-[13px] font-semibold text-navy hover:underline"
-                  >
-                    Check jobs for your age <ArrowDown className="w-4 h-4" aria-hidden />
-                  </a>
-                }
-              />
-            </div>
+          {/* search sits in the hero: the first job is one screen closer */}
+          <div className="mt-4 max-w-2xl">
+            <HomeSearch
+              extra={
+                <a
+                  href="#age-check"
+                  className="inline-flex items-center gap-1.5 min-h-[44px] text-[13px] font-semibold text-navy hover:underline"
+                >
+                  Check jobs for your age <ArrowDown className="w-4 h-4" aria-hidden />
+                </a>
+              }
+            />
           </div>
-
         </div>
       </section>
 
