@@ -9,6 +9,15 @@ const config: Config = {
   darkMode: "media",
   theme: {
     extend: {
+      // the page width every container shares (header, state bar, pages): 76rem instead of 72rem
+      maxWidth: { "6xl": "76rem" },
+      // Inter everywhere ("serif" headings included); system fonts cover Indic scripts
+      fontFamily: {
+        sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "Arial", "sans-serif"],
+        serif: ["var(--font-inter)", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "Arial", "sans-serif"],
+        // the two display titles on the home page (hero, "Am I eligible?"): the system serif, as before
+        display: ["ui-serif", "Georgia", "Cambria", "Times New Roman", "Times", "serif"],
+      },
       keyframes: {
         marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
       },
@@ -28,6 +37,7 @@ const config: Config = {
         "muted": "rgb(var(--c-muted) / <alpha-value>)",
         "faint": "rgb(var(--c-faint) / <alpha-value>)",
         "navy": "rgb(var(--c-navy) / <alpha-value>)",
+        "masthead": "rgb(var(--c-masthead) / <alpha-value>)",
         "navy-solid": "rgb(var(--c-navy-solid) / <alpha-value>)",
         "navy-strong": "rgb(var(--c-navy-strong) / <alpha-value>)",
         "navy-deep": "rgb(var(--c-navy-deep) / <alpha-value>)",

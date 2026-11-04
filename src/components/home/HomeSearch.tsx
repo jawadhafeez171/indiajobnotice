@@ -14,7 +14,7 @@ const field =
  * of the job list (state, qualification, sector, central/state, age; the stage is the list's tabs). It sends the visitor to
  * /?q=..&state=.. where the list reads the filters and scrolls into view.
  */
-export function HomeSearch({ extra }: { extra?: React.ReactNode }) {
+export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode; onDark?: boolean }) {
   const [open, setOpen] = useState(false);
 
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,32 +35,42 @@ export function HomeSearch({ extra }: { extra?: React.ReactNode }) {
   return (
     <section aria-label="Search government jobs">
       <form onSubmit={submit} role="search">
-        <div className="flex gap-2">
+        {/* on the navy hero: one white bar with the button inside it */}
+        <div className={cn("flex gap-2", onDark && "gap-1.5 p-[5px] rounded-[10px] border border-[#C6D2E4] dark:border-line bg-surface focus-within:ring-2 focus-within:ring-saffron-light")}>
           <div className="relative flex-1">
-            <Search className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-faint pointer-events-none" aria-hidden />
+            <Search className="w-[21px] h-[21px] absolute left-3.5 top-1/2 -translate-y-1/2 text-faint pointer-events-none" aria-hidden />
             <input
               type="search"
               name="q"
-              placeholder="Search jobs, e.g. SSC, police"
+              placeholder="Search jobs, e.g. SSC, Police, Railway, Karnataka"
               aria-label="Search jobs"
-              className="w-full h-12 pl-11 pr-3 rounded-xl border-2 border-control bg-surface text-[15px] text-ink placeholder:text-faint focus:border-navy"
+              className={cn(
+                "w-full pl-11 pr-3 bg-surface text-[15px] text-ink placeholder:text-faint",
+                onDark ? "h-11 rounded-lg border-0 focus:outline-none" : "h-12 rounded-xl border-2 border-control focus:border-navy"
+              )}
             />
           </div>
           <button
             type="submit"
-            className="h-12 px-4 sm:px-6 rounded-xl bg-navy-solid hover:bg-navy-strong text-white text-sm font-bold"
+            className={cn(
+              "px-4 sm:px-7 bg-navy-solid hover:bg-navy-strong active:bg-masthead text-white transition-colors",
+              onDark ? "h-11 rounded-[9px] text-[15px] font-semibold" : "h-12 rounded-xl text-sm font-bold"
+            )}
           >
             Search
           </button>
         </div>
 
-        <div className="mt-1 flex flex-wrap items-center gap-x-5">
+        <div className={cn("mt-1 flex flex-wrap items-center gap-x-5", onDark && "mt-1 gap-x-8")}>
         <button
           type="button"
           onClick={() => setOpen(!open)}
           aria-expanded={open}
           aria-controls="advanced-search"
-          className="inline-flex items-center gap-1.5 min-h-[44px] text-[13px] font-semibold text-navy hover:underline"
+          className={cn(
+            "inline-flex items-center gap-1.5 min-h-[44px] font-semibold hover:underline",
+            onDark ? "text-[14px] text-white" : "text-[13px] text-navy"
+          )}
         >
           <SlidersHorizontal className="w-4 h-4" aria-hidden />
           Advanced search

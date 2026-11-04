@@ -43,6 +43,8 @@ interface Props {
   hideSearch?: boolean;
   /** List / Featured / Cards switch (desktop); off on the home page. */
   showLayoutSwitch?: boolean;
+  /** The list shares its row with a side column (home page): short tab names that scroll sideways. */
+  narrow?: boolean;
 }
 
 type ViewMode = "ledger" | "spotlight" | "bulletin";
@@ -154,7 +156,7 @@ export const STAGE_PARAM: Record<string, StatusCategoryKey> = {
   underway: "UNDER_WAY", all: "ALL",
 };
 
-export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = false, showLayoutSwitch = true }: Props) {
+export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = false, showLayoutSwitch = true, narrow = false }: Props) {
   const [viewMode, setViewMode] = useState<ViewMode>("ledger");
   const [activeCategory, setActiveCategory] = useState<StatusCategoryKey>("APPLY_OPEN");
 
@@ -639,7 +641,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
           ref={tabsRef}
           role="group"
           aria-label="Show jobs by stage"
-          className="relative flex gap-1.5 pr-10 overflow-x-auto [scrollbar-width:none] [mask-image:linear-gradient(to_right,black_86%,transparent)] md:pr-0 md:overflow-visible md:gap-2 md:[mask-image:none]"
+          className={cn(
+            "relative flex gap-1.5 pr-10 overflow-x-auto [scrollbar-width:none] [mask-image:linear-gradient(to_right,black_86%,transparent)]",
+            narrow ? "md:gap-2 lg:gap-1.5 lg:pr-0 lg:overflow-visible lg:flex-wrap lg:[mask-image:none]" : "md:pr-0 md:overflow-visible md:gap-2 md:[mask-image:none]"
+          )}
         >
           {TAB_ORDER.map((key) => {
             const isActive = activeCategory === key;
@@ -653,16 +658,17 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 title={key === "UNDER_WAY" ? "Applications closed, exams or results still to come" : undefined}
                 onClick={() => setActiveCategory(key)}
                 className={cn(
-                  "shrink-0 flex items-center gap-1.5 pl-3 pr-2 min-h-[44px] md:min-h-[38px] rounded-full border text-[13px] font-semibold whitespace-nowrap transition-colors",
-                  isActive ? cn(t.active, "text-white border-transparent") : "bg-surface border-control text-ink-2 hover:border-navy"
+                  narrow ? "px-3 gap-1.5" : "px-3.5 gap-2",
+                  "shrink-0 flex items-center min-h-[44px] md:min-h-0 md:py-[9px] rounded-full border text-[13px] font-semibold whitespace-nowrap transition-colors motion-reduce:transition-none",
+                  isActive ? cn(t.active, "text-white border-transparent") : "bg-surface border-[#C8D3E3] dark:border-control text-ink hover:border-navy"
                 )}
               >
-                <span className="md:hidden">{t.short}</span>
-                <span className="hidden md:inline">{t.label}</span>
+                <span className={narrow ? undefined : "md:hidden"}>{t.short}</span>
+                {!narrow && <span className="hidden md:inline">{t.label}</span>}
                 <span
                   className={cn(
-                    "min-w-[22px] px-1.5 py-0.5 rounded-full text-[12px] font-bold leading-none tabular-nums",
-                    isActive ? "bg-black/20 text-white" : "bg-subtle text-muted"
+                    "min-w-[22px] px-1.5 py-[3px] rounded-full text-[12px] font-semibold leading-none tabular-nums",
+                    isActive ? "bg-black/20 text-white" : "bg-[#F1F4F9] dark:bg-subtle text-ink-2"
                   )}
                 >
                   {categoryCounts[key]}
@@ -729,15 +735,27 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
           <div className="flex items-center gap-3 shrink-0">
             {openTab && (
               <button
+                role="switch"
                 onClick={() => setMajorOnly(!majorOnly)}
-                aria-pressed={majorOnly}
+                aria-checked={majorOnly}
                 title={`Show only recruitments with ${MAJOR_POSTS} or more posts`}
-                className={cn(
-                  "px-3 min-h-[44px] md:min-h-[36px] rounded-full border text-[13px] font-semibold whitespace-nowrap transition-colors",
-                  majorOnly ? "bg-navy-solid text-white border-navy" : "bg-surface text-ink-2 border-control hover:border-navy"
-                )}
+                className="group flex items-center gap-2 pl-3 pr-1.5 min-h-[44px] md:min-h-[36px] rounded-full border border-line bg-surface text-[13px] font-semibold text-ink-2 whitespace-nowrap hover:border-navy"
               >
                 {MAJOR_POSTS}+ posts only
+                <span
+                  className={cn(
+                    "relative w-9 h-5 rounded-full transition-colors",
+                    majorOnly ? "bg-navy-solid" : "bg-line"
+                  )}
+                  aria-hidden
+                >
+                  <span
+                    className={cn(
+                      "absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform",
+                      majorOnly && "translate-x-4"
+                    )}
+                  />
+                </span>
               </button>
             )}
             {hasActiveFilters && (
@@ -828,7 +846,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
             </li>
           )}
           {shownItems.map((it) => it.kind === "head" ? (
-            <li key={it.key} className="bg-subtle">
+            <li key={it.key} className={it.label === BUCKETS[0] ? "bg-danger-tint" : "bg-subtle"}>
               <h3 className="px-3 pt-3 pb-1.5 text-[12px] font-bold text-ink-2 flex justify-between">
                 <span>{it.label}</span>
                 <span className="font-semibold text-muted tabular-nums">{it.count}</span>
@@ -870,7 +888,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       )}
       {viewMode === "ledger" && (
         <div className="hidden lg:block bg-surface rounded-xl border border-line overflow-clip shadow-2xs">
-          <table className="w-full text-left border-collapse text-sm">
+          <table className="w-full table-fixed text-left border-collapse text-sm">
             <thead className={filteredJobs.length === 0 ? "hidden" : undefined}>
               <tr className="bg-subtle border-b border-line text-[12px] font-semibold text-muted [&>th]:sticky [&>th]:top-[162px] [&>th]:z-20 [&>th]:bg-subtle">
                 <th className="py-2.5 pl-6 pr-4">Recruitment</th>
@@ -878,12 +896,12 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                   <th className="py-2.5 px-4">{activeCategory === "EXAM_DATES" ? "Admit card or exam notice" : "Latest official document"}</th>
                 ) : (
                   <>
-                    <th className="py-2.5 px-4 text-right">Posts</th>
-                    <th className="py-2.5 px-4">Eligibility</th>
+                    <th className="w-[5.5rem] py-2.5 px-4 text-right">Posts</th>
+                    <th className="w-[7.5rem] py-2.5 px-4">Eligibility</th>
                   </>
                 )}
-                <th className="py-2.5 px-4">{activeCategory === "EXAM_DATES" ? "Exam" : docMode ? "Where it stands" : "Last date / exam"}</th>
-                <th className="py-2.5 pl-2 pr-4"><span className="sr-only">Actions</span></th>
+                <th className="w-[10.5rem] py-2.5 px-4 text-right">{activeCategory === "EXAM_DATES" ? "Exam" : docMode ? "Where it stands" : "Last date / exam"}</th>
+                <th className="w-14 py-2.5 pl-2 pr-4"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line-soft">
@@ -897,7 +915,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 shownItems.map((it) => {
                   if (it.kind === "head") {
                     return (
-                      <tr key={it.key} className="bg-subtle">
+                      <tr key={it.key} className={it.label === BUCKETS[0] ? "bg-danger-tint" : "bg-subtle"}>
                         <th colSpan={cols} scope="colgroup" className="py-2 pl-6 pr-4 text-left text-[12px] font-bold text-ink-2">
                           {it.label} <span className="font-semibold text-muted tabular-nums">· {it.count}</span>
                         </th>
@@ -929,10 +947,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                   const doc = !docMode ? null : activeCategory === "EXAM_DATES" ? nextExamDate(job)?.stage || null : latestDoc(job);
                   const exam = activeCategory === "EXAM_DATES" || job.status === "ADMIT_CARD_OUT" ? nextExamDate(job) : undefined;
                   return (
-                    <tr key={job.id} data-job={job.id} className="group hover:bg-subtle transition-colors">
+                    <tr key={job.id} data-job={job.id} className="group hover:bg-[#F8FAFD] dark:hover:bg-subtle transition-colors">
                       {/* recruitment, with the stage stripe on the left edge */}
-                      <td className="relative py-3 pl-6 pr-4">
-                        <span className={cn("absolute left-0 inset-y-0 w-1.5", style.stripe)} aria-hidden />
+                      <td className="relative py-4 pl-6 pr-4">
+                        <span className={cn("absolute left-0 inset-y-0 w-1", style.stripe)} aria-hidden />
                         <div className="flex items-center gap-1.5 text-[12px]">
                           <abbr title={job.organization} className="no-underline px-1.5 py-0.5 rounded bg-navy-tint text-navy font-bold leading-none border border-navy-line">
                             {job.orgShortCode}
@@ -952,18 +970,18 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                         </div>
                         <Link
                           href={detailLink}
-                          className="mt-1 block font-serif font-bold text-[15px] leading-snug text-ink group-hover:text-navy line-clamp-2"
+                          className="mt-1 block font-bold text-base leading-[1.35] text-ink group-hover:text-navy line-clamp-2"
                         >
                           {titleOf(job)}
                         </Link>
-                        <p className="text-[12px] text-muted truncate mt-0.5">
+                        <p className="text-[12px] text-muted truncate mt-1">
                           {job.organization}
                           {host && <span className="text-faint"> · {host}</span>}
                         </p>
                       </td>
 
                       {docMode ? (
-                        <td className="py-3 px-4 max-w-[22rem]">
+                        <td className="py-4 px-4 max-w-[22rem]">
                           {doc ? (
                             <a href={doc.url} target="_blank" rel="noreferrer" className="text-[13px] text-ink-2 hover:text-navy">
                               <span className="line-clamp-2">{stageText(doc).main}</span>
@@ -977,7 +995,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                         </td>
                       ) : (
                       <>
-                      <td className="py-3 px-4 text-right whitespace-nowrap tabular-nums">
+                      <td className="py-4 px-4 text-right whitespace-nowrap tabular-nums text-[15px]">
                         {job.totalVacancies ? (
                           <b className="text-ink">{job.totalVacancies.toLocaleString("en-IN")}</b>
                         ) : (
@@ -985,10 +1003,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                         )}
                       </td>
 
-                      <td className="py-3 px-4">
+                      <td className="py-4 px-4">
                         <div className="flex flex-wrap gap-1.5">
                           {[qual, age].filter(Boolean).map((c) => (
-                            <span key={c} className="px-2 py-0.5 rounded-full bg-subtle border border-line-soft text-[12px] text-ink-2 whitespace-nowrap">
+                            <span key={c} className="px-2 py-0.5 rounded-full bg-surface border border-line text-[12px] font-medium text-ink-2 whitespace-nowrap">
                               {c}
                             </span>
                           ))}
@@ -998,13 +1016,13 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                       </>
                       )}
 
-                      <td className="py-3 px-4">
-                        <div className="flex flex-col items-start gap-1 text-[13px] whitespace-nowrap">
+                      <td className="py-4 px-4">
+                        <div className="flex flex-col items-end text-right gap-1 text-[13px] text-balance">
                           <JobDeadline job={job} exam={exam} />
                         </div>
                       </td>
 
-                      <td className="py-3 pl-2 pr-4 text-right whitespace-nowrap">
+                      <td className="py-4 pl-2 pr-4 text-right whitespace-nowrap">
                         <div className="inline-flex items-center gap-1">
                           <button
                             onClick={() => toggleSave(job.id)}

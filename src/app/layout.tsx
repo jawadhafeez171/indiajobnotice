@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import "./globals.css";
+
+// one typeface for the whole site; next/font serves it from our own domain with a size-matched fallback
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], display: "swap", variable: "--font-inter" });
 
 
 export const metadata: Metadata = {
@@ -92,7 +96,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full scroll-smooth">
+    <html lang="en" className={`h-full scroll-smooth ${inter.variable}`}>
       <head>
         <script
           type="application/ld+json"

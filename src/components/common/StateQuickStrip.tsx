@@ -22,7 +22,7 @@ export function StateQuickStrip({ currentStateSlug, onOpenSelector }: Props) {
   return (
     <nav
       aria-label="States"
-      className="bg-subtle border-b border-line text-xs select-none relative z-30 px-4 md:py-1 md:px-3 lg:px-4 overflow-hidden"
+      className="bg-subtle md:bg-surface border-b border-line text-xs select-none relative z-30 px-4 md:py-1 md:px-3 lg:px-4 overflow-hidden"
     >
       {/* 1. Phones: one row, one target: the state you are on, and Change */}
       <div className="md:hidden max-w-7xl mx-auto">

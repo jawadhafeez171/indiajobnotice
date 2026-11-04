@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Menu, X, Bookmark, Briefcase, CalendarDays, BarChart3, Calculator, Building2, MapPin, ChevronRight,
+  Menu, X, Bookmark, Briefcase, CalendarDays, BarChart3, Calculator, Building2, MapPin, ChevronRight, ChevronDown,
 } from "lucide-react";
 import { BrandLogo } from "./BrandLogo";
 import { StateSelectorModal } from "./StateSelectorModal";
@@ -53,6 +53,8 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isWatchlistOpen, setIsWatchlistOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
   const { savedCount } = useWatchlist();
 
   const currentState = currentStateSlug && currentStateSlug !== "central"
@@ -98,6 +100,23 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
     };
   }, [mobileMenuOpen]);
 
+  // "More" closes on a click outside it or on Esc
+  useEffect(() => {
+    if (!moreOpen) return;
+    const onDown = (e: MouseEvent) => {
+      if (!moreRef.current?.contains(e.target as Node)) setMoreOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMoreOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [moreOpen]);
+
   // other parts of the page can open the state picker ("Choose your state")
   useEffect(() => {
     const open = () => setIsModalOpen(true);
@@ -111,6 +130,7 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
     ...PAGES.map((pg) => ({ href: pg.href, label: pg.menuLabel, icon: pg.icon })),
   ];
   const isHere = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  const onJobs = pathname === "/" || pathname.startsWith("/state/");
 
   return (
     <>
@@ -120,56 +140,87 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
       >
         Skip to main content
       </a>
-      <header className="sticky top-0 z-40 bg-surface border-b border-line shadow-xs">
+      <header className="sticky top-0 z-40 on-dark bg-masthead shadow-xs">
         <div className="flex h-[3px]" aria-hidden>
           <span className="flex-1 bg-saffron-bright" />
-          <span className="flex-1 bg-white shadow-[inset_0_-1px_0_rgb(var(--c-line))]" />
+          <span className="flex-1 bg-white" />
           <span className="flex-1 bg-green-solid" />
         </div>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between gap-3 h-16">
             {/* Logo */}
             <a href={getCentralPortalUrl()} className="flex flex-col justify-center min-h-[48px] min-w-0 shrink group hover:opacity-95" title="India Job Notice home">
-              <BrandLogo height={30} className="!h-6 sm:!h-8 [&_img]:!h-6 sm:[&_img]:!h-8" />
-              <span className="mt-0.5 text-[11px] sm:text-[12px] leading-none font-semibold tracking-wide text-muted whitespace-nowrap">
+              <BrandLogo variant="light" height={30} className="!h-6 sm:!h-8 [&_img]:!h-6 sm:[&_img]:!h-8" />
+              <span className="mt-0.5 text-[11px] sm:text-[12px] leading-none font-semibold tracking-wide text-on-navy whitespace-nowrap">
                 Verified government job alerts
               </span>
             </a>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm text-ink-2 font-semibold">
-              <a href={jobsHref} className="hover:text-navy transition-colors whitespace-nowrap py-3 -my-3 px-1">
+            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-2 text-[13px] xl:text-sm text-white/90 font-semibold">
+              <a
+                href={jobsHref}
+                aria-current={onJobs ? "page" : undefined}
+                className={`relative whitespace-nowrap py-2 px-2 xl:px-2.5 rounded-lg hover:text-white hover:bg-white/10 transition-colors ${onJobs ? "text-white" : ""}`}
+              >
                 Jobs
+                {onJobs && <span className="absolute left-2 right-2 xl:left-2.5 xl:right-2.5 -bottom-[11px] h-[3px] rounded-full bg-saffron-bright" aria-hidden />}
               </a>
               {PAGES.map((pg) => (
                 <Link
                   key={pg.href}
                   href={pg.href}
                   aria-current={isHere(pg.href) ? "page" : undefined}
-                  className={`whitespace-nowrap py-3 -my-3 transition-colors hover:text-navy ${
-                    isHere(pg.href) ? "text-navy underline decoration-2 underline-offset-[6px]" : ""
-                  }`}
+                  className={`relative whitespace-nowrap py-2 px-2 xl:px-2.5 rounded-lg hover:text-white hover:bg-white/10 transition-colors ${isHere(pg.href) ? "text-white" : ""}`}
                 >
                   {pg.label}
+                  {isHere(pg.href) && <span className="absolute left-2 right-2 xl:left-2.5 xl:right-2.5 -bottom-[11px] h-[3px] rounded-full bg-saffron-bright" aria-hidden />}
                 </Link>
               ))}
-              <span className="flex items-center gap-2">
+              <div ref={moreRef} className="relative z-40">
+                <button
+                  type="button"
+                  onClick={() => setMoreOpen(!moreOpen)}
+                  aria-expanded={moreOpen}
+                  aria-controls="more-menu"
+                  className="flex items-center gap-1 whitespace-nowrap py-2 px-2 xl:px-2.5 rounded-lg hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  More <ChevronDown className={`w-4 h-4 transition-transform ${moreOpen ? "rotate-180" : ""}`} aria-hidden />
+                </button>
+                <div
+                  id="more-menu"
+                  hidden={!moreOpen}
+                  className="absolute right-0 top-full mt-4 w-56 py-2 rounded-xl border border-line bg-surface shadow-lg"
+                >
+                  {BROWSE.map((b) => (
+                    <a
+                      key={b.href}
+                      href={b.href}
+                      onClick={() => setMoreOpen(false)}
+                      className="block px-4 py-2.5 text-sm font-semibold text-ink-2 hover:bg-subtle hover:text-navy"
+                    >
+                      {b.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+              <span className="flex items-center gap-2 ml-2 xl:ml-3">
                 <a
                   href={TELEGRAM}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-3 min-h-[40px] rounded-lg border border-control text-ink-2 hover:border-navy hover:text-navy transition-colors whitespace-nowrap [&>svg]:text-[#1A7DB0]"
+                  className="flex items-center gap-1.5 px-3 min-h-[40px] rounded-lg border border-white/35 text-white hover:bg-white/10 transition-colors whitespace-nowrap"
                   title="Free job alerts on Telegram"
                 >
-                  <TelegramLogo className="w-4 h-4" />
+                  <TelegramLogo className="w-4 h-4 text-[#5BB8F0]" />
                   <span>Telegram</span>
                 </a>
                 <button
                   onClick={() => setIsWatchlistOpen(true)}
-                  className="relative flex items-center gap-1.5 px-3 min-h-[40px] rounded-lg border border-line hover:border-navy text-ink hover:text-navy transition-colors whitespace-nowrap"
+                  className="relative flex items-center gap-1.5 px-3 min-h-[40px] rounded-lg border border-white/35 text-white hover:bg-white/10 transition-colors whitespace-nowrap"
                   title="Jobs you saved"
                 >
-                  <Bookmark className={`w-4 h-4 ${savedCount > 0 ? "fill-saffron-bright text-saffron" : "text-muted"}`} />
+                  <Bookmark className={`w-4 h-4 ${savedCount > 0 ? "fill-saffron-bright text-saffron-bright" : ""}`} />
                   <span>Saved</span>
                   {savedCount > 0 && (
                     <span className="px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-saffron-solid text-white leading-none">
@@ -186,17 +237,17 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
                 href={TELEGRAM}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-11 h-11 flex items-center justify-center rounded-lg border border-line text-[#1A7DB0] active:bg-subtle"
+                className="w-11 h-11 flex items-center justify-center rounded-lg border border-white/30 text-[#5BB8F0] active:bg-white/10"
                 aria-label="Free job alerts on Telegram"
               >
                 <TelegramLogo className="w-5 h-5" />
               </a>
               <button
                 onClick={() => setIsWatchlistOpen(true)}
-                className="relative w-11 h-11 flex items-center justify-center rounded-lg border border-line text-ink active:bg-subtle"
+                className="relative w-11 h-11 flex items-center justify-center rounded-lg border border-white/30 text-white active:bg-white/10"
                 aria-label="Saved jobs"
               >
-                <Bookmark className={`w-5 h-5 ${savedCount > 0 ? "fill-saffron-bright text-saffron" : "text-muted"}`} />
+                <Bookmark className={`w-5 h-5 ${savedCount > 0 ? "fill-saffron-bright text-saffron-bright" : ""}`} />
                 {savedCount > 0 && (
                   <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-saffron-solid text-white text-[10px] font-bold flex items-center justify-center">
                     {savedCount}
@@ -206,7 +257,7 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
               <button
                 ref={menuButtonRef}
                 onClick={() => setMobileMenuOpen(true)}
-                className="w-11 h-11 flex items-center justify-center rounded-lg border border-line text-navy active:bg-subtle"
+                className="w-11 h-11 flex items-center justify-center rounded-lg border border-white/30 text-white active:bg-white/10"
                 aria-label="Open menu"
                 aria-expanded={mobileMenuOpen}
                 aria-controls="site-menu"

@@ -126,6 +126,16 @@ export function examWhen(date: string): string {
   return d <= 0 ? "Today" : d === 1 ? "Tomorrow" : `in ${d} days`;
 }
 
+/**
+ * "Answer key out · result awaited · 04 Nov" as one part per line: a narrow date column would
+ * otherwise break it anywhere, even just before a "·".
+ */
+function StageLines({ text }: { text: string }) {
+  const parts = text.split(" · ");
+  if (parts.length < 2) return <>{text}</>;
+  return <>{parts.map((p, i) => <span key={i} className="block">{p}</span>)}</>;
+}
+
 export function JobDeadline({ job, exam }: { job: JobNotification; exam?: ExamDateEntry | null }) {
   if (exam) {
     return (
@@ -149,7 +159,7 @@ export function JobDeadline({ job, exam }: { job: JobNotification; exam?: ExamDa
         {daysLeft >= 0 && (
           <span
             className={cn(
-              "px-2 py-0.5 rounded-full font-bold text-[12px]",
+              "px-2 py-0.5 rounded-full font-semibold text-[12px]",
               job.status === "LAST_DATE_NEAR" ? "bg-saffron-solid text-white" : "bg-green-tint text-green"
             )}
           >
@@ -167,7 +177,11 @@ export function JobDeadline({ job, exam }: { job: JobNotification; exam?: ExamDa
       : job.status === "RESULT_OUT"
         ? "Result out"
         : stageSummary(job) || (open ? "Last date: see notification" : "Applications closed");
-  return <span className={cn("font-bold", STATUS_STYLE[job.status]?.text || "text-ink-2")}>{text}</span>;
+  return (
+    <span className={cn("font-bold", STATUS_STYLE[job.status]?.text || "text-ink-2")}>
+      <StageLines text={text} />
+    </span>
+  );
 }
 
 interface Props {
@@ -217,7 +231,7 @@ export function JobListCard({ job, extra, exam, action, className }: Props) {
         </span>
       </div>
 
-      <h3 className="mt-1.5 font-serif font-bold text-[15px] sm:text-base leading-snug text-ink line-clamp-2 group-hover:text-navy">
+      <h3 className="mt-1.5 font-bold text-[15px] sm:text-base leading-snug text-ink line-clamp-2 group-hover:text-navy">
         <Link href={getJobCanonicalPath(job)} className="after:absolute after:inset-0">
           {/* "(196 Posts)" at the end repeats the posts chip */}
           {rowTitle(job)}
@@ -274,7 +288,7 @@ function RowDate({ job, exam }: { job: JobNotification; exam?: ExamDateEntry | n
   const style = STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING;
   const stage = job.inProgress ? stageSummary(job) : null;
   return stage
-    ? <span className="text-[12px] font-semibold text-ink-2 text-right">{stage}</span>
+    ? <span className="text-[12px] font-semibold text-ink-2 text-right"><StageLines text={stage} /></span>
     : <span className={cn("text-[12px] font-bold", style.text)}>{style.label}</span>;
 }
 
