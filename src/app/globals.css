@@ -191,6 +191,13 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 .search-bar input:focus-visible {
   outline: none !important;
 }
+/* ...a soft white halo round the bar where there is a mouse or keyboard (on phones the caret is
+   enough: over the navy the halo read as a grey border) */
+@media (pointer: fine) {
+  .search-halo:focus-within {
+    box-shadow: 0 0 0 4px rgb(255 255 255 / 0.5), 0 6px 20px -6px rgb(0 0 0 / 0.35);
+  }
+}
 
 /* Browser surfaces in the site's palette */
 :root {

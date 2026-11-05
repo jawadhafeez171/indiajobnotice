@@ -345,15 +345,18 @@ export function JobListCard({ job, extra, exam, action, className }: Props) {
 }
 
 
-/** Right-hand column of a list row: the date that matters and how far away it is. */
+/**
+ * The date that matters and how soon, on one line at the end of a list row's second line:
+ * "05 Nov · today", "Walk-in 19 Nov · 14 days left", "Exam 11 Nov · in 6 days", "Answer key out · 04 Nov".
+ */
 function RowDate({ job, exam }: { job: JobNotification; exam?: ExamDateEntry | null }) {
   const open = job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
   if (exam) {
     return (
       <>
-        <span className="text-[12px] text-muted">Exam</span>
-        <b className="text-[13px] text-ink">{formatDateShort(exam.date)}</b>
-        <span className="text-[12px] font-semibold text-navy">{examWhen(exam.date)}</span>
+        <span className="text-muted">Exam </span>
+        <b className="text-ink">{formatDateShort(exam.date)}</b>
+        <span className="font-semibold text-navy"> · {examWhen(exam.date).toLowerCase()}</span>
       </>
     );
   }
@@ -361,11 +364,11 @@ function RowDate({ job, exam }: { job: JobNotification; exam?: ExamDateEntry | n
     const soon = closesIn(job.applicationEndDate);
     return (
       <>
-        {job.isWalkIn && <span className="text-[12px] text-muted">Walk-in</span>}
-        <b className="text-[13px] text-ink">{formatDateShort(job.applicationEndDate)}</b>
+        {job.isWalkIn && <span className="text-muted">Walk-in </span>}
+        <b className="text-ink">{formatDateShort(job.applicationEndDate)}</b>
         {soon && (
-          <span className={cn("text-[12px]", soon.urgent ? "font-semibold text-saffron" : "text-muted")}>
-            {soon.text.replace("Closes ", "")}
+          <span className={soon.urgent ? "font-semibold text-saffron" : "text-muted"}>
+            {" · "}{soon.text.replace("Closes ", "")}
           </span>
         )}
       </>
@@ -373,9 +376,12 @@ function RowDate({ job, exam }: { job: JobNotification; exam?: ExamDateEntry | n
   }
   const style = STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING;
   const stage = job.inProgress ? stageSummary(job) : null;
-  return stage
-    ? <span className="text-[12px] font-semibold text-ink-2 text-right"><StageLines text={stage} /></span>
-    : <span className={cn("text-[12px] font-bold", style.text)}>{style.label}</span>;
+  if (stage) {
+    // the stage and its date ("result awaited" follows from the stage)
+    const parts = stage.split(" · ");
+    return <span className="font-semibold text-ink-2">{parts.length > 2 ? `${parts[0]} · ${parts[parts.length - 1]}` : stage}</span>;
+  }
+  return <span className={cn("font-bold", style.text)}>{style.label}</span>;
 }
 
 /** What a screen reader hears after a row's title: the date that matters, as the row shows it. */
@@ -387,9 +393,10 @@ function deadlineText(job: JobNotification, exam?: ExamDateEntry | null): string
 }
 
 /**
- * Compact list row (phones and tablets): stage dot, the title (with the body's code), one grey line
- * of facts, and the date and `action` on the right. The full name and the age are on the job page.
- * No box; rows are separated by lines. The whole row is the link; `action` sits on top.
+ * Compact list row (phones and tablets): stage dot and the title (with the body's code) across the
+ * whole width, then one line of facts with the date and `action` at its end (the facts give way first).
+ * The full name and the age are on the job page. No box; rows are separated by lines. The whole row is
+ * the link; `action` sits on top.
  */
 export function JobRow({ job, exam, action, title, showStage = false, note }: {
   job: JobNotification;
@@ -412,24 +419,24 @@ export function JobRow({ job, exam, action, title, showStage = false, note }: {
   ].filter(Boolean);
 
   return (
-    <div className="relative flex gap-3 px-3 py-3 hover:bg-subtle active:bg-subtle transition-colors">
+    <div className="relative flex gap-3 pl-3 pr-1.5 pt-3 pb-1.5 hover:bg-subtle active:bg-subtle transition-colors">
       <span aria-hidden className={cn("mt-[7px] w-2 h-2 rounded-full shrink-0", style.stripe)} />
       <div className="min-w-0 flex-1">
         <Link
           href={getJobCanonicalPath(job)}
-          className="font-semibold text-[14px] leading-snug text-ink line-clamp-2 after:absolute after:inset-0"
+          className="block pr-1.5 font-semibold text-[14px] leading-snug text-ink line-clamp-2 after:absolute after:inset-0"
         >
           {note && <span className="text-saffron font-bold">{note} · </span>}
           <b className="text-navy">{job.orgShortCode}</b> {title ?? rowTitle(job)}
           <span className="sr-only">, {job.organization}, {deadlineText(job, exam)}</span>
         </Link>
-        <p className="mt-1 text-[12px] text-muted truncate">{meta.join(" · ")}</p>
-      </div>
-      <div className="shrink-0 flex items-start gap-1">
-        <div className="w-[92px] flex flex-col items-end text-right leading-tight gap-0.5 pt-0.5">
-          <RowDate job={job} exam={exam} />
+        <div className="flex items-center gap-2 text-[11px] leading-tight">
+          <p className="min-w-0 flex-1 truncate text-muted">{meta.join(" · ")}</p>
+          <p className="shrink-0 whitespace-nowrap">
+            <RowDate job={job} exam={exam} />
+          </p>
+          {action && <span className="relative z-10 shrink-0">{action}</span>}
         </div>
-        {action && <span className="relative z-10 -mt-1.5 -mr-1.5">{action}</span>}
       </div>
     </div>
   );

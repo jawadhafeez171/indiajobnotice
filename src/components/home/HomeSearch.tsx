@@ -91,7 +91,7 @@ export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode;
           className={cn(
             "flex gap-2",
             onDark && "search-bar gap-0.5 p-1 rounded-full bg-surface dark:bg-[#1B2A57] shadow-[0_6px_20px_-6px_rgb(0_0_0/0.35)] dark:shadow-[inset_0_0_0_1px_rgb(255_255_255/0.28),0_6px_20px_-6px_rgb(0_0_0/0.5)] transition-shadow",
-            onDark && !open && "focus-within:ring-4 focus-within:ring-white/50"
+            onDark && !open && "search-halo"
           )}
         >
           <div className="relative flex-1 min-w-0">

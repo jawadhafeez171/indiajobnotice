@@ -701,7 +701,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
         <div className="flex items-center justify-between gap-3 text-[13px]">
           <p id="results-count" tabIndex={-1} className="scroll-mt-[140px] md:scroll-mt-[176px] text-ink-2 min-w-0 focus:outline-none" aria-live="polite">
             <b className="text-ink">{filteredJobs.length}</b> {filteredJobs.length === 1 ? "job" : "jobs"}
-            {filteredJobs.length > 0 && TABS[activeCategory].order && <span className="text-muted"> · {TABS[activeCategory].order}</span>}
+            {filteredJobs.length > 0 && TABS[activeCategory].order && <span className="hidden sm:inline text-muted"> · {TABS[activeCategory].order}</span>}
             {selectedState !== "ALL" && (
               <span className="ml-2 inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded-full text-[12px] font-bold border border-navy-line align-middle">
                 {getStateBySlug(selectedState)?.name || selectedState} + central

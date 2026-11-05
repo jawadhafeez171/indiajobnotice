@@ -48,9 +48,9 @@ export function TodaySummary({ jobs, serverToday }: { jobs: JobNotification[]; s
         {total ? (
           <a
             href="#today"
-            className="group flex items-center gap-2 min-h-[52px] py-2 text-sm text-ink"
+            className="group flex items-center gap-2 min-h-[52px] py-2 text-[13px] sm:text-sm text-ink"
           >
-            <span className="shrink-0 px-2 py-0.5 rounded bg-saffron-solid text-white text-[12px] font-bold">Today</span>
+            <span className="shrink-0 px-2 py-0.5 rounded bg-saffron-solid text-white text-[11px] sm:text-[12px] font-bold">Today</span>
             <span className="min-w-0 flex-1">
               {counts.map((c, i) => (
                 <span key={c.kind}>
@@ -62,8 +62,8 @@ export function TodaySummary({ jobs, serverToday }: { jobs: JobNotification[]; s
             <ArrowRight className="w-4 h-4 shrink-0 text-navy transition-transform group-hover:translate-x-0.5" aria-hidden />
           </a>
         ) : (
-          <p className="flex items-center gap-2 min-h-[52px] py-2 text-sm text-muted">
-            <span className="shrink-0 px-2 py-0.5 rounded bg-subtle text-ink-2 text-[12px] font-bold">Today</span>
+          <p className="flex items-center gap-2 min-h-[52px] py-2 text-[13px] sm:text-sm text-muted">
+            <span className="shrink-0 px-2 py-0.5 rounded bg-subtle text-ink-2 text-[11px] sm:text-[12px] font-bold">Today</span>
             {later ? <>No new updates yet. Next check {later}.</> : <>No new updates yet. Checked twice a day.</>}
           </p>
         )}

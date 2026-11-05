@@ -98,7 +98,7 @@ export default async function HomePage() {
             Latest government jobs, <span className="text-[#FF841C]">verified</span>
           </h1>
           {/* the proof line sits back: smaller, one muted blue, the count only a little brighter */}
-          <p className="mt-2 md:mt-3 text-[12px] sm:text-[13px] leading-normal text-[#9FB3D6] text-center">
+          <p className="hidden sm:block mt-2 md:mt-3 text-[12px] sm:text-[13px] leading-normal text-[#9FB3D6] text-center">
             <b className="font-medium text-[#C0D0E8]">{openNow} open now</b>
             {/* each part keeps its "·", so a line never starts with one */}
             {latestAdded && <> <span className="whitespace-nowrap">· updated</span> {latestAdded}</>}{" "}
