@@ -1,3 +1,4 @@
+import { safeJson } from "@/lib/json-ld";
 import React from "react";
 import type { Metadata } from "next";
 import { Navbar } from "@/components/common/Navbar";
@@ -43,7 +44,7 @@ export default function DirectoryPage() {
       {/* Schema.org Structured Data */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJson(jsonLd) }}
       />
 
       <Navbar currentStateSlug="central" />

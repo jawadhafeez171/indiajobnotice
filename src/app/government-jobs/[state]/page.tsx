@@ -1,3 +1,4 @@
+import { safeJson } from "@/lib/json-ld";
 import React from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -106,7 +107,7 @@ export default async function StateGovernmentJobsPage({ params }: Props) {
       {/* Schema.org CollectionPage Structured Data */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJson(jsonLd) }}
       />
       <Navbar currentStateSlug={state.slug} />
 

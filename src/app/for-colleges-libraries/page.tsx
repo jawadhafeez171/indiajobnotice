@@ -1,3 +1,4 @@
+import { safeJson } from "@/lib/json-ld";
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -51,7 +52,7 @@ export default function ForCollegesLibrariesPage() {
     <div className="min-h-screen flex flex-col bg-canvas">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJson(jsonLd) }}
       />
 
       <Navbar currentStateSlug="central" />

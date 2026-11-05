@@ -1,3 +1,4 @@
+import { safeJson } from "@/lib/json-ld";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
@@ -101,7 +102,7 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(websiteSchema),
+            __html: safeJson(websiteSchema),
           }}
         />
       </head>

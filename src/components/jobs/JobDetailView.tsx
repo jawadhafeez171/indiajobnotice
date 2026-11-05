@@ -1,5 +1,6 @@
 "use client";
 
+import { safeJson } from "@/lib/json-ld";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
@@ -132,7 +133,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
       {/* Schema.org Structured Data Graph (JobPosting / WebPage + BreadcrumbList + FAQPage) */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: safeJson(structuredData) }}
       />
 
       {/* Breadcrumb */}

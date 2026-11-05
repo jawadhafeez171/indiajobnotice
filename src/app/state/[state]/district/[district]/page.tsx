@@ -1,3 +1,4 @@
+import { safeJson } from "@/lib/json-ld";
 import React from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -147,7 +148,7 @@ export default async function DistrictPage({ params }: PageProps) {
     <div className="min-h-screen flex flex-col bg-canvas">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJson(breadcrumbJsonLd) }}
       />
       
       <Navbar currentStateSlug={state.slug} />

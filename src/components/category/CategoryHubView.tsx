@@ -1,3 +1,4 @@
+import { safeJson } from "@/lib/json-ld";
 import React from "react";
 import Link from "next/link";
 import { CategoryHubInfo, getJobsForHub } from "@/data/permanent-categories";
@@ -54,7 +55,7 @@ export async function CategoryHubView({ hub, parentCrumb }: Props) {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-7 space-y-8">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJson(jsonLd) }} />
 
       <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted">
         <Link href="/" className="hover:text-navy font-medium">Home</Link>
