@@ -16,7 +16,7 @@ import {
 } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
 import { noticeArea } from "@/lib/internal-links";
-import { JobListCard, JobRow, JobDeadline, STATUS_STYLE, qualificationLabel, rowTitle, placeLabel, sourceHost } from "./JobListCard";
+import { JobListCard, JobRow, JobDeadline, STATUS_STYLE, qualificationLabel, rowTitle, placeLabel, termsLabel, withoutAdvtNo } from "./JobListCard";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
 import { useWatchlist } from "@/lib/watchlist";
 import { getStateBySlug } from "@/config/states";
@@ -124,6 +124,13 @@ function primaryText(j: JobNotification): string {
 }
 function secondaryText(j: JobNotification): string {
   return `${j.keyHighlights.join(" ")} ${j.qualifications.join(" ")}`;
+}
+
+/** A document's title for the list: no leading date ("Nov 03 2026 Important …") and no advert number. */
+const LEADING_DATE = /^\s*(?:[A-Z][a-z]{2}\s+\d{1,2}\s+\d{4}|\d{1,2}\s+[A-Z][a-z]{2}\s+\d{4}|\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4})\s*(?:important\s*)?[:–—-]?\s*/i;
+function docTitle(t: string): string {
+  const s = withoutAdvtNo(t.replace(LEADING_DATE, ""));
+  return s.length >= 6 ? s : t;
 }
 
 /** The newest official document of a recruitment (results and documents views). */
@@ -242,8 +249,16 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       }));
     };
     applyQuery();
-    const onSearch = () => applyQuery(true, true);
-    const onBack = () => applyQuery(true);
+    let lastSearch = window.location.search;
+    const onSearch = () => {
+      lastSearch = window.location.search;
+      applyQuery(true, true);
+    };
+    const onBack = () => {
+      if (window.location.search === lastSearch) return;
+      lastSearch = window.location.search;
+      applyQuery(true);
+    };
     window.addEventListener("ijn:query", onSearch);
     window.addEventListener("popstate", onBack);
     window.addEventListener("hashchange", handleHash);
@@ -418,12 +433,13 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
     for (const j of filteredJobs) seen.set(key(j), (seen.get(key(j)) || 0) + 1);
     return (j: JobNotification): string => {
       const t = rowTitle(j);
-      if ((seen.get(key(j)) || 0) < 2) return t;
-      // a round's KK / RPC notices differ by that alone; else the advert number (or year)
+      // a Karnataka round's KK / RPC notice always says which (the two often have different titles)
       const area = noticeArea(j)?.code;
-      const tag = area || (j.advtNo ? `Advt ${j.advtNo}` : (j.applicationEndDate || j.publishedAt || "").slice(0, 4));
-      if (area) return `${area} · ${t.replace(new RegExp(`\\s*\\(${area}\\)\\s*$`), "")}`;
-      return tag && !t.includes(j.advtNo || tag) ? `${tag} · ${t}` : t;
+      if (area) return `${area} · ${t.replace(/\s*\((?:KK|RPC)\)/g, "").replace(/\s{2,}/g, " ").trim()}`;
+      if ((seen.get(key(j)) || 0) < 2) return t;
+      // look-alikes otherwise differ by the year (lists leave advert numbers out)
+      const year = (j.applicationEndDate || j.publishedAt || "").slice(0, 4);
+      return year && !t.includes(year) ? `${year} · ${t}` : t;
     };
   }, [filteredJobs]);
 
@@ -868,7 +884,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 job={job}
                 title={titleOf(job)}
                 exam={activeCategory === "EXAM_DATES" || job.status === "ADMIT_CARD_OUT" ? nextExamDate(job) : undefined}
-                showStage={!grouped && activeCategory !== "TODAY"}
+                showStage={activeCategory === "ALL"}
                 note={activeCategory === "TODAY" ? todayChange(job)?.label : undefined}
                 action={
                   <button
@@ -943,7 +959,6 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                   const saved = isSaved(job.id);
                   const qual = qualificationLabel(job);
                   const age = job.ageKnown !== false && job.maxAge > 0 ? formatAgeRange(job) : null;
-                  const host = sourceHost(job);
                   const doc = !docMode ? null : activeCategory === "EXAM_DATES" ? nextExamDate(job)?.stage || null : latestDoc(job);
                   const exam = activeCategory === "EXAM_DATES" || job.status === "ADMIT_CARD_OUT" ? nextExamDate(job) : undefined;
                   return (
@@ -951,13 +966,14 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                       {/* recruitment, with the stage stripe on the left edge */}
                       <td className="relative py-4 pl-6 pr-4">
                         <span className={cn("absolute left-0 inset-y-0 w-1", style.stripe)} aria-hidden />
-                        <div className="flex items-center gap-1.5 text-[12px]">
+                        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[12px] [&>*]:whitespace-nowrap">
                           <abbr title={job.organization} className="no-underline px-1.5 py-0.5 rounded bg-navy-tint text-navy font-bold leading-none border border-navy-line">
                             {job.orgShortCode}
                           </abbr>
                           <span className="text-muted">{placeLabel(job)}</span>
-                          {/* inside Open / Closing the tab already says it; the days-left pill carries urgency */}
-                          {!grouped && (
+                          {termsLabel(job) && <span className="text-muted">· {termsLabel(job)}</span>}
+                          {/* the stage word only where the list mixes stages (All); Today says what changed */}
+                          {(activeCategory === "ALL" || activeCategory === "TODAY") && (
                             <>
                               <span className="text-faint" aria-hidden>·</span>
                               {activeCategory === "TODAY" ? (
@@ -970,54 +986,43 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                         </div>
                         <Link
                           href={detailLink}
-                          className="mt-1 block font-bold text-base leading-[1.35] text-ink group-hover:text-navy line-clamp-2"
+                          className="mt-1 block font-bold text-[15px] leading-[1.35] text-ink group-hover:text-navy line-clamp-2"
                         >
                           {titleOf(job)}
                         </Link>
-                        <p className="text-[12px] text-muted truncate mt-1">
-                          {job.organization}
-                          {host && <span className="text-faint"> · {host}</span>}
-                        </p>
                       </td>
 
                       {docMode ? (
                         <td className="py-4 px-4 max-w-[22rem]">
                           {doc ? (
                             <a href={doc.url} target="_blank" rel="noreferrer" className="text-[13px] text-ink-2 hover:text-navy">
-                              <span className="line-clamp-2">{stageText(doc).main}</span>
+                              <span className="line-clamp-2">{docTitle(stageText(doc).main)}</span>
                               <span className="mt-0.5 inline-flex items-center gap-1 text-[12px] text-muted">
-                                {doc.date ? (doc.date > todayIST() ? `dated ${formatDate(doc.date)}` : formatDate(doc.date)) : "Official PDF"} <ExternalLink className="w-3 h-3" aria-hidden />
+                                {activeCategory === "EXAM_DATES" && doc.date
+                                  ? doc.date > todayIST() ? `dated ${formatDate(doc.date)}` : formatDate(doc.date)
+                                  : "Official PDF"}{" "}
+                                <ExternalLink className="w-3 h-3" aria-hidden />
                               </span>
                             </a>
-                          ) : (
-                            <span className="text-[12px] text-faint">See notice</span>
-                          )}
+                          ) : null}
                         </td>
                       ) : (
                       <>
-                      <td className="py-4 px-4 text-right whitespace-nowrap tabular-nums text-[15px]">
-                        {job.totalVacancies ? (
-                          <b className="text-ink">{job.totalVacancies.toLocaleString("en-IN")}</b>
-                        ) : (
-                          <span className="text-[12px] text-faint">See notice</span>
-                        )}
+                      <td className="py-4 px-4 text-right whitespace-nowrap tabular-nums text-sm">
+                        {job.totalVacancies ? <b className="text-ink">{job.totalVacancies.toLocaleString("en-IN")}</b> : null}
                       </td>
 
                       <td className="py-4 px-4">
-                        <div className="flex flex-wrap gap-1.5">
-                          {[qual, age].filter(Boolean).map((c) => (
-                            <span key={c} className="px-2 py-0.5 rounded-full bg-surface border border-line text-[12px] font-medium text-ink-2 whitespace-nowrap">
-                              {c}
-                            </span>
-                          ))}
-                          {!qual && !age && <span className="text-[12px] text-faint">See notice</span>}
-                        </div>
+                        <p className="text-[12px] leading-snug text-ink-2">
+                          {qual && <span className="block">{qual}</span>}
+                          {age && <span className="block text-muted">{age}</span>}
+                        </p>
                       </td>
                       </>
                       )}
 
                       <td className="py-4 px-4">
-                        <div className="flex flex-col items-end text-right gap-1 text-[13px] text-balance">
+                        <div className="flex flex-col items-end text-right gap-1 text-[12px] text-balance">
                           <JobDeadline job={job} exam={exam} />
                         </div>
                       </td>

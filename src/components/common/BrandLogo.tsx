@@ -6,6 +6,8 @@ interface BrandLogoProps {
   variant?: "default" | "light";
   showDomain?: boolean;
   height?: number;
+  /** Height classes for the wordmark image (the header's is smaller than the footer's). */
+  sizeClass?: string;
 }
 
 /**
@@ -18,12 +20,13 @@ export function BrandLogo({
   variant = "default",
   showDomain = false,
   height = 34,
+  sizeClass = "h-5 sm:h-[25px]",
 }: BrandLogoProps) {
   const isLight = variant === "light";
   const logoSrc = isLight ? "/logo-white.png" : "/logo-transparent.png";
   
-  // Aspect ratio of the tight transparent logo: 926 / 135 ≈ 6.86
-  const width = Math.round((height * 926) / 135);
+  // Aspect ratio of the wordmark (no colour strip above it since 5 Nov): 926 / 95 ≈ 9.75
+  const width = Math.round((height * 926) / 95);
 
   return (
     <div className={`inline-flex items-center gap-1.5 select-none ${className}`}>
@@ -35,7 +38,7 @@ export function BrandLogo({
         height={height}
         priority
         style={{ width: "auto" }}
-        className={`h-7 sm:h-9 w-auto object-contain transition-opacity group-hover:opacity-95 ${isLight ? "" : "dark:hidden"}`}
+        className={`${sizeClass} w-auto object-contain transition-opacity group-hover:opacity-95 ${isLight ? "" : "dark:hidden"}`}
       />
       {!isLight && (
         <Image
@@ -45,7 +48,7 @@ export function BrandLogo({
           width={width}
           height={height}
           style={{ width: "auto" }}
-          className="hidden dark:block h-7 sm:h-9 w-auto object-contain"
+          className={`hidden dark:block ${sizeClass} w-auto object-contain`}
         />
       )}
 

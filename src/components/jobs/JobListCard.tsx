@@ -91,10 +91,87 @@ const TITLE_BOILERPLATE = [
   /^applications?\s+(are\s+)?invited\s+from\s+[^,]{3,60}?\s+for\s+(the\s+)?/i,
   /^panel\s+for\s+(appointment\s+)?(on\s+)?contract(ual)?\s+(basis\s+)?(appointment\s+)?(to|of|for)\s+(the\s+)?(posts?\s+of\s+)?/i,
   /^(appointment|engagement)\s+on\s+contract(ual)?\s+basis\s+(to|for|of)\s+(the\s+)?(posts?\s+of\s+)?/i,
+  /^walk[- ]?in[- ]?interview\s+(for\s+)?(the\s+)?((engagement|appointment|selection|recruitment)\s+)?((of|for|to)\s+)?(the\s+)?(posts?\s+of\s+)?/i,
+  /^(vacancy\s+)?notification\s+inviting\s+applications\s+for\s+(filling\s+up\s+of\s+)?(the\s+)?(posts?\s+of\s+)?/i,
+  /^applications?\s+(are\s+)?invited\s+from\s+.{3,100}?\s+for\s+(appointment\s+)?(on\s+a?\s*contract\s+basis\s+)?(to|of|for)\s+(the\s+)?(posts?\s+of\s+)?/i,
+  /^(essential\s+information\s+for\s+)?panel\s+formation\s+for\s+(appointment\s+to\s+)?/i,
+  /^general\s+recruitment\s+for\s+the\s+posts?\s+of\s+/i,
+  /^written\s+examination\s+for\s+(filling\s+up\s+of\s+)?/i,
+  /^online\s+applications?\s+for\s+(the\s+)?(posts?\s+of\s+)?/i,
+  /^(engagement|appointment|selection|filling\s+up)\s+of\s+(the\s+)?(posts?\s+of\s+)?/i,
+  /^recruitment\s+notification\s+(for|of)\s+(the\s+)?(posts?\s+of\s+)?/i,
   /^posts?\s+of\s+/i,
 ];
+// wording inside a title that the row says elsewhere (Contract / Deputation in the grey line, the
+// grade in the notice) or that says nothing about the post
+const TITLE_FILLER = [
+  /\s+on\s+(a\s+)?(contract(ual)?|deputation|outsourcing|temporary|tenure)\s+basis\b/gi,
+  /\s*\(general recruitment\)/gi,
+  /\s+and\s+equivalent\s+(group[- ][a-d]\s+)?posts?\b/gi,
+  /\s+in\s+various\s+(departments|disciplines)(\s+of\s+[A-Z][\w.]*)?/gi,
+  /\s+in\s+level\s+\d+\s+of\s+(the\s+)?pay\s+matrix(\s*\(\s*7th\s+CPC\s*\))?/gi,
+  /\b(full[- ]time\s*\/\s*part[- ]time|full[- ]time|part[- ]time)\s+/gi,
+  /\bcontractual\s+/gi,
+  // dates and codes: the job page has them
+  /\s*,?\s*notification\s+(dated\s+[\d./-]+|[a-z0-9][\w/.-]*\d[\w/.-]*)/gi,
+  /\s*,?\s*post\s+code[:\s]*[\w/.-]*\d[\w/.-]*/gi,
+  /\s*\((jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{4}\)/gi,
+  /\s*\((excluding|including|except)\b[^()]*\)/gi,
+  /\s+direct\s+recruitment$/i,
+];
+// over this many characters a title is cut down to the post names, when the notice lists them
+const LONG_TITLE = 70;
+// still long: the employing department or service at the end goes (the badge names the body)
+const TRAILING_DEPARTMENT =
+  /(\s*,\s*(directorate|department|ministry)\s+of\s+[^,]+|\s+(in|under)\s+(the\s+)?((directorate|department|ministry)\s+of\s+[^,]+|[^,]{3,80}?\s+(department|sub[\s-]+(ordinate\s+)?services?|subordinate\s+services?|services?)))(\s*,\s*(directorate|department)\s+of\s+[^,]+)*\s*$/i;
+// a post name's aside that names an employer ("(Uttarakhand Jal Vidyut Nigam Ltd)") or is a note
+// ("(form lists L.D Typist)"), not the post
+const EMPLOYER_ASIDE = /\s*\((?=[^()]*\b(ltd|limited|corporation|nigam|board|company|authority|university|council|form|as per|see|lists)\b)[^()]*\)/gi;
+// the room the post names get in a list title
+const NAMES_ROOM = 80;
+
+/** Without the department / service it ends with, when that leaves a usable title. */
+function withoutDepartment(t: string): string {
+  const cut = t.replace(TRAILING_DEPARTMENT, "").trim();
+  return cut.length >= 12 ? cut : t;
+}
+// a batch / exam code after a post name ("Navik (General Duty) - CGEPT-01/27")
+const NAME_CODE = /\s*[-–]\s*[A-Z]{2,}[-\s]?\d[\w/-]*$/;
+
+/** The posts a notice lists, as many as fit in a list title, then "+N more". */
+function postNames(job: JobNotification): string {
+  const names = [...new Set((job.posts || [])
+    .map((p) => withoutDepartment((p.postName || "").replace(EMPLOYER_ASIDE, "").replace(NAME_CODE, "").trim()))
+    .filter(Boolean))];
+  let out = "";
+  let n = 0;
+  for (const name of names) {
+    const next = out ? `${out}, ${name}` : name;
+    if (n > 0 && next.length > NAMES_ROOM) break;
+    out = next;
+    n += 1;
+  }
+  return n < names.length ? `${out} +${names.length - n} more` : out;
+}
+
+/** "Contract" / "Deputation" for the row's grey line (the title no longer says it). */
+export function termsLabel(job: JobNotification): string | null {
+  if (/deputation/i.test(job.title)) return "Deputation";
+  if (/contract|outsourc|ad[- ]?hoc|locum|tenure\s+posts?|temporary/i.test(job.title)) return "Contract";
+  return null;
+}
 // a title that names no post at all: the posts the notice lists say more
 const GENERIC_TITLE = /^(employment|recruitment|job|vacancy)\s+(notification|notice|advertisement)\b[^a-z]*$/i;
+// advertisement / notice numbers ("Advt. No. 25/2025", "(Advt. 01/2026)", "Notification No. 12/2025"):
+// lists leave them to the job page
+const ADVT_NO = [
+  /\s*[([]?\s*\b(?:advt\.?|advertisement)\s*(?:no\.?|number)?\s*[:.-]?\s*(?=[\w/.-]*\d)[\w/.-]+(?:\s*(?:dated|dt\.?)\s*[\d/.-]+)?\s*[)\]]?/gi,
+  /\s*[([]?\s*\b(?:(?:employment|recruitment)\s+)?(?:notification|notice)\s+(?:no\.?|number)\s*[:.-]?\s*(?=[\w/.-]*\d)[\w/.-]+\s*[)\]]?/gi,
+];
+export function withoutAdvtNo(t: string): string {
+  for (const re of ADVT_NO) t = t.replace(re, " ");
+  return t.replace(/\(\s*\)/g, "").replace(/\s{2,}/g, " ").replace(/^[\s,;:–—-]+|[\s,;:–—-]+$/g, "").trim();
+}
 
 /**
  * Title for lists that already show the body: the post first ("Assistant Statistical Officer in
@@ -109,13 +186,20 @@ export function rowTitle(job: JobNotification): string {
   if (code && t.startsWith(code + " ")) t = t.slice(code.length + 1);
   for (let i = 0; i < 3; i++) for (const re of TITLE_BOILERPLATE) t = t.replace(re, "");
   t = t.replace(/\s*\(\s*[\d,]+\s+posts?\s*\)\s*$/i, "").trim();
-  if (GENERIC_TITLE.test(t)) {
-    const names = [...new Set((job.posts || []).map((p) => p.postName).filter(Boolean))];
-    if (names.length) t = names.slice(0, 2).join(", ") + (names.length > 2 ? ` and ${names.length - 2} more posts` : "");
-  }
+  for (const re of TITLE_FILLER) t = t.replace(re, " ");
+  t = t.replace(/\s+([,)])/g, "$1").replace(/\s{2,}/g, " ").replace(/^[\s,;:–—-]+|[\s,;:–—-]+$/g, "").trim();
+  const withNo = t;
+  t = withoutAdvtNo(t);
+  const postList = postNames(job);
+  if (GENERIC_TITLE.test(t) && postList) t = postList;
+  // a long title: first without the department or service it ends with; still long, the post names
+  if (t.length > LONG_TITLE) t = withoutDepartment(t);
+  if (t.length > LONG_TITLE && postList && postList.length < t.length - 10) t = postList;
   if (t.length < 6) {
-    const short = cleanTitle(job);
-    return code && short.startsWith(code + " ") ? short.slice(code.length + 1) : short;
+    // nothing left but the number: the posts, else the short title without it, else as published
+    const short = withoutAdvtNo(cleanTitle(job));
+    const shortNoCode = code && (short === code || short.startsWith(code + " ")) ? short.slice(code.length + 1) : short;
+    t = postList || (shortNoCode.length >= 6 ? shortNoCode : withNo);
   }
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
@@ -127,13 +211,21 @@ export function examWhen(date: string): string {
 }
 
 /**
- * "Answer key out · result awaited · 04 Nov" as one part per line: a narrow date column would
- * otherwise break it anywhere, even just before a "·".
+ * "Answer key out · result awaited · 04 Nov" as the stage and the date, one per line ("result
+ * awaited" follows from the stage): a narrow date column would otherwise break it anywhere.
  */
 function StageLines({ text }: { text: string }) {
   const parts = text.split(" · ");
   if (parts.length < 2) return <>{text}</>;
-  return <>{parts.map((p, i) => <span key={i} className="block">{p}</span>)}</>;
+  const shown = parts.length > 2 ? [parts[0], parts[parts.length - 1]] : parts;
+  return <>{shown.map((p, i) => <span key={i} className="block">{p}</span>)}</>;
+}
+
+/** How soon a last date is, and whether that is close enough to stand out (a week or less). */
+export function closesIn(date: string): { text: string; urgent: boolean } | null {
+  const d = getDaysRemaining(date);
+  if (d < 0) return null;
+  return { text: d === 0 ? "Closes today" : d === 1 ? "Closes tomorrow" : `${d} days left`, urgent: d <= 7 };
 }
 
 export function JobDeadline({ job, exam }: { job: JobNotification; exam?: ExamDateEntry | null }) {
@@ -144,27 +236,21 @@ export function JobDeadline({ job, exam }: { job: JobNotification; exam?: ExamDa
           Exam <b className="text-ink">{formatDateShort(exam.date)}</b>
           {exam.tentative && <span className="text-muted"> (tentative)</span>}
         </span>
-        <span className="px-2 py-0.5 rounded-full font-bold text-[12px] bg-navy-tint text-navy">{examWhen(exam.date)}</span>
+        <span className="text-[12px] font-semibold text-navy">{examWhen(exam.date)}</span>
       </>
     );
   }
   const open = job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
-  const daysLeft = getDaysRemaining(job.applicationEndDate);
   if (open && job.applicationEndDate) {
+    const soon = closesIn(job.applicationEndDate);
     return (
       <>
         <span className="text-ink-2">
-          {job.isWalkIn ? "Walk-in" : "Last date"} <b className="text-ink">{formatDateShort(job.applicationEndDate)}</b>
+          {job.isWalkIn && "Walk-in "}
+          <b className="text-ink">{formatDateShort(job.applicationEndDate)}</b>
         </span>
-        {daysLeft >= 0 && (
-          <span
-            className={cn(
-              "px-2 py-0.5 rounded-full font-semibold text-[12px]",
-              job.status === "LAST_DATE_NEAR" ? "bg-saffron-solid text-white" : "bg-green-tint text-green"
-            )}
-          >
-            {daysLeft === 0 ? "Closes today" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`}
-          </span>
+        {soon && (
+          <span className={cn("text-[12px]", soon.urgent ? "font-semibold text-saffron" : "text-muted")}>{soon.text}</span>
         )}
       </>
     );
@@ -266,20 +352,20 @@ function RowDate({ job, exam }: { job: JobNotification; exam?: ExamDateEntry | n
     return (
       <>
         <span className="text-[12px] text-muted">Exam</span>
-        <b className="text-[14px] text-ink">{formatDateShort(exam.date)}</b>
+        <b className="text-[13px] text-ink">{formatDateShort(exam.date)}</b>
         <span className="text-[12px] font-semibold text-navy">{examWhen(exam.date)}</span>
       </>
     );
   }
   if (open && job.applicationEndDate) {
-    const d = getDaysRemaining(job.applicationEndDate);
+    const soon = closesIn(job.applicationEndDate);
     return (
       <>
-        <span className="text-[12px] text-muted">{job.isWalkIn ? "Walk-in" : "Last date"}</span>
-        <b className="text-[14px] text-ink">{formatDateShort(job.applicationEndDate)}</b>
-        {d >= 0 && (
-          <span className={cn("text-[12px] font-bold", job.status === "LAST_DATE_NEAR" ? "px-1.5 rounded bg-saffron-solid text-white" : "text-green")}>
-            {d === 0 ? "Today" : `${d} day${d === 1 ? "" : "s"} left`}
+        {job.isWalkIn && <span className="text-[12px] text-muted">Walk-in</span>}
+        <b className="text-[13px] text-ink">{formatDateShort(job.applicationEndDate)}</b>
+        {soon && (
+          <span className={cn("text-[12px]", soon.urgent ? "font-semibold text-saffron" : "text-muted")}>
+            {soon.text.replace("Closes ", "")}
           </span>
         )}
       </>
@@ -301,8 +387,9 @@ function deadlineText(job: JobNotification, exam?: ExamDateEntry | null): string
 }
 
 /**
- * Compact list row (phones and tablets): stage dot, title, one grey line of facts, the date on
- * the right. No box; rows are separated by lines. The whole row is the link; `action` sits on top.
+ * Compact list row (phones and tablets): stage dot, the title (with the body's code), one grey line
+ * of facts, and the date and `action` on the right. The full name and the age are on the job page.
+ * No box; rows are separated by lines. The whole row is the link; `action` sits on top.
  */
 export function JobRow({ job, exam, action, title, showStage = false, note }: {
   job: JobNotification;
@@ -316,15 +403,12 @@ export function JobRow({ job, exam, action, title, showStage = false, note }: {
   note?: string;
 }) {
   const style = STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING;
-  const qual = qualificationLabel(job);
-  const age = job.ageKnown !== false && job.maxAge > 0 ? formatAgeRange(job) : null;
-  const host = sourceHost(job);
   const meta = [
     showStage ? style.label : null,
     placeLabel(job),
+    termsLabel(job),
     job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} post${job.totalVacancies === 1 ? "" : "s"}` : null,
-    qual,
-    age,
+    qualificationLabel(job),
   ].filter(Boolean);
 
   return (
@@ -333,21 +417,19 @@ export function JobRow({ job, exam, action, title, showStage = false, note }: {
       <div className="min-w-0 flex-1">
         <Link
           href={getJobCanonicalPath(job)}
-          className="font-semibold text-[15px] leading-snug text-ink line-clamp-2 after:absolute after:inset-0"
+          className="font-semibold text-[14px] leading-snug text-ink line-clamp-2 after:absolute after:inset-0"
         >
           {note && <span className="text-saffron font-bold">{note} · </span>}
           <b className="text-navy">{job.orgShortCode}</b> {title ?? rowTitle(job)}
           <span className="sr-only">, {job.organization}, {deadlineText(job, exam)}</span>
         </Link>
-        <p className="mt-1 text-[12px] text-ink-2 truncate">
-          {job.organization}
-          {host && host !== "official gov.in website" && <span className="text-faint"> · {host}</span>}
-        </p>
-        <p className="mt-0.5 text-[12px] text-muted line-clamp-2">{meta.join(" · ")}</p>
+        <p className="mt-1 text-[12px] text-muted truncate">{meta.join(" · ")}</p>
       </div>
-      <div className="shrink-0 w-[92px] flex flex-col items-end text-right leading-tight gap-0.5">
-        <RowDate job={job} exam={exam} />
-        {action && <span className="relative z-10 mt-1">{action}</span>}
+      <div className="shrink-0 flex items-start gap-1">
+        <div className="w-[92px] flex flex-col items-end text-right leading-tight gap-0.5 pt-0.5">
+          <RowDate job={job} exam={exam} />
+        </div>
+        {action && <span className="relative z-10 -mt-1.5 -mr-1.5">{action}</span>}
       </div>
     </div>
   );

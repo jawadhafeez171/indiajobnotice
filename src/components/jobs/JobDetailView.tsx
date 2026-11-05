@@ -14,17 +14,14 @@ import {
 } from "lucide-react";
 import { JobNotification } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
-import { JobLifecycleTracker } from "./JobLifecycleTracker";
 import { formatDate, cn, getDaysRemaining } from "@/lib/utils";
 import { WhatsAppLogo, TelegramLogo } from "@/components/common/SocialIcons";
 import { getStateBySlug } from "@/config/states";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { useWatchlist } from "@/lib/watchlist";
 import { generateGoogleCalendarUrl } from "@/lib/calendar";
-import { ExecutiveNotificationDigest } from "./ExecutiveNotificationDigest";
-import { ApplicationFee, HowToApply, ImportantDates, WhoCanApply } from "./JobFactSections";
-import { ReservationTable } from "./ReservationTable";
-import { StageDocumentsPanel } from "./StageDocumentsPanel";
+import { ExecutiveNotificationDigest, hasPostsCard } from "./ExecutiveNotificationDigest";
+import { DatesAndApply, WhoCanApply, datesHeading, hasEligibility } from "./JobFactSections";
 import { ClosedRecruitmentAlert } from "./ClosedRecruitmentAlert";
 import { JobTaxonomyBar } from "./JobTaxonomyBar";
 import { RelatedOpportunitiesSection } from "./RelatedOpportunitiesSection";
@@ -99,14 +96,10 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
 
   const canonicalUrl = `https://www.indiajobnotice.com${basePrefix}`;
   const structuredData = generateJobStructuredData(job, canonicalUrl);
-  const hasPosts = (job.posts || []).length > 0 || job.totalVacancies > 0 || Boolean(job.salary);
   const sections = [
-    { id: "dates", label: "Dates" },
-    { id: "eligibility", label: "Who can apply" },
-    { id: "fee", label: "Fee" },
-    ...(hasPosts ? [{ id: "posts", label: "Posts" }] : []),
-    { id: "apply", label: "How to apply" },
-    { id: "progress", label: "Progress" },
+    { id: "dates", label: datesHeading(job) },
+    ...(hasEligibility(job) ? [{ id: "eligibility", label: "Who can apply" }] : []),
+    ...(hasPostsCard(job) ? [{ id: "posts", label: "Posts" }] : []),
   ];
   // the section being read, highlighted in the jump links
   const [here, setHere] = useState("");
@@ -334,21 +327,11 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
         </div>
       </nav>
 
-      <ImportantDates job={job} />
+      {/* three cards: the dates (with the documents since, the fee and how to apply), who can
+          apply, and the posts (with pay, vacancies by category and the selection process) */}
+      <DatesAndApply job={job} />
       <WhoCanApply job={job} />
-      <ApplicationFee job={job} />
-
-      {/* Posts (with pay), vacancies by category, selection process: when the notice gives them */}
       <ExecutiveNotificationDigest job={job} />
-      <ReservationTable job={job} />
-
-      <HowToApply job={job} applyHost={applyHost} />
-
-      {/* Where the recruitment stands, and its official documents */}
-      <div id="progress" className="print:hidden scroll-mt-32 md:scroll-mt-44">
-        <JobLifecycleTracker job={job} />
-      </div>
-      <StageDocumentsPanel job={job} />
 
       {/* Sharing and alerts, after the facts rather than among the apply buttons */}
       <div className="flex flex-wrap items-center gap-2 print:hidden">

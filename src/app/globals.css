@@ -187,6 +187,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: 2px solid rgb(var(--c-navy)) !important;
   outline-offset: 1px;
 }
+/* the home search bar shows focus as a whole (a halo round the bar), not round the field inside it */
+.search-bar input:focus-visible {
+  outline: none !important;
+}
 
 /* Browser surfaces in the site's palette */
 :root {

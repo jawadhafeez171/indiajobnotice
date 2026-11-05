@@ -375,11 +375,26 @@ export function istDate(ts?: string): string {
   return Number.isNaN(t) ? "" : new Date(t + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
 }
 
+/** The agent checks the official sites at these India times (the server's cron). */
+export const CHECK_RUNS = [[10, 17], [18, 47]] as const;
+
 /**
- * What changed on this recruitment today (India time), the most important first: published today,
- * a corrigendum applied today, or an official document found today. Null when nothing did.
+ * The day the Today list and line show (YYYY-MM-DD, India time): the date from the day's first
+ * check on; before it, the day before, so the list does not empty at midnight while nothing new can
+ * have been found yet.
  */
-export function todayChange(job: JobNotification, today = todayIST()): { kind: TodayKind; label: string } | null {
+export function updatesDay(now = Date.now()): string {
+  const ist = new Date(now + 5.5 * 3600 * 1000);
+  const [h, m] = CHECK_RUNS[0];
+  if (ist.getUTCHours() * 60 + ist.getUTCMinutes() < h * 60 + m) ist.setUTCDate(ist.getUTCDate() - 1);
+  return ist.toISOString().slice(0, 10);
+}
+
+/**
+ * What changed on this recruitment on the updates day (see updatesDay), the most important first:
+ * published, a corrigendum applied, or an official document found that day. Null when nothing did.
+ */
+export function todayChange(job: JobNotification, today = updatesDay()): { kind: TodayKind; label: string } | null {
   // a recruitment under way approved today is not a new notice: only its documents found today count
   if (!job.inProgress && istDate(job.publishedAt) === today) return { kind: "new", label: TODAY_LABEL.new };
   if ((job.updates || []).some((u) => u.found === today)) return { kind: "dates", label: TODAY_LABEL.dates };
@@ -391,7 +406,7 @@ export function todayChange(job: JobNotification, today = todayIST()): { kind: T
 }
 
 /** Today's changes by kind, for the home page's one-line summary. */
-export function todayCounts(jobs: JobNotification[], today = todayIST()): { kind: TodayKind; count: number }[] {
+export function todayCounts(jobs: JobNotification[], today = updatesDay()): { kind: TodayKind; count: number }[] {
   const n = new Map<TodayKind, number>();
   for (const j of jobs) {
     const c = todayChange(j, today);

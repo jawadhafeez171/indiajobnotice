@@ -2,7 +2,7 @@ import React from "react";
 import { JobNotification } from "@/data/jobs";
 
 /**
- * Vacancies by category, as the notification prints them (the agent sends a table only when each
+ * Vacancies by category (a part of the posts card), as the notification prints them (the agent sends a table only when each
  * post's categories add up to its vacancies). Horizontal reservations are listed below the table.
  */
 export function ReservationTable({ job }: { job: JobNotification }) {
@@ -10,8 +10,8 @@ export function ReservationTable({ job }: { job: JobNotification }) {
   if (!t || !t.rows.length) return null;
   const onePost = t.rows.length === 1 && !t.rows[0].post;
   return (
-    <section aria-labelledby="by-category" className="bg-surface rounded-xl border border-line p-5 sm:p-6 shadow-2xs">
-      <h2 id="by-category" className="font-serif text-lg font-bold text-ink">Vacancies by category</h2>
+    <section aria-labelledby="by-category">
+      <h3 id="by-category" className="text-sm font-bold text-ink">Vacancies by category</h3>
       <p className="mt-1 text-[13px] text-muted">As given in the notification. Check it for the rules of each category.</p>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full text-sm border-collapse">
@@ -41,7 +41,7 @@ export function ReservationTable({ job }: { job: JobNotification }) {
       </div>
       {t.horizontal.length > 0 && (
         <div className="mt-4">
-          <h3 className="text-sm font-semibold text-ink">Within these categories</h3>
+          <h4 className="text-sm font-semibold text-ink">Within these categories</h4>
           <ul className="mt-1 text-sm text-ink-2 space-y-0.5">
             {t.horizontal.map((h, i) => (
               <li key={i}>

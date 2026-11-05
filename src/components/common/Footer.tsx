@@ -114,7 +114,7 @@ export function Footer() {
           {/* Brand Info */}
           <div className="md:col-span-1 space-y-4">
             <a href={getCentralPortalUrl()} className="inline-block transition-transform hover:opacity-95" title="India Job Notice Home">
-              <BrandLogo variant="light" height={34} />
+              <BrandLogo variant="light" height={25} />
             </a>
 
             <p className="text-xs text-on-navy leading-relaxed">

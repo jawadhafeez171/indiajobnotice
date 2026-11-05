@@ -343,13 +343,27 @@ export function getGenuinelyRelatedOpportunities(
   }));
 }
 
+const KK = { code: "KK" as const, label: "Kalyana Karnataka local cadre (KK)" };
+const RPC = { code: "RPC" as const, label: "residual parent cadre (RPC)" };
+
 /**
  * Karnataka recruitments come as two notices of one round: posts in the Kalyana Karnataka local
- * cadre (KK) and in the residual parent cadre (RPC). Which one this is, from its title.
+ * cadre (KK) and in the residual parent cadre (RPC). Which one this is: from its title, else its
+ * advert number ("ED/KEA/42/NE.A/2026 (RPC)", "…/2026 (ಕೆಕೆ)"), else KEA's page for it
+ * (".../wcwdkk2026.aspx"); titles often leave it out (5 Nov: the two Women Supervisor notices).
  */
-export function noticeArea(job: Pick<JobNotification, "title">): { code: "KK" | "RPC"; label: string } | null {
-  if (/\bKK\b|kalyana[ -]karnataka/i.test(job.title)) return { code: "KK", label: "Kalyana Karnataka local cadre (KK)" };
-  if (/\bRPC\b|residual parent cadre/i.test(job.title)) return { code: "RPC", label: "residual parent cadre (RPC)" };
+export function noticeArea(job: Pick<JobNotification, "title"> & Partial<Pick<JobNotification, "advtNo" | "officialPdfUrl">>):
+  { code: "KK" | "RPC"; label: string } | null {
+  if (/\bKK\b|kalyana[ -]karnataka/i.test(job.title)) return KK;
+  if (/\bRPC\b|residual parent cadre/i.test(job.title)) return RPC;
+  const advt = job.advtNo || "";
+  if (/\bKK\b|ಕೆ\.?ಕೆ/i.test(advt)) return KK;
+  if (/\bRPC\b|ಆರ್‌?\.?ಪಿ\.?ಸಿ/i.test(advt)) return RPC;
+  const url = job.officialPdfUrl || "";
+  if (/karnataka\.gov\.in/i.test(url)) {
+    if (/[a-z]kk\d{4}|[_/-]kk[_.\d/-]/i.test(url)) return KK;
+    if (/rpc\d{4}|[_/-]rpc[_.\d/-]/i.test(url)) return RPC;
+  }
   return null;
 }
 
@@ -362,11 +376,31 @@ function roundKey(title: string): string {
     .toLowerCase();
 }
 
+/**
+ * KEA's page for a notice without its KK / RPC part (".../kea/wcwdkk2026.aspx" and ".../wcwdrpc2026.aspx"
+ * give the same key): one round's notices often have different titles but pages named alike.
+ */
+function roundPageKey(url: string | undefined): string | null {
+  if (!url || !/karnataka\.gov\.in/i.test(url)) return null;
+  try {
+    const path = new URL(url).pathname.toLowerCase();
+    const key = path.replace(/kk|rpc/g, "");
+    return key === path ? null : key;
+  } catch {
+    return null;
+  }
+}
+
 /** The other notice(s) of the same round (KK for an RPC notice and the other way round). */
 export function getSiblingNotices(jobs: JobNotification[], job: JobNotification): JobNotification[] {
   const area = noticeArea(job);
   if (!area) return [];
   const key = roundKey(job.title);
-  return jobs.filter((j) => j.id !== job.id && j.organization === job.organization
-    && noticeArea(j)?.code !== undefined && noticeArea(j)!.code !== area.code && roundKey(j.title) === key);
+  const page = roundPageKey(job.officialPdfUrl);
+  return jobs.filter((j) => {
+    if (j.id === job.id || j.organization !== job.organization) return false;
+    const other = noticeArea(j);
+    if (!other || other.code === area.code) return false;
+    return roundKey(j.title) === key || (!!page && roundPageKey(j.officialPdfUrl) === page);
+  });
 }

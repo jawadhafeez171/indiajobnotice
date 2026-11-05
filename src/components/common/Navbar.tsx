@@ -150,7 +150,7 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
           <div className="flex items-center justify-between gap-3 h-16">
             {/* Logo */}
             <a href={getCentralPortalUrl()} className="flex flex-col justify-center min-h-[48px] min-w-0 shrink group hover:opacity-95" title="India Job Notice home">
-              <BrandLogo variant="light" height={30} className="!h-6 sm:!h-8 [&_img]:!h-6 sm:[&_img]:!h-8" />
+              <BrandLogo variant="light" height={22} sizeClass="h-[17px] sm:h-[22px]" />
               <span className="mt-0.5 text-[11px] sm:text-[12px] leading-none font-semibold tracking-wide text-on-navy whitespace-nowrap">
                 Verified government job alerts
               </span>

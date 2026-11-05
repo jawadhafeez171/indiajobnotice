@@ -32,7 +32,7 @@ export function StateQuickStrip({ currentStateSlug, onOpenSelector }: Props) {
           className="w-full flex items-center gap-1.5 min-h-[44px] text-left cursor-pointer"
           aria-label={`Your state: ${currentState ? currentState.name : "All India"}. Change state`}
         >
-          <MapPin className="w-4 h-4 text-navy shrink-0" aria-hidden />
+          <MapPin className="w-3.5 h-3.5 text-navy shrink-0" aria-hidden />
           <span className="font-bold text-sm text-navy truncate">
             {currentState ? currentState.name : "All India"}
           </span>
@@ -46,7 +46,7 @@ export function StateQuickStrip({ currentStateSlug, onOpenSelector }: Props) {
       {/* 2. Desktop: the state you are on, the states we cover most, and the full picker */}
       <div className="hidden md:flex max-w-6xl mx-auto items-center gap-5 h-8 px-2 sm:px-3">
         <span className="flex items-center gap-1.5 shrink-0 text-muted">
-          <MapPin className="w-3.5 h-3.5 text-navy" />
+          <MapPin className="w-3 h-3 text-navy shrink-0" aria-hidden />
           <span className="font-bold text-navy text-[13px]">
             {currentState ? currentState.name : "All India"}
           </span>
