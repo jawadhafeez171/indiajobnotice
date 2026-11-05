@@ -24,7 +24,8 @@ function forList(j: JobNotification): JobNotification {
     updates: j.updates?.filter((u) => u.found).map((u) => ({ date: u.date, text: "", url: "", found: u.found })),
     districtWiseVacancies: undefined, verificationSource: undefined,
     posts: j.posts?.map((p) => ({ postName: p.postName, vacancies: 0, qualification: p.qualification, ageLimit: "", pay: "" })),
-    stages: j.stages?.map((s) => ({ ...s, title: s.summary && /[ऀ-෿]/.test(s.title) ? s.title.slice(0, 80) : s.title })),
+    copyKey: undefined,
+    stages: j.stages?.map((s) => ({ ...s, copyKey: undefined, title: s.summary && /[ऀ-෿]/.test(s.title) ? s.title.slice(0, 80) : s.title })),
   };
 }
 

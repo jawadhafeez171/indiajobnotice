@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { BellRing, CheckCircle2, Circle, CircleDot, ExternalLink } from "lucide-react";
+import { BellRing, CheckCircle2, Circle, CircleDot, ExternalLink, FileText } from "lucide-react";
 import {
   JobNotification, StageKind, ageText, formatFee, getJobCanonicalPath, isJobApplicationClosed, stageText, todayIST,
 } from "@/data/jobs";
@@ -62,7 +62,7 @@ interface Step {
   when: When;
   value: React.ReactNode;
   /** an official document: its summary, its PDF and its page here */
-  doc?: { summary: string; url: string; page?: string; examDates?: string[] };
+  doc?: { summary: string; url: string; page?: string; examDates?: string[]; copyName?: string };
 }
 
 const MARK: Record<When, { icon: typeof Circle; cls: string; sr: string }> = {
@@ -70,6 +70,15 @@ const MARK: Record<When, { icon: typeof Circle; cls: string; sr: string }> = {
   now: { icon: CircleDot, cls: "text-navy", sr: "now" },
   next: { icon: Circle, cls: "text-faint", sr: "to come" },
 };
+
+/** Our stored copy of a notice sent by hand; the official page sits beside it. */
+function CopyLink({ name }: { name: string }) {
+  return (
+    <a href={`/pdf/${name}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 py-1 text-navy hover:text-saffron">
+      PDF (our copy) <FileText className="w-3.5 h-3.5" aria-hidden />
+    </a>
+  );
+}
 
 /** The dates card's name: with how to apply while applications are open. */
 export function datesHeading(job: JobNotification): string {
@@ -137,7 +146,7 @@ export function DatesAndApply({ job }: { job: JobNotification }) {
       sortKey: s.date || s.found || today,
       when: "done",
       value: s.date ? formatDate(s.date) : "Released",
-      doc: { summary: stageText(s).main, url: s.url, page: KIND_PAGE[s.kind] ? `${base}/${KIND_PAGE[s.kind]}` : undefined, examDates: s.examDates },
+      doc: { summary: stageText(s).main, url: s.url, page: KIND_PAGE[s.kind] ? `${base}/${KIND_PAGE[s.kind]}` : undefined, examDates: s.examDates, copyName: s.copyName },
     });
   });
   if (job.exams?.length) {
@@ -206,6 +215,7 @@ export function DatesAndApply({ job }: { job: JobNotification }) {
                       </p>
                     )}
                     <p className="mt-1 flex flex-wrap gap-x-4 text-[13px] font-semibold">
+                      {s.doc.copyName && <CopyLink name={s.doc.copyName} />}
                       <a href={s.doc.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 py-1 text-navy hover:text-saffron">
                         Official document <ExternalLink className="w-3.5 h-3.5" aria-hidden />
                       </a>
@@ -236,6 +246,7 @@ export function DatesAndApply({ job }: { job: JobNotification }) {
             {job.howToApply?.trim() || "Apply on the official website. The steps are in the official notification."}
           </p>
           {job.advtNo && <p className="mt-1 text-[13px] text-muted">Advt. No. {job.advtNo}</p>}
+          {job.copyName && <p className="mt-1 text-[13px] font-semibold"><CopyLink name={job.copyName} /></p>}
         </div>
       </div>}
     </section>

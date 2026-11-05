@@ -17,6 +17,9 @@ export type JobCategory =
   | "Medical & Nursing";
 
 export interface JobNotification {
+  /** A notification sent by hand without its official address: our stored copy, at /pdf/<copyName>. */
+  copyName?: string;
+  copyKey?: string;
   id: string;
   slug: string;
   title: string;
@@ -208,6 +211,9 @@ export interface JobStage {
   shortlist?: boolean;
   /** The day the official site's document was found (India time, YYYY-MM-DD). */
   found?: string;
+  /** Sent by hand without its official address: our stored copy, at /pdf/<copyName> (src/app/pdf). */
+  copyName?: string;
+  copyKey?: string;
 }
 
 /** The text to show for a stage document: its English summary when the title is in another script. */
