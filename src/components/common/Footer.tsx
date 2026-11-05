@@ -115,6 +115,7 @@ export function Footer() {
           <div className="md:col-span-1 space-y-4">
             <a href={getCentralPortalUrl()} className="inline-block transition-transform hover:opacity-95" title="India Job Notice Home">
               <BrandLogo variant="light" height={25} />
+              <span className="block mt-1 text-[12px] leading-none font-semibold tracking-wide text-on-navy">Verified government job alerts</span>
             </a>
 
             <p className="text-xs text-on-navy leading-relaxed">

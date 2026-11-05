@@ -674,8 +674,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 title={key === "UNDER_WAY" ? "Applications closed, exams or results still to come" : undefined}
                 onClick={() => setActiveCategory(key)}
                 className={cn(
-                  narrow ? "px-3 gap-1.5" : "px-3.5 gap-2",
-                  "shrink-0 flex items-center min-h-[44px] md:min-h-0 md:py-[9px] rounded-full border text-[13px] font-semibold whitespace-nowrap transition-colors motion-reduce:transition-none",
+                  narrow ? "px-2.5 gap-1 md:px-3 md:gap-1.5" : "px-2.5 gap-1 md:px-3.5 md:gap-2",
+                  "shrink-0 flex items-center min-h-[36px] md:min-h-0 md:py-[9px] rounded-full border text-[12px] md:text-[13px] font-semibold whitespace-nowrap transition-colors motion-reduce:transition-none",
                   isActive ? cn(t.active, "text-white border-transparent") : "bg-surface border-[#C8D3E3] dark:border-control text-ink hover:border-navy"
                 )}
               >
@@ -683,7 +683,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 {!narrow && <span className="hidden md:inline">{t.label}</span>}
                 <span
                   className={cn(
-                    "min-w-[22px] px-1.5 py-[3px] rounded-full text-[12px] font-semibold leading-none tabular-nums",
+                    "min-w-[18px] md:min-w-[22px] px-1 md:px-1.5 py-[2px] md:py-[3px] rounded-full text-[11px] md:text-[12px] font-semibold leading-none tabular-nums",
                     isActive ? "bg-black/20 text-white" : "bg-[#F1F4F9] dark:bg-subtle text-ink-2"
                   )}
                 >
@@ -894,7 +894,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                     aria-label={`Save: ${rowTitle(job)}`}
                     aria-pressed={isSaved(job.id)}
                   >
-                    <Bookmark className={cn("w-4 h-4", isSaved(job.id) && "fill-saffron-bright")} />
+                    <Bookmark className={cn("w-3.5 h-3.5", isSaved(job.id) && "fill-saffron-bright")} />
                   </button>
                 }
               />

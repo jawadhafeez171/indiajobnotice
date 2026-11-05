@@ -164,8 +164,8 @@ export default async function HomePage() {
             </form>
           </section>
 
-          {/* Alerts: both channels, each in its own brand colour */}
-          <section aria-label="Job alerts" className="space-y-2.5">
+          {/* Alerts: both channels, each in its own brand colour (phones have them in the footer) */}
+          <section aria-label="Job alerts" className="hidden sm:block space-y-2.5">
             <a
               href="https://t.me/india_jobnotice"
               target="_blank"
