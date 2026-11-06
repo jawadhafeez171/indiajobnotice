@@ -149,7 +149,7 @@ export function generateJobStructuredData(job: JobNotification, canonicalUrl: st
         name: job.title,
         description: jobSeoDescription(job),
         url: canonicalUrl,
-        dateModified: new Date().toISOString(),
+        dateModified: new Date(job.lastVerifiedDate || "2026-10-23").toISOString(),
       };
 
   return {
