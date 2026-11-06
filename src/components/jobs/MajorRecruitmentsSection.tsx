@@ -16,7 +16,7 @@ import {
 } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
 import { noticeArea } from "@/lib/internal-links";
-import { JobListCard, JobRow, JobDeadline, STATUS_STYLE, qualificationLabel, rowTitle, placeLabel, termsLabel, withoutAdvtNo } from "./JobListCard";
+import { JOB_KINDS, JobListCard, JobRow, JobDeadline, STATUS_STYLE, qualificationLabel, rowTitle, placeLabel, termsLabel, withoutAdvtNo } from "./JobListCard";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
 import { useWatchlist } from "@/lib/watchlist";
 import { getStateBySlug } from "@/config/states";
@@ -171,6 +171,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedQualification, setSelectedQualification] = useState("ALL");
+  const [selectedKind, setSelectedKind] = useState("ALL");
   const [selectedScope, setSelectedScope] = useState<"ALL" | "CENTRAL" | "STATE">("ALL");
   const [selectedState, setSelectedState] = useState("ALL");
   const [myAge, setMyAge] = useState<number | null>(null);
@@ -224,18 +225,20 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
     // search from the home page hero: /?q=...
     const applyQuery = (fromSearch = false, focus = false) => {
       const u = new URLSearchParams(window.location.search);
-      const keys = ["q", "state", "qual", "sector", "scope", "stage", "age"];
+      const keys = ["q", "state", "qual", "sector", "only", "scope", "stage", "age"];
       if (!fromSearch && !keys.some((k) => u.get(k))) return;
       const q = u.get("q") || "";
       const stage = STAGE_PARAM[u.get("stage") || ""];
       const qual = u.get("qual") || "";
       const sector = u.get("sector") || "";
+      const only = u.get("only") || "";
       const scope = (u.get("scope") || "").toUpperCase();
       const age = Number(u.get("age"));
       setSearchQuery(q);
       setSelectedState(u.get("state") || "ALL");
       setSelectedQualification(QUALIFICATIONS.some((x) => x.value === qual) ? qual : "ALL");
       setSelectedCategory(JOB_CATEGORIES.includes(sector) ? sector : "ALL");
+      setSelectedKind(JOB_KINDS.some((k) => k.value === only) ? only : "ALL");
       setSelectedScope(scope === "CENTRAL" || scope === "STATE" ? scope : "ALL");
       setMyAge(age >= 14 && age <= 70 ? age : null);
       // a search looks at every stage unless one was chosen
@@ -297,8 +300,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
 
   // Check if any filter is actively applied
   const hasActiveFilters = searchQuery.trim() !== "" || selectedCategory !== "ALL" || selectedQualification !== "ALL"
-    || selectedScope !== "ALL" || selectedState !== "ALL" || myAge !== null;
-  const facetCount = [selectedCategory !== "ALL", selectedQualification !== "ALL", selectedScope !== "ALL",
+    || selectedKind !== "ALL" || selectedScope !== "ALL" || selectedState !== "ALL" || myAge !== null;
+  const facetCount = [selectedCategory !== "ALL", selectedQualification !== "ALL", selectedKind !== "ALL", selectedScope !== "ALL",
     selectedState !== "ALL", myAge !== null].filter(Boolean).length;
 
   useEffect(() => {
@@ -313,6 +316,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
     setSearchQuery("");
     setSelectedCategory("ALL");
     setSelectedQualification("ALL");
+    setSelectedKind("ALL");
     setSelectedScope("ALL");
     setSelectedState("ALL");
     setMyAge(null);
@@ -344,6 +348,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       if (selectedQualification === "tech" && !quals.includes("iti") && !quals.includes("diploma") && !quals.includes("engineering") && !quals.includes("tech")) return false;
       if (selectedQualification === "teaching" && !quals.includes("b.ed") && !quals.includes("d.el.ed") && !quals.includes("ctet") && !quals.includes("stet")) return false;
     }
+    if (selectedKind !== "ALL" && !JOB_KINDS.find((k) => k.value === selectedKind)?.test(j)) return false;
     if (selectedScope === "CENTRAL" && !j.isCentral) return false;
     if (selectedScope === "STATE" && j.isCentral) return false;
     // a state shows its own jobs plus central ones (open to everyone)
@@ -382,7 +387,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
         || b.totalVacancies - a.totalVacancies;
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobs, activeCategory, words, broad, selectedCategory, selectedQualification, selectedScope, selectedState, myAge, majorOn]);
+  }, [jobs, activeCategory, words, broad, selectedCategory, selectedQualification, selectedKind, selectedScope, selectedState, myAge, majorOn]);
 
   // what the list draws: day headings, jobs, and "N more from <body>" rows (Open / Closing tabs)
   const grouped = viewMode === "ledger" && (activeCategory === "APPLY_OPEN" || activeCategory === "CLOSING_SOON");
@@ -504,7 +509,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
 
     return counts;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobs, selectedCategory, selectedQualification, selectedScope, selectedState, myAge, words, broad, majorOn]);
+  }, [jobs, selectedCategory, selectedQualification, selectedKind, selectedScope, selectedState, myAge, words, broad, majorOn]);
 
   // the home page's own search box shows what the list is filtered by (cleared chip, Back button)
   useEffect(() => {
@@ -724,6 +729,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 label: QUALIFICATIONS.find((q) => q.value === selectedQualification)?.label || selectedQualification,
                 clear: () => setSelectedQualification("ALL"),
               },
+              selectedKind !== "ALL" && {
+                label: JOB_KINDS.find((k) => k.value === selectedKind)?.label || selectedKind,
+                clear: () => setSelectedKind("ALL"),
+              },
               selectedScope !== "ALL" && {
                 label: selectedScope === "CENTRAL" ? "Central government" : "State government",
                 clear: () => setSelectedScope("ALL"),
@@ -836,6 +845,17 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
               <option key={q.value} value={q.value}>{q.label}</option>
             ))}
           </select>
+          <select
+            value={selectedKind}
+            onChange={(e) => setSelectedKind(e.target.value)}
+            aria-label="Show only"
+            className="w-full md:w-auto px-3 min-h-[44px] md:min-h-[38px] text-[15px] md:text-sm bg-surface border border-line rounded-lg text-ink focus:outline-none focus:border-navy"
+          >
+            <option value="ALL">All jobs</option>
+            {JOB_KINDS.map((k) => (
+              <option key={k.value} value={k.value}>{k.label}</option>
+            ))}
+          </select>
           <div className="flex rounded-lg border border-line bg-surface p-0.5 min-h-[44px] md:min-h-[38px]">
             {(["ALL", "CENTRAL", "STATE"] as const).map((sc) => (
               <button
@@ -885,7 +905,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 title={titleOf(job)}
                 exam={activeCategory === "EXAM_DATES" || job.status === "ADMIT_CARD_OUT" ? nextExamDate(job) : undefined}
                 showStage={activeCategory === "ALL"}
-                note={activeCategory === "TODAY" ? todayChange(job)?.label : undefined}
+                note={activeCategory === "TODAY" ? (todayChange(job)?.kind === "new" ? "New" : todayChange(job)?.label) : undefined}
                 action={
                   <button
                     onClick={() => toggleSave(job.id)}

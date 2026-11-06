@@ -157,9 +157,31 @@ function postNames(job: JobNotification): string {
 /** "Contract" / "Deputation" for the row's grey line (the title no longer says it). */
 export function termsLabel(job: JobNotification): string | null {
   if (/deputation/i.test(job.title)) return "Deputation";
-  if (/contract|outsourc|ad[- ]?hoc|locum|tenure\s+posts?|temporary/i.test(job.title)) return "Contract";
+  if (CONTRACT.test(job.title)) return "Contract";
   return null;
 }
+
+const CONTRACT = /contract(?!or)|outsourc|ad[- ]?hoc|locum|tenure|temporary|fixed[- ]term|guest\s+(?:faculty|lecturer|teacher)/i;
+// retired people: the title, or a pay line written for them; a mention of ex-servicemen elsewhere is
+// only a reservation or an age relaxation
+const FOR_RETIRED = /\bretired\b|\bretd\b|superannuat|pensioner|re-?employ|ex-?servicem[ae]n/i;
+const RETIRED_PAY = /\bretired\b|\bretd\b/i;
+// a PSU goes by its registered name; ESIC, municipal and city corporations, co-operatives and banks
+// (a type of their own) are not
+const PSU = /\b(?:limited|ltd)\b|corporation|\bnigam\b|airports authority/i;
+const NOT_PSU = /municipal|city corporation|greater \w+ corporation|employees'? state insurance|co-?operative|sahakari|\bbank\b/i;
+
+/** The "Show only" filter of the job list. */
+export const JOB_KINDS: { value: string; label: string; test: (job: JobNotification) => boolean }[] = [
+  {
+    value: "contract",
+    label: "Contract jobs",
+    test: (j) => termsLabel(j) === "Contract" || CONTRACT.test([...j.keyHighlights, ...(j.posts || []).map((p) => p.postName)].join(" ")),
+  },
+  { value: "retired", label: "For retired people", test: (j) => FOR_RETIRED.test(j.title) || RETIRED_PAY.test(j.salary) },
+  { value: "walkin", label: "Walk-in interviews", test: (j) => !!j.isWalkIn || /walk[- ]?in/i.test(j.title) },
+  { value: "psu", label: "PSU jobs", test: (j) => PSU.test(j.organization) && !NOT_PSU.test(j.organization) },
+];
 // a title that names no post at all: the posts the notice lists say more
 const GENERIC_TITLE = /^(employment|recruitment|job|vacancy)\s+(notification|notice|advertisement)\b[^a-z]*$/i;
 // advertisement / notice numbers ("Advt. No. 25/2025", "(Advt. 01/2026)", "Notification No. 12/2025"):
@@ -406,17 +428,18 @@ export function JobRow({ job, exam, action, title, showStage = false, note }: {
   title?: string;
   /** Say the stage in words (lists that mix stages: All, search results); the dot alone is colour only. */
   showStage?: boolean;
-  /** What changed today ("New notice", "Result"), shown before the title in the Today list. */
+  /** What changed today ("New", "Result"), shown before the title in the Today list. */
   note?: string;
 }) {
   const style = STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING;
+  // phones keep the short facts, so the line is not cut off: terms and qualification are on the job page
   const meta = [
-    showStage ? style.label : null,
-    placeLabel(job),
-    termsLabel(job),
-    job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} post${job.totalVacancies === 1 ? "" : "s"}` : null,
-    qualificationLabel(job),
-  ].filter(Boolean);
+    { text: showStage ? style.label : null },
+    { text: placeLabel(job) },
+    { text: termsLabel(job), wide: true },
+    { text: job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} post${job.totalVacancies === 1 ? "" : "s"}` : null },
+    { text: qualificationLabel(job), wide: true },
+  ].filter((m) => m.text);
 
   return (
     <div className="relative flex gap-3 pl-3 pr-1.5 pt-3 pb-1.5 hover:bg-subtle active:bg-subtle transition-colors">
@@ -431,7 +454,11 @@ export function JobRow({ job, exam, action, title, showStage = false, note }: {
           <span className="sr-only">, {job.organization}, {deadlineText(job, exam)}</span>
         </Link>
         <div className="flex items-center gap-2 text-[11px] leading-tight">
-          <p className="min-w-0 flex-1 truncate text-muted">{meta.join(" · ")}</p>
+          <p className="min-w-0 flex-1 truncate text-muted">
+            {meta.map((m, i) => (
+              <span key={m.text} className={m.wide ? "hidden sm:inline" : undefined}>{i > 0 && " · "}{m.text}</span>
+            ))}
+          </p>
           <p className="shrink-0 whitespace-nowrap">
             <RowDate job={job} exam={exam} />
           </p>

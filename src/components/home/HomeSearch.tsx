@@ -4,18 +4,19 @@ import React, { useEffect, useRef, useState } from "react";
 import { Search, SlidersHorizontal, ChevronDown, X } from "lucide-react";
 import { STATES_REGISTRY } from "@/config/states";
 import { JOB_CATEGORIES, QUALIFICATIONS } from "@/components/jobs/MajorRecruitmentsSection";
+import { JOB_KINDS } from "@/components/jobs/JobListCard";
 import { cn } from "@/lib/utils";
 
 const field =
   "w-full h-11 px-3 rounded-lg border border-control bg-surface text-[15px] sm:text-sm text-ink focus:border-navy";
 
 const LONG_HINT = "Search jobs, e.g. SSC, Police, Railway, Karnataka";
-const FILTER_KEYS = ["state", "qual", "sector", "scope", "age"];
+const FILTER_KEYS = ["state", "qual", "only", "sector", "scope", "age"];
 const SHORT_HINT = "Search jobs, e.g. SSC";
 
 /**
  * Search band under the home page hero: one search box, and "Advanced search" with every filter
- * of the job list (state, qualification, sector, central/state, age; the stage is the list's tabs). It sends the visitor to
+ * of the job list (state, qualification, contract/retired/walk-in/PSU, sector, central/state, age; the stage is the list's tabs). It sends the visitor to
  * /?q=..&state=.. where the list reads the filters and scrolls into view.
  */
 export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode; onDark?: boolean }) {
@@ -25,7 +26,7 @@ export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode;
   const [hasText, setHasText] = useState(false);
   // filters in use (from the address): shown as a count on the Filters button
   const [active, setActive] = useState(0);
-  // phones show State and Qualification; the other filters behind "More filters"
+  // phones show State, Qualification and Show only; the other filters behind "More filters"
   const [more, setMore] = useState(false);
   const boxRef = useRef<HTMLInputElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -219,6 +220,15 @@ export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode;
               <select name="qual" defaultValue="ALL" className={field}>
                 {QUALIFICATIONS.map((q) => (
                   <option key={q.value} value={q.value}>{q.value === "ALL" ? "Any qualification" : q.label}</option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="block text-[12px] font-semibold text-muted mb-1">Show only</span>
+              <select name="only" defaultValue="ALL" className={field}>
+                <option value="ALL">All jobs</option>
+                {JOB_KINDS.map((k) => (
+                  <option key={k.value} value={k.value}>{k.label}</option>
                 ))}
               </select>
             </label>
