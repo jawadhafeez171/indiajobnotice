@@ -360,7 +360,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
 
   const resetAllFilters = () => {
     clearFacets();
-    setActiveCategory("ALL");
+    setActiveCategory("APPLY_OPEN");
     const u = new URLSearchParams(window.location.search);
     if (u.has("stage")) {
       u.delete("stage");
