@@ -15,7 +15,7 @@ import {
   Copy,
   Check,
 } from "lucide-react";
-import { JobNotification, getExamDates, getLatestResults, daysUntil, todayIST } from "@/data/jobs";
+import { JobNotification, isOpenOrOpening, getExamDates, getLatestResults, daysUntil, todayIST } from "@/data/jobs";
 import { formatDate, formatDateShort, cn } from "@/lib/utils";
 import { rowTitle, placeLabel } from "@/components/jobs/JobListCard";
 import { generateGoogleCalendarUrl, downloadIcsFile, downloadCombinedIcsFile, CalendarEventParams } from "@/lib/calendar";
@@ -74,8 +74,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
       code: job.orgShortCode, place: placeLabel(job),
     });
     for (const job of jobs) {
-      const open = job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
-      if (open && job.applicationEndDate && job.applicationEndDate >= today) {
+      if (isOpenOrOpening(job) && job.applicationEndDate && job.applicationEndDate >= today) {
         events.push({ ...base(job), id: `${job.id}-deadline`, eventType: "DEADLINE",
           dateStr: job.applicationEndDate, rawDateLabel: formatDate(job.applicationEndDate) });
       }

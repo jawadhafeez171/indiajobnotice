@@ -275,6 +275,16 @@ export function JobDeadline({ job, exam }: { job: JobNotification; exam?: ExamDa
     );
   }
   const open = job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
+  if (job.status === "UPCOMING" && job.applicationStartDate) {
+    return (
+      <>
+        <span className="text-ink-2">Opens <b className="text-ink">{formatDateShort(job.applicationStartDate)}</b></span>
+        {job.applicationEndDate && (
+          <span className="text-[12px] text-muted">Last date {formatDateShort(job.applicationEndDate)}</span>
+        )}
+      </>
+    );
+  }
   if (open && job.applicationEndDate) {
     const soon = closesIn(job.applicationEndDate);
     return (
@@ -394,6 +404,15 @@ function RowDate({ job, exam }: { job: JobNotification; exam?: ExamDateEntry | n
       </>
     );
   }
+  if (job.status === "UPCOMING" && job.applicationStartDate) {
+    return (
+      <>
+        <span className="text-muted">Opens </span>
+        <b className="text-ink">{formatDateShort(job.applicationStartDate)}</b>
+        {job.applicationEndDate && <span className="text-muted"> · closes {formatDateShort(job.applicationEndDate)}</span>}
+      </>
+    );
+  }
   if (open && job.applicationEndDate) {
     const soon = closesIn(job.applicationEndDate);
     return (
@@ -422,6 +441,10 @@ function RowDate({ job, exam }: { job: JobNotification; exam?: ExamDateEntry | n
 function deadlineText(job: JobNotification, exam?: ExamDateEntry | null): string {
   const open = job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
   if (exam) return `exam ${formatDateShort(exam.date)}`;
+  if (job.status === "UPCOMING" && job.applicationStartDate) {
+    const end = job.applicationEndDate ? `, last date ${formatDateShort(job.applicationEndDate)}` : "";
+    return `opens ${formatDateShort(job.applicationStartDate)}${end}`;
+  }
   if (open && job.applicationEndDate) return `${job.isWalkIn ? "walk-in" : "last date"} ${formatDateShort(job.applicationEndDate)}`;
   return (job.inProgress && stageSummary(job)) || (STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING).label;
 }

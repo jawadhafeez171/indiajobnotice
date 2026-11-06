@@ -6,7 +6,7 @@ const dayMon = (iso: string) => `${Number(iso.slice(8, 10))} ${MON[Number(iso.sl
 
 /** Year of the recruitment: the notification's own dates, else today (IST). */
 export function jobYear(job: JobNotification): string {
-  return (job.applicationStartDate || job.applicationEndDate || todayIST()).slice(0, 4);
+  return (job.applicationStartDate || job.notificationDate || job.applicationEndDate || todayIST()).slice(0, 4);
 }
 
 /** The short title without a cut-off ending ("… posts in…" -> "… posts"). */

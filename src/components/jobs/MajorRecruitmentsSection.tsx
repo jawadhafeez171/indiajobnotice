@@ -13,6 +13,7 @@ import {
   todayChange,
   TODAY_ORDER,
   type JobStage,
+  isOpenOrOpening,
 } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
 import { noticeArea } from "@/lib/internal-links";
@@ -197,6 +198,42 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
     c.scrollTo({ left: c.scrollLeft + br.left - cr.left - (cr.width - br.width) / 2, behavior: "smooth" });
   }, [activeCategory]);
 
+  const clearFacets = () => {
+    setSearchQuery("");
+    setSelectedCategory("ALL");
+    setSelectedQualification("ALL");
+    setSelectedKind("ALL");
+    setSelectedScope("ALL");
+    setSelectedState("ALL");
+    setMyAge(null);
+  };
+
+  // The address keeps a search from the home page. A filter changed or cleared here leaves the address
+  // too, so a reload does not bring it back, and the search panel is told to show the same thing.
+  const filterKey = [searchQuery, selectedState, selectedQualification, selectedCategory, selectedKind, selectedScope, myAge].join("|");
+  const lastFilters = useRef(filterKey);
+  useEffect(() => {
+    if (lastFilters.current === filterKey) return;
+    lastFilters.current = filterKey;
+    const u = new URLSearchParams(window.location.search);
+    const now: Record<string, string> = {
+      q: searchQuery, state: selectedState, qual: selectedQualification, sector: selectedCategory,
+      only: selectedKind, scope: selectedScope, age: myAge === null ? "" : String(myAge),
+    };
+    let changed = false;
+    for (const [key, raw] of Object.entries(now)) {
+      const value = raw === "ALL" ? "" : raw;
+      if (!u.has(key) || (u.get(key) || "").toLowerCase() === value.toLowerCase()) continue;
+      if (value) u.set(key, value);
+      else u.delete(key);
+      changed = true;
+    }
+    if (!changed) return;
+    const qs = u.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`);
+    window.dispatchEvent(new Event("ijn:filters"));
+  }, [filterKey, searchQuery, selectedState, selectedQualification, selectedCategory, selectedKind, selectedScope, myAge]);
+
   // Listen to hash changes (e.g., from hero counter clicks)
   useEffect(() => {
     const handleHash = () => {
@@ -264,11 +301,18 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       lastSearch = window.location.search;
       applyQuery(true);
     };
+    // Clear in the search panel: every filter goes, the tab stays
+    const onClear = () => {
+      lastSearch = window.location.search;
+      clearFacets();
+    };
     window.addEventListener("ijn:query", onSearch);
+    window.addEventListener("ijn:clear", onClear);
     window.addEventListener("popstate", onBack);
     window.addEventListener("hashchange", handleHash);
     return () => {
       window.removeEventListener("ijn:query", onSearch);
+      window.removeEventListener("ijn:clear", onClear);
       window.removeEventListener("popstate", onBack);
       window.removeEventListener("hashchange", handleHash);
     };
@@ -280,7 +324,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       case "TODAY":
         return todayChange(job) !== null;
       case "APPLY_OPEN":
-        return job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR";
+        return isOpenOrOpening(job);
       case "CLOSING_SOON": {
         if (job.status === "LAST_DATE_NEAR") return true;
         const days = getDaysRemaining(job.applicationEndDate);
@@ -315,14 +359,14 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
   }, [activeCategory, majorOnly]);
 
   const resetAllFilters = () => {
-    setSearchQuery("");
-    setSelectedCategory("ALL");
-    setSelectedQualification("ALL");
-    setSelectedKind("ALL");
-    setSelectedScope("ALL");
-    setSelectedState("ALL");
-    setMyAge(null);
+    clearFacets();
     setActiveCategory("ALL");
+    const u = new URLSearchParams(window.location.search);
+    if (u.has("stage")) {
+      u.delete("stage");
+      const qs = u.toString();
+      window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`);
+    }
   };
 
   const words = useMemo(() => searchWords(searchQuery), [searchQuery]);
@@ -383,7 +427,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
         return rank(a) - rank(b) || b.totalVacancies - a.totalVacancies;
       }
       const rank = (j: JobNotification) =>
-        j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR" ? 0
+        isOpenOrOpening(j) ? 0
           : j.status === "ADMIT_CARD_OUT" || j.status === "RESULT_OUT" ? 1 : 2;
       return rank(a) - rank(b)
         || (a.applicationEndDate || "9999").localeCompare(b.applicationEndDate || "9999")
@@ -767,20 +811,20 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 onClick={() => setMajorOnly(!majorOnly)}
                 aria-checked={majorOnly}
                 title={`Show only recruitments with ${MAJOR_POSTS} or more posts`}
-                className="group flex items-center gap-2 pl-3 pr-1.5 min-h-[44px] md:min-h-[36px] rounded-full border border-line bg-surface text-[13px] font-semibold text-ink-2 whitespace-nowrap hover:border-navy"
+                className="group relative flex items-center gap-1.5 md:gap-2 pl-2.5 md:pl-3 pr-1 md:pr-1.5 h-[30px] md:h-auto md:min-h-[36px] before:absolute before:inset-x-0 before:-inset-y-2 md:before:hidden rounded-full border border-line bg-surface text-[12px] md:text-[13px] font-semibold text-ink-2 whitespace-nowrap hover:border-navy"
               >
-                {MAJOR_POSTS}+ posts only
+                <span>{MAJOR_POSTS}+ posts<span className="hidden md:inline"> only</span></span>
                 <span
                   className={cn(
-                    "relative w-9 h-5 rounded-full transition-colors",
+                    "relative w-7 h-4 md:w-9 md:h-5 rounded-full transition-colors",
                     majorOnly ? "bg-navy-solid" : "bg-line"
                   )}
                   aria-hidden
                 >
                   <span
                     className={cn(
-                      "absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform",
-                      majorOnly && "translate-x-4"
+                      "absolute top-0.5 left-0.5 w-3 h-3 md:w-4 md:h-4 rounded-full bg-white shadow-sm transition-transform",
+                      majorOnly && "translate-x-3 md:translate-x-4"
                     )}
                   />
                 </span>

@@ -1,3 +1,4 @@
+import { isOpenOrOpening } from "@/data/jobs";
 import { safeJson } from "@/lib/json-ld";
 import React from "react";
 import Link from "next/link";
@@ -28,7 +29,7 @@ const KNOWN_GAPS: Record<string, { text: string; href: string; site: string }> =
  */
 export async function CategoryHubView({ hub, parentCrumb }: Props) {
   const jobs = getJobsForHub(await getAllJobs(), hub);
-  const open = jobs.filter((j) => j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR");
+  const open = jobs.filter(isOpenOrOpening);
   const openPosts = open.reduce((n, j) => n + (j.totalVacancies || 0), 0);
   const underWay = jobs.filter((j) => j.inProgress).length;
   const gap = KNOWN_GAPS[hub.slug];

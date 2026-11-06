@@ -1,3 +1,4 @@
+import { isOpenOrOpening } from "@/data/jobs";
 import { safeJson } from "@/lib/json-ld";
 import React from "react";
 import type { Metadata } from "next";
@@ -67,7 +68,7 @@ export default async function StateQualificationPage({ params }: Props) {
   }
 
   const jobs = getJobsForStateQualHub(await getAllJobs(), hub);
-  const open = jobs.filter((j) => j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR");
+  const open = jobs.filter(isOpenOrOpening);
   const openPosts = open.reduce((n, j) => n + (j.totalVacancies || 0), 0);
   const underWay = jobs.filter((j) => j.inProgress).length;
 

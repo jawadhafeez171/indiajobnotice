@@ -112,6 +112,9 @@ export function DatesAndApply({ job }: { job: JobNotification }) {
   if (job.applicationStartDate && !job.isWalkIn) {
     steps.push({ key: "open", label: "Applications open", sortKey: job.applicationStartDate,
       when: job.applicationStartDate <= today ? "done" : "next", value: formatDate(job.applicationStartDate) });
+  } else if (job.notificationDate) {
+    steps.push({ key: "notice", label: "Notice dated", sortKey: job.notificationDate, when: "done",
+      value: formatDate(job.notificationDate) });
   }
   const pastApplying = closed || (job.stages || []).length > 0;
   if (end || !pastApplying) steps.push({

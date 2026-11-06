@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { JobNotification, formatAgeRange, getJobCanonicalPath } from "@/data/jobs";
+import { JobNotification, formatAgeRange, isOpenOrOpening, getJobCanonicalPath } from "@/data/jobs";
 import { STATUS_STYLE, qualificationLabel, rowTitle, placeLabel } from "@/components/jobs/JobListCard";
 import { formatDateShort, getDaysRemaining, cn } from "@/lib/utils";
 import { ArrowRight, Printer } from "lucide-react";
@@ -95,7 +95,7 @@ export const QUALIFICATION_TIERS: QualificationTier[] = [
 ];
 
 const SCREEN_ROWS = 25;
-const isOpen = (j: JobNotification) => j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR";
+const isOpen = isOpenOrOpening;
 
 /**
  * Vacancies by qualification: pick a level, see its recruitments (nearest last date first) and print
@@ -209,7 +209,7 @@ export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] 
                       {job.applicationEndDate ? (
                         <>
                           <b className="text-ink">{formatDateShort(job.applicationEndDate)}</b>
-                          {isOpen(job) && days >= 0 && (
+                          {isOpen(job) && job.status !== "UPCOMING" && days >= 0 && (
                             <span className={cn("block text-[12px] font-semibold", job.status === "LAST_DATE_NEAR" ? "text-saffron" : "text-green")}>
                               {days === 0 ? "Closes today" : `${days} day${days === 1 ? "" : "s"} left`}
                             </span>

@@ -113,7 +113,7 @@ export function generateJobStructuredData(job: JobNotification, canonicalUrl: st
         title: job.title,
         description: jobPostingDescription(job),
         // a fixed date: the notice's own start date, else the day the site added it
-        datePosted: new Date(job.applicationStartDate || job.lastVerifiedDate || "2026-10-30").toISOString(),
+        datePosted: new Date(job.notificationDate || job.applicationStartDate || job.lastVerifiedDate || "2026-10-30").toISOString(),
         dateModified: new Date(job.lastVerifiedDate || "2026-10-23").toISOString(),
         validThrough: job.applicationEndDate ? new Date(`${job.applicationEndDate}T23:59:59Z`).toISOString() : undefined,
         employmentType: "FULL_TIME",

@@ -12,6 +12,26 @@ const field =
 
 const LONG_HINT = "Search jobs, e.g. SSC, Police, Railway, Karnataka";
 const FILTER_KEYS = ["state", "qual", "only", "sector", "scope", "age"];
+
+/** Show the filters in the address in the panel's boxes: a reload, Back or a change in the list. */
+function fillFromAddress(form: HTMLFormElement, u: URLSearchParams) {
+  const only = u.get("only");
+  const sector = u.get("sector");
+  const want: Record<string, string> = {
+    state: u.get("state") || "ALL",
+    qual: u.get("qual") || "ALL",
+    type: only ? `only:${only}` : sector ? `sector:${sector}` : "ALL",
+    scope: (u.get("scope") || "").toLowerCase() || "ALL",
+  };
+  for (const [name, value] of Object.entries(want)) {
+    const box = form.elements.namedItem(name) as HTMLSelectElement | null;
+    if (!box) continue;
+    box.value = value;
+    if (box.selectedIndex < 0) box.value = "ALL";
+  }
+  const age = form.elements.namedItem("age") as HTMLInputElement | null;
+  if (age) age.value = u.get("age") || "";
+}
 const SHORT_HINT = "Search jobs, e.g. SSC";
 
 /**
@@ -36,12 +56,15 @@ export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode;
         setHasText(!!boxRef.current?.value);
         const u = new URLSearchParams(window.location.search);
         setActive(FILTER_KEYS.filter((k) => u.get(k)).length);
+        if (boxRef.current?.form) fillFromAddress(boxRef.current.form, u);
       }, 0);
     look();
     window.addEventListener("ijn:query", look);
+    window.addEventListener("ijn:filters", look);
     window.addEventListener("popstate", look);
     return () => {
       window.removeEventListener("ijn:query", look);
+      window.removeEventListener("ijn:filters", look);
       window.removeEventListener("popstate", look);
     };
   }, []);
@@ -67,6 +90,14 @@ export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode;
     if (new URLSearchParams(window.location.search).get("q")) box.form?.requestSubmit();
   };
 
+  // Clear: the boxes empty themselves (a reset form); take the filters off the list and the address too
+  const clearAll = () => {
+    setHasText(false);
+    setActive(0);
+    if (window.location.search) window.history.pushState(null, "", `/${window.location.hash}`);
+    window.dispatchEvent(new Event("ijn:clear"));
+  };
+
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -88,7 +119,7 @@ export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode;
 
   return (
     <section aria-label="Search government jobs">
-      <form onSubmit={submit} role="search">
+      <form onSubmit={submit} onReset={clearAll} role="search">
         {/* on the navy hero: one slim white pill, lifted by a shadow rather than outlined, with the
             filters button and Search inside it; 48px tall on wide screens, 44px tap targets on phones */}
         <div

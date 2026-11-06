@@ -1,4 +1,4 @@
-import { JobNotification } from "@/data/jobs";
+import { JobNotification, isOpenOrOpening } from "@/data/jobs";
 import { getStateBySlug, StateInfo } from "@/config/states";
 import { 
   QUALIFICATION_HUBS, 
@@ -318,7 +318,7 @@ export function getGenuinelyRelatedOpportunities(
     }
 
     // Boost if currently accepting applications; other bodies' closed notices are not suggested
-    const candidateOpen = candidate.status === "APPLY_OPEN" || candidate.status === "LAST_DATE_NEAR";
+    const candidateOpen = isOpenOrOpening(candidate);
     if (candidateOpen) {
       score += 15;
     } else if (type !== "organisation") {

@@ -37,6 +37,8 @@ export interface JobNotification {
   ageCutoffDate?: string; // Official cutoff date for age determination, e.g., '2026-08-01'
   salary: string;
   applicationStartDate: string;
+  /** The date printed on the notice, when it gives no start date for applications. Not an opening date. */
+  notificationDate?: string;
   applicationEndDate: string;
   admitCardDate?: string;
   examDate?: string;
@@ -352,11 +354,11 @@ export function getLatestResults(jobs: JobNotification[], days = 45, today = tod
  */
 export function ofThisRecruitment(
   s: JobStage,
-  job: Pick<JobNotification, "applicationStartDate" | "applicationEndDate">,
+  job: Pick<JobNotification, "applicationStartDate" | "applicationEndDate" | "notificationDate">,
   today = todayIST(),
 ): boolean {
   if (s.kind === "schedule") return true;
-  const start = job.applicationStartDate || "";
+  const start = job.applicationStartDate || job.notificationDate || "";
   const end = job.applicationEndDate || "";
   if (s.date && start && s.date < start) return false;
   return !(end && end >= today && (!s.date || s.date < end));
@@ -488,6 +490,11 @@ export function getJobBySlug(jobs: JobNotification[], slug: string): JobNotifica
   return jobs.find(
     (job) => job.slug.toLowerCase() === slug.toLowerCase()
   );
+}
+
+/** Taking applications, or will from a stated date: a job people can still apply to. */
+export function isOpenOrOpening(job: Pick<JobNotification, "status">): boolean {
+  return job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR" || job.status === "UPCOMING";
 }
 
 export function isJobApplicationClosed(job: JobNotification): boolean {
