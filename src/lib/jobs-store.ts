@@ -17,7 +17,32 @@ function db(): postgres.Sql | null {
   return sql;
 }
 
+// Localhost reads a saved copy, so testing does not use the live database's data allowance. The first
+// load makes it; `npm run jobs:refresh` deletes it and the next load fetches a fresh one.
+const SNAPSHOT = ".local/jobs-snapshot.json";
+
+async function readSnapshot(): Promise<JobNotification[] | null> {
+  const { readFile } = await import("node:fs/promises");
+  try {
+    return JSON.parse(await readFile(SNAPSHOT, "utf8")) as JobNotification[];
+  } catch {
+    return null;
+  }
+}
+
+async function saveSnapshot(jobs: JobNotification[]): Promise<void> {
+  const { mkdir, writeFile } = await import("node:fs/promises");
+  await mkdir(".local", { recursive: true });
+  await writeFile(SNAPSHOT, JSON.stringify(jobs));
+}
+
+const dev = process.env.NODE_ENV === "development";
+
 async function loadJobs(): Promise<JobNotification[]> {
+  if (dev) {
+    const saved = await readSnapshot();
+    if (saved) return saved;
+  }
   const conn = db();
   if (!conn) {
     console.warn("JOBS_DATABASE_URL is not set: no jobs to show");
@@ -26,11 +51,15 @@ async function loadJobs(): Promise<JobNotification[]> {
   const rows = await conn<{ data: string; at: string | null }[]>`
     select data, coalesce(published_at, created_at)::text as at from notices where status = 'published'
     order by coalesce(published_at, created_at) desc`;
-  return rows.map((r) => ({ ...(JSON.parse(r.data) as JobNotification), publishedAt: r.at || undefined }));
+  const jobs = rows.map((r) => ({ ...(JSON.parse(r.data) as JobNotification), publishedAt: r.at || undefined }));
+  if (dev) await saveSnapshot(jobs);
+  return jobs;
 }
 
-// Cached for an hour and refreshed at once when the agent publishes (POST /api/revalidate, tag "jobs").
-const cachedJobs = unstable_cache(loadJobs, ["published-jobs"], { tags: ["jobs"], revalidate: 3600 });
+// Cached for a day and refreshed at once after every agent run and approval (POST /api/revalidate, tag
+// "jobs"). Each load is the whole list, so this is what the site's database use comes down to. Statuses
+// and days left are worked out below on every request, so they stay right however old the copy is.
+const cachedJobs = dev ? loadJobs : unstable_cache(loadJobs, ["published-jobs"], { tags: ["jobs"], revalidate: 86400 });
 
 /** Every published job, with its status worked out from today's date. */
 const SMALL_WORDS = new Set(["of", "the", "and", "for", "in", "&", "at", "to", "office"]);

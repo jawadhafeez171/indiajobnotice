@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "jobs:refresh": "node -e \"require('fs').rmSync('.local/jobs-snapshot.json',{force:true})\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
