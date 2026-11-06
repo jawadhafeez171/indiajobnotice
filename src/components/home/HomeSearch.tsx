@@ -16,7 +16,7 @@ const SHORT_HINT = "Search jobs, e.g. SSC";
 
 /**
  * Search band under the home page hero: one search box, and "Advanced search" with every filter
- * of the job list (state, qualification, contract/retired/walk-in/PSU, sector, central/state, age; the stage is the list's tabs). It sends the visitor to
+ * of the job list (state, qualification, type of job, central/state, age; the stage is the list's tabs). It sends the visitor to
  * /?q=..&state=.. where the list reads the filters and scrolls into view.
  */
 export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode; onDark?: boolean }) {
@@ -26,7 +26,7 @@ export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode;
   const [hasText, setHasText] = useState(false);
   // filters in use (from the address): shown as a count on the Filters button
   const [active, setActive] = useState(0);
-  // phones show State, Qualification and Show only; the other filters behind "More filters"
+  // phones show State, Qualification and Type of job; the other filters behind "More filters"
   const [more, setMore] = useState(false);
   const boxRef = useRef<HTMLInputElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -73,7 +73,10 @@ export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode;
     const params = new URLSearchParams();
     for (const [k, v] of data.entries()) {
       const val = String(v).trim();
-      if (val && val !== "ALL") params.set(k, val);
+      if (!val || val === "ALL") continue;
+      // one box for two filters: "only:psu" or "sector:Banking / Insurance"
+      if (k === "type") params.set(val.slice(0, val.indexOf(":")), val.slice(val.indexOf(":") + 1));
+      else params.set(k, val);
     }
     const qs = params.toString();
     setOpen(false);
@@ -224,24 +227,22 @@ export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode;
               </select>
             </label>
             <label className="block">
-              <span className="block text-[12px] font-semibold text-muted mb-1">Show only</span>
-              <select name="only" defaultValue="ALL" className={field}>
-                <option value="ALL">All jobs</option>
-                {JOB_KINDS.map((k) => (
-                  <option key={k.value} value={k.value}>{k.label}</option>
-                ))}
+              <span className="block text-[12px] font-semibold text-muted mb-1">Type of job</span>
+              <select name="type" defaultValue="ALL" className={field}>
+                <option value="ALL">All types</option>
+                <optgroup label="Kind of job">
+                  {JOB_KINDS.map((k) => (
+                    <option key={k.value} value={`only:${k.value}`}>{k.label}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Sector">
+                  {JOB_CATEGORIES.filter((c) => c !== "ALL").map((c) => (
+                    <option key={c} value={`sector:${c}`}>{c}</option>
+                  ))}
+                </optgroup>
               </select>
             </label>
             <div className={more ? "contents" : "hidden sm:contents"}>
-            <label className="block">
-              <span className="block text-[12px] font-semibold text-muted mb-1">Type of job</span>
-              <select name="sector" defaultValue="ALL" className={field}>
-                <option value="ALL">All types</option>
-                {JOB_CATEGORIES.filter((c) => c !== "ALL").map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </label>
             <label className="block">
               <span className="block text-[12px] font-semibold text-muted mb-1">Central or state government</span>
               <select name="scope" defaultValue="ALL" className={field}>
@@ -274,7 +275,7 @@ export function HomeSearch({ extra, onDark = false }: { extra?: React.ReactNode;
               onClick={() => setMore(true)}
               className="sm:hidden mt-1 min-h-[44px] text-[13px] font-semibold text-navy"
             >
-              More filters: type of job, central or state, age
+              More filters: central or state, age
             </button>
           )}
           <div className="mt-3 sm:mt-4 flex items-center justify-end gap-3">

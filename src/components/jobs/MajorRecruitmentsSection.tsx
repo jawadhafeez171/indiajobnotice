@@ -16,7 +16,7 @@ import {
 } from "@/data/jobs";
 import { JobStatusBadge } from "./JobStatusBadge";
 import { noticeArea } from "@/lib/internal-links";
-import { JOB_KINDS, JobListCard, JobRow, JobDeadline, STATUS_STYLE, qualificationLabel, rowTitle, placeLabel, termsLabel, withoutAdvtNo } from "./JobListCard";
+import { JOB_KINDS, JobListCard, JobRow, isMedicalJob, JobDeadline, STATUS_STYLE, qualificationLabel, rowTitle, placeLabel, termsLabel, withoutAdvtNo } from "./JobListCard";
 import { formatDate, getDaysRemaining, cn } from "@/lib/utils";
 import { useWatchlist } from "@/lib/watchlist";
 import { getStateBySlug } from "@/config/states";
@@ -34,6 +34,7 @@ import {
   SlidersHorizontal,
   X,
   Bookmark,
+  ChevronDown,
 } from "lucide-react";
 
 interface Props {
@@ -92,6 +93,7 @@ export const QUALIFICATIONS = [
   { label: "Graduate (Any Stream)", value: "graduate" },
   { label: "Engineering / Diploma / ITI", value: "tech" },
   { label: "Teaching (B.Ed / CTET)", value: "teaching" },
+  { label: "Medicine (MBBS / Nursing / Pharmacy)", value: "medical" },
 ];
 
 // Open and Closing tabs: grouped by how soon applications close; inside a group, bigger recruitments
@@ -347,6 +349,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       if (selectedQualification === "graduate" && !quals.includes("graduate") && !quals.includes("bachelor") && !quals.includes("degree")) return false;
       if (selectedQualification === "tech" && !quals.includes("iti") && !quals.includes("diploma") && !quals.includes("engineering") && !quals.includes("tech")) return false;
       if (selectedQualification === "teaching" && !quals.includes("b.ed") && !quals.includes("d.el.ed") && !quals.includes("ctet") && !quals.includes("stet")) return false;
+      if (selectedQualification === "medical" && !isMedicalJob(j)) return false;
     }
     if (selectedKind !== "ALL" && !JOB_KINDS.find((k) => k.value === selectedKind)?.test(j)) return false;
     if (selectedScope === "CENTRAL" && !j.isCentral) return false;
@@ -825,15 +828,26 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
             </div>
           )}
           <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            aria-label="Sector"
+            value={selectedKind !== "ALL" ? `only:${selectedKind}` : selectedCategory !== "ALL" ? `sector:${selectedCategory}` : "ALL"}
+            onChange={(e) => {
+              const [key, ...rest] = e.target.value.split(":");
+              setSelectedKind(key === "only" ? rest.join(":") : "ALL");
+              setSelectedCategory(key === "sector" ? rest.join(":") : "ALL");
+            }}
+            aria-label="Type of job"
             className="w-full md:w-auto px-3 min-h-[44px] md:min-h-[38px] text-[15px] md:text-sm bg-surface border border-line rounded-lg text-ink focus:outline-none focus:border-navy cursor-pointer"
           >
-            <option value="ALL">All sectors</option>
-            {JOB_CATEGORIES.filter((c) => c !== "ALL").map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
+            <option value="ALL">All types</option>
+            <optgroup label="Kind of job">
+              {JOB_KINDS.map((k) => (
+                <option key={k.value} value={`only:${k.value}`}>{k.label}</option>
+              ))}
+            </optgroup>
+            <optgroup label="Sector">
+              {JOB_CATEGORIES.filter((c) => c !== "ALL").map((cat) => (
+                <option key={cat} value={`sector:${cat}`}>{cat}</option>
+              ))}
+            </optgroup>
           </select>
           <select
             value={selectedQualification}
@@ -843,17 +857,6 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
           >
             {QUALIFICATIONS.map((q) => (
               <option key={q.value} value={q.value}>{q.label}</option>
-            ))}
-          </select>
-          <select
-            value={selectedKind}
-            onChange={(e) => setSelectedKind(e.target.value)}
-            aria-label="Show only"
-            className="w-full md:w-auto px-3 min-h-[44px] md:min-h-[38px] text-[15px] md:text-sm bg-surface border border-line rounded-lg text-ink focus:outline-none focus:border-navy"
-          >
-            <option value="ALL">All jobs</option>
-            {JOB_KINDS.map((k) => (
-              <option key={k.value} value={k.value}>{k.label}</option>
             ))}
           </select>
           <div className="flex rounded-lg border border-line bg-surface p-0.5 min-h-[44px] md:min-h-[38px]">
@@ -892,10 +895,11 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
             <li key={it.key}>
               <button
                 onClick={() => unfold(it.key, it.firstId)}
-                className="w-full min-h-[44px] px-3 pl-8 text-left text-[13px] font-semibold text-navy hover:bg-subtle"
+                className="w-full min-h-[44px] px-3 text-center text-[12px] font-medium text-muted hover:text-navy hover:bg-subtle"
               >
                 Show {it.count} more from {it.org}
-                {it.posts > 0 && <span className="font-normal text-muted"> · {it.posts.toLocaleString("en-IN")} posts</span>}
+                {it.posts > 0 && <span> · {it.posts.toLocaleString("en-IN")} posts</span>}
+                <ChevronDown className="inline-block w-3.5 h-3.5 ml-1 -mt-px align-middle" aria-hidden />
               </button>
             </li>
           ) : (() => { const job = it.job; return (

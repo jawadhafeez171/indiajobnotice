@@ -171,7 +171,19 @@ const RETIRED_PAY = /\bretired\b|\bretd\b/i;
 const PSU = /\b(?:limited|ltd)\b|corporation|\bnigam\b|airports authority/i;
 const NOT_PSU = /municipal|city corporation|greater \w+ corporation|employees'? state insurance|co-?operative|sahakari|\bbank\b/i;
 
-/** The "Show only" filter of the job list. */
+// Medicine: the degrees the notice asks for, or the post itself (many notices give no qualification
+// text). "MS" alone is left out: it also means MS Office. Bio-medical engineering is not medicine.
+const MEDICAL_DEGREE = /\b(?:mbbs|m\.b\.b\.s|bds|bams|bhms|bums|dnb|gnm|anm|nursing|pharmacy|b\.?\s?pharm|d\.?\s?pharm|m\.?\s?pharm|medicine|dental|nmc)\b/i;
+const MEDICAL_POST = /\b(?:medical officer|doctors?|nurses?|nursing|pharmacy officer|pharmacists?|physicians?|surgeons?|senior residents?|junior residents?|dentists?|dental|ayurved\w*|homoeo\w*|unani|medicine|consultants? \(doctor)/i;
+
+/** Jobs for those with a medical, nursing or pharmacy qualification. */
+export function isMedicalJob(j: JobNotification): boolean {
+  const quals = [...j.qualifications, ...(j.posts || []).map((p) => p.qualification)].join(" ");
+  if (MEDICAL_DEGREE.test(quals.replace(/bio-?medical/gi, ""))) return true;
+  return MEDICAL_POST.test([j.title, ...(j.posts || []).map((p) => p.postName)].join(" "));
+}
+
+/** The kinds of job in the job list's "Type of job" filter, beside its sectors. */
 export const JOB_KINDS: { value: string; label: string; test: (job: JobNotification) => boolean }[] = [
   {
     value: "contract",
