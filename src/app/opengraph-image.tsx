@@ -7,7 +7,7 @@ import { googleFont } from "@/lib/job-card-image";
 export const alt = "India Job Notice: verified government job alerts";
 export const size = { width: 1200, height: 315 };
 export const contentType = "image/png";
-export const revalidate = 3600;
+export const revalidate = 86400; // daily: hourly rebuilds counted as ISR writes (9 Nov)
 
 const NAVY = "#14286b";
 const SAFFRON = "#ef7a1a";

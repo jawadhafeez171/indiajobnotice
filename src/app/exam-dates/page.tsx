@@ -7,7 +7,7 @@ import { getExamDates, JobNotification, ExamDateEntry } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
 
-export const revalidate = 3600;
+export const revalidate = 86400; // daily: hourly rebuilds counted as ISR writes (9 Nov)
 
 export const metadata = {
   title: "Upcoming Government Exam Dates 2026 - Admit Cards & Schedules",

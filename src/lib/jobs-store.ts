@@ -61,6 +61,25 @@ async function loadJobs(): Promise<JobNotification[]> {
 // and days left are worked out below on every request, so they stay right however old the copy is.
 const cachedJobs = dev ? loadJobs : unstable_cache(loadJobs, ["published-jobs"], { tags: ["jobs"], revalidate: 86400 });
 
+// Job pages (and district pages) must not be rebuilt on every refresh: ~800 of them at ~190 KB each used up
+// Vercel's free 200K ISR writes (9 Nov). They read their own job under the tag "job:<slug>", which the agent
+// names only when that job changed (or was withdrawn), and the other jobs they show (related, open elsewhere)
+// from a copy renewed once a day.
+const cachedJobsDaily = dev ? loadJobs : unstable_cache(loadJobs, ["published-jobs-daily"], { tags: ["jobs-daily"], revalidate: 86400 });
+
+async function loadOne(slug: string): Promise<JobNotification | null> {
+  if (dev) return (await loadJobs()).find((j) => j.slug.toLowerCase() === slug.toLowerCase()) || null;
+  const conn = db();
+  if (!conn) return null;
+  const rows = await conn<{ data: string; at: string | null }[]>`
+    select data, coalesce(published_at, created_at)::text as at from notices
+    where status = 'published' and lower(slug) = lower(${slug}) limit 1`;
+  return rows[0] ? { ...(JSON.parse(rows[0].data) as JobNotification), publishedAt: rows[0].at || undefined } : null;
+}
+
+const cachedJob = (slug: string) => dev ? loadOne(slug)
+  : unstable_cache(() => loadOne(slug), ["published-job", slug.toLowerCase()], { tags: [`job:${slug.toLowerCase()}`], revalidate: 86400 })();
+
 /** Every published job, with its status worked out from today's date. */
 const SMALL_WORDS = new Set(["of", "the", "and", "for", "in", "&", "at", "to", "office"]);
 const KEEP_WORDS = new Set(["District Court", "High Court"]);
@@ -124,7 +143,27 @@ function disambiguateCodes(jobs: JobNotification[]): JobNotification[] {
 }
 
 export async function getAllJobs(): Promise<JobNotification[]> {
-  const jobs = await cachedJobs();
+  return prepare(await cachedJobs());
+}
+
+/** Every published job as of the daily copy: for pages that need not change on every refresh (districts). */
+export async function getAllJobsDaily(): Promise<JobNotification[]> {
+  return prepare(await cachedJobsDaily());
+}
+
+/**
+ * A job page's data: its own job, current (null when not published), and the other jobs from the daily copy,
+ * with this job in its current form among them.
+ */
+export async function getJobPage(slug: string): Promise<{ job: JobNotification | null; allJobs: JobNotification[] }> {
+  const own = await cachedJob(slug);
+  if (!own) return { job: null, allJobs: [] };
+  const others = (await cachedJobsDaily()).filter((j) => j.id !== own.id && j.slug !== own.slug);
+  const allJobs = prepare([own, ...others]);
+  return { job: allJobs.find((j) => j.id === own.id) || null, allJobs };
+}
+
+function prepare(jobs: JobNotification[]): JobNotification[] {
   const cleaned = jobs.map((stored) => {
     // a document the recruitment's dates rule out is not one of its stages (the agent checks too)
     const stages = stored.stages?.filter((s) => ofThisRecruitment(s, stored));

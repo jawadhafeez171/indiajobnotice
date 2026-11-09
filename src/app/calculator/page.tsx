@@ -7,6 +7,7 @@ import { getAllJobs } from "@/lib/jobs-store";
 
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
+import { forList } from "@/lib/list-jobs";
 
 export const metadata = {
   title: "Government Job Age & Eligibility Calculator 2026",
@@ -39,7 +40,7 @@ export default async function CalculatorPage() {
           </p>
         </div>
 
-        <EligibilityCalculator currentStateSlug="central" jobs={getCalculatorJobs(await getAllJobs())} />
+        <EligibilityCalculator currentStateSlug="central" jobs={getCalculatorJobs(await getAllJobs()).map(forList)} />
 
         <SocialAlertBar />
       </main>

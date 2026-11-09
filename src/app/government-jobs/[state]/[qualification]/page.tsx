@@ -16,6 +16,7 @@ import {
 } from "@/data/state-qualification-hubs";
 import { getAllJobs } from "@/lib/jobs-store";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
+import { forList } from "@/lib/list-jobs";
 
 interface Props {
   params: Promise<{ state: string; qualification: string }>;
@@ -155,7 +156,7 @@ export default async function StateQualificationPage({ params }: Props) {
           <p className="mt-3 text-sm text-muted leading-relaxed max-w-[68ch]">{hub.subtitle}</p>
         </header>
 
-        <MajorRecruitmentsSection jobs={jobs} hideSearch showLayoutSwitch={false} />
+        <MajorRecruitmentsSection jobs={jobs.map(forList)} hideSearch showLayoutSwitch={false} />
 
         <ReservedAdSlot slotType="leaderboard" slotId={`state-qual-${state.slug}-${hub.qualSlug}`} />
 

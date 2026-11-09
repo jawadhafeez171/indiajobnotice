@@ -7,6 +7,7 @@ import { getAllJobs } from "@/lib/jobs-store";
 
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
+import { forList } from "@/lib/list-jobs";
 
 export const metadata = {
   title: "Government Exam Schedule & Calendar 2026-2027",
@@ -40,7 +41,7 @@ export default async function CalendarPage() {
             from an official document. Add any date to your phone&apos;s calendar.
           </p>
         </header>
-        <ExamCalendarView jobs={getListingJobs(await getAllJobs())} />
+        <ExamCalendarView jobs={getListingJobs(await getAllJobs()).map(forList)} />
 
         <SocialAlertBar />
       </main>

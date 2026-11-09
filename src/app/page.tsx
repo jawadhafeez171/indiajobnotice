@@ -6,28 +6,13 @@ import { Footer } from "@/components/common/Footer";
 import { TelegramLogo, WhatsAppLogo } from "@/components/common/SocialIcons";
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
 import { getListingJobs, getExamsInProgress, todayIST, updatesDay } from "@/data/jobs";
-import type { JobNotification } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
 import { HomeSearch } from "@/components/home/HomeSearch";
 import { TodaySummary } from "@/components/home/TodaySummary";
 import { HeroBackdrop } from "@/components/home/HeroBackdrop";
 import { AgeCheckLink } from "@/components/home/AgeCheckLink";
+import { forList } from "@/lib/list-jobs";
 
-
-// what the list needs of a job: the page sends every listed job to the browser, so the long
-// texts only the job page shows stay behind
-function forList(j: JobNotification): JobNotification {
-  return {
-    ...j,
-    salary: "", ageRelaxation: "", syllabusSummary: "", selectionProcess: [],
-    // only the date changes' days (the Today tab), not their text
-    updates: j.updates?.filter((u) => u.found).map((u) => ({ date: u.date, text: "", url: "", found: u.found })),
-    districtWiseVacancies: undefined, verificationSource: undefined,
-    posts: j.posts?.map((p) => ({ postName: p.postName, vacancies: 0, qualification: p.qualification, ageLimit: "", pay: "" })),
-    copyKey: undefined,
-    stages: j.stages?.map((s) => ({ ...s, copyKey: undefined, title: s.summary && /[ऀ-෿]/.test(s.title) ? s.title.slice(0, 80) : s.title })),
-  };
-}
 
 const MONTHS3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 /** "2 Nov, 18:52 IST" from a database timestamp. */

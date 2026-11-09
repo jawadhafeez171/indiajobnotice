@@ -4,7 +4,7 @@ import { CARD_SIZE, jobCardImage } from "@/lib/job-card-image";
 export const alt = "Government job notification on India Job Notice";
 export const size = CARD_SIZE;
 export const contentType = "image/png";
-export const revalidate = 3600;
+export const revalidate = 86400; // daily: hourly rebuilds counted as ISR writes (9 Nov)
 
 // made on first request, then stored (like the job pages; none at build time)
 export async function generateStaticParams() {

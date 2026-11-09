@@ -19,6 +19,7 @@ import { getAllJobs } from "@/lib/jobs-store";
 import { getCentralPortalUrl } from "@/lib/subdomains";
 import { cn } from "@/lib/utils";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
+import { forList } from "@/lib/list-jobs";
 
 interface PageProps {
   params: Promise<{ state: string }>;
@@ -142,7 +143,7 @@ export default async function StateHomePage({ params }: PageProps) {
         <SocialAlertBar state={state} />
 
         {/* Active Notifications Section with Interactive View Switcher */}
-        <MajorRecruitmentsSection jobs={jobs} currentStateSlug={state.slug} />
+        <MajorRecruitmentsSection jobs={jobs.map(forList)} currentStateSlug={state.slug} />
 
         <ExamCalendarSections jobs={getJobsByState(allJobs, state.slug, false)} limit={15} />
 
@@ -153,7 +154,7 @@ export default async function StateHomePage({ params }: PageProps) {
 
         {/* Age & Eligibility Calculator */}
         <section id="calculator">
-          <EligibilityCalculator currentStateSlug={state.slug} jobs={getCalculatorJobs(allJobs)} />
+          <EligibilityCalculator currentStateSlug={state.slug} jobs={getCalculatorJobs(allJobs).map(forList)} />
         </section>
 
         {/* Authorized Recruitment Bodies & Stream Navigation */}

@@ -14,7 +14,7 @@ import {
   getMajorDistricts 
 } from "@/config/districts";
 import { getJobsByDistrict, getListingJobs } from "@/data/jobs";
-import { getAllJobs } from "@/lib/jobs-store";
+import { getAllJobsDaily } from "@/lib/jobs-store";
 
 import { getCentralPortalUrl } from "@/lib/subdomains";
 import { cn } from "@/lib/utils";
@@ -89,7 +89,7 @@ export default async function DistrictPage({ params }: PageProps) {
     notFound();
   }
 
-  const jobs = getJobsByDistrict(getListingJobs(await getAllJobs()), state.slug, district.slug, true);
+  const jobs = getJobsByDistrict(getListingJobs(await getAllJobsDaily()), state.slug, district.slug, true);
   const badgeStyle = getStateBadgeColor(state.code);
 
   // Categorize jobs for intuitive district presentation

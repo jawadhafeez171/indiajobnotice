@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getStateBySlug } from "@/config/states";
-import { JobNotification, getJobBySlug, isJobApplicationClosed } from "@/data/jobs";
-import { getAllJobs } from "@/lib/jobs-store";
+import { JobNotification, isJobApplicationClosed } from "@/data/jobs";
+import { getJobPage } from "@/lib/jobs-store";
 import { formatDate } from "@/lib/utils";
 import { rowTitle } from "@/components/jobs/JobListCard";
 
@@ -33,7 +33,7 @@ function clip(t: string, n: number): string {
 }
 
 export async function jobCardImage(slug: string): Promise<ImageResponse> {
-  const job: JobNotification | undefined = getJobBySlug(await getAllJobs(), slug);
+  const job: JobNotification | undefined = (await getJobPage(slug)).job ?? undefined;
   const code = job ? job.orgShortCode.split("·")[0].trim() : "";
   const place = job ? (job.isCentral ? "Central" : getStateBySlug(job.stateSlug)?.name || "") : "";
   const post = job ? clip(rowTitle(job), 90) : "Government job notification";

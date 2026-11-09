@@ -10,6 +10,7 @@ import { getAllJobs } from "@/lib/jobs-store";
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
+import { forList } from "@/lib/list-jobs";
 
 export const metadata: Metadata = {
   title: "Qualification-Wise Government Job Vacancy Tracker 2026",
@@ -62,7 +63,7 @@ export default async function VacanciesPage() {
             notice. Colleges and libraries print this list for their notice boards.
           </p>
         </header>
-        <QualificationVacancyTracker jobs={getListingJobs(await getAllJobs())} />
+        <QualificationVacancyTracker jobs={getListingJobs(await getAllJobs()).map(forList)} />
 
         {/* Reserved Ad Slot (0.00 CLS Protection) */}
         <ReservedAdSlot slotType="leaderboard" slotId="vacancies-tracker-bottom" className="print:hidden" />

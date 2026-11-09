@@ -7,6 +7,7 @@ import { getAllJobs } from "@/lib/jobs-store";
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { ArrowRight } from "lucide-react";
+import { forList } from "@/lib/list-jobs";
 
 interface Props {
   hub: CategoryHubInfo;
@@ -94,7 +95,7 @@ export async function CategoryHubView({ hub, parentCrumb }: Props) {
         )}
       </header>
 
-      <MajorRecruitmentsSection jobs={jobs} hideSearch showLayoutSwitch={false} />
+      <MajorRecruitmentsSection jobs={jobs.map(forList)} hideSearch showLayoutSwitch={false} />
 
       <ReservedAdSlot slotType="leaderboard" slotId={`category-${hub.slug}-top`} />
 

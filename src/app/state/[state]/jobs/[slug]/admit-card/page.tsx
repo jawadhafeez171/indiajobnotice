@@ -4,8 +4,8 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { AdmitCardView } from "@/components/jobs/AdmitCardView";
-import { getJobBySlug, getJobCanonicalPath } from "@/data/jobs";
-import { getAllJobs } from "@/lib/jobs-store";
+import { getJobCanonicalPath } from "@/data/jobs";
+import { getJobPage } from "@/lib/jobs-store";
 import { stageMetadata } from "@/lib/stage-meta";
 
 interface Props {
@@ -20,7 +20,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
-  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
+  const job = (await getJobPage(resolvedParams.slug)).job ?? undefined;
   if (!job) return { title: "Admit Card Not Found" };
 
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}/admit-card`;
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function StateJobAdmitCardPage({ params }: Props) {
   const resolvedParams = await params;
-  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
+  const job = (await getJobPage(resolvedParams.slug)).job ?? undefined;
 
   if (!job) {
     notFound();

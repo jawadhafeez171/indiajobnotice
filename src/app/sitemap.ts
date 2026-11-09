@@ -12,7 +12,7 @@ import {
 import { VERIFIED_STATE_QUAL_HUBS } from "@/data/state-qualification-hubs";
 
 // Route handlers are cached at build time; refresh hourly so newly published jobs are listed.
-export const revalidate = 3600;
+export const revalidate = 86400; // daily: hourly rebuilds counted as ISR writes (9 Nov)
 
 /** The latest of these days (YYYY-MM-DD), never one still ahead; "" when none is known. */
 function latestDay(days: (string | undefined)[], today: string): string {

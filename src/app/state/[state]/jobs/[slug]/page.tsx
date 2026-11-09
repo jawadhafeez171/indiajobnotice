@@ -4,8 +4,8 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { JobDetailView } from "@/components/jobs/JobDetailView";
-import { getJobBySlug, getJobCanonicalPath, getActiveOpportunities } from "@/data/jobs";
-import { getAllJobs } from "@/lib/jobs-store";
+import { getJobCanonicalPath, getActiveOpportunities } from "@/data/jobs";
+import { getJobPage } from "@/lib/jobs-store";
 import { jobSeoTitle, jobSeoDescription } from "@/lib/seo";
 import { getGenuinelyRelatedOpportunities, getSiblingNotices } from "@/lib/internal-links";
 
@@ -21,7 +21,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
-  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
+  const job = (await getJobPage(resolvedParams.slug)).job ?? undefined;
   if (!job) return { title: "Job Notification Not Found" };
 
   const canonicalUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}`;
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function StateJobPage({ params }: Props) {
   const resolvedParams = await params;
-  const job = getJobBySlug(await getAllJobs(), resolvedParams.slug);
+  const job = (await getJobPage(resolvedParams.slug)).job ?? undefined;
 
   if (!job) {
     notFound();
@@ -67,7 +67,7 @@ export default async function StateJobPage({ params }: Props) {
     permanentRedirect(`/state/${job.stateSlug.toLowerCase()}/jobs/${job.slug}`);
   }
 
-  const allJobs = await getAllJobs();
+  const allJobs = (await getJobPage(resolvedParams.slug)).allJobs;
 
   return (
     <div className="min-h-screen flex flex-col bg-canvas">
