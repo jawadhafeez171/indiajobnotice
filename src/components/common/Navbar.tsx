@@ -10,7 +10,7 @@ import { BrandLogo } from "./BrandLogo";
 import { StateSelectorModal } from "./StateSelectorModal";
 import { StateQuickStrip } from "./StateQuickStrip";
 import { WatchlistDrawer } from "./WatchlistDrawer";
-import { TelegramLogo, WhatsAppLogo } from "./SocialIcons";
+import { TelegramLogo, WhatsAppLogo, InstagramLogo, YouTubeLogo, INSTAGRAM_URL, YOUTUBE_URL } from "./SocialIcons";
 import { useWatchlist } from "@/lib/watchlist";
 import { getStateBySlug } from "@/config/states";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
@@ -215,6 +215,16 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
                   <TelegramLogo className="w-4 h-4 text-[#5BB8F0]" />
                   <span>Telegram</span>
                 </a>
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-10 min-h-[40px] rounded-lg border border-white/35 text-[#F77FBE] hover:bg-white/10 transition-colors"
+                  title="Job reels on Instagram"
+                  aria-label="India Job Notice on Instagram"
+                >
+                  <InstagramLogo className="w-4 h-4" />
+                </a>
                 <button
                   onClick={() => setIsWatchlistOpen(true)}
                   className="relative flex items-center gap-1.5 px-3 min-h-[40px] rounded-lg border border-white/35 text-white hover:bg-white/10 transition-colors whitespace-nowrap"
@@ -231,8 +241,17 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
               </span>
             </nav>
 
-            {/* Phone and tablet: Telegram, saved jobs, menu */}
+            {/* Phone and tablet: Instagram, Telegram, saved jobs, menu */}
             <div className="flex items-center gap-1.5 lg:hidden shrink-0">
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden min-[400px]:flex w-11 h-11 items-center justify-center rounded-lg border border-white/30 text-[#F77FBE] active:bg-white/10"
+                aria-label="India Job Notice on Instagram"
+              >
+                <InstagramLogo className="w-5 h-5" />
+              </a>
               <a
                 href={TELEGRAM}
                 target="_blank"
@@ -409,6 +428,26 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
                 >
                   <WhatsAppLogo className="w-4 h-4" />
                   WhatsApp
+                </a>
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={close}
+                  className="flex items-center justify-center gap-2 min-h-[46px] rounded-xl bg-[#C13584] active:bg-[#A72D72] text-white font-bold text-sm"
+                >
+                  <InstagramLogo className="w-4 h-4" />
+                  Instagram
+                </a>
+                <a
+                  href={YOUTUBE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={close}
+                  className="flex items-center justify-center gap-2 min-h-[46px] rounded-xl bg-[#CC0000] active:bg-[#B00000] text-white font-bold text-sm"
+                >
+                  <YouTubeLogo className="w-4 h-4" />
+                  YouTube
                 </a>
               </div>
             </div>
