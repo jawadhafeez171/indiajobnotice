@@ -12,6 +12,7 @@ import { TodaySummary } from "@/components/home/TodaySummary";
 import { HeroBackdrop } from "@/components/home/HeroBackdrop";
 import { AgeCheckLink } from "@/components/home/AgeCheckLink";
 import { forList } from "@/lib/list-jobs";
+import { OpenJobLinks } from "@/components/jobs/OpenJobLinks";
 
 
 const MONTHS3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -113,7 +114,12 @@ export default async function HomePage() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-8 flex-1 w-full xl:grid xl:grid-cols-[minmax(0,1fr)_21rem] xl:gap-6 xl:items-start">
         {/* Jobs: the stage tabs, the count and the list */}
-        <MajorRecruitmentsSection jobs={listJobs} currentStateSlug="central" hideSearch showLayoutSwitch={false} narrow />
+        <div className="min-w-0">
+          <MajorRecruitmentsSection jobs={listJobs} currentStateSlug="central" hideSearch showLayoutSwitch={false} narrow />
+          <div className="mt-6">
+            <OpenJobLinks jobs={listedJobs} />
+          </div>
+        </div>
 
         {/* Side column on wide screens; under the list on phones */}
         <aside className="mt-10 xl:mt-[3.25rem] space-y-4" aria-label="Age check and alerts">

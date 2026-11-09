@@ -31,6 +31,7 @@ import {
   CheckCircle2
 } from "lucide-react";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
+import { districtHasOwnJobs } from "@/lib/index-rules";
 
 interface PageProps {
   params: Promise<{
@@ -55,6 +56,7 @@ export async function generateMetadata({ params }: PageProps) {
   }
 
   const canonicalUrl = `https://www.indiajobnotice.com/state/${state.slug}/district/${district.slug}`;
+  const ownJobs = districtHasOwnJobs(getListingJobs(await getAllJobsDaily()), state.slug, district.slug);
   const nativeSuffix = district.nativeName ? ` (${district.nativeName})` : "";
 
   return {
@@ -63,6 +65,8 @@ export async function generateMetadata({ params }: PageProps) {
     alternates: {
       canonical: canonicalUrl,
     },
+    // only its state's list, no jobs of its own: kept out of search (9 Nov), links still followed
+    robots: ownJobs ? undefined : { index: false, follow: true },
     openGraph: {
       images: SITE_OG_IMAGES,
       title: `${district.name} Government Jobs - India Job Notice`,

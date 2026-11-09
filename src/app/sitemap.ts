@@ -1,8 +1,9 @@
 import { MetadataRoute } from "next";
 import { STATES_REGISTRY } from "@/config/states";
 import { DISTRICTS_REGISTRY } from "@/config/districts";
-import { getJobCanonicalPath, getStages, istDate, JobNotification, StageKind, todayIST } from "@/data/jobs";
+import { getJobCanonicalPath, istDate, JobNotification, todayIST } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
+import { districtHasOwnJobs, jobInSitemap } from "@/lib/index-rules";
 
 import { 
   QUALIFICATION_HUBS, 
@@ -163,34 +164,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dedicated District Hub Routes (/state/[state]/district/[district])
-  const districtRoutes: MetadataRoute.Sitemap = DISTRICTS_REGISTRY.map((district) => ({
+  const districtRoutes: MetadataRoute.Sitemap = DISTRICTS_REGISTRY.filter((d) => districtHasOwnJobs(jobs, d.stateSlug, d.slug)).map((district) => ({
     url: `${baseUrl}/state/${district.stateSlug}/district/${district.slug}`,
     changeFrequency: "daily",
     priority: district.isMajorHub ? 0.82 : 0.75,
   }));
 
   // Central and State Job detail pages
-  const jobRoutes: MetadataRoute.Sitemap = jobs.map((job) => ({
+  const offered = jobs.filter((job) => jobInSitemap(job, today));
+  const jobRoutes: MetadataRoute.Sitemap = offered.map((job) => ({
     url: `${baseUrl}${getJobCanonicalPath(job)}`,
     ...lastmod(jobDay(job)),
     changeFrequency: "weekly",
     priority: job.featured ? 0.9 : 0.75,
   }));
-
-  // Stage pages (admit card, answer key, result); eligibility is part of the job page itself
-  const lifecycleRoutes: MetadataRoute.Sitemap = jobs.flatMap((job) => {
-    const base = `${baseUrl}${getJobCanonicalPath(job)}`;
-
-    return [
-      // stage pages only once the official document is out (until then they are noindex)
-      ...(["admit-card", "answer-key", "result"] as const)
-        .filter((path) => getStages(job, path.replace("-", "_") as StageKind).length > 0)
-        .map((path) => ({
-          url: `${base}/${path}`,
-          ...lastmod(latestDay([...getStages(job, path.replace("-", "_") as StageKind).map((s) => s.date), istDate(job.publishedAt)], today)),
-          changeFrequency: "weekly" as const, priority: 0.7 })),
-    ];
-  });
 
   return [
     ...staticRoutes,
@@ -200,8 +187,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...stateQualificationRoutes,
     ...stateRoutes,
     ...districtRoutes,
+    // admit card / answer key / result pages are left out: indexable while their document is recent,
+    // reached through the job page (9 Nov: 300+ of them made the sitemap mostly thin pages)
     ...governmentJobsRoutes,
     ...jobRoutes,
-    ...lifecycleRoutes,
   ];
 }

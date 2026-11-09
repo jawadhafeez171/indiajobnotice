@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { JobNotification, getStages } from "@/data/jobs";
+import { stagePageIndexable } from "@/lib/index-rules";
 
 const LABEL = { admit_card: "Admit Card", answer_key: "Answer Key", result: "Result" } as const;
 
 /** Metadata of a job's admit card / answer key / result page. Until the official document is out the
- * page says so and is kept out of search results (noindex), since it has nothing of its own yet. */
+ * page says so and is kept out of search results (noindex), since it has nothing of its own yet; the same
+ * once its newest document is older than STAGE_NEWS_DAYS (the job page keeps the link). */
 export function stageMetadata(
   job: JobNotification,
   kind: keyof typeof LABEL,
@@ -22,7 +24,7 @@ export function stageMetadata(
     title,
     description,
     alternates: { canonical: canonicalUrl },
-    robots: released ? undefined : { index: false, follow: true },
+    robots: released && stagePageIndexable(job, kind) ? undefined : { index: false, follow: true },
     openGraph: { title, description, url: canonicalUrl, siteName: "India Job Notice", locale: "en_IN", type: "article" },
   };
 }

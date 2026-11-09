@@ -20,6 +20,7 @@ import { getCentralPortalUrl } from "@/lib/subdomains";
 import { cn } from "@/lib/utils";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
 import { forList } from "@/lib/list-jobs";
+import { OpenJobLinks } from "@/components/jobs/OpenJobLinks";
 
 interface PageProps {
   params: Promise<{ state: string }>;
@@ -144,6 +145,8 @@ export default async function StateHomePage({ params }: PageProps) {
 
         {/* Active Notifications Section with Interactive View Switcher */}
         <MajorRecruitmentsSection jobs={jobs.map(forList)} currentStateSlug={state.slug} />
+
+        <OpenJobLinks jobs={jobs} heading={`All open notifications for ${state.name}`} />
 
         <ExamCalendarSections jobs={getJobsByState(allJobs, state.slug, false)} limit={15} />
 
