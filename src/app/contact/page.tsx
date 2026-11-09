@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { WhatsAppLogo, TelegramLogo } from "@/components/common/SocialIcons";
+import { WhatsAppLogo, TelegramLogo, InstagramLogo, YouTubeLogo, INSTAGRAM_URL, YOUTUBE_URL } from "@/components/common/SocialIcons";
 import { 
   Mail, 
   Clock, 
@@ -181,6 +181,42 @@ export default function ContactPage() {
                 </div>
               </div>
               <ExternalLink className="w-4 h-4 text-[#24A1DE]" />
+            </a>
+
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-lg border border-line bg-surface hover:bg-navy-tint transition-colors flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-full bg-[#C13584] text-white">
+                  <InstagramLogo className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-ink text-sm">Instagram @indiajobnotice</h3>
+                  <p className="text-xs text-ink-2">Short reels on big new vacancies</p>
+                </div>
+              </div>
+              <ExternalLink className="w-4 h-4 text-muted" />
+            </a>
+
+            <a
+              href={YOUTUBE_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-lg border border-line bg-surface hover:bg-navy-tint transition-colors flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-full bg-[#CC0000] text-white">
+                  <YouTubeLogo className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-ink text-sm">YouTube @Indiajobnotice</h3>
+                  <p className="text-xs text-ink-2">Shorts on big new vacancies</p>
+                </div>
+              </div>
+              <ExternalLink className="w-4 h-4 text-muted" />
             </a>
           </div>
         </section>

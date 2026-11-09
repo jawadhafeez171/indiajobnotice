@@ -3,7 +3,7 @@ import Link from "next/link";
 import { STATES_REGISTRY, STATE_ZONES, StateInfo } from "@/config/states";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
 import { ShieldCheck, MapPin, Landmark, ChevronDown } from "lucide-react";
-import { TelegramLogo, WhatsAppLogo } from "./SocialIcons";
+import { TelegramLogo, WhatsAppLogo, InstagramLogo, YouTubeLogo, INSTAGRAM_URL, YOUTUBE_URL } from "./SocialIcons";
 import { BrandLogo } from "./BrandLogo";
 
 type FooterLink = { href: string; label: string; external?: boolean; divider?: boolean };
@@ -93,6 +93,16 @@ function SocialButtons() {
         aria-label="WhatsApp Channel" title="Follow India Job Notice on WhatsApp" className={`${base} bg-[#13853F] hover:bg-[#0E7A3E]`}>
         <WhatsAppLogo className="w-4 h-4" />
         <span className="md:sr-only">WhatsApp</span>
+      </a>
+      <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" aria-label="Instagram"
+        title="Follow India Job Notice on Instagram" className={`${base} bg-[#C13584] hover:bg-[#A72D72]`}>
+        <InstagramLogo className="w-4 h-4" />
+        <span className="md:sr-only">Instagram</span>
+      </a>
+      <a href={YOUTUBE_URL} target="_blank" rel="noreferrer" aria-label="YouTube"
+        title="India Job Notice on YouTube" className={`${base} bg-[#CC0000] hover:bg-[#B00000]`}>
+        <YouTubeLogo className="w-4 h-4" />
+        <span className="md:sr-only">YouTube</span>
       </a>
     </div>
   );

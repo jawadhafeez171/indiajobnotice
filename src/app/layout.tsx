@@ -86,7 +86,7 @@ const websiteSchema = {
       name: "India Job Notice",
       url: "https://www.indiajobnotice.com/",
       logo: "https://www.indiajobnotice.com/icon.png",
-      sameAs: ["https://t.me/india_jobnotice", "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C"],
+      sameAs: ["https://t.me/india_jobnotice", "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C", "https://www.instagram.com/indiajobnotice/", "https://www.youtube.com/@Indiajobnotice"],
     },
   ],
 };
