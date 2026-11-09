@@ -10,6 +10,11 @@ const encode = (s: string) => encodeURIComponent(s).replace(/[!'()*]/g, (c) => `
 
 /** The signed address of a stored file, or null when R2 is not set up here. */
 export function signedPdfUrl(key: string, now = new Date()): string | null {
+  return signedR2Url(key, true, now);
+}
+
+/** A signed GET for any object in the bucket; as a PDF to show in the browser when `pdf`. */
+export function signedR2Url(key: string, pdf: boolean, now = new Date()): string | null {
   const { R2_ACCOUNT_ID: account, R2_ACCESS_KEY_ID: id, R2_SECRET_ACCESS_KEY: secret, R2_BUCKET: bucket } = process.env;
   if (!account || !id || !secret || !bucket) return null;
   const host = `${account}.r2.cloudflarestorage.com`;
@@ -23,8 +28,7 @@ export function signedPdfUrl(key: string, now = new Date()): string | null {
     ["X-Amz-Date", stamp],
     ["X-Amz-Expires", String(EXPIRES_S)],
     ["X-Amz-SignedHeaders", "host"],
-    ["response-content-disposition", "inline"],
-    ["response-content-type", "application/pdf"],
+    ...(pdf ? [["response-content-disposition", "inline"], ["response-content-type", "application/pdf"]] : []),
   ].map(([k, v]) => `${encode(k)}=${encode(v)}`).sort().join("&");
   const request = ["GET", path, query, `host:${host}\n`, "host", "UNSIGNED-PAYLOAD"].join("\n");
   const toSign = ["AWS4-HMAC-SHA256", stamp, scope, createHash("sha256").update(request).digest("hex")].join("\n");

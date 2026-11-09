@@ -1,6 +1,8 @@
 import "server-only";
 import postgres from "postgres";
 import { unstable_cache } from "next/cache";
+import { gunzipSync } from "node:zlib";
+import { signedR2Url } from "@/lib/r2-link";
 import { getStateBySlug } from "@/config/states";
 import { computeJobStatus, JobNotification, ofThisRecruitment, stageSummary } from "@/data/jobs";
 
@@ -38,10 +40,31 @@ async function saveSnapshot(jobs: JobNotification[]): Promise<void> {
 
 const dev = process.env.NODE_ENV === "development";
 
+// The agent writes every published notice to R2 (private) on each change, gzipped: loading that instead of the
+// database keeps the site off Supabase's egress allowance (9 Nov: ~280 full loads a day, ~1.2 MB each).
+const R2_SNAPSHOT = "site/jobs.json.gz";
+
+async function loadFromR2(): Promise<JobNotification[] | null> {
+  const url = signedR2Url(R2_SNAPSHOT, false);
+  if (!url) return null;
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) return null;
+    const jobs = JSON.parse(gunzipSync(Buffer.from(await res.arrayBuffer())).toString("utf8"));
+    return Array.isArray(jobs) && jobs.length ? (jobs as JobNotification[]) : null;
+  } catch (err) {
+    console.warn("jobs snapshot from R2 failed, reading the database:", err);
+    return null;
+  }
+}
+
 async function loadJobs(): Promise<JobNotification[]> {
   if (dev) {
     const saved = await readSnapshot();
     if (saved) return saved;
+  } else {
+    const stored = await loadFromR2();
+    if (stored) return stored;
   }
   const conn = db();
   if (!conn) {
