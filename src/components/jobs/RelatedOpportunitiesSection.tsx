@@ -18,8 +18,10 @@ export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
   const repeated = (t: string) => titles.filter((x) => x === t).length > 1;
 
   return (
-    <section aria-labelledby="similar" className="bg-surface rounded-xl border border-line p-5 sm:p-6 shadow-2xs print:hidden">
-      <h2 id="similar" className="font-serif text-lg font-bold text-ink">Similar jobs</h2>
+    <section aria-labelledby="similar" className="border-t border-line pt-7 print:hidden">
+      <h2 id="similar" className="font-serif text-xl font-bold text-ink">
+        {isJobApplicationClosed(currentJob) ? "Similar jobs" : "Other jobs open now"}
+      </h2>
       <ul className="mt-3 divide-y divide-line-soft border-y border-line-soft">
         {related.map(({ job, relationshipReason }) => {
           const href = getJobCanonicalPath(job);

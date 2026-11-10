@@ -18,9 +18,8 @@ export function ReservationTable({ job }: { job: JobNotification }) {
     t.horizontal.find((h) => h.post === post && h.category === category)?.count;
 
   return (
-    <section aria-labelledby="by-category">
-      <h3 id="by-category" className="text-sm font-bold text-ink">Vacancies by category</h3>
-      <p className="mt-1 text-[13px] text-muted">
+    <div>
+      <p className="text-[13px] text-muted">
         As given in the notification. Check it for the rules of each category.
         {inColumns && " Horizontal seats are the same seats counted another way, not extra ones."}
       </p>
@@ -78,6 +77,6 @@ export function ReservationTable({ job }: { job: JobNotification }) {
           </ul>
         </div>
       )}
-    </section>
+    </div>
   );
 }

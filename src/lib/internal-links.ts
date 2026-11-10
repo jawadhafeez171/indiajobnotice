@@ -273,9 +273,13 @@ export function getGenuinelyRelatedOpportunities(
   limit: number = 4
 ): RelatedOpportunity[] {
   const scored: Array<{ job: JobNotification; score: number; reason: string; type: RelatedOpportunity["relationshipType"] }> = [];
+  // someone on an open notice is looking for jobs to apply to: only open (or opening) ones, never past
+  // recruitments' results (11 Nov, owner's choice); a closed notice's page may still show its body's others
+  const currentOpen = isOpenOrOpening(currentJob);
 
   for (const candidate of jobs) {
     if (candidate.id === currentJob.id) continue;
+    if (currentOpen && !isOpenOrOpening(candidate)) continue;
 
     let score = 0;
     let reason = "";
@@ -297,7 +301,11 @@ export function getGenuinelyRelatedOpportunities(
     // 3 and 4 only within the same reach (central with central, or the same state): an Andhra
     // engineering post is not "similar" to an all-India bank post
     else if (candidate.isCentral !== currentJob.isCentral || (!currentJob.isCentral && candidate.stateSlug !== currentJob.stateSlug)) {
-      continue;
+      // a state notice's page may suggest open all-India jobs of the same kind (anyone may apply to those)
+      if (!(currentOpen && candidate.isCentral && candidate.category === currentJob.category)) continue;
+      score += 10;
+      reason = `All-India ${currentJob.category.toLowerCase()}`;
+      type = "sector";
     }
     // 3. Same Category / Sector
     else if (candidate.category === currentJob.category) {
