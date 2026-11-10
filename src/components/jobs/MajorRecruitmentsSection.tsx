@@ -47,6 +47,8 @@ interface Props {
   showLayoutSwitch?: boolean;
   /** The list shares its row with a side column (home page): short tab names that scroll sideways. */
   narrow?: boolean;
+  /** A state page starts with the state's own jobs (11 Nov, owner's choice); central ones are one tap away. */
+  defaultScope?: "ALL" | "STATE";
 }
 
 type ViewMode = "ledger" | "spotlight" | "bulletin";
@@ -166,7 +168,7 @@ export const STAGE_PARAM: Record<string, StatusCategoryKey> = {
   underway: "UNDER_WAY", all: "ALL",
 };
 
-export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = false, showLayoutSwitch = true, narrow = false }: Props) {
+export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = false, showLayoutSwitch = true, narrow = false, defaultScope = "ALL" }: Props) {
   const [viewMode, setViewMode] = useState<ViewMode>("ledger");
   const [activeCategory, setActiveCategory] = useState<StatusCategoryKey>("APPLY_OPEN");
 
@@ -175,7 +177,9 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedQualification, setSelectedQualification] = useState("ALL");
   const [selectedKind, setSelectedKind] = useState("ALL");
-  const [selectedScope, setSelectedScope] = useState<"ALL" | "CENTRAL" | "STATE">("ALL");
+  const [selectedScope, setSelectedScope] = useState<"ALL" | "CENTRAL" | "STATE">(defaultScope);
+  const centralOpen = jobs.filter((j) => j.isCentral && isOpenOrOpening(j)).length;
+  const stateName = currentStateSlug ? getStateBySlug(currentStateSlug)?.name || "" : "";
   const [selectedState, setSelectedState] = useState("ALL");
   const [myAge, setMyAge] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
@@ -203,7 +207,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
     setSelectedCategory("ALL");
     setSelectedQualification("ALL");
     setSelectedKind("ALL");
-    setSelectedScope("ALL");
+    setSelectedScope(defaultScope);
     setSelectedState("ALL");
     setMyAge(null);
   };
@@ -278,7 +282,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       setSelectedQualification(QUALIFICATIONS.some((x) => x.value === qual) ? qual : "ALL");
       setSelectedCategory(JOB_CATEGORIES.includes(sector) ? sector : "ALL");
       setSelectedKind(JOB_KINDS.some((k) => k.value === only) ? only : "ALL");
-      setSelectedScope(scope === "CENTRAL" || scope === "STATE" ? scope : "ALL");
+      setSelectedScope(scope === "CENTRAL" || scope === "STATE" || scope === "ALL" ? scope : defaultScope);
       setMyAge(age >= 14 && age <= 70 ? age : null);
       // a search looks at every stage unless one was chosen
       setActiveCategory(stage || (q ? "ALL" : "APPLY_OPEN"));
@@ -316,6 +320,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       window.removeEventListener("popstate", onBack);
       window.removeEventListener("hashchange", handleHash);
     };
+    // once, on arrival: defaultScope is fixed for the page, and the listeners read the address themselves
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Helper to test if a job matches a status category
@@ -346,8 +352,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
 
   // Check if any filter is actively applied
   const hasActiveFilters = searchQuery.trim() !== "" || selectedCategory !== "ALL" || selectedQualification !== "ALL"
-    || selectedKind !== "ALL" || selectedScope !== "ALL" || selectedState !== "ALL" || myAge !== null;
-  const facetCount = [selectedCategory !== "ALL", selectedQualification !== "ALL", selectedKind !== "ALL", selectedScope !== "ALL",
+    || selectedKind !== "ALL" || selectedScope !== defaultScope || selectedState !== "ALL" || myAge !== null;
+  const facetCount = [selectedCategory !== "ALL", selectedQualification !== "ALL", selectedKind !== "ALL", selectedScope !== defaultScope,
     selectedState !== "ALL", myAge !== null].filter(Boolean).length;
 
   useEffect(() => {
@@ -753,7 +759,18 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
         <div className="flex items-center justify-between gap-3 text-[13px]">
           <p id="results-count" tabIndex={-1} className="scroll-mt-[140px] md:scroll-mt-[176px] text-ink-2 min-w-0 focus:outline-none" aria-live="polite">
             <b className="text-ink">{filteredJobs.length}</b> {filteredJobs.length === 1 ? "job" : "jobs"}
+            {defaultScope === "STATE" && stateName && (selectedScope === "STATE" ? " in " + stateName : selectedScope === "ALL" ? ` in ${stateName} and central` : "")}
             {filteredJobs.length > 0 && TABS[activeCategory].order && <span className="hidden sm:inline text-muted"> · {TABS[activeCategory].order}</span>}
+            {defaultScope === "STATE" && selectedScope === "STATE" && centralOpen > 0 && (
+              <button type="button" onClick={() => setSelectedScope("ALL")} className="ml-2 py-2 -my-2 font-semibold text-navy underline underline-offset-2 hover:text-saffron">
+                + {centralOpen} central jobs open to all
+              </button>
+            )}
+            {defaultScope === "STATE" && selectedScope === "ALL" && (
+              <button type="button" onClick={() => setSelectedScope("STATE")} className="ml-2 py-2 -my-2 font-semibold text-navy underline underline-offset-2 hover:text-saffron">
+                Only {stateName}
+              </button>
+            )}
             {selectedState !== "ALL" && (
               <span className="ml-2 inline-flex items-center gap-1 bg-navy-tint text-navy px-2 py-0.5 rounded-full text-[12px] font-bold border border-navy-line align-middle">
                 {getStateBySlug(selectedState)?.name || selectedState} + central
@@ -780,9 +797,10 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 label: JOB_KINDS.find((k) => k.value === selectedKind)?.label || selectedKind,
                 clear: () => setSelectedKind("ALL"),
               },
-              selectedScope !== "ALL" && {
+              // a state page's own default (its state's jobs) is not a filter to clear; the line above says it
+              selectedScope !== "ALL" && selectedScope !== defaultScope && {
                 label: selectedScope === "CENTRAL" ? "Central government" : "State government",
-                clear: () => setSelectedScope("ALL"),
+                clear: () => setSelectedScope(defaultScope),
               },
             ].filter(Boolean).map((c) => {
               const chip = c as { label: string; clear: () => void };

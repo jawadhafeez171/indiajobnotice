@@ -19,6 +19,17 @@ const csp = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Pages that repeated others (11 Nov, owner's choice): permanent redirects, so links and any search
+  // standing carry over to the page that stays.
+  async redirects() {
+    return [
+      { source: "/government-jobs/:state", destination: "/state/:state", permanent: true },
+      { source: "/government-jobs/:state/:qualification", destination: "/state/:state", permanent: true },
+      { source: "/exam-dates", destination: "/calendar?type=exams", permanent: true },
+      { source: "/organisations/railways-rrb", destination: "/railway-jobs", permanent: true },
+      { source: "/for-colleges-libraries", destination: "/about", permanent: true },
+    ];
+  },
   async headers() {
     return [{
       source: "/:path*",

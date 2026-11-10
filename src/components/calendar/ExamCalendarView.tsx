@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Calendar as CalendarIcon,
@@ -48,6 +48,13 @@ export interface CalendarEventItem {
 
 export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
   const [selectedType, setSelectedType] = useState<"ALL" | EventType>("ALL");
+  // /calendar?type=exams (the old exam-dates page sends here, 11 Nov) opens on that kind of date
+  useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get("type");
+    const map: Record<string, EventType> = { exams: "EXAM", deadlines: "DEADLINE", "admit-cards": "ADMIT_CARD", results: "RESULT" };
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- read once from the address after the first render
+    if (t && map[t]) setSelectedType(map[t]);
+  }, []);
   const [selectedScope, setSelectedScope] = useState<"ALL" | "CENTRAL" | "STATE">("ALL");
   const [viewFormat, setViewFormat] = useState<"agenda" | "month">("agenda");
   // Calendar month being viewed (month 0-indexed), starting at the current month

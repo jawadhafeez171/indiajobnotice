@@ -35,7 +35,7 @@ export default function PoliceDefenseJobsPage() {
     <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar currentStateSlug="central" />
       <main id="main-content" className="flex-1">
-        <CategoryHubView hub={hub} parentCrumb={{ label: "Sectors", href: "/" }} />
+        <CategoryHubView hub={hub} />
       </main>
       <Footer />
     </div>

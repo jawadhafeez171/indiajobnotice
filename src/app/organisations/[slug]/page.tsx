@@ -65,7 +65,7 @@ export default async function OrganisationPage({ params }: Props) {
       <main id="main-content" className="flex-1">
         <CategoryHubView 
           hub={hub} 
-          parentCrumb={{ label: "Recruiting Bodies", href: "/" }} 
+          parentCrumb={{ label: "Commissions and boards", href: "/directory" }}
         />
         {/* UPSC's own calendar: its site blocks our reader, so its planned dates are shown here */}
         {slug === "upsc" && <UpscCalendarTable />}

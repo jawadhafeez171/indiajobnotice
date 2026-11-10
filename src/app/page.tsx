@@ -5,7 +5,7 @@ import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { TelegramLogo, WhatsAppLogo } from "@/components/common/SocialIcons";
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
-import { getListingJobs, getExamsInProgress, todayIST, updatesDay } from "@/data/jobs";
+import { getListingJobs, getExamsInProgress, isOpenOrOpening, todayIST, updatesDay } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
 import { HomeSearch } from "@/components/home/HomeSearch";
 import { TodaySummary } from "@/components/home/TodaySummary";
@@ -55,7 +55,6 @@ export const metadata = {
 export default async function HomePage() {
   const allJobs = await getAllJobs();
   const listedJobs = getListingJobs(allJobs);
-  const openNow = listedJobs.filter((j) => j.status === "APPLY_OPEN" || j.status === "LAST_DATE_NEAR").length;
 
   // when the newest notice was published (IST), for the proof line
   const newest = allJobs.map((j) => j.publishedAt || "").sort().pop();
@@ -64,6 +63,9 @@ export default async function HomePage() {
   // one list: listed jobs plus recruitments under way, each once
   const listedIds = new Set(listedJobs.map((j) => j.id));
   const listJobs = [...listedJobs, ...getExamsInProgress(allJobs).filter((j) => !listedIds.has(j.id))].map(forList);
+  // the same count as the list's Open tab (11 Nov: the banner said 90 while the tab said 93; it left out
+  // notices whose applications open in a few days)
+  const openNow = listJobs.filter(isOpenOrOpening).length;
 
   return (
     <div className="min-h-screen flex flex-col bg-canvas">
@@ -77,15 +79,17 @@ export default async function HomePage() {
 
       <main id="main-content" className="flex-1 w-full flex flex-col">
       {/* Hero: heading, proof line and search on the navy band, centred at every width */}
-      <section className="on-dark relative overflow-hidden px-4 sm:px-6 pt-6 pb-3 sm:pt-7 sm:pb-4 md:pt-10 md:pb-6 bg-[linear-gradient(115deg,#061438_0%,#0B2862_58%,#103B83_100%)]">
+      {/* phones: a shorter band (11 Nov), the heading on one line and the proof line shown, so the list starts sooner */}
+      <section className="on-dark relative overflow-hidden px-4 sm:px-6 pt-4 pb-2 sm:pt-7 sm:pb-4 md:pt-10 md:pb-6 bg-[linear-gradient(115deg,#061438_0%,#0B2862_58%,#103B83_100%)]">
         <HeroBackdrop />
         {/* text and search above the decoration */}
         <div className="relative max-w-6xl mx-auto">
-          <h1 className="font-display text-[28px] sm:text-[34px] lg:text-[48px] font-bold text-white tracking-tight leading-[1.12] text-balance text-center">
-            Latest government jobs, <span className="text-[#FF841C]">verified</span>
+          {/* "Latest" only from sm up: on a phone "Government jobs, verified" fits one line; the page text keeps it */}
+          <h1 className="font-display text-[25px] sm:text-[34px] lg:text-[48px] font-bold text-white tracking-tight leading-[1.12] text-balance text-center first-letter:uppercase">
+            <span className="hidden sm:inline">Latest </span>government jobs, <span className="text-[#FF841C]">verified</span>
           </h1>
           {/* the proof line sits back: smaller, one muted blue, the count only a little brighter */}
-          <p className="hidden sm:block mt-2 md:mt-3 text-[12px] sm:text-[13px] leading-normal text-[#9FB3D6] text-center">
+          <p className="mt-1 sm:mt-2 md:mt-3 text-[12px] sm:text-[13px] leading-normal text-[#B9C8E3] text-center">
             <b className="font-medium text-[#C0D0E8]">{openNow} open now</b>
             {/* each part keeps its "·", so a line never starts with one */}
             {latestAdded && <> <span className="whitespace-nowrap">· updated</span> {latestAdded}</>}{" "}
@@ -98,11 +102,12 @@ export default async function HomePage() {
           </p>
 
           {/* search sits in the hero: the first job is one screen closer */}
-          <div className="mt-4 md:mt-6 max-w-2xl mx-auto">
+          <div className="mt-3 md:mt-6 max-w-2xl mx-auto">
             <HomeSearch
               onDark
               extra={
-                <AgeCheckLink className="inline-flex items-center gap-1 min-h-[44px] text-[13px] font-medium text-[#C0D0E8] hover:text-white" />
+                // only where the "Am I eligible?" box is not already beside the list (it is from xl up)
+                <AgeCheckLink className="xl:hidden inline-flex items-center gap-1 min-h-[44px] text-[13px] font-medium text-[#C0D0E8] hover:text-white" />
               }
             />
           </div>
@@ -122,7 +127,8 @@ export default async function HomePage() {
         </div>
 
         {/* Side column on wide screens; under the list on phones */}
-        <aside className="mt-10 xl:mt-[3.25rem] space-y-4" aria-label="Age check and alerts">
+        {/* wide screens: stays in view while the list scrolls (11 Nov) */}
+        <aside className="mt-10 xl:mt-[3.25rem] xl:sticky xl:top-[125px] xl:self-start space-y-4" aria-label="Age check and alerts">
           {/* Age check: date of birth -> the open jobs whose age limit includes it */}
           <section
             id="age-check"

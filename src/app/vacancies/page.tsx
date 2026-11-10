@@ -1,3 +1,4 @@
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { safeJson } from "@/lib/json-ld";
 import React from "react";
 import type { Metadata } from "next";
@@ -54,6 +55,7 @@ export default async function VacanciesPage() {
       <Navbar currentStateSlug="central" />
 
       <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-7 flex-1 w-full space-y-6">
+        <Breadcrumbs items={[{ label: "Vacancies by qualification" }]} className="mb-3" />
         <header className="max-w-3xl">
           <h1 className="font-serif text-[24px] sm:text-4xl font-bold text-ink tracking-tight leading-tight text-balance">
             Government job vacancies by qualification

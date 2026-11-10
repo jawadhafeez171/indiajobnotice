@@ -64,7 +64,7 @@ export default async function QualificationPage({ params }: Props) {
       <main id="main-content" className="flex-1">
         <CategoryHubView 
           hub={hub} 
-          parentCrumb={{ label: "Qualifications", href: "/" }} 
+          parentCrumb={{ label: "Vacancies by qualification", href: "/vacancies" }}
         />
       </main>
       <Footer />

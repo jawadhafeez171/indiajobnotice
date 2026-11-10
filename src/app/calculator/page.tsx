@@ -1,3 +1,4 @@
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import React from "react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
@@ -31,6 +32,7 @@ export default async function CalculatorPage() {
     <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar currentStateSlug="central" />
       <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-8">
+        <Breadcrumbs items={[{ label: "Age calculator" }]} className="mb-3" />
         <div className="max-w-3xl">
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
             Government Job Eligibility & Age Calculator

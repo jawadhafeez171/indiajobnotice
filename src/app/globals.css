@@ -11,13 +11,15 @@
     --c-surface: 255 255 255;
     --c-subtle: 248 250 252;
     --c-sunken: 238 241 245;
-    --c-line: 220 228 239;
-    --c-control: 135 143 158;
-    --c-line-soft: 226 232 240;
-    --c-ink: 16 28 57;
-    --c-ink-2: 51 65 85;
-    --c-muted: 82 97 123;
-    --c-faint: 102 117 141;
+    /* greater contrast (11 Nov, owner's choice): secondary text and rules a step darker, for cheap
+       screens in daylight; muted on canvas ~8.9:1, faint ~6.3:1 */
+    --c-line: 200 210 224;
+    --c-control: 110 120 138;
+    --c-line-soft: 214 222 233;
+    --c-ink: 12 22 48;
+    --c-ink-2: 33 45 66;
+    --c-muted: 60 72 95;
+    --c-faint: 84 97 120;
     --c-navy: 18 38 122;
     --c-navy-solid: 11 40 98;
     --c-navy-strong: 16 59 131;
@@ -67,13 +69,13 @@
       --c-surface: 19 26 43;
       --c-subtle: 24 32 53;
       --c-sunken: 30 39 64;
-      --c-line: 46 56 84;
-      --c-control: 100 112 142;
-      --c-line-soft: 36 45 69;
-      --c-ink: 232 236 244;
-      --c-ink-2: 199 207 221;
-      --c-muted: 163 173 192;
-      --c-faint: 127 138 160;
+      --c-line: 64 76 108;
+      --c-control: 122 134 164;
+      --c-line-soft: 50 61 90;
+      --c-ink: 240 243 249;
+      --c-ink-2: 216 223 235;
+      --c-muted: 186 195 212;
+      --c-faint: 152 163 184;
       --c-navy: 165 182 255;
       --c-navy-solid: 46 71 184;
       --c-navy-strong: 58 85 204;

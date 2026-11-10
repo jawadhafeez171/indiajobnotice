@@ -31,7 +31,6 @@ const GROUPS: FooterGroup[] = [
       { href: "/calendar", label: "Exam calendar" },
       { href: "/vacancies", label: "Vacancies by qualification" },
       { href: "/directory", label: "Commissions and boards" },
-      { href: "/for-colleges-libraries", label: "For colleges and libraries" },
       { href: getCentralPortalUrl(), label: "All India (central jobs)", external: true, divider: true },
     ],
   },
@@ -48,34 +47,11 @@ const GROUPS: FooterGroup[] = [
   },
 ];
 
-const HUBS: FooterLink[] = [
-  { href: "/government-jobs/karnataka/12th-pass", label: "KA 12th" },
-  { href: "/government-jobs/karnataka/engineering", label: "KA Engg" },
-  { href: "/government-jobs/up/12th-pass", label: "UP 12th" },
-  { href: "/government-jobs/bihar/12th-pass", label: "BR 12th" },
-];
-
 function FooterAnchor({ link, className }: { link: FooterLink; className: string }) {
   return link.external ? (
     <a href={link.href} className={className}>{link.label}</a>
   ) : (
     <Link href={link.href} className={className}>{link.label}</Link>
-  );
-}
-
-function Hubs({ className }: { className: string }) {
-  return (
-    <div className={className}>
-      <span className="text-[12px] text-on-navy">State + Qualification Hubs:</span>
-      <div className="flex flex-wrap gap-x-1.5 text-white text-[13px] md:text-[12px]">
-        {HUBS.map((h, i) => (
-          <React.Fragment key={h.href}>
-            {i > 0 && <span aria-hidden className="self-center">·</span>}
-            <Link href={h.href} className="hover:text-saffron-light flex items-center min-h-[44px] px-1 md:inline md:min-h-0 md:p-0">{h.label}</Link>
-          </React.Fragment>
-        ))}
-      </div>
-    </div>
   );
 }
 
@@ -154,7 +130,6 @@ export function Footer() {
                     </li>
                   ))}
                 </ul>
-                {g.title === "By Qualification" && <Hubs className="px-4 pb-3 pt-2 border-t border-on-navy-2/25" />}
               </details>
             ))}
           </div>
@@ -172,11 +147,6 @@ export function Footer() {
                     <FooterAnchor link={l} className="text-on-navy hover:text-saffron-light font-medium" />
                   </li>
                 ))}
-                {g.title === "By Qualification" && (
-                  <li className="pt-2 border-t border-on-navy-2/25">
-                    <Hubs className="space-y-1" />
-                  </li>
-                )}
               </ul>
             </div>
           ))}

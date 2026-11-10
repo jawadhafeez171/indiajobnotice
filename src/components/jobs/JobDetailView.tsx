@@ -27,6 +27,8 @@ import {
   DatesAndApply, FeeAndApply, WhoCanApply, datesHeading, glanceFacts, hasEligibility, hasFeeSection, opensLater,
 } from "./JobFactSections";
 import { ClosedRecruitmentAlert } from "./ClosedRecruitmentAlert";
+import { NoticeTitle } from "./NoticeTitle";
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { JobTaxonomyBar } from "./JobTaxonomyBar";
 import { RelatedOpportunitiesSection } from "./RelatedOpportunitiesSection";
 import { getJobTaxonomyLinks, noticeArea, RelatedOpportunity } from "@/lib/internal-links";
@@ -49,47 +51,6 @@ function hostOf(url: string): string {
   } catch {
     return "";
   }
-}
-
-/**
- * The notice's own title, in full (official titles run to seven lines): three lines on phones and two on
- * wider screens, with the rest a tap away. The whole title stays in the page for search and print.
- */
-function NoticeTitle({ text }: { text: string }) {
-  const ref = useRef<HTMLHeadingElement>(null);
-  const [open, setOpen] = useState(false);
-  const [cut, setCut] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const check = () => setCut(el.scrollHeight > el.clientHeight + 2);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, [text, open]);
-  return (
-    <>
-      <h1
-        ref={ref}
-        className={cn(
-          "font-serif text-[21px] leading-snug sm:text-[28px] sm:leading-tight font-bold text-ink text-balance print:line-clamp-none",
-          !open && "line-clamp-3 sm:line-clamp-2"
-        )}
-      >
-        {text}
-      </h1>
-      {(cut || open) && (
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          className="mt-1 min-h-[36px] text-sm font-semibold text-navy underline underline-offset-2 hover:text-saffron print:hidden"
-        >
-          {open ? "Show less" : "Show full title"}
-        </button>
-      )}
-    </>
-  );
 }
 
 export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = [] }: Props) {
@@ -165,36 +126,17 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
         dangerouslySetInnerHTML={{ __html: safeJson(structuredData) }}
       />
 
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="flex items-start justify-between gap-2 text-xs text-muted print:hidden">
-        <ol className="flex items-center flex-wrap gap-x-1.5 list-none p-0 m-0 min-w-0">
-          {taxonomy.breadcrumbTrail.map((crumb, idx) => {
-            const isLast = idx === taxonomy.breadcrumbTrail.length - 1;
-            return (
-              // phones keep Home, the state and this page: the middle crumbs would wrap to three lines
-              <li key={idx} className={cn("items-center gap-1.5 min-w-0", idx > 1 && !isLast ? "hidden sm:flex" : "flex")}>
-                {idx > 0 && <span aria-hidden className="text-faint">/</span>}
-                {isLast ? (
-                  <span className="text-ink font-bold truncate max-w-[60vw] sm:max-w-md" aria-current="page">
-                    {crumb.label}
-                  </span>
-                ) : (
-                  <Link href={crumb.href} className="inline-block py-1.5 hover:text-navy font-medium transition-colors">
-                    {crumb.label}
-                  </Link>
-                )}
-              </li>
-            );
-          })}
-        </ol>
-        <Link
-          href={back.href}
-          className="hidden sm:inline-flex text-navy hover:underline font-bold items-center gap-1 shrink-0 py-1.5"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>{back.label}</span>
-        </Link>
-      </nav>
+      {/* Breadcrumb (its Google data is in the page's structured data above) */}
+      <Breadcrumbs
+        items={taxonomy.breadcrumbTrail.slice(1).map((c, i, all) => (i === all.length - 1 ? { label: c.label } : c))}
+        data={false}
+        aside={
+          <Link href={back.href} className="inline-flex text-navy hover:underline font-bold items-center gap-1 py-1.5">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>{back.label}</span>
+          </Link>
+        }
+      />
 
       {/* Wide screens: the title and the facts on the left, the glance panel beside the title from the top */}
       <div className="mt-4 sm:mt-6 lg:grid lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-x-12">

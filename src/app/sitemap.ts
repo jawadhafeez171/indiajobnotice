@@ -10,7 +10,6 @@ import {
   SECTOR_HUBS, 
   ORGANISATION_HUBS 
 } from "@/data/permanent-categories";
-import { VERIFIED_STATE_QUAL_HUBS } from "@/data/state-qualification-hubs";
 
 // Route handlers are cached at build time; refresh hourly so newly published jobs are listed.
 export const revalidate = 86400; // daily: hourly rebuilds counted as ISR writes (9 Nov)
@@ -66,12 +65,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/exam-dates`,
-      ...lastmod(siteDay),
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
       url: `${baseUrl}/calculator`,
       changeFrequency: "weekly",
       priority: 0.85,
@@ -86,11 +79,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/directory`,
       changeFrequency: "weekly",
       priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/for-colleges-libraries`,
-      changeFrequency: "weekly",
-      priority: 0.85,
     },
     {
       url: `${baseUrl}/about`,
@@ -140,24 +128,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.88,
   }));
 
-  // Curated State + Qualification Hubs (/government-jobs/karnataka/12th-pass, etc.)
-  const stateQualificationRoutes: MetadataRoute.Sitemap = VERIFIED_STATE_QUAL_HUBS.map((hub) => ({
-    url: `${baseUrl}/government-jobs/${hub.stateSlug}/${hub.qualSlug}`,
-    changeFrequency: "daily",
-    priority: 0.86,
-  }));
-
   // 36 State Directory Hubs (/state/[state])
   const stateRoutes: MetadataRoute.Sitemap = STATES_REGISTRY.map((state) => ({
     url: `${baseUrl}/state/${state.slug}`,
-    ...lastmod(stateDay(state.slug)),
-    changeFrequency: "daily",
-    priority: 0.85,
-  }));
-
-  // 36 Permanent Government Jobs Hubs (/government-jobs/[state])
-  const governmentJobsRoutes: MetadataRoute.Sitemap = STATES_REGISTRY.map((state) => ({
-    url: `${baseUrl}/government-jobs/${state.slug}`,
     ...lastmod(stateDay(state.slug)),
     changeFrequency: "daily",
     priority: 0.85,
@@ -184,12 +157,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...sectorRoutes,
     ...qualificationRoutes,
     ...organisationRoutes,
-    ...stateQualificationRoutes,
     ...stateRoutes,
     ...districtRoutes,
     // admit card / answer key / result pages are left out: indexable while their document is recent,
-    // reached through the job page (9 Nov: 300+ of them made the sitemap mostly thin pages)
-    ...governmentJobsRoutes,
+    // reached through the job page (9 Nov: 300+ of them made the sitemap mostly thin pages).
+    // /government-jobs/*, /exam-dates and /for-colleges-libraries redirect elsewhere since 11 Nov.
     ...jobRoutes,
   ];
 }

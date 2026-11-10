@@ -1,3 +1,4 @@
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import React from "react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
@@ -32,6 +33,7 @@ export default async function CalendarPage() {
       <Navbar currentStateSlug="central" />
 
       <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-7 flex-1 w-full space-y-8">
+        <Breadcrumbs items={[{ label: "Exam calendar" }]} className="mb-3" />
         <header className="max-w-3xl">
           <h1 className="font-serif text-[24px] sm:text-4xl font-bold text-ink tracking-tight leading-tight text-balance">
             Calendar of last dates and exams

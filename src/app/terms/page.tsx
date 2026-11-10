@@ -1,3 +1,4 @@
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import React from "react";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -33,13 +34,7 @@ export default function TermsPage() {
       {/* Editorial Header */}
       <section className="border-b border-line bg-subtle py-8 sm:py-10 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-2 text-xs text-muted mb-3">
-            <Link href="/" className="hover:text-navy font-medium transition-colors">
-              All-India Gazettes
-            </Link>
-            <span>/</span>
-            <span className="text-ink font-bold">Terms of Service</span>
-          </div>
+          <Breadcrumbs items={[{ label: "Terms of use" }]} className="mb-3" />
 
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
             Terms of Service & Usage

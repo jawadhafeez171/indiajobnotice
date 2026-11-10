@@ -3,21 +3,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { JobCard } from "@/components/jobs/JobCard";
-import { SocialAlertBar } from "@/components/common/SocialAlertBar";
-import { EligibilityCalculator } from "@/components/eligibility/EligibilityCalculator";
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
-import { TricolorCapsule } from "@/components/common/BrandLogo";
-import { DistrictSelectorBar } from "@/components/common/DistrictSelectorBar";
-import { getStateBySlug, STATES_REGISTRY, getStateBadgeColor } from "@/config/states";
-import { getJobsByState, getListingJobs, getCalculatorJobs, getExamsInProgress } from "@/data/jobs";
+import { getStateBySlug, STATES_REGISTRY } from "@/config/states";
+import { getJobsByState, getListingJobs, getExamsInProgress, isOpenOrOpening } from "@/data/jobs";
 import { ExamsInProgressSection } from "@/components/jobs/ExamsInProgressSection";
 import { ExamCalendarSections } from "@/components/jobs/ExamCalendarSections";
 import { getAllJobs } from "@/lib/jobs-store";
 
-import { getCentralPortalUrl } from "@/lib/subdomains";
-import { cn } from "@/lib/utils";
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
 import { forList } from "@/lib/list-jobs";
 import { OpenJobLinks } from "@/components/jobs/OpenJobLinks";
@@ -72,7 +66,7 @@ export default async function StateHomePage({ params }: PageProps) {
 
   const allJobs = await getAllJobs();
   const jobs = getJobsByState(getListingJobs(allJobs), state.slug);
-  const badgeStyle = getStateBadgeColor(state.code);
+  const ownOpen = jobs.some((j) => !j.isCentral && isOpenOrOpening(j));
 
   return (
     <div className="min-h-screen flex flex-col bg-canvas">
@@ -81,150 +75,69 @@ export default async function StateHomePage({ params }: PageProps) {
       {/* Editorial State Header with Regional Tint Accent */}
       <section className="border-b border-line bg-subtle py-5 sm:py-6 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          {/* Breadcrumb with Tricolor Accent */}
-          <div className="flex items-center gap-2 text-xs text-muted mb-3">
-            <a href={getCentralPortalUrl()} className="hover:text-navy font-medium transition-colors">
-              All-India jobs
-            </a>
-            <span>/</span>
-            <span className="text-ink font-bold">{state.name}</span>
+          <Breadcrumbs items={[{ label: state.name }]} className="mb-3" />
+
+          {/* the state's name and what the page holds; 11 Nov: the code badge, capital and "State Hub" address pill went */}
+          <div className="flex items-baseline gap-3 flex-wrap">
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
+              {state.name} government jobs
+            </h1>
+            <span className="text-base font-semibold text-muted">
+              {state.nativeName}
+            </span>
           </div>
+          <p className="mt-2 text-sm text-ink-2 max-w-2xl leading-relaxed">
+            Recruitments from {state.name}&apos;s commissions, boards, courts and departments, each with its last date
+            and the link to the official notification.
+          </p>
 
-          <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
-                  {state.name}
-                </h1>
-                <span className="text-sm font-serif italic text-muted">
-                  {state.nativeName}
-                </span>
-                <span
-                  className={cn(
-                    "text-xs font-mono px-2 py-0.5 rounded font-bold border",
-                    badgeStyle.bg,
-                    badgeStyle.text,
-                    badgeStyle.border
-                  )}
-                >
-                  {state.code}
-                </span>
-                <span className="text-xs font-mono text-muted">
-                  Capital: {state.capital}
-                </span>
-              </div>
-
-              {/* Dignified Cultural Greeting Line */}
-              <p className="mt-2 text-xs font-semibold text-navy">
-                {state.greeting}
-              </p>
-
-              <p className="mt-1 text-sm text-ink-2 max-w-2xl leading-relaxed">
-                Official employment notifications, syllabus patterns, and gazette notices issued by state departments and public service commissions in {state.name}.
-              </p>
-            </div>
-
-            {/* Subdirectory Context Pill */}
-            <div className="flex items-center gap-2 text-xs font-mono shrink-0">
-              <span className="text-muted font-medium">State Hub:</span>
-              <span className={cn("px-2.5 py-1 rounded font-bold border", badgeStyle.bg, badgeStyle.text, badgeStyle.border)}>
-                /state/{state.slug}
-              </span>
-            </div>
-          </div>
-
-          {/* Interactive District Quick Selector */}
-          <DistrictSelectorBar stateSlug={state.slug} stateName={state.name} />
+          {/* District buttons come back when notices record their district (11 Nov: every district page
+              repeated the state's list, so they now lead here) */}
         </div>
       </section>
 
       {/* Main Content Area */}
       <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-10">
-        {/* Social Alert Bar */}
-        <SocialAlertBar state={state} />
-
-        {/* Active Notifications Section with Interactive View Switcher */}
-        <MajorRecruitmentsSection jobs={jobs.map(forList)} currentStateSlug={state.slug} />
+        {/* The jobs: the state's own first when it has open ones (11 Nov, owner's choice), central a tap away */}
+        <MajorRecruitmentsSection
+          jobs={jobs.map(forList)}
+          currentStateSlug={state.slug}
+          defaultScope={ownOpen ? "STATE" : "ALL"}
+        />
 
         <OpenJobLinks jobs={jobs} heading={`All open notifications for ${state.name}`} />
 
-        <ExamCalendarSections jobs={getJobsByState(allJobs, state.slug, false)} limit={15} />
+        {/* Short lists; the rest open in place */}
+        <ExamCalendarSections jobs={getJobsByState(allJobs, state.slug, false)} limit={5} expandRest />
 
-        <ExamsInProgressSection jobs={getJobsByState(getExamsInProgress(allJobs), state.slug, false)} limit={20} />
+        <ExamsInProgressSection jobs={getJobsByState(getExamsInProgress(allJobs), state.slug, false)} limit={6} expandRest />
 
         {/* Reserved Ad Space (0.00 CLS Protected) */}
         <ReservedAdSlot slotType="leaderboard" slotId={`state-${state.slug}-leaderboard`} />
 
-        {/* Age & Eligibility Calculator */}
-        <section id="calculator">
-          <EligibilityCalculator currentStateSlug={state.slug} jobs={getCalculatorJobs(allJobs).map(forList)} />
-        </section>
-
-        {/* Authorized Recruitment Bodies & Stream Navigation */}
-        <section className="bg-surface rounded-lg border border-line p-5 shadow-2xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-line-soft pb-3">
-            <div className="flex items-center gap-2">
-              <TricolorCapsule className="w-10 h-1.5" />
-              <h3 className="font-serif text-sm font-bold text-ink">
-                Key Recruitment Boards & Commissions in {state.name}
-              </h3>
-            </div>
-            <a
-              href={`/government-jobs/${state.slug}`}
-              className="text-xs font-bold text-navy hover:underline flex items-center gap-1"
-            >
-              <span>View Permanent {state.name} Hub</span>
-              <span aria-hidden="true">→</span>
-            </a>
-          </div>
-
-          <div className="flex flex-wrap gap-2 text-xs">
+        {/* The bodies that recruit here, and more ways in; the age check has its own page */}
+        <section aria-labelledby="bodies-h" className="border-t border-line pt-6 space-y-4">
+          <h2 id="bodies-h" className="font-serif text-xl font-bold text-ink">Recruiting bodies in {state.name}</h2>
+          <ul className="flex flex-wrap gap-x-2 gap-y-2 text-sm">
             {state.majorExams.map((exam) => (
-              <span
-                key={exam}
-                className={cn(
-                  "px-3 py-1 rounded border font-semibold text-xs shadow-2xs",
-                  badgeStyle.bg,
-                  badgeStyle.text,
-                  badgeStyle.border
-                )}
-              >
-                {exam}
-              </span>
+              <li key={exam} className="px-3 py-1.5 rounded-md bg-surface border border-line font-semibold text-ink">{exam}</li>
             ))}
-          </div>
-
-          {/* Links to qualification and sector pages */}
-          <div className="pt-2 border-t border-line-soft grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-            <Link
-              href="/engineering-jobs"
-              className="p-2.5 rounded bg-subtle border border-line hover:border-navy transition-colors block text-center"
-            >
-              <span className="font-bold text-ink block truncate">Engineering Jobs</span>
-              <span className="text-[11px] text-muted">B.Tech & Diploma</span>
-            </Link>
-            <Link
-              href="/police-defense-jobs"
-              className="p-2.5 rounded bg-subtle border border-line hover:border-saffron-bright transition-colors block text-center"
-            >
-              <span className="font-bold text-ink block truncate">Police & Defense</span>
-              <span className="text-[11px] text-muted">SI & Constable</span>
-            </Link>
-            <Link
-              href="/qualification/graduate"
-              className="p-2.5 rounded bg-subtle border border-line hover:border-navy transition-colors block text-center"
-            >
-              <span className="font-bold text-ink block truncate">Graduate Jobs</span>
-              <span className="text-[11px] text-muted">Any Degree</span>
-            </Link>
-            <Link
-              href="/qualification/12th-pass"
-              className="p-2.5 rounded bg-subtle border border-line hover:border-green transition-colors block text-center"
-            >
-              <span className="font-bold text-ink block truncate">12th Pass Jobs</span>
-              <span className="text-[11px] text-muted">Clerk & Assistant</span>
-            </Link>
-          </div>
+          </ul>
+          <ul className="flex flex-wrap gap-x-6 gap-y-1 text-sm font-semibold">
+            {[
+              { href: "/calculator", label: "Check which jobs your age fits" },
+              { href: "/engineering-jobs", label: "Engineering jobs" },
+              { href: "/police-defense-jobs", label: "Police and defence jobs" },
+              { href: "/qualification/graduate", label: "Graduate jobs" },
+              { href: "/qualification/12th-pass", label: "12th pass jobs" },
+            ].map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className="inline-flex items-center min-h-[44px] text-navy hover:text-saffron underline-offset-4 hover:underline">
+                  {l.label} →
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       </main>
 

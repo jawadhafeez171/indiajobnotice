@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { JobNotification, formatAgeRange, isOpenOrOpening, getJobCanonicalPath } from "@/data/jobs";
 import { STATUS_STYLE, qualificationLabel, rowTitle, placeLabel } from "@/components/jobs/JobListCard";
@@ -103,6 +103,12 @@ const isOpen = isOpenOrOpening;
  */
 export function QualificationVacancyTracker({ jobs }: { jobs: JobNotification[] }) {
   const [selectedTierId, setSelectedTierId] = useState<string>("all");
+  // /vacancies?stream=graduate (from a qualification page's "Print this list") opens on that group
+  useEffect(() => {
+    const s = new URLSearchParams(window.location.search).get("stream");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- read once from the address after the first render
+    if (s && QUALIFICATION_TIERS.some((t) => t.id === s)) setSelectedTierId(s);
+  }, []);
   const [openOnly, setOpenOnly] = useState<boolean>(true);
   const [showAll, setShowAll] = useState(false);
 

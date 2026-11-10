@@ -1,3 +1,4 @@
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -43,13 +44,7 @@ export default function AboutPage() {
       {/* Editorial Header */}
       <section className="border-b border-line bg-subtle py-8 sm:py-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto space-y-3">
-          <div className="flex items-center gap-2 text-xs text-muted">
-            <Link href="/" className="hover:text-navy font-medium transition-colors">
-              All-India Gazettes
-            </Link>
-            <span>/</span>
-            <span className="text-ink font-bold">About Us</span>
-          </div>
+          <Breadcrumbs items={[{ label: "About" }]} className="mb-3" />
 
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-ink tracking-tight">
             Democratizing Government Career Notices for Every Aspirant
@@ -161,6 +156,16 @@ export default function AboutPage() {
           </ul>
           <p className="text-xs text-muted pt-2">
             Read our complete <Link href="/editorial-policy" className="text-navy underline font-bold">Editorial &amp; Verification Policy</Link> to learn about our 5-step fact-checking and errata correction protocol.
+          </p>
+        </section>
+
+        {/* replaces the separate page for colleges and libraries (11 Nov): one line, one link */}
+        <section className="space-y-2">
+          <h2 className="font-serif text-2xl font-bold text-ink">For colleges, libraries and coaching centres</h2>
+          <p className="text-sm text-ink-2 leading-relaxed max-w-prose">
+            Placement cells and libraries are welcome to print our list of open jobs for their notice boards. The{" "}
+            <Link href="/vacancies" className="text-navy underline font-bold">vacancies page</Link> groups them by
+            qualification and prints on one sheet.
           </p>
         </section>
 

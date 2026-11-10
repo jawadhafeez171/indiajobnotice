@@ -1,6 +1,6 @@
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import React from "react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { WhatsAppLogo, TelegramLogo, InstagramLogo, YouTubeLogo, INSTAGRAM_URL, YOUTUBE_URL } from "@/components/common/SocialIcons";
@@ -45,13 +45,7 @@ export default function ContactPage() {
       {/* Editorial Header */}
       <section className="border-b border-line bg-subtle py-8 sm:py-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto space-y-3">
-          <div className="flex items-center gap-2 text-xs text-muted">
-            <Link href="/" className="hover:text-navy font-medium transition-colors">
-              All-India Gazettes
-            </Link>
-            <span>/</span>
-            <span className="text-ink font-bold">Contact &amp; Grievance</span>
-          </div>
+          <Breadcrumbs items={[{ label: "Contact" }]} className="mb-3" />
 
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-ink tracking-tight">
             Contact Editorial Desk &amp; Grievance Officer

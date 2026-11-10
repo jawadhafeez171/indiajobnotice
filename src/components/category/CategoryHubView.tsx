@@ -7,6 +7,7 @@ import { getAllJobs } from "@/lib/jobs-store";
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { ArrowRight } from "lucide-react";
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { forList } from "@/lib/list-jobs";
 
 interface Props {
@@ -28,6 +29,15 @@ const KNOWN_GAPS: Record<string, { text: string; href: string; site: string }> =
  * as the home page (stage tabs, closing-date groups). No general advice: each notice sets its own
  * rules, and its job page shows them as the notice gives them.
  */
+/** A hub's group on the vacancies page (its printable list), where it has one. */
+const PRINT_STREAM: Record<string, string> = {
+  graduate: "graduate",
+  diploma: "diploma",
+  "12th-pass": "12th-pass",
+  "10th-pass": "10th-pass",
+  "engineering-jobs": "engineering",
+};
+
 export async function CategoryHubView({ hub, parentCrumb }: Props) {
   const jobs = getJobsForHub(await getAllJobs(), hub);
   const open = jobs.filter(isOpenOrOpening);
@@ -59,17 +69,7 @@ export async function CategoryHubView({ hub, parentCrumb }: Props) {
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-7 space-y-8">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJson(jsonLd) }} />
 
-      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted">
-        <Link href="/" className="hover:text-navy font-medium">Home</Link>
-        <span aria-hidden>/</span>
-        {parentCrumb && (
-          <>
-            <Link href={parentCrumb.href} className="hover:text-navy font-medium">{parentCrumb.label}</Link>
-            <span aria-hidden>/</span>
-          </>
-        )}
-        <span className="text-ink font-bold">{hub.badge}</span>
-      </nav>
+      <Breadcrumbs items={[...(parentCrumb ? [parentCrumb] : []), { label: hub.badge }]} />
 
       <header className="max-w-3xl">
         <h1 className="font-serif text-[24px] sm:text-4xl font-bold text-ink tracking-tight leading-tight text-balance">
@@ -96,6 +96,16 @@ export async function CategoryHubView({ hub, parentCrumb }: Props) {
       </header>
 
       <MajorRecruitmentsSection jobs={jobs.map(forList)} hideSearch showLayoutSwitch={false} />
+
+      {/* the same jobs as a printable list for a notice board (the vacancies page groups them the same way) */}
+      {PRINT_STREAM[hub.slug] && (
+        <Link
+          href={`/vacancies?stream=${PRINT_STREAM[hub.slug]}`}
+          className="-mt-4 inline-flex items-center gap-1.5 min-h-[44px] text-sm font-semibold text-navy hover:underline"
+        >
+          Print this list for a notice board <ArrowRight className="w-4 h-4" aria-hidden />
+        </Link>
+      )}
 
       <ReservedAdSlot slotType="leaderboard" slotId={`category-${hub.slug}-top`} />
 

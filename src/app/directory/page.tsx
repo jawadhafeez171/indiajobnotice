@@ -1,3 +1,4 @@
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { safeJson } from "@/lib/json-ld";
 import React from "react";
 import type { Metadata } from "next";
@@ -52,6 +53,7 @@ export default function DirectoryPage() {
       {/* Editorial Header */}
       <section className="border-b border-line bg-subtle py-8 sm:py-10 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
+          <Breadcrumbs items={[{ label: "Commissions and boards" }]} className="mb-3" />
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
             All-India State Recruitment Commissions Directory
           </h1>

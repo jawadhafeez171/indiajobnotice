@@ -1,6 +1,6 @@
 import { safeJson } from "@/lib/json-ld";
 import React from "react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
@@ -91,6 +91,12 @@ export default async function DistrictPage({ params }: PageProps) {
 
   if (!state || !district) {
     notFound();
+  }
+
+  // No notice records its district yet, so a district page would only repeat its state's list (11 Nov,
+  // owner's choice): go to the state page instead. Temporary, so the page returns once districts are known.
+  if (!districtHasOwnJobs(getListingJobs(await getAllJobsDaily()), state.slug, district.slug)) {
+    redirect(`/state/${state.slug}`);
   }
 
   const jobs = getJobsByDistrict(getListingJobs(await getAllJobsDaily()), state.slug, district.slug, true);

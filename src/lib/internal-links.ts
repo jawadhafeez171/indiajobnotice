@@ -24,8 +24,8 @@ export interface RelatedOpportunity {
 /**
  * Returns deliberate internal taxonomy links for a given job.
  * Every job deliberately connects to:
- * 1. Relevant state hub (/government-jobs/[state] and /state/[state])
- * 2. Relevant organisation hub (/organisations/ssc, upsc, railways-rrb, etc.)
+ * 1. Relevant state page (/state/[state]; /government-jobs/[state] redirects there since 11 Nov)
+ * 2. Relevant organisation hub (/organisations/ssc, upsc, banking-ibps, sbi; railways go to /railway-jobs)
  * 3. Relevant qualification hub (/qualification/12th-pass, diploma, graduate, 10th-pass)
  * 4. Relevant sector hub (/engineering-jobs, /police-defense-jobs, etc.)
  */
@@ -56,7 +56,7 @@ export function getJobTaxonomyLinks(job: JobNotification): {
     if (stateInfo) {
       result.stateHub = {
         label: `${stateInfo.name} Govt Jobs Hub`,
-        href: `/government-jobs/${stateInfo.slug}`,
+        href: `/state/${stateInfo.slug}`,
         type: "state",
         badge: `${stateInfo.name} State`,
         description: `All active and upcoming recruitment gazettes in ${stateInfo.name}`,
@@ -100,7 +100,7 @@ export function getJobTaxonomyLinks(job: JobNotification): {
   } else if (orgCode === "RRB" || orgName.includes("railway")) {
     result.organisationHub = {
       label: "Railway Recruitment Boards (RRB) Hub",
-      href: "/organisations/railways-rrb",
+      href: "/railway-jobs",
       type: "organisation",
       badge: "Indian Railways",
       description: "NTPC, ALP, Group D, and Junior Engineer centralized notices",
@@ -116,7 +116,8 @@ export function getJobTaxonomyLinks(job: JobNotification): {
   } else if (stateInfo && /public service commission/.test(orgName)) {
     result.organisationHub = {
       label: `${stateInfo.name} Public Service Commissions`,
-      href: `/organisations/state-psc`,
+      // there is no page for state PSCs: their notices are on the state's page (was a dead link)
+      href: `/state/${stateInfo.slug}`,
       type: "organisation",
       badge: "State PSC",
       description: `State civil service, police board and municipal recruitment in ${stateInfo.name}`,
@@ -216,7 +217,7 @@ export function getJobTaxonomyLinks(job: JobNotification): {
   if (stateInfo) {
     result.breadcrumbTrail.push({
       label: `${stateInfo.name} Jobs`,
-      href: `/government-jobs/${stateInfo.slug}`,
+      href: `/state/${stateInfo.slug}`,
     });
 
     if (result.sectorHub) {

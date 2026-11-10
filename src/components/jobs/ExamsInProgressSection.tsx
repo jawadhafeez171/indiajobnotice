@@ -3,71 +3,69 @@ import Link from "next/link";
 import { OpenStatePicker } from "@/components/common/OpenStatePicker";
 import { STATUS_STYLE } from "./JobListCard";
 import { cn } from "@/lib/utils";
-import { Hourglass, ArrowRight } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { JobNotification, getJobCanonicalPath, stageText, stageSummary } from "@/data/jobs";
 
 interface Props {
   jobs: JobNotification[];
-  /** How many to show before "and N more". */
+  /** How many to show before "See all". */
   limit?: number;
+  /** The rest open in place under "Show all" (a state page); else the state picker. */
+  expandRest?: boolean;
+}
+
+function Row({ job }: { job: JobNotification }) {
+  const last = (job.stages || [])[(job.stages || []).length - 1];
+  const style = STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING;
+  return (
+    <li>
+      <Link href={getJobCanonicalPath(job)} className="group block py-3">
+        <span className="block text-sm font-semibold text-ink group-hover:text-navy leading-snug">
+          <span className="font-bold text-navy">{job.orgShortCode}</span> · {job.shortTitle}
+        </span>
+        {stageSummary(job) && <span className={cn("mt-0.5 block text-[13px] font-bold", style.text)}>{stageSummary(job)}</span>}
+        {last && <span className="mt-0.5 text-[13px] text-muted line-clamp-1">Latest: {last.summary || stageText(last).main}</span>}
+      </Link>
+    </li>
+  );
 }
 
 // Recruitments whose applications have closed and whose exams or results are under way, with the
-// latest official document. Shown only when there is at least one.
-export function ExamsInProgressSection({ jobs, limit = 12 }: Props) {
+// latest official document, as plain rows (11 Nov: the boxed two-column grid ran to many screens).
+// Shown only when there is at least one.
+export function ExamsInProgressSection({ jobs, limit = 12, expandRest = false }: Props) {
   if (!jobs.length) return null;
   const shown = jobs.slice(0, limit);
 
   return (
-    <section className="space-y-4 -mx-4 sm:mx-0 px-4 py-6 sm:p-6 bg-navy-tint border-y sm:border border-navy-line sm:rounded-2xl" aria-labelledby="exams-in-progress" id="recruitments-under-way">
-      <div className="flex items-center gap-2">
-        <Hourglass className="w-5 h-5 text-saffron" />
-        <h2 id="exams-in-progress" className="font-serif text-xl sm:text-2xl font-bold text-ink">
-          Recruitments under way
-        </h2>
-        <span className="text-xs text-muted">{jobs.length} past the application stage</span>
-      </div>
-      <p className="text-sm text-muted -mt-2">
-        Applications have closed; admit cards, answer keys or results are coming out. Each entry links to the
-        official documents.
+    <section className="border-t border-line pt-6" aria-labelledby="exams-in-progress" id="recruitments-under-way">
+      <h2 id="exams-in-progress" className="font-serif text-xl font-bold text-ink">
+        Recruitments under way <span className="ml-1 font-sans text-base font-semibold text-muted tabular-nums">{jobs.length}</span>
+      </h2>
+      <p className="mt-1 text-sm text-ink-2 max-w-prose">
+        Applications have closed; admit cards, answer keys or results are coming out.
       </p>
-      <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {shown.map((job) => {
-          const last = (job.stages || [])[(job.stages || []).length - 1];
-          return (
-            <li key={job.id}>
-              <Link
-                href={getJobCanonicalPath(job)}
-                className="relative block h-full pl-5 pr-4 py-4 rounded-xl bg-surface border border-line hover:border-navy shadow-2xs transition-colors overflow-hidden"
-              >
-                <span
-                  aria-hidden
-                  className={cn("absolute left-0 inset-y-0 w-1.5", (STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING).stripe)}
-                />
-                <span className="inline-block px-2 py-0.5 rounded bg-navy-tint text-navy font-bold text-[12px] border border-navy-line">
-                  {job.orgShortCode}
-                </span>
-                <p className="mt-2 text-sm font-bold text-ink leading-snug line-clamp-2">{job.shortTitle}</p>
-                {stageSummary(job) && (
-                  <p className={cn("mt-1.5 text-xs font-bold", (STATUS_STYLE[job.status] || STATUS_STYLE.UPCOMING).text)}>
-                    {stageSummary(job)}
-                  </p>
-                )}
-                {last && <p className="mt-1 text-xs text-muted line-clamp-1">Latest: {last.summary || stageText(last).main}</p>}
-                <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-navy">
-                  Stages & documents <ArrowRight className="w-3 h-3" />
-                </span>
-              </Link>
-            </li>
-          );
-        })}
+      <ul className="mt-2 divide-y divide-line-soft">
+        {shown.map((job) => <Row key={job.id} job={job} />)}
       </ul>
       {jobs.length > shown.length && (
-        <p className="text-sm text-muted">
-          Showing {shown.length} of {jobs.length}.{" "}
-          <OpenStatePicker className="font-semibold text-navy underline underline-offset-2">Choose your state</OpenStatePicker>{" "}
-          to see the rest for that state.
-        </p>
+        expandRest ? (
+          <details className="group">
+            <summary className="inline-flex items-center gap-1.5 min-h-[44px] cursor-pointer list-none text-sm font-bold text-navy hover:text-saffron [&::-webkit-details-marker]:hidden">
+              <ChevronDown className="w-4 h-4 transition-transform group-open:rotate-180" aria-hidden />
+              Show all {jobs.length}
+            </summary>
+            <ul className="divide-y divide-line-soft border-t border-line-soft">
+              {jobs.slice(limit).map((job) => <Row key={job.id} job={job} />)}
+            </ul>
+          </details>
+        ) : (
+          <p className="mt-2 text-sm text-ink-2">
+            Showing {shown.length} of {jobs.length}.{" "}
+            <OpenStatePicker className="font-semibold text-navy underline underline-offset-2">Choose your state</OpenStatePicker>{" "}
+            to see the rest for that state.
+          </p>
+        )
       )}
     </section>
   );

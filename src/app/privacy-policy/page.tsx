@@ -1,6 +1,6 @@
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import React from "react";
 import { Metadata } from "next";
-import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { ShieldCheck, Lock, Eye, FileText, ExternalLink, Mail } from "lucide-react";
@@ -33,13 +33,7 @@ export default function PrivacyPolicyPage() {
       {/* Editorial Header */}
       <section className="border-b border-line bg-subtle py-8 sm:py-10 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-2 text-xs text-muted mb-3">
-            <Link href="/" className="hover:text-navy font-medium transition-colors">
-              All-India Gazettes
-            </Link>
-            <span>/</span>
-            <span className="text-ink font-bold">Privacy Policy</span>
-          </div>
+          <Breadcrumbs items={[{ label: "Privacy policy" }]} className="mb-3" />
 
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight">
             Privacy Policy

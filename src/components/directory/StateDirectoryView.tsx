@@ -226,7 +226,7 @@ export function StateDirectoryView() {
               {/* Internal Bidirectional Cross-Links */}
               <div className="pt-3 border-t border-line-soft flex items-center justify-between gap-3 text-xs">
                 <Link
-                  href={`/government-jobs/${rec.state.slug}`}
+                  href={`/state/${rec.state.slug}`}
                   className="font-bold text-navy hover:underline flex items-center gap-1"
                 >
                   <span>{rec.state.name} government jobs</span>

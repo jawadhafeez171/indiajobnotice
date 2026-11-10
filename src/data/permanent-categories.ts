@@ -243,22 +243,7 @@ export const ORGANISATION_HUBS: CategoryHubInfo[] = [
       );
     },
   },
-  {
-    slug: "railways-rrb",
-    title: "RRB Recruitment 2026 - Indian Railways Centralized Employment Notices",
-    h1: "Railway Recruitment Boards (RRB) 2026",
-    subtitle: "Railway Recruitment Board (RRB) notifications",
-    metaDescription: "Railway Recruitment Board (RRB) notices: notifications, admit cards, answer keys and results, with last dates, posts, eligibility and the official notification link, read from each notice.",
-    badge: "Railway Recruitment Boards",
-    canonicalPath: "/organisations/railways-rrb",
-    overview: "Notices of the Railway Recruitment Boards (RRBs), which recruit technical and non-technical staff for Indian Railways.",
-    filterPredicate: (job: JobNotification) => {
-      return (
-        job.orgShortCode.toUpperCase() === "RRB" ||
-        job.organization.toLowerCase().includes("railway")
-      );
-    },
-  },
+  // railways-rrb went 11 Nov: it picked the same jobs as /railway-jobs, which its address now leads to
   {
     slug: "banking-ibps",
     title: "IBPS Recruitment 2026 - Bank PO, Clerk, Specialist Officer & RRBs",

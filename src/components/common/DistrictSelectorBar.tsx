@@ -41,26 +41,37 @@ export function DistrictSelectorBar({
 
   return (
     <div className="mt-4 pt-3.5 border-t border-line/80">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-        <div className="flex items-center gap-1.5 text-xs text-muted font-mono">
-          <MapPin className="w-3.5 h-3.5 text-saffron" />
-          <span className="font-bold text-ink">Jobs by district:</span>
-          <span className="text-faint">({allDistricts.length} Districts in {stateName})</span>
+      {/* phones: one button that opens the list (11 Nov: eight chips filled the first screen before any job) */}
+      <button
+        type="button"
+        onClick={() => setIsModalOpen(true)}
+        className="sm:hidden inline-flex items-center gap-1.5 min-h-[44px] text-sm font-bold text-navy"
+      >
+        <MapPin className="w-4 h-4 text-saffron" aria-hidden />
+        Jobs by district ({allDistricts.length})
+        <ChevronRight className="w-4 h-4" aria-hidden />
+      </button>
+
+      <div className="hidden sm:flex flex-row items-center justify-between gap-2.5">
+        <div className="flex items-center gap-1.5 text-sm text-muted">
+          <MapPin className="w-4 h-4 text-saffron" aria-hidden />
+          <span className="font-bold text-ink">Jobs by district</span>
+          <span>({allDistricts.length} districts)</span>
         </div>
 
         {allDistricts.length > 8 && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="self-start sm:self-auto text-xs text-navy hover:text-navy hover:underline font-bold flex items-center gap-1"
+            className="text-sm text-navy hover:underline font-bold flex items-center gap-1"
           >
-            <span>Browse All {allDistricts.length} Districts</span>
+            <span>All {allDistricts.length} districts</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         )}
       </div>
 
-      {/* Quick District Chips */}
-      <div className="flex flex-wrap items-center gap-1.5 mt-2">
+      {/* Quick District Chips (wider screens) */}
+      <div className="hidden sm:flex flex-wrap items-center gap-1.5 mt-2">
         {majorDistricts.map((dist) => {
           const isSelected = currentDistrictSlug === dist.slug;
           return (
