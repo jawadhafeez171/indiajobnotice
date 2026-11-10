@@ -3,7 +3,7 @@ import Link from "next/link";
 import { CalendarDays, ChevronRight } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { TelegramLogo, WhatsAppLogo } from "@/components/common/SocialIcons";
+import { TelegramLogo, WhatsAppLogo, InstagramLogo, INSTAGRAM_URL } from "@/components/common/SocialIcons";
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
 import { getListingJobs, getExamsInProgress, isOpenOrOpening, todayIST, updatesDay } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
@@ -162,32 +162,37 @@ export default async function HomePage() {
           </section>
 
           {/* Alerts: both channels, each in its own brand colour (phones have them in the footer) */}
-          <section aria-label="Job alerts" className="hidden sm:block space-y-2.5">
+          {/* slim bars, one line each (11 Nov, owner's choice) */}
+          <section aria-label="Job alerts" className="hidden sm:block space-y-2">
             <a
               href="https://t.me/india_jobnotice"
               target="_blank"
               rel="noreferrer"
-              className="group flex items-center gap-2.5 px-3.5 py-3 rounded-xl bg-[#1A7DB0] hover:bg-[#156C99] text-white transition-colors"
+              className="group flex items-center gap-2.5 px-3.5 min-h-[44px] py-2 rounded-lg bg-[#1A7DB0] hover:bg-[#156C99] text-white transition-colors"
             >
-              <TelegramLogo className="w-7 h-7 shrink-0" />
-              <span className="flex-1 min-w-0">
-                <span className="block font-bold text-[15px] leading-tight">Join our Telegram Channel</span>
-                <span className="block text-[12px] text-white/85 mt-0.5">Get job alerts and updates</span>
-              </span>
-              <ChevronRight className="w-5 h-5 shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              <TelegramLogo className="w-5 h-5 shrink-0" />
+              <span className="flex-1 min-w-0 font-semibold text-[14px] leading-tight">Join on Telegram</span>
+              <ChevronRight className="w-4 h-4 shrink-0 opacity-80 transition-transform group-hover:translate-x-0.5" aria-hidden />
             </a>
             <a
               href="https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C"
               target="_blank"
               rel="noreferrer"
-              className="group flex items-center gap-2.5 px-3.5 py-3 rounded-xl bg-[#13853F] hover:bg-[#0E7A3E] text-white transition-colors"
+              className="group flex items-center gap-2.5 px-3.5 min-h-[44px] py-2 rounded-lg bg-[#13853F] hover:bg-[#0E7A3E] text-white transition-colors"
             >
-              <WhatsAppLogo className="w-7 h-7 shrink-0" />
-              <span className="flex-1 min-w-0">
-                <span className="block font-bold text-[15px] leading-tight">Join our WhatsApp Channel</span>
-                <span className="block text-[12px] text-white/85 mt-0.5">Get new notifications on WhatsApp</span>
-              </span>
-              <ChevronRight className="w-5 h-5 shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              <WhatsAppLogo className="w-5 h-5 shrink-0" />
+              <span className="flex-1 min-w-0 font-semibold text-[14px] leading-tight">Join on WhatsApp</span>
+              <ChevronRight className="w-4 h-4 shrink-0 opacity-80 transition-transform group-hover:translate-x-0.5" aria-hidden />
+            </a>
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex items-center gap-2.5 px-3.5 min-h-[44px] py-2 rounded-lg bg-[#C13584] hover:bg-[#A72D72] text-white transition-colors"
+            >
+              <InstagramLogo className="w-5 h-5 shrink-0" />
+              <span className="flex-1 min-w-0 font-semibold text-[14px] leading-tight">Follow on Instagram</span>
+              <ChevronRight className="w-4 h-4 shrink-0 opacity-80 transition-transform group-hover:translate-x-0.5" aria-hidden />
             </a>
           </section>
         </aside>

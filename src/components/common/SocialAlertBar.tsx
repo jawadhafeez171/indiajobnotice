@@ -1,5 +1,5 @@
 import React from "react";
-import { TelegramLogo, WhatsAppLogo } from "./SocialIcons";
+import { TelegramLogo, WhatsAppLogo, InstagramLogo, INSTAGRAM_URL } from "./SocialIcons";
 import { StateInfo } from "@/config/states";
 
 interface Props {
@@ -21,26 +21,37 @@ export function SocialAlertBar({ state }: Props) {
         </p>
       </div>
 
-      <div className="flex items-center gap-2.5 shrink-0">
+      {/* phones: three equal full-width rows; wider screens: side by side */}
+      <div className="grid grid-cols-1 gap-2 w-full sm:w-auto sm:flex sm:flex-wrap sm:items-center sm:gap-2.5 shrink-0">
         {/* each in its own brand colour (the deeper shades, so white text stays readable) */}
         <a
           href={telegramLink}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1.5 px-3.5 min-h-[44px] rounded-md bg-[#1A7DB0] hover:bg-[#156C99] text-white text-xs font-bold transition-colors"
+          className="inline-flex items-center gap-2 px-3.5 min-h-[44px] rounded-lg bg-[#1A7DB0] hover:bg-[#156C99] text-white text-[13px] font-semibold transition-colors"
         >
           <TelegramLogo className="w-4 h-4" />
-          <span>Telegram Alerts</span>
+          <span>Join on Telegram</span>
         </a>
 
         <a
           href="https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C"
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1.5 px-3.5 min-h-[44px] rounded-md bg-[#13853F] hover:bg-[#0E7A3E] text-white text-xs font-bold transition-colors"
+          className="inline-flex items-center gap-2 px-3.5 min-h-[44px] rounded-lg bg-[#13853F] hover:bg-[#0E7A3E] text-white text-[13px] font-semibold transition-colors"
         >
           <WhatsAppLogo className="w-4 h-4" />
-          <span>WhatsApp Channel</span>
+          <span>Join on WhatsApp</span>
+        </a>
+
+        <a
+          href={INSTAGRAM_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 px-3.5 min-h-[44px] rounded-lg bg-[#C13584] hover:bg-[#A72D72] text-white text-[13px] font-semibold transition-colors"
+        >
+          <InstagramLogo className="w-4 h-4" />
+          <span>Follow on Instagram</span>
         </a>
       </div>
     </div>
