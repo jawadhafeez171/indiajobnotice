@@ -6,19 +6,20 @@ import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
-import { YEAR } from "@/lib/year";
 
+// From the hub's settings (11 Nov): the old text promised syllabus, exam patterns and post counts the page does not show
+const HUB = getSectorHubBySlug("teaching-jobs")!;
 export const metadata: Metadata = {
-  title: `Government Teaching Jobs ${YEAR} - CTET, KVS, DSSSB & State TET Vacancies`,
-  description: `Find Government Teaching Jobs in ${YEAR}. Central Teacher Eligibility Test (CTET), Kendriya Vidyalaya (KVS), Navodaya (NVS), DSSSB, and State PSC Lecturer circulars.`,
+  title: HUB.title,
+  description: HUB.metaDescription,
   alternates: {
-    canonical: "https://www.indiajobnotice.com/teaching-jobs",
+    canonical: `https://www.indiajobnotice.com${HUB.canonicalPath}`,
   },
   openGraph: {
     images: SITE_OG_IMAGES,
-    title: `Government Teaching Jobs ${YEAR} - PRT, TGT, PGT Vacancies`,
-    description: "Verified Vacancies for PRT, TGT, PGT Teachers, Lecturers & Central School Educators.",
-    url: "https://www.indiajobnotice.com/teaching-jobs",
+    title: HUB.h1,
+    description: HUB.metaDescription,
+    url: `https://www.indiajobnotice.com${HUB.canonicalPath}`,
     siteName: "India Job Notice",
     locale: "en_IN",
     type: "website",

@@ -6,19 +6,20 @@ import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
-import { YEAR } from "@/lib/year";
 
+// From the hub's settings (11 Nov): the old text promised syllabus, exam patterns and post counts the page does not show
+const HUB = getSectorHubBySlug("railway-jobs")!;
 export const metadata: Metadata = {
-  title: `Railway Recruitment ${YEAR} - RRB NTPC, Group D, ALP & JE Notifications`,
-  description: `Check all Railway RRB jobs in ${YEAR}. RRB NTPC (11,558 posts), Group D (1,03,769 posts), Assistant Loco Pilot (ALP 18,799 posts), and Junior Engineer with syllabus and application dates.`,
+  title: HUB.title,
+  description: HUB.metaDescription,
   alternates: {
-    canonical: "https://www.indiajobnotice.com/railway-jobs",
+    canonical: `https://www.indiajobnotice.com${HUB.canonicalPath}`,
   },
   openGraph: {
     images: SITE_OG_IMAGES,
-    title: `Railway Government Jobs ${YEAR} (RRB & RRC)`,
-    description: "Official Notifications & Exam Schedules Across 21 Railway Recruitment Boards.",
-    url: "https://www.indiajobnotice.com/railway-jobs",
+    title: HUB.h1,
+    description: HUB.metaDescription,
+    url: `https://www.indiajobnotice.com${HUB.canonicalPath}`,
     siteName: "India Job Notice",
     locale: "en_IN",
     type: "website",

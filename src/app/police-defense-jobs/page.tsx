@@ -6,19 +6,20 @@ import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
-import { YEAR } from "@/lib/year";
 
+// From the hub's settings (11 Nov): the old text promised syllabus, exam patterns and post counts the page does not show
+const HUB = getSectorHubBySlug("police-defense-jobs")!;
 export const metadata: Metadata = {
-  title: `Police & Defense Govt Jobs ${YEAR} - Army, Navy, Air Force & Police Constables`,
-  description: `All Police and Defense jobs ${YEAR}. SSC GD Constable, NDA, CDS, CAPF AC, UP Police Constable, and Indian Coast Guard notifications with PET/PST criteria and physical standards.`,
+  title: HUB.title,
+  description: HUB.metaDescription,
   alternates: {
-    canonical: "https://www.indiajobnotice.com/police-defense-jobs",
+    canonical: `https://www.indiajobnotice.com${HUB.canonicalPath}`,
   },
   openGraph: {
     images: SITE_OG_IMAGES,
-    title: `Police & Defense Govt Jobs ${YEAR} - Army, Navy, Air Force & Police Constables`,
-    description: "Official Circulars for Central Armed Police Forces (CAPF), Defense Services & State Police.",
-    url: "https://www.indiajobnotice.com/police-defense-jobs",
+    title: HUB.h1,
+    description: HUB.metaDescription,
+    url: `https://www.indiajobnotice.com${HUB.canonicalPath}`,
     siteName: "India Job Notice",
     locale: "en_IN",
     type: "website",

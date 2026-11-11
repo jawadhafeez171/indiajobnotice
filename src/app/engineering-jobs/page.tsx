@@ -6,19 +6,20 @@ import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
-import { YEAR } from "@/lib/year";
 
+// From the hub's settings (11 Nov): the old text promised syllabus, exam patterns and post counts the page does not show
+const HUB = getSectorHubBySlug("engineering-jobs")!;
 export const metadata: Metadata = {
-  title: `Government Engineering Jobs ${YEAR} - B.Tech, B.E. & Diploma Vacancies`,
-  description: `Explore Government Engineering Jobs in ${YEAR}. Railway RRB JE, State PSC Assistant Engineers, PSUs (IOCL, NTPC, BHEL), Defense DRDO & ISRO notifications with branch eligibility and exam patterns.`,
+  title: HUB.title,
+  description: HUB.metaDescription,
   alternates: {
-    canonical: "https://www.indiajobnotice.com/engineering-jobs",
+    canonical: `https://www.indiajobnotice.com${HUB.canonicalPath}`,
   },
   openGraph: {
     images: SITE_OG_IMAGES,
-    title: `Government Engineering Jobs ${YEAR} - B.Tech, B.E. & Diploma Vacancies`,
-    description: `Explore Government Engineering Jobs in ${YEAR}. Railway RRB JE, State PSC Assistant Engineers, PSUs, Defense DRDO & ISRO notifications.`,
-    url: "https://www.indiajobnotice.com/engineering-jobs",
+    title: HUB.h1,
+    description: HUB.metaDescription,
+    url: `https://www.indiajobnotice.com${HUB.canonicalPath}`,
     siteName: "India Job Notice",
     locale: "en_IN",
     type: "website",

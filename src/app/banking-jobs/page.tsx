@@ -6,19 +6,20 @@ import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
-import { YEAR } from "@/lib/year";
 
+// From the hub's settings (11 Nov): the old text promised syllabus, exam patterns and post counts the page does not show
+const HUB = getSectorHubBySlug("banking-jobs")!;
 export const metadata: Metadata = {
-  title: `Bank Jobs ${YEAR} - SBI, IBPS PO, Clerk & RBI Grade B Recruitment`,
-  description: `Apply for Bank Jobs ${YEAR}. SBI PO, SBI Clerk, IBPS PO, IBPS Clerk, RRB Office Assistant, and RBI Grade B notifications with vacancy tables, syllabus, and exam dates.`,
+  title: HUB.title,
+  description: HUB.metaDescription,
   alternates: {
-    canonical: "https://www.indiajobnotice.com/banking-jobs",
+    canonical: `https://www.indiajobnotice.com${HUB.canonicalPath}`,
   },
   openGraph: {
     images: SITE_OG_IMAGES,
-    title: `Banking & Insurance Government Jobs ${YEAR}`,
-    description: "Verified Recruitment Circulars for State Bank of India, Public Sector Banks & RBI.",
-    url: "https://www.indiajobnotice.com/banking-jobs",
+    title: HUB.h1,
+    description: HUB.metaDescription,
+    url: `https://www.indiajobnotice.com${HUB.canonicalPath}`,
     siteName: "India Job Notice",
     locale: "en_IN",
     type: "website",
