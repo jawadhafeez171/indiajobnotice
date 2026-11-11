@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import "./globals.css";
+import { YEAR } from "@/lib/year";
 
 // one typeface for the whole site; next/font serves it from our own domain with a size-matched fallback
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], display: "swap", variable: "--font-inter" });
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     "SSC CGL",
     "Railway RRB",
     "State Govt Jobs",
-    "Admit Card 2026",
+    `Admit Card ${YEAR}`,
     "indiajobnotice.com",
     "www.indiajobnotice.com",
   ],

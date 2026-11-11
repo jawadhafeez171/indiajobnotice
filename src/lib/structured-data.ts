@@ -3,6 +3,7 @@ import { getStateBySlug } from "@/config/states";
 import { getJobTaxonomyLinks } from "@/lib/internal-links";
 import { formatDate } from "@/lib/utils";
 import { salaryRange, jobSeoDescription } from "@/lib/seo";
+import { termsLabel } from "@/components/jobs/JobListCard";
 
 export interface FAQItem {
   question: string;
@@ -85,11 +86,27 @@ function jobPostingDescription(job: JobNotification): string {
   return lines.join("");
 }
 
+/**
+ * The kind of employment, from the notice's own wording (11 Nov: every job said FULL_TIME, though about a third
+ * of open ones are contract posts). Apprenticeships are INTERN, part-time posts PART_TIME, contract / fixed-term
+ * / tenure posts TEMPORARY, deputation none (not an open hire), regular recruitment FULL_TIME.
+ */
+function employmentType(job: JobNotification): string | undefined {
+  const t = `${job.title} ${job.shortTitle || ""}`;
+  if (/apprentic|internship/i.test(t)) return "INTERN";
+  if (/part[- ]?time/i.test(t)) return "PART_TIME";
+  const terms = termsLabel(job);
+  if (terms === "Deputation") return undefined;
+  if (terms === "Contract") return "TEMPORARY";
+  return "FULL_TIME";
+}
+
 export function generateJobStructuredData(job: JobNotification, canonicalUrl: string) {
   const isClosed = isJobApplicationClosed(job);
   const taxonomy = getJobTaxonomyLinks(job);
   const state = job.stateSlug !== "central" ? getStateBySlug(job.stateSlug) : null;
-  const locationRegion = state ? state.name : "National / All-India";
+  // central jobs: the country only ("National / All-India" is not a region)
+  const locationRegion = state ? state.name : undefined;
   const pay = salaryRange(job);
 
   // 1. BreadcrumbList Schema
@@ -116,18 +133,18 @@ export function generateJobStructuredData(job: JobNotification, canonicalUrl: st
         datePosted: new Date(job.notificationDate || job.applicationStartDate || job.lastVerifiedDate || "2026-10-30").toISOString(),
         dateModified: new Date(job.lastVerifiedDate || "2026-10-23").toISOString(),
         validThrough: job.applicationEndDate ? new Date(`${job.applicationEndDate}T23:59:59Z`).toISOString() : undefined,
-        employmentType: "FULL_TIME",
+        ...(employmentType(job) ? { employmentType: employmentType(job) } : {}),
+        // no sameAs: the apply or notice link is not the body's own website
         hiringOrganization: {
           "@type": "Organization",
           name: job.organization,
-          sameAs: job.applyOnlineUrl || job.officialPdfUrl,
         },
         jobLocation: {
           "@type": "Place",
           address: {
             "@type": "PostalAddress",
             addressCountry: "IN",
-            addressRegion: locationRegion,
+            ...(locationRegion ? { addressRegion: locationRegion } : {}),
           },
         },
         // pay only when the notification states it (an empty amount is an error in Search Console)
@@ -135,7 +152,7 @@ export function generateJobStructuredData(job: JobNotification, canonicalUrl: st
           baseSalary: {
             "@type": "MonetaryAmount",
             currency: "INR",
-            value: { "@type": "QuantitativeValue", unitText: "MONTH", minValue: pay.min, ...(pay.max ? { maxValue: pay.max } : {}) },
+            value: { "@type": "QuantitativeValue", unitText: pay.unit, minValue: pay.min, ...(pay.max ? { maxValue: pay.max } : {}) },
           },
         } : {}),
         ...(job.advtNo ? { identifier: { "@type": "PropertyValue", name: job.organization, value: job.advtNo } } : {}),

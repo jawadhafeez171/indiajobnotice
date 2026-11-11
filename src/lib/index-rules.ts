@@ -27,6 +27,14 @@ export function jobInSitemap(job: JobNotification, today = todayIST()): boolean 
   return daysAgo(latest, today) <= STAGE_NEWS_DAYS;
 }
 
+/**
+ * A state page has something of its own: an open or opening job of that state, or one of its recruitments under
+ * way. Without one it only repeats central jobs, so it is kept out of search until it has (11 Nov).
+ */
+export function stateHasListings(jobs: JobNotification[], stateSlug: string): boolean {
+  return jobs.some((j) => !j.isCentral && j.stateSlug === stateSlug && (isOpenOrOpening(j) || Boolean(j.inProgress)));
+}
+
 /** A district page has jobs of its own (district posts or a district quota), not only its state's list. */
 export function districtHasOwnJobs(jobs: JobNotification[], stateSlug: string, districtSlug: string): boolean {
   return getJobsByDistrict(jobs, stateSlug, districtSlug, false).length > 0;

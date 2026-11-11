@@ -1,5 +1,6 @@
 import { JobNotification, formatAgeRange, isJobApplicationClosed, todayIST } from "@/data/jobs";
 import { cleanTitle, qualificationLabel } from "@/components/jobs/JobListCard";
+import { payRange, PayRange } from "@/lib/pay";
 
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const dayMon = (iso: string) => `${Number(iso.slice(8, 10))} ${MON[Number(iso.slice(5, 7)) - 1]}`;
@@ -18,21 +19,41 @@ function baseTitle(job: JobNotification): string {
     .trim();
 }
 
+/** Search results show about 60 characters; the site name the layout adds comes after and may be cut. */
+const TITLE_MAX = 60;
+const STOP_END = /\s+(?:in|of|for|and|the|to|at|on|with|under|from|by|&|-|–)$/i;
+
 /**
  * Search title of a job page, e.g. "KEA Group-C Junior Engineer (Civil) Recruitment 2026: 31 Posts,
- * Last Date 26 Nov". The site name is added by the layout template.
+ * Last Date 26 Nov". Kept to ~60 characters so the posts and last date survive in results (11 Nov: 10 of 12
+ * job pages checked ran past 70 and lost them): first without "Recruitment", then with the name shortened at a
+ * word. The site name is added by the layout template.
  */
 export function jobSeoTitle(job: JobNotification): string {
-  let t = baseTitle(job);
+  const base = baseTitle(job);
   const year = jobYear(job);
-  if (!/recruitment|notification|walk[\s-]?in/i.test(t)) t += job.isWalkIn ? " Walk-in" : " Recruitment";
-  if (!t.includes(year)) t += ` ${year}`;
-  const bits: string[] = [];
-  if (job.totalVacancies) bits.push(`${job.totalVacancies.toLocaleString("en-IN")} Post${job.totalVacancies === 1 ? "" : "s"}`);
+  const kind = /recruitment|notification|walk[\s-]?in/i.test(base) ? "" : job.isWalkIn ? " Walk-in" : " Recruitment";
+  const withYear = (t: string) => (t.includes(year) ? t : `${t} ${year}`);
+  const facts: string[] = [];
+  if (job.totalVacancies) facts.push(`${job.totalVacancies.toLocaleString("en-IN")} Post${job.totalVacancies === 1 ? "" : "s"}`);
   if (job.applicationEndDate && !isJobApplicationClosed(job)) {
-    bits.push(`${job.isWalkIn ? "Walk-in" : "Last Date"} ${dayMon(job.applicationEndDate)}`);
+    facts.push(`${job.isWalkIn ? "Walk-in" : "Last Date"} ${dayMon(job.applicationEndDate)}`);
   }
-  return bits.length ? `${t}: ${bits.join(", ")}` : t;
+  const join = (t: string, f: string[]) => (f.length ? `${t}: ${f.join(", ")}` : t);
+  const fit = [join(withYear(base + kind), facts), join(withYear(base), facts), join(withYear(base + kind), facts.slice(0, 1))]
+    .find((c) => c.length <= TITLE_MAX);
+  if (fit) return fit;
+  // the name shortened at a word so the year and facts stay whole
+  const tail = join(base.includes(year) ? "" : ` ${year}`, facts);
+  let name = base;
+  // at least ~30 characters of name, so it stays recognisable ("CRPF Meritorious Sportsperson")
+  const room = Math.max(30, TITLE_MAX - tail.length);
+  if (name.length > room) {
+    name = name.slice(0, room);
+    name = name.slice(0, Math.max(name.lastIndexOf(" "), 16)).replace(/[\s,;:(–-]+$/, "");
+    while (STOP_END.test(name)) name = name.replace(STOP_END, "");
+  }
+  return `${name}${tail}`;
 }
 
 /** Search description: the facts people look for, in one or two sentences (about 155 characters). */
@@ -55,12 +76,8 @@ export function jobSeoDescription(job: JobNotification): string {
   return parts.join(" ");
 }
 
-/** Monthly pay range from the stated pay ("37,640 – 1,15,500"), or null when none is stated. */
-export function salaryRange(job: JobNotification): { min: number; max?: number } | null {
-  const nums = (job.salary || "").match(/\d[\d,]*/g)?.map((n) => Number(n.replace(/,/g, ""))).filter((n) => n >= 1000) || [];
-  if (!nums.length) return null;
-  const min = Math.min(...nums);
-  const max = Math.max(...nums);
-  return max > min ? { min, max } : { min };
+/** Pay range from the stated pay ("37,640 – 1,15,500"), or null when it cannot be read safely (see lib/pay.ts). */
+export function salaryRange(job: JobNotification): PayRange | null {
+  return payRange(job.salary);
 }
 

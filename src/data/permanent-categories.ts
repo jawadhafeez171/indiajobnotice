@@ -1,5 +1,6 @@
 import { JobNotification } from "./jobs";
 import { STATES_REGISTRY, StateInfo, getStateBySlug } from "@/config/states";
+import { YEAR } from "@/lib/year";
 
 export interface CategoryHubInfo {
   slug: string;
@@ -19,8 +20,8 @@ export interface CategoryHubInfo {
 export const QUALIFICATION_HUBS: CategoryHubInfo[] = [
   {
     slug: "12th-pass",
-    title: "12th Pass Govt Jobs 2026 - Latest 10+2 Notifications & Vacancies",
-    h1: "12th Pass Government Jobs 2026",
+    title: `12th Pass Govt Jobs ${YEAR} - Latest 10+2 Notifications & Vacancies`,
+    h1: `12th Pass Government Jobs ${YEAR}`,
     subtitle: "Government jobs for 12th (10+2) pass candidates, from official notifications",
     metaDescription: "Government jobs for 12th pass (10+2, PUC, intermediate) candidates, central and state, with last dates, posts, eligibility and the official notification link, read from each notice.",
     badge: "10+2 Intermediate",
@@ -42,8 +43,8 @@ export const QUALIFICATION_HUBS: CategoryHubInfo[] = [
   },
   {
     slug: "diploma",
-    title: "Diploma Govt Jobs 2026 - Polytechnic Engineering & Technical Vacancies",
-    h1: "Diploma & Polytechnic Government Jobs 2026",
+    title: `Diploma Govt Jobs ${YEAR} - Polytechnic Engineering & Technical Vacancies`,
+    h1: `Diploma & Polytechnic Government Jobs ${YEAR}`,
     subtitle: "Government jobs for diploma and polytechnic holders, from official notifications",
     metaDescription: "Government jobs for diploma and polytechnic holders, such as junior engineer and technician posts, with last dates, posts, eligibility and the official notification link, read from each notice.",
     badge: "Polytechnic / Diploma",
@@ -63,8 +64,8 @@ export const QUALIFICATION_HUBS: CategoryHubInfo[] = [
   },
   {
     slug: "10th-pass",
-    title: "10th Pass Govt Jobs 2026 - Matriculation Jobs, SSC GD & Group D",
-    h1: "10th Pass (Matriculation) Government Jobs 2026",
+    title: `10th Pass Govt Jobs ${YEAR} - Matriculation Jobs, SSC GD & Group D`,
+    h1: `10th Pass (Matriculation) Government Jobs ${YEAR}`,
     subtitle: "Government jobs for 10th pass candidates, from official notifications",
     metaDescription: "Government jobs for 10th pass (matriculation, SSLC) candidates, central and state, with last dates, posts, eligibility and the official notification link, read from each notice.",
     badge: "10th High School",
@@ -86,8 +87,8 @@ export const QUALIFICATION_HUBS: CategoryHubInfo[] = [
   },
   {
     slug: "graduate",
-    title: "Graduate Govt Jobs 2026 - UPSC, SSC CGL, Bank PO & State PSC",
-    h1: "Graduate (Degree) Government Jobs 2026",
+    title: `Graduate Govt Jobs ${YEAR} - UPSC, SSC CGL, Bank PO & State PSC`,
+    h1: `Graduate (Degree) Government Jobs ${YEAR}`,
     subtitle: "Government jobs for graduates, from official notifications",
     metaDescription: "Government jobs for graduates in any discipline, central and state, with last dates, posts, eligibility and the official notification link, read from each notice.",
     badge: "Bachelor's Degree",
@@ -115,8 +116,8 @@ export const QUALIFICATION_HUBS: CategoryHubInfo[] = [
 export const SECTOR_HUBS: CategoryHubInfo[] = [
   {
     slug: "engineering-jobs",
-    title: "Government Engineering Jobs 2026 - B.Tech, B.E. & Diploma Vacancies",
-    h1: "Government Engineering Jobs 2026",
+    title: `Government Engineering Jobs ${YEAR} - B.Tech, B.E. & Diploma Vacancies`,
+    h1: `Government Engineering Jobs ${YEAR}`,
     subtitle: "Engineering jobs in government bodies, from official notifications",
     metaDescription: "Government engineering jobs, such as assistant and junior engineer posts in departments, railways and public sector companies, with last dates, posts, eligibility and the official notification link, read from each notice.",
     badge: "Engineering & Technical",
@@ -132,8 +133,8 @@ export const SECTOR_HUBS: CategoryHubInfo[] = [
   },
   {
     slug: "police-defense-jobs",
-    title: "Police & Defense Govt Jobs 2026 - Army, Navy, Air Force & Police Constables",
-    h1: "Police & Defense Government Jobs 2026",
+    title: `Police & Defense Govt Jobs ${YEAR} - Army, Navy, Air Force & Police Constables`,
+    h1: `Police & Defense Government Jobs ${YEAR}`,
     subtitle: "Police and defence jobs, from official notifications",
     metaDescription: "Police and defence jobs, such as constable, sub-inspector and armed forces entries, with last dates, posts, eligibility and the official notification link, read from each notice.",
     badge: "Uniformed Services",
@@ -152,8 +153,8 @@ export const SECTOR_HUBS: CategoryHubInfo[] = [
   },
   {
     slug: "railway-jobs",
-    title: "Railway Recruitment 2026 - RRB NTPC, Group D, ALP & JE Notifications",
-    h1: "Railway Government Jobs 2026 (RRB & RRC)",
+    title: `Railway Recruitment ${YEAR} - RRB NTPC, Group D, ALP & JE Notifications`,
+    h1: `Railway Government Jobs ${YEAR} (RRB & RRC)`,
     subtitle: "Railway jobs, from official notifications",
     metaDescription: "Railway jobs from the Railway Recruitment Boards and Railway Recruitment Cells, with last dates, posts, eligibility and the official notification link, read from each notice.",
     badge: "Indian Railways",
@@ -169,8 +170,8 @@ export const SECTOR_HUBS: CategoryHubInfo[] = [
   },
   {
     slug: "banking-jobs",
-    title: "Bank Jobs 2026 - SBI, IBPS PO, Clerk & RBI Grade B Recruitment",
-    h1: "Banking & Insurance Government Jobs 2026",
+    title: `Bank Jobs ${YEAR} - SBI, IBPS PO, Clerk & RBI Grade B Recruitment`,
+    h1: `Banking & Insurance Government Jobs ${YEAR}`,
     subtitle: "Bank jobs, from official notifications",
     metaDescription: "Bank jobs from SBI, IBPS, public sector banks and the RBI, with last dates, posts, eligibility and the official notification link, read from each notice.",
     badge: "Banking & Finance",
@@ -188,8 +189,8 @@ export const SECTOR_HUBS: CategoryHubInfo[] = [
   },
   {
     slug: "teaching-jobs",
-    title: "Government Teaching Jobs 2026 - CTET, KVS, DSSSB & State TET Vacancies",
-    h1: "Government Teaching Jobs 2026",
+    title: `Government Teaching Jobs ${YEAR} - CTET, KVS, DSSSB & State TET Vacancies`,
+    h1: `Government Teaching Jobs ${YEAR}`,
     subtitle: "Teaching jobs, from official notifications",
     metaDescription: "Government teaching jobs, such as primary, graduate and post-graduate teachers and lecturers, with last dates, posts, eligibility and the official notification link, read from each notice.",
     badge: "Education & Teaching",
@@ -213,8 +214,8 @@ export const SECTOR_HUBS: CategoryHubInfo[] = [
 export const ORGANISATION_HUBS: CategoryHubInfo[] = [
   {
     slug: "ssc",
-    title: "SSC Recruitment 2026 - CGL, CHSL, GD Constable & MTS Exam Notices",
-    h1: "Staff Selection Commission (SSC) Recruitment 2026",
+    title: `SSC Recruitment ${YEAR} - CGL, CHSL, GD Constable & MTS Exam Notices`,
+    h1: `Staff Selection Commission (SSC) Recruitment ${YEAR}`,
     subtitle: "Staff Selection Commission (SSC) notifications",
     metaDescription: "Staff Selection Commission (SSC) notices: notifications, admit cards, answer keys and results, with last dates, posts, eligibility and the official notification link, read from each notice.",
     badge: "Staff Selection Commission",
@@ -229,8 +230,8 @@ export const ORGANISATION_HUBS: CategoryHubInfo[] = [
   },
   {
     slug: "upsc",
-    title: "UPSC Recruitment 2026 - Civil Services, NDA, CDS & Central Gazettes",
-    h1: "Union Public Service Commission (UPSC) Exams 2026",
+    title: `UPSC Recruitment ${YEAR} - Civil Services, NDA, CDS & Central Gazettes`,
+    h1: `Union Public Service Commission (UPSC) Exams ${YEAR}`,
     subtitle: "Union Public Service Commission (UPSC) notifications and calendar",
     metaDescription: "UPSC notices and UPSC's own calendar of examinations, with the official notification link for each.",
     badge: "Union Public Service Commission",
@@ -246,8 +247,8 @@ export const ORGANISATION_HUBS: CategoryHubInfo[] = [
   // railways-rrb went 11 Nov: it picked the same jobs as /railway-jobs, which its address now leads to
   {
     slug: "banking-ibps",
-    title: "IBPS Recruitment 2026 - Bank PO, Clerk, Specialist Officer & RRBs",
-    h1: "Institute of Banking Personnel Selection (IBPS) 2026",
+    title: `IBPS Recruitment ${YEAR} - Bank PO, Clerk, Specialist Officer & RRBs`,
+    h1: `Institute of Banking Personnel Selection (IBPS) ${YEAR}`,
     subtitle: "IBPS notifications",
     metaDescription: "IBPS notices: PO, clerk, specialist officer and regional rural bank recruitments, with last dates, posts, eligibility and the official notification link, read from each notice.",
     badge: "IBPS Banking",
@@ -262,8 +263,8 @@ export const ORGANISATION_HUBS: CategoryHubInfo[] = [
   },
   {
     slug: "sbi",
-    title: "SBI Recruitment 2026 - Probationary Officer (PO) & Clerk (Junior Associate)",
-    h1: "State Bank of India (SBI) Recruitment 2026",
+    title: `SBI Recruitment ${YEAR} - Probationary Officer (PO) & Clerk (Junior Associate)`,
+    h1: `State Bank of India (SBI) Recruitment ${YEAR}`,
     subtitle: "State Bank of India (SBI) notifications",
     metaDescription: "State Bank of India (SBI) notices: PO, junior associate and specialist officer recruitments, with last dates, posts, eligibility and the official notification link, read from each notice.",
     badge: "State Bank of India",

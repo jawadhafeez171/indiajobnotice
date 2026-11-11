@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     openGraph: {
       title: jobSeoTitle(job),
-      description: `${job.organization}: ${job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} posts. ` : ""}${job.isWalkIn ? "Walk-in" : "Last date"}: ${job.applicationEndDate || "see the notification"}. Eligibility, fee and the official notification link.`,
+      description: jobSeoDescription(job), // the same facts as the search snippet (11 Nov: raw ISO dates here)
       url: canonicalUrl,
       siteName: "India Job Notice",
       locale: "en_IN",
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       title: jobSeoTitle(job),
-      description: `Official notification for ${job.organization}. Vacancies: ${job.totalVacancies.toLocaleString("en-IN")}.`,
+      description: jobSeoDescription(job), // was "Vacancies: 0" for notices without a count
     },
   };
 }

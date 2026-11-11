@@ -21,6 +21,7 @@ import { rowTitle, placeLabel } from "@/components/jobs/JobListCard";
 import { generateGoogleCalendarUrl, downloadIcsFile, downloadCombinedIcsFile, CalendarEventParams } from "@/lib/calendar";
 import { useWatchlist } from "@/lib/watchlist";
 import { upcomingUpscDates, UPSC_CALENDAR_SOURCE } from "@/data/upsc-calendar";
+import { YEAR } from "@/lib/year";
 
 export type EventType = "DEADLINE" | "EXAM" | "ADMIT_CARD" | "RESULT" | "PLANNED";
 
@@ -152,7 +153,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
       url: ev.applyUrl,
     }));
 
-    downloadCombinedIcsFile(paramsList, "govt-job-exam-schedule-2026.ics");
+    downloadCombinedIcsFile(paramsList, `govt-job-exam-schedule-${YEAR}.ics`);
   };
 
   // Calendar month matrix generator

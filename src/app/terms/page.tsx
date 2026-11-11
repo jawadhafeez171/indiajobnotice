@@ -166,7 +166,7 @@ export default function TermsPage() {
             We welcome corrections from candidates, educators, and departmental officials. If you spot a factual error in any published circular, please inform our editorial team:
           </p>
           <div className="text-xs space-y-1 bg-subtle p-3 rounded border border-line text-ink font-semibold">
-            <p><strong>Editorial Desk:</strong> <a href="mailto:contact@indiajobnotice.com" className="text-navy underline">contact@indiajobnotice.com</a></p>
+            <p><strong>Editorial Desk:</strong> <a href="mailto:indiajobnotice@gmail.com" className="text-navy underline">indiajobnotice@gmail.com</a></p>
             <p><strong>Corrections SLA:</strong> Verified corrections are updated within 24 to 48 hours.</p>
           </div>
         </section>

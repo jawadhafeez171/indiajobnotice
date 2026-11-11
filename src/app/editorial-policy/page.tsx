@@ -162,7 +162,7 @@ export default function EditorialPolicyPage() {
             <li><strong>Audit Logging:</strong> All changes are committed to our version-controlled git registry for transparent public auditability.</li>
           </ul>
           <p className="text-xs text-muted pt-1">
-            If you notice any inaccuracy in any circular, please notify our team at <a href="mailto:contact@indiajobnotice.com" className="text-navy font-bold underline">contact@indiajobnotice.com</a> with the subject line <em>&ldquo;[Errata] Job Title&rdquo;</em>.
+            If you notice any inaccuracy in any circular, please notify our team at <a href="mailto:indiajobnotice@gmail.com" className="text-navy font-bold underline">indiajobnotice@gmail.com</a> with the subject line <em>&ldquo;[Errata] Job Title&rdquo;</em>.
           </p>
         </section>
 

@@ -6,16 +6,17 @@ import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
+import { YEAR } from "@/lib/year";
 
 export const metadata: Metadata = {
-  title: "Railway Recruitment 2026 - RRB NTPC, Group D, ALP & JE Notifications",
-  description: "Check all Railway RRB jobs in 2026. RRB NTPC (11,558 posts), Group D (1,03,769 posts), Assistant Loco Pilot (ALP 18,799 posts), and Junior Engineer with syllabus and application dates.",
+  title: `Railway Recruitment ${YEAR} - RRB NTPC, Group D, ALP & JE Notifications`,
+  description: `Check all Railway RRB jobs in ${YEAR}. RRB NTPC (11,558 posts), Group D (1,03,769 posts), Assistant Loco Pilot (ALP 18,799 posts), and Junior Engineer with syllabus and application dates.`,
   alternates: {
     canonical: "https://www.indiajobnotice.com/railway-jobs",
   },
   openGraph: {
     images: SITE_OG_IMAGES,
-    title: "Railway Government Jobs 2026 (RRB & RRC)",
+    title: `Railway Government Jobs ${YEAR} (RRB & RRC)`,
     description: "Official Notifications & Exam Schedules Across 21 Railway Recruitment Boards.",
     url: "https://www.indiajobnotice.com/railway-jobs",
     siteName: "India Job Notice",

@@ -3,7 +3,7 @@ import { STATES_REGISTRY } from "@/config/states";
 import { DISTRICTS_REGISTRY } from "@/config/districts";
 import { getJobCanonicalPath, istDate, JobNotification, todayIST } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
-import { districtHasOwnJobs, jobInSitemap } from "@/lib/index-rules";
+import { districtHasOwnJobs, jobInSitemap, stateHasListings } from "@/lib/index-rules";
 
 import { 
   QUALIFICATION_HUBS, 
@@ -129,7 +129,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // 36 State Directory Hubs (/state/[state])
-  const stateRoutes: MetadataRoute.Sitemap = STATES_REGISTRY.map((state) => ({
+  // only states with something of their own open or under way (the others are noindex, 11 Nov)
+  const stateRoutes: MetadataRoute.Sitemap = STATES_REGISTRY.filter((s) => stateHasListings(jobs, s.slug)).map((state) => ({
     url: `${baseUrl}/state/${state.slug}`,
     ...lastmod(stateDay(state.slug)),
     changeFrequency: "daily",

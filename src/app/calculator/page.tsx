@@ -9,16 +9,17 @@ import { getAllJobs } from "@/lib/jobs-store";
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
 import { forList } from "@/lib/list-jobs";
+import { YEAR } from "@/lib/year";
 
 export const metadata = {
-  title: "Government Job Age & Eligibility Calculator 2026",
+  title: `Government Job Age & Eligibility Calculator ${YEAR}`,
   description: "Calculate your exact age and find all Central and State government jobs you are eligible for based on DOB, Category, and Qualification.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/calculator",
   },
   openGraph: {
     images: SITE_OG_IMAGES,
-    title: "Sarkari Job Age & Eligibility Calculator 2026 - India Job Notice",
+    title: `Sarkari Job Age & Eligibility Calculator ${YEAR} - India Job Notice`,
     description: "Automatic category age relaxation calculator (SC/ST/OBC/EWS) matching open government recruitment drives.",
     url: "https://www.indiajobnotice.com/calculator",
     siteName: "India Job Notice",

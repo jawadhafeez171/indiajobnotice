@@ -7,6 +7,7 @@ import {
   CategoryHubInfo 
 } from "@/data/permanent-categories";
 
+import { YEAR } from "@/lib/year";
 export interface TaxonomyLink {
   label: string;
   href: string;
@@ -172,7 +173,7 @@ export function getJobTaxonomyLinks(job: JobNotification): {
   // 4. SECTOR / DOMAIN LINKS
   if (job.category === "Engineering / Technical" || titleStr.includes("engineer") || titleHas("je")) {
     result.sectorHub = {
-      label: "Government Engineering Jobs 2026",
+      label: `Government Engineering Jobs ${YEAR}`,
       href: "/engineering-jobs",
       type: "sector",
       badge: "Engineering & Technical",

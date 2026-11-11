@@ -75,8 +75,8 @@ export default function ContactPage() {
             </div>
             <div className="pt-2 border-t border-line-soft space-y-1">
               <span className="text-[11px] text-muted block font-semibold">Primary Email</span>
-              <a href="mailto:contact@indiajobnotice.com" className="text-xs font-bold text-navy hover:underline block break-all">
-                contact@indiajobnotice.com
+              <a href="mailto:indiajobnotice@gmail.com" className="text-xs font-bold text-navy hover:underline block break-all">
+                indiajobnotice@gmail.com
               </a>
               <span className="text-[12px] text-green font-medium block">Turnaround: 24-48 Hours</span>
             </div>
@@ -95,8 +95,8 @@ export default function ContactPage() {
             </div>
             <div className="pt-2 border-t border-line-soft space-y-1">
               <span className="text-[11px] text-muted block font-semibold">Grievance Desk</span>
-              <a href="mailto:grievance@indiajobnotice.com" className="text-xs font-bold text-saffron hover:underline block break-all">
-                grievance@indiajobnotice.com
+              <a href="mailto:indiajobnotice@gmail.com" className="text-xs font-bold text-saffron hover:underline block break-all">
+                indiajobnotice@gmail.com
               </a>
               <span className="text-[12px] text-ink-2 font-medium block">Subject: [Grievance] Notice ID</span>
             </div>
@@ -115,8 +115,8 @@ export default function ContactPage() {
             </div>
             <div className="pt-2 border-t border-line-soft space-y-1">
               <span className="text-[11px] text-muted block font-semibold">Institutional Desk</span>
-              <a href="mailto:institutions@indiajobnotice.com" className="text-xs font-bold text-green hover:underline block break-all">
-                institutions@indiajobnotice.com
+              <a href="mailto:indiajobnotice@gmail.com" className="text-xs font-bold text-green hover:underline block break-all">
+                indiajobnotice@gmail.com
               </a>
               <span className="text-[12px] text-ink-2 font-medium block">Free Digital Notice Boards</span>
             </div>
@@ -238,7 +238,7 @@ export default function ContactPage() {
                 <span>Editorial Processing Standard</span>
               </div>
               <p className="text-xs text-muted leading-relaxed">
-                Factual correction requests received through <code>contact@indiajobnotice.com</code> are logged in our editorial registry and verified within 24 to 48 hours. Urgent exam date revisions are updated same-day.
+                Factual correction requests received through <code>indiajobnotice@gmail.com</code> are logged in our editorial registry and verified within 24 to 48 hours. Urgent exam date revisions are updated same-day.
               </p>
             </div>
           </div>

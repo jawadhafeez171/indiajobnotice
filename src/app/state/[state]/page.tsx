@@ -15,6 +15,8 @@ import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
 import { forList } from "@/lib/list-jobs";
 import { OpenJobLinks } from "@/components/jobs/OpenJobLinks";
+import { YEAR } from "@/lib/year";
+import { stateHasListings } from "@/lib/index-rules";
 
 interface PageProps {
   params: Promise<{ state: string }>;
@@ -32,13 +34,16 @@ export async function generateMetadata({ params }: PageProps) {
   if (!state) return { title: "State Not Found" };
 
   const canonicalUrl = `https://www.indiajobnotice.com/state/${state.slug}`;
+  const listed = stateHasListings(await getAllJobs(), state.slug);
 
   return {
-    title: `${state.name} Govt Jobs 2026: Notifications, Admit Cards & Results`,
-    description: `Official public employment gazettes and notifications for ${state.name} (${state.nativeName}). Official commission updates: ${state.majorExams.join(", ")}. Capital: ${state.capital}.`,
+    title: `${state.name} Govt Jobs ${YEAR}: Notifications, Admit Cards & Results`,
+    description: `Government job notifications from ${state.name}'s commissions, boards, police and courts: last dates, eligibility, admit cards and results, each with the official notification link.`,
     alternates: {
       canonical: canonicalUrl,
     },
+    // nothing of its own open or under way: out of search until there is, links still followed (11 Nov)
+    robots: listed ? undefined : { index: false, follow: true },
     openGraph: {
       images: SITE_OG_IMAGES,
       title: `${state.name} Government Jobs - India Job Notice`,

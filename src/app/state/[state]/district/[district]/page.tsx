@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
 import { districtHasOwnJobs } from "@/lib/index-rules";
+import { YEAR } from "@/lib/year";
 
 interface PageProps {
   params: Promise<{
@@ -60,7 +61,7 @@ export async function generateMetadata({ params }: PageProps) {
   const nativeSuffix = district.nativeName ? ` (${district.nativeName})` : "";
 
   return {
-    title: `${district.name} Govt Job Notifications 2026, District Court & Collectorate Jobs`,
+    title: `${district.name} Govt Job Notifications ${YEAR}, District Court & Collectorate Jobs`,
     description: `Official public recruitment gazettes for ${district.name}${nativeSuffix}, ${state.name}. Verified circulars for District & Sessions Court, CMO Health Society (NHM), Collectorate, and state commission posts with ${district.name} posting.`,
     alternates: {
       canonical: canonicalUrl,

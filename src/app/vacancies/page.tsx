@@ -12,16 +12,17 @@ import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
 import { forList } from "@/lib/list-jobs";
+import { YEAR } from "@/lib/year";
 
 export const metadata: Metadata = {
-  title: "Qualification-Wise Government Job Vacancy Tracker 2026",
+  title: `Qualification-Wise Government Job Vacancy Tracker ${YEAR}`,
   description: "Live cross-sector tracker of government job vacancies by qualification (10th Pass, 12th Pass, Diploma, Graduate Degree, B.Tech Engineering). Campus bulletin printout for college placement cells and libraries.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/vacancies",
   },
   openGraph: {
     images: SITE_OG_IMAGES,
-    title: "Qualification-Wise Government Vacancy Tracker 2026",
+    title: `Qualification-Wise Government Vacancy Tracker ${YEAR}`,
     description: "Track live verified government job vacancies categorized by educational qualification. 100% verified gazette circulars.",
     url: "https://www.indiajobnotice.com/vacancies",
     siteName: "India Job Notice",
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Qualification-Wise Govt Job Vacancy Tracker 2026",
+    title: `Qualification-Wise Govt Job Vacancy Tracker ${YEAR}`,
     description: "Consolidated live vacancy counts across Graduate, Engineering, Diploma, 12th, and 10th pass government recruitments.",
   },
 };
@@ -39,7 +40,7 @@ export default async function VacanciesPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Qualification-Wise Government Job Vacancy Tracker 2026",
+    name: `Qualification-Wise Government Job Vacancy Tracker ${YEAR}`,
     description: "Live cross-sector tracker of government job vacancies by educational criteria.",
     url: "https://www.indiajobnotice.com/vacancies",
   };

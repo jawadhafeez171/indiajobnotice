@@ -8,16 +8,17 @@ import { StateDirectoryView } from "@/components/directory/StateDirectoryView";
 import { SocialAlertBar } from "@/components/common/SocialAlertBar";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
+import { YEAR } from "@/lib/year";
 
 export const metadata: Metadata = {
-  title: "All-India State Public Service Commissions & Police Boards Directory 2026",
+  title: `All-India State Public Service Commissions & Police Boards Directory ${YEAR}`,
   description: "Verified master directory of official State Public Service Commissions (KPSC, UPPSC, BPSC, MPSC, TNPSC, GPSC), Staff Selection Boards, and State Police Recruitment portals across India.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/directory",
   },
   openGraph: {
     images: SITE_OG_IMAGES,
-    title: "All-India State Recruitment Commissions Directory 2026",
+    title: `All-India State Recruitment Commissions Directory ${YEAR}`,
     description: "Verified official portal URLs, physical headquarters, and candidate helpdesk numbers for all 28 State PSCs and Police Recruitment Boards.",
     url: "https://www.indiajobnotice.com/directory",
     siteName: "India Job Notice",
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "State Recruitment Commissions & Police Boards Directory 2026",
+    title: `State Recruitment Commissions & Police Boards Directory ${YEAR}`,
     description: "Official portal directory for KPSC, UPPSC, BPSC, RPSC, MPSC and all state examination commissions.",
   },
 };
@@ -35,7 +36,7 @@ export default function DirectoryPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "All-India State Recruitment Commissions Directory 2026",
+    name: `All-India State Recruitment Commissions Directory ${YEAR}`,
     description: "Master directory of official State Public Service Commissions and Police Boards across India.",
     url: "https://www.indiajobnotice.com/directory",
   };

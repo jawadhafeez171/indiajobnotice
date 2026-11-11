@@ -6,16 +6,17 @@ import { Footer } from "@/components/common/Footer";
 import { CategoryHubView } from "@/components/category/CategoryHubView";
 import { getSectorHubBySlug } from "@/data/permanent-categories";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
+import { YEAR } from "@/lib/year";
 
 export const metadata: Metadata = {
-  title: "Police & Defense Govt Jobs 2026 - Army, Navy, Air Force & Police Constables",
-  description: "All Police and Defense jobs 2026. SSC GD Constable, NDA, CDS, CAPF AC, UP Police Constable, and Indian Coast Guard notifications with PET/PST criteria and physical standards.",
+  title: `Police & Defense Govt Jobs ${YEAR} - Army, Navy, Air Force & Police Constables`,
+  description: `All Police and Defense jobs ${YEAR}. SSC GD Constable, NDA, CDS, CAPF AC, UP Police Constable, and Indian Coast Guard notifications with PET/PST criteria and physical standards.`,
   alternates: {
     canonical: "https://www.indiajobnotice.com/police-defense-jobs",
   },
   openGraph: {
     images: SITE_OG_IMAGES,
-    title: "Police & Defense Govt Jobs 2026 - Army, Navy, Air Force & Police Constables",
+    title: `Police & Defense Govt Jobs ${YEAR} - Army, Navy, Air Force & Police Constables`,
     description: "Official Circulars for Central Armed Police Forces (CAPF), Defense Services & State Police.",
     url: "https://www.indiajobnotice.com/police-defense-jobs",
     siteName: "India Job Notice",

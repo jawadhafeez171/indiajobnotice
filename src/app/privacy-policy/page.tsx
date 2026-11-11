@@ -193,7 +193,7 @@ export default function PrivacyPolicyPage() {
           </p>
           <div className="text-xs space-y-1 bg-subtle p-3 rounded border border-line text-ink font-semibold">
             <p><strong>Entity:</strong> IndiaJobNotice.com Editorial & Compliance Team</p>
-            <p><strong>Email:</strong> <a href="mailto:contact@indiajobnotice.com" className="text-navy underline">contact@indiajobnotice.com</a></p>
+            <p><strong>Email:</strong> <a href="mailto:indiajobnotice@gmail.com" className="text-navy underline">indiajobnotice@gmail.com</a></p>
             <p><strong>Response Time:</strong> Within 48 hours for privacy or errata queries.</p>
           </div>
         </section>
