@@ -48,7 +48,7 @@ export function SocialAlertBar({ state }: Props) {
           href={INSTAGRAM_URL}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 px-3.5 min-h-[44px] rounded-lg bg-[#C13584] hover:bg-[#A72D72] text-white text-[13px] font-semibold transition-colors"
+          className="inline-flex items-center gap-2 px-3.5 min-h-[44px] rounded-lg bg-instagram text-[13px] font-semibold transition-[filter]"
         >
           <InstagramLogo className="w-4 h-4" />
           <span>Follow on Instagram</span>

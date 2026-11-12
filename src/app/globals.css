@@ -226,3 +226,14 @@ h1, h2, h3 { text-wrap: balance; }
     bottom: 84px;
   }
 }
+
+@layer components {
+  /* Instagram's own brand gradient for every Instagram button (12 Nov, owner's choice) */
+  .bg-instagram {
+    background-color: #d6249f;
+    background-image: linear-gradient(45deg, #f58529 0%, #dd2a7b 42%, #8134af 75%, #515bd4 100%);
+    color: #fff;
+  }
+  .bg-instagram:hover,
+  .bg-instagram:active { filter: brightness(1.08); }
+}

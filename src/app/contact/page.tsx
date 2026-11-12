@@ -184,7 +184,7 @@ export default function ContactPage() {
               className="p-4 rounded-lg border border-line bg-surface hover:bg-navy-tint transition-colors flex items-center justify-between group"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-full bg-[#C13584] text-white">
+                <div className="p-2.5 rounded-full bg-instagram">
                   <InstagramLogo className="w-5 h-5" />
                 </div>
                 <div>

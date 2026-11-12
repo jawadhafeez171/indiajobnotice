@@ -188,7 +188,7 @@ export default async function HomePage() {
               href={INSTAGRAM_URL}
               target="_blank"
               rel="noreferrer"
-              className="group flex items-center gap-2.5 px-3.5 min-h-[44px] py-2 rounded-lg bg-[#C13584] hover:bg-[#A72D72] text-white transition-colors"
+              className="group flex items-center gap-2.5 px-3.5 min-h-[44px] py-2 rounded-lg bg-instagram transition-[filter]"
             >
               <InstagramLogo className="w-5 h-5 shrink-0" />
               <span className="flex-1 min-w-0 font-semibold text-[14px] leading-tight">Follow on Instagram</span>

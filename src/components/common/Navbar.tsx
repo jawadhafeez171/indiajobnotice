@@ -219,7 +219,7 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
                   href={INSTAGRAM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center w-10 min-h-[40px] rounded-lg border border-white/35 text-[#F77FBE] hover:bg-white/10 transition-colors"
+                  className="flex items-center justify-center w-10 min-h-[40px] rounded-lg bg-instagram transition-[filter]"
                   title="Job reels on Instagram"
                   aria-label="India Job Notice on Instagram"
                 >
@@ -247,7 +247,7 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
                 href={INSTAGRAM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden min-[400px]:flex w-11 h-11 items-center justify-center rounded-lg border border-white/30 text-[#F77FBE] active:bg-white/10"
+                className="hidden min-[400px]:flex w-11 h-11 items-center justify-center rounded-lg bg-instagram"
                 aria-label="India Job Notice on Instagram"
               >
                 <InstagramLogo className="w-5 h-5" />
@@ -434,7 +434,7 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={close}
-                  className="flex items-center justify-center gap-2 min-h-[46px] rounded-xl bg-[#C13584] active:bg-[#A72D72] text-white font-bold text-sm"
+                  className="flex items-center justify-center gap-2 min-h-[46px] rounded-xl bg-instagram font-bold text-sm"
                 >
                   <InstagramLogo className="w-4 h-4" />
                   Instagram

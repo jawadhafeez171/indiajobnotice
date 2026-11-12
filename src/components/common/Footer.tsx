@@ -71,7 +71,7 @@ function SocialButtons() {
         <span className="md:sr-only">WhatsApp</span>
       </a>
       <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" aria-label="Instagram"
-        title="Follow India Job Notice on Instagram" className={`${base} bg-[#C13584] hover:bg-[#A72D72]`}>
+        title="Follow India Job Notice on Instagram" className={`${base} bg-instagram`}>
         <InstagramLogo className="w-4 h-4" />
         <span className="md:sr-only">Instagram</span>
       </a>
