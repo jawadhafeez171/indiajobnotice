@@ -49,6 +49,7 @@ const config: Config = {
         "saffron": "rgb(var(--c-saffron) / <alpha-value>)",
         "saffron-bright": "rgb(var(--c-saffron-bright) / <alpha-value>)",
         "saffron-solid": "rgb(var(--c-saffron-solid) / <alpha-value>)",
+        "today-solid": "rgb(var(--c-today-solid) / <alpha-value>)",
         "saffron-strong": "rgb(var(--c-saffron-strong) / <alpha-value>)",
         "saffron-tint": "rgb(var(--c-saffron-tint) / <alpha-value>)",
         "saffron-line": "rgb(var(--c-saffron-line) / <alpha-value>)",

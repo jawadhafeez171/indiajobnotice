@@ -32,7 +32,7 @@ export function TodaySummary({ jobs, serverToday }: { jobs: JobNotification[]; s
     <div className="border-b border-line bg-surface">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <a href="#today" className="group flex items-center gap-2 min-h-[52px] py-2 text-[13px] sm:text-sm text-ink">
-          <span className="shrink-0 px-2 py-0.5 rounded bg-saffron-solid text-white text-[11px] sm:text-[12px] font-bold">Today</span>
+          <span className="shrink-0 px-2 py-0.5 rounded bg-today-solid text-white text-[11px] sm:text-[12px] font-bold">Today</span>
           <span className="min-w-0 flex-1">
             {counts.map((c, i) => (
               <span key={c.kind}>

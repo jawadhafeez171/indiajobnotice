@@ -34,6 +34,7 @@
     --c-saffron: 194 65 12;
     --c-saffron-bright: 240 122 22;
     --c-saffron-solid: 198 61 15;
+    --c-today-solid: 37 99 235;     /* "Today" badge and tab (12 Nov, owner's choice: blue, not orange) */
     --c-saffron-strong: 154 52 18;
     --c-saffron-tint: 255 243 232;
     --c-saffron-line: 249 207 174;
@@ -89,6 +90,7 @@
       --c-saffron: 255 157 87;
       --c-saffron-bright: 243 138 51;
       --c-saffron-solid: 201 80 15;
+      --c-today-solid: 45 108 240;
       --c-saffron-strong: 168 66 16;
       --c-saffron-tint: 58 36 18;
       --c-saffron-line: 110 61 28;

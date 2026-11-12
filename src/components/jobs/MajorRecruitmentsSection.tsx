@@ -67,7 +67,7 @@ export type StatusCategoryKey =
 // "Today" leads, and only shows on a day something changed
 export const TAB_ORDER: StatusCategoryKey[] = ["TODAY", "APPLY_OPEN", "CLOSING_SOON", "EXAM_DATES", "RESULT", "UNDER_WAY", "ALL"];
 export const TABS: Record<StatusCategoryKey, { label: string; short: string; active: string; order?: string }> = {
-  TODAY: { label: "Today", short: "Today", active: "bg-saffron-solid", order: "found on the official sites today · new notices first" },
+  TODAY: { label: "Today", short: "Today", active: "bg-today-solid", order: "found on the official sites today · new notices first" },
   APPLY_OPEN: { label: "Open", short: "Open", active: "bg-green-solid", order: "by last date, biggest first" },
   CLOSING_SOON: { label: "Closing this week", short: "Closing", active: "bg-saffron-solid", order: "part of Open · by last date, biggest first" },
   EXAM_DATES: { label: "Exams & admit cards", short: "Exams", active: "bg-navy-solid", order: "soonest exam first" },
