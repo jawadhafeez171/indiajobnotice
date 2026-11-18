@@ -102,6 +102,13 @@ const TITLE_BOILERPLATE = [
   /^recruitment\s+notification\s+(for|of)\s+(the\s+)?(posts?\s+of\s+)?/i,
   /^posts?\s+of\s+/i,
 ];
+/** Does the title open with wording that names no post ("Direct recruitment to the post of…", "General
+ * Recruitment", "Written Examination for filling up of…")? */
+export function opensWithBoilerplate(t: string): boolean {
+  const x = t.trim();
+  return /^(direct|general)?\s*recruitment$/i.test(x) || TITLE_BOILERPLATE.some((re) => re.test(x))
+    || /^(direct|general)\s+recruitment\b/i.test(x);
+}
 // wording inside a title that the row says elsewhere (Contract / Deputation in the grey line, the
 // grade in the notice) or that says nothing about the post
 const TITLE_FILLER = [

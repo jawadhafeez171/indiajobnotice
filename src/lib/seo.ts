@@ -1,5 +1,5 @@
 import { JobNotification, formatAgeRange, isJobApplicationClosed, todayIST } from "@/data/jobs";
-import { cleanTitle, qualificationLabel } from "@/components/jobs/JobListCard";
+import { cleanTitle, opensWithBoilerplate, qualificationLabel, rowTitle, withoutAdvtNo } from "@/components/jobs/JobListCard";
 import { payRange, PayRange } from "@/lib/pay";
 
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -24,13 +24,33 @@ const TITLE_MAX = 60;
 const STOP_END = /\s+(?:in|of|for|and|the|to|at|on|with|under|from|by|&|-|–)$/i;
 
 /**
- * Search title of a job page, e.g. "KEA Group-C Junior Engineer (Civil) Recruitment 2026: 31 Posts,
- * Last Date 26 Nov". Kept to ~60 characters so the posts and last date survive in results (11 Nov: 10 of 12
- * job pages checked ran past 70 and lost them): first without "Recruitment", then with the name shortened at a
- * word. The site name is added by the layout template.
+ * The name a search title starts with: the stored short title without advert numbers or post codes; when that
+ * opens with wording that names no post ("APPSC Direct Recruitment to the post", "TPSC General Recruitment",
+ * 18 Nov), the body's short code and the post instead: "APPSC Assistant Statistical Officer".
+ */
+function seoName(job: JobNotification): string {
+  // the badge may say "APPSC · AP" when two bodies share a code (disambiguateCodes): the title uses the code
+  const code = (job.orgShortCode || "").split(" · ")[0].trim();
+  const strip = (t: string) => withoutAdvtNo(t.replace(/\s*,?\s*\(?\badvt\.?\s*(?:no\.?)?\s*[:.-]?\s*\d+\s+of\s+\d{4}\)?/gi, ""))
+    .replace(/\s+,/g, ",").replace(/^(\S+),\s*/, "$1 ")
+    .replace(/\s*,?\s*post\s+code[:\s]*[\w/.-]*\d[\w/.-]*/gi, "")
+    .replace(/\s+(in|of|for|and|the|to|at|on|with|under|from|by)$/i, "").replace(/[\s,;:–-]+$/, "").trim();
+  const base = strip(baseTitle(job));
+  const rest = code && base.startsWith(code + " ") ? base.slice(code.length + 1) : base;
+  if (!code || code.length > 16 || !opensWithBoilerplate(rest)) return base;
+  // the body named again at the end ("Teaching Faculty at ESIC") goes
+  const post = rowTitle(job).replace(/\s*…\s*$/, "").split(` at ${code}`).join("").split(` of ${code}`).join("").trim();
+  if (!post || opensWithBoilerplate(post)) return base;
+  return strip(post.toLowerCase().startsWith(code.toLowerCase() + " ") ? post : `${code} ${post}`);
+}
+
+/**
+ * Search title of a job page, e.g. "KEA Junior Engineer (Civil) Recruitment 2026: 31 Posts, Last Date 26 Nov".
+ * Kept to ~60 characters so it is not cut in results (11 Nov: 10 of 12 job pages checked ran past 70): first
+ * without "Recruitment", then with the name shortened at a word. The site name is added by the layout template.
  */
 export function jobSeoTitle(job: JobNotification): string {
-  const base = baseTitle(job);
+  const base = seoName(job);
   const year = jobYear(job);
   const kind = /recruitment|notification|walk[\s-]?in/i.test(base) ? "" : job.isWalkIn ? " Walk-in" : " Recruitment";
   const withYear = (t: string) => (t.includes(year) ? t : `${t} ${year}`);
@@ -43,7 +63,7 @@ export function jobSeoTitle(job: JobNotification): string {
   const fit = [join(withYear(base + kind), facts), join(withYear(base), facts), join(withYear(base + kind), facts.slice(0, 1))]
     .find((c) => c.length <= TITLE_MAX);
   if (fit) return fit;
-  // the name shortened at a word so the year and facts stay whole
+  // the name shortened at a word so the year and facts stay whole (the last date is what people click for)
   const tail = join(base.includes(year) ? "" : ` ${year}`, facts);
   let name = base;
   // at least ~30 characters of name, so it stays recognisable ("CRPF Meritorious Sportsperson")
