@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { removedJobRedirects } from "./src/data/removed-jobs";
 
 const dev = process.env.NODE_ENV !== "production";
 
@@ -28,6 +29,8 @@ const nextConfig: NextConfig = {
       { source: "/exam-dates", destination: "/calendar?type=exams", permanent: true },
       { source: "/organisations/railways-rrb", destination: "/railway-jobs", permanent: true },
       { source: "/for-colleges-libraries", destination: "/about", permanent: true },
+      // the hand-written jobs removed on 30 Oct (18 Nov: Google still showed them, as 404s)
+      ...removedJobRedirects(),
     ];
   },
   async headers() {
