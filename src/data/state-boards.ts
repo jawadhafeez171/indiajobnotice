@@ -42,6 +42,14 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "AP DSC",
      "url": "https://apdsc.apcfss.in/"
+    },
+    {
+     "name": "AP Tribal Welfare Residential Educational Institutions",
+     "url": "https://aptwgurukulam.ap.gov.in/"
+    },
+    {
+     "name": "Andhra University",
+     "url": "https://www.andhrauniversity.edu.in/circulars.php"
     }
    ]
   },
@@ -63,6 +71,15 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "APSRTC",
      "url": "https://apsrtc.ap.gov.in/Recruitments.php"
+    }
+   ]
+  },
+  {
+   "label": "Banks",
+   "bodies": [
+    {
+     "name": "AP State Cooperative Bank (APCOB)",
+     "url": "https://apcob.bank.in/careers/"
     }
    ]
   },
@@ -395,6 +412,15 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
    ]
   },
   {
+   "label": "State government",
+   "bodies": [
+    {
+     "name": "Bihar Vidhan Parishad",
+     "url": "https://vidhanparishad.bihar.gov.in/"
+    }
+   ]
+  },
+  {
    "label": "Courts",
    "bodies": [
     {
@@ -536,6 +562,26 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
    ]
   }
  ],
+ "chandigarh": [
+  {
+   "label": "Health and medical",
+   "bodies": [
+    {
+     "name": "GMCH Chandigarh",
+     "url": "https://gmch.gov.in/jobs-and-training"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "Chandigarh District Court",
+     "url": "https://chandigarh.dcourts.gov.in/notice-category/recruitments/"
+    }
+   ]
+  }
+ ],
  "chhattisgarh": [
   {
    "label": "Public service commissions",
@@ -543,6 +589,191 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "Chhattisgarh Public Service Commission",
      "url": "https://psc.cg.gov.in/"
+    }
+   ]
+  },
+  {
+   "label": "Police, forest and uniformed services",
+   "bodies": [
+    {
+     "name": "Chhattisgarh Police",
+     "url": "https://cgpolice.gov.in/"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "High Court of Chhattisgarh",
+     "url": "https://highcourt.cg.gov.in/recruit/recruithc3.php"
+    },
+    {
+     "name": "Balod District Court",
+     "url": "https://balod.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Baloda Bazar District Court",
+     "url": "https://balodabazar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Balrampur District Court",
+     "url": "https://balrampur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bastar District Court",
+     "url": "https://bastar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bemetara District Court",
+     "url": "https://bemetara.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bilaspur District Court",
+     "url": "https://bilaspur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Chhattisgarh District Courts (via High Court)",
+     "url": "https://highcourt.cg.gov.in/recruit/recruitdc.php"
+    },
+    {
+     "name": "Dantewada District Court",
+     "url": "https://dantewada.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Dhamtari District Court",
+     "url": "https://dhamtari.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Durg District Court",
+     "url": "https://durg.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Janjgir District Court",
+     "url": "https://janjgir.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jashpur District Court",
+     "url": "https://jashpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kabirdham District Court",
+     "url": "https://kabirdham.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kanker District Court",
+     "url": "https://kanker.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kondagaon District Court",
+     "url": "https://kondagaon.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Korba District Court",
+     "url": "https://korba.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mahasamund District Court",
+     "url": "https://mahasamund.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mungeli District Court",
+     "url": "https://mungeli.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Raigarh District Court",
+     "url": "https://raigarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Raipur District Court",
+     "url": "https://raipur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Rajnandgaon District Court",
+     "url": "https://rajnandgaon.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Surajpur District Court",
+     "url": "https://surajpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Surguja District Court",
+     "url": "https://surguja.dcourts.gov.in/notice-category/recruitments/"
+    }
+   ]
+  }
+ ],
+ "dadra": [
+  {
+   "label": "State government",
+   "bodies": [
+    {
+     "name": "UT Dadra & Nagar Haveli and Daman & Diu",
+     "url": "https://ddd.gov.in/notice-category/recruitments/"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "Daman District Court",
+     "url": "https://daman.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Diu District Court",
+     "url": "https://diu.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Silvassa District Court",
+     "url": "https://silvassa.dcourts.gov.in/notice-category/recruitments/"
+    }
+   ]
+  }
+ ],
+ "delhi": [
+  {
+   "label": "Recruitment and selection boards",
+   "bodies": [
+    {
+     "name": "Delhi Subordinate Services Selection Board",
+     "url": "https://dsssb.delhi.gov.in/"
+    }
+   ]
+  },
+  {
+   "label": "Police, forest and uniformed services",
+   "bodies": [
+    {
+     "name": "Delhi Police",
+     "url": "https://delhipolice.gov.in/Vacancies.aspx"
+    }
+   ]
+  },
+  {
+   "label": "Health and medical",
+   "bodies": [
+    {
+     "name": "Delhi Health & Family Welfare",
+     "url": "https://health.delhi.gov.in/vacancy"
+    }
+   ]
+  },
+  {
+   "label": "Power, transport and state companies",
+   "bodies": [
+    {
+     "name": "Delhi Transco (DTL)",
+     "url": "https://www.dtl.gov.in/"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "Delhi High Court",
+     "url": "https://delhihighcourt.nic.in/web/recruitment"
     }
    ]
   }
@@ -554,6 +785,24 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "Goa Public Service Commission",
      "url": "https://gpsc.goa.gov.in/"
+    }
+   ]
+  },
+  {
+   "label": "Recruitment and selection boards",
+   "bodies": [
+    {
+     "name": "Goa Staff Selection Commission",
+     "url": "https://gssc.goa.gov.in/recruitment/candidates/results/"
+    }
+   ]
+  },
+  {
+   "label": "Police, forest and uniformed services",
+   "bodies": [
+    {
+     "name": "Goa Police",
+     "url": "https://citizen.goapolice.gov.in/web/guest/recruitment_new"
     }
    ]
   }
@@ -572,8 +821,147 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
    "label": "Recruitment and selection boards",
    "bodies": [
     {
+     "name": "Gujarat Panchayat Service Selection Board",
+     "url": "https://gpssb.gujarat.gov.in/advertisement-list.htm"
+    },
+    {
      "name": "Gujarat Subordinate Service Selection Board",
      "url": "https://gsssb.gujarat.gov.in/"
+    }
+   ]
+  },
+  {
+   "label": "Health and medical",
+   "bodies": [
+    {
+     "name": "GMERS Gujarat",
+     "url": "https://gmers.gujarat.gov.in/showpage.aspx?contentid=123"
+    }
+   ]
+  },
+  {
+   "label": "Power, transport and state companies",
+   "bodies": [
+    {
+     "name": "Gujarat Energy Transmission Corporation (GETCO)",
+     "url": "https://www.getcogujarat.com/Career.php"
+    },
+    {
+     "name": "Gujarat State Electricity Corporation (GSECL)",
+     "url": "https://www.gsecl.in/career"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "Amreli District Court",
+     "url": "https://amreli.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Anand District Court",
+     "url": "https://anand.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Aravalli District Court",
+     "url": "https://aravalli.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Banaskantha District Court",
+     "url": "https://banaskantha.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bharuch District Court",
+     "url": "https://bharuch.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bhavnagar District Court",
+     "url": "https://bhavnagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Botad District Court",
+     "url": "https://botad.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Chhota Udepur District Court",
+     "url": "https://chhotaudepur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Dahod District Court",
+     "url": "https://dahod.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Gandhinagar District Court",
+     "url": "https://gandhinagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Gir Somnath District Court",
+     "url": "https://girsomnath.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jamnagar District Court",
+     "url": "https://jamnagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Junagadh District Court",
+     "url": "https://junagadh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kheda District Court",
+     "url": "https://kheda.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mahisagar District Court",
+     "url": "https://mahisagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Morbi District Court",
+     "url": "https://morbi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Narmada District Court",
+     "url": "https://narmada.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Navsari District Court",
+     "url": "https://navsari.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Patan District Court",
+     "url": "https://patan.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Porbandar District Court",
+     "url": "https://porbandar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Rajkot District Court",
+     "url": "https://rajkot.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sabarkantha District Court",
+     "url": "https://sabarkantha.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Surat District Court",
+     "url": "https://surat.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Surendranagar District Court",
+     "url": "https://surendranagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Tapi District Court",
+     "url": "https://tapi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Vadodara District Court",
+     "url": "https://vadodara.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Valsad District Court",
+     "url": "https://valsad.dcourts.gov.in/notice-category/recruitments/"
     }
    ]
   }
@@ -596,6 +984,117 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
      "url": "https://www.hssc.gov.in/"
     }
    ]
+  },
+  {
+   "label": "Health and medical",
+   "bodies": [
+    {
+     "name": "NHM Haryana",
+     "url": "https://www.nhmharyana.gov.in/page.aspx?id=37"
+    }
+   ]
+  },
+  {
+   "label": "Power, transport and state companies",
+   "bodies": [
+    {
+     "name": "Dakshin Haryana Bijli Vitran Nigam (DHBVN)",
+     "url": "https://dhbvn.org.in/web/portal/career"
+    },
+    {
+     "name": "Uttar Haryana Bijli Vitran Nigam (UHBVN)",
+     "url": "https://uhbvn.org.in/web/portal/career"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "Ambala District Court",
+     "url": "https://ambala.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bhiwani District Court",
+     "url": "https://bhiwani.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Charkhi Dadri District Court",
+     "url": "https://charkhidadri.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Faridabad District Court",
+     "url": "https://faridabad.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Fatehabad District Court",
+     "url": "https://fatehabad.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Gurugram District Court",
+     "url": "https://gurugram.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Hisar District Court",
+     "url": "https://hisar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jhajjar District Court",
+     "url": "https://jhajjar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jind District Court",
+     "url": "https://jind.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kaithal District Court",
+     "url": "https://kaithal.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Karnal District Court",
+     "url": "https://karnal.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kurukshetra District Court",
+     "url": "https://kurukshetra.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Narnaul District Court",
+     "url": "https://narnaul.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Nuh District Court",
+     "url": "https://nuh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Palwal District Court",
+     "url": "https://palwal.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Panchkula District Court",
+     "url": "https://panchkula.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Panipat District Court",
+     "url": "https://panipat.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Rewari District Court",
+     "url": "https://rewari.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Rohtak District Court",
+     "url": "https://rohtak.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sirsa District Court",
+     "url": "https://sirsa.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Yamunanagar District Court",
+     "url": "https://yamunanagar.dcourts.gov.in/notice-category/recruitments/"
+    }
+   ]
   }
  ],
  "hp": [
@@ -605,6 +1104,60 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "Himachal Pradesh Public Service Commission",
      "url": "https://hppsc.hp.gov.in/"
+    }
+   ]
+  },
+  {
+   "label": "Power, transport and state companies",
+   "bodies": [
+    {
+     "name": "HP State Electricity Board (HPSEBL)",
+     "url": "https://www.hpseb.in/irj/go/km/docs/internet/New_Website/Pages/vacancies.html"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "Chamba District Court",
+     "url": "https://chamba.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Hamirpur District Court",
+     "url": "https://hamirpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kangra District Court",
+     "url": "https://kangra.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kinnaur District Court",
+     "url": "https://kinnaur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kullu District Court",
+     "url": "https://kullu.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mandi District Court",
+     "url": "https://mandi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Shimla District Court",
+     "url": "https://shimla.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sirmaur District Court",
+     "url": "https://sirmaur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Solan District Court",
+     "url": "https://solan.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Una District Court",
+     "url": "https://una.dcourts.gov.in/notice-category/recruitments/"
     }
    ]
   }
@@ -627,6 +1180,117 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
      "url": "https://jssc.jharkhand.gov.in/"
     }
    ]
+  },
+  {
+   "label": "Police, forest and uniformed services",
+   "bodies": [
+    {
+     "name": "Jharkhand Police",
+     "url": "https://jhpolice.gov.in/recruitments"
+    }
+   ]
+  },
+  {
+   "label": "Power, transport and state companies",
+   "bodies": [
+    {
+     "name": "Jharkhand Bijli Vitran Nigam (JBVNL)",
+     "url": "https://jbvnl.co.in/careers"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "Jharkhand High Court",
+     "url": "https://jharkhandhighcourt.nic.in/"
+    },
+    {
+     "name": "Bokaro District Court",
+     "url": "https://bokaro.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Chaibasa District Court",
+     "url": "https://chaibasa.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Chatra District Court",
+     "url": "https://chatra.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Deoghar District Court",
+     "url": "https://deoghar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Dhanbad District Court",
+     "url": "https://dhanbad.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Dumka District Court",
+     "url": "https://dumka.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Garhwa District Court",
+     "url": "https://garhwa.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Giridih District Court",
+     "url": "https://giridih.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Godda District Court",
+     "url": "https://godda.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Gumla District Court",
+     "url": "https://gumla.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jamshedpur District Court",
+     "url": "https://jamshedpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jamtara District Court",
+     "url": "https://jamtara.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Khunti District Court",
+     "url": "https://khunti.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Koderma District Court",
+     "url": "https://koderma.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Latehar District Court",
+     "url": "https://latehar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Lohardaga District Court",
+     "url": "https://lohardaga.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Pakur District Court",
+     "url": "https://pakur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Palamu District Court",
+     "url": "https://palamu.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ramgarh District Court",
+     "url": "https://ramgarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ranchi District Court",
+     "url": "https://ranchi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Simdega District Court",
+     "url": "https://simdega.dcourts.gov.in/notice-category/recruitments/"
+    }
+   ]
   }
  ],
  "jk": [
@@ -645,6 +1309,96 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "J&K Services Selection Board",
      "url": "https://jkssb.nic.in/"
+    }
+   ]
+  },
+  {
+   "label": "Banks",
+   "bodies": [
+    {
+     "name": "J&K Bank",
+     "url": "https://jkb.bank.in/career"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "Anantnag District Court",
+     "url": "https://anantnag.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bandipora District Court",
+     "url": "https://bandipora.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Baramulla District Court",
+     "url": "https://baramulla.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Budgam District Court",
+     "url": "https://budgam.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ganderbal District Court",
+     "url": "https://ganderbal.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jammu District Court",
+     "url": "https://jammu.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kathua District Court",
+     "url": "https://kathua.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kishtwar District Court",
+     "url": "https://kishtwar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kulgam District Court",
+     "url": "https://kulgam.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kupwara District Court",
+     "url": "https://kupwara.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Poonch District Court",
+     "url": "https://poonch.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Pulwama District Court",
+     "url": "https://pulwama.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Rajouri District Court",
+     "url": "https://rajouri.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ramban District Court",
+     "url": "https://ramban.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Reasi District Court",
+     "url": "https://reasi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Samba District Court",
+     "url": "https://samba.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Shopian District Court",
+     "url": "https://shopian.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Srinagar District Court",
+     "url": "https://srinagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Udhampur District Court",
+     "url": "https://udhampur.dcourts.gov.in/notice-category/recruitments/"
     }
    ]
   }
@@ -922,6 +1676,14 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
    "label": "Education and universities",
    "bodies": [
     {
+     "name": "Cochin University of Science and Technology",
+     "url": "https://recruit.cusat.ac.in/"
+    },
+    {
+     "name": "Kerala Agricultural University",
+     "url": "https://kau.in/jobs"
+    },
+    {
      "name": "University of Calicut",
      "url": "https://www.uoc.ac.in/index.php/info-desk/vacancies"
     },
@@ -1023,6 +1785,39 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "Wayanad District Court",
      "url": "https://wayanad.dcourts.gov.in/notice-category/recruitments/"
+    }
+   ]
+  }
+ ],
+ "ladakh": [
+  {
+   "label": "Police, forest and uniformed services",
+   "bodies": [
+    {
+     "name": "Ladakh Police Recruitment Board",
+     "url": "https://ladakh.gov.in/ladakh-police-recruitment-board/"
+    }
+   ]
+  },
+  {
+   "label": "State government",
+   "bodies": [
+    {
+     "name": "UT Ladakh Administration",
+     "url": "https://ladakh.gov.in/recruitment-corner/"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "Kargil District Court",
+     "url": "https://kargil.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Leh District Court",
+     "url": "https://leh.dcourts.gov.in/notice-category/recruitments/"
     }
    ]
   }
@@ -1139,6 +1934,10 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "Maharashtra Rural Development (Zilla Parishad)",
      "url": "https://rdd.maharashtra.gov.in/"
+    },
+    {
+     "name": "Nagpur Municipal Corporation",
+     "url": "https://nmcnagpur.gov.in/recruitment-2023"
     }
    ]
   },
@@ -1370,6 +2169,10 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
    "label": "Health and medical",
    "bodies": [
     {
+     "name": "Meghalaya Health Services",
+     "url": "https://meghealth.gov.in/"
+    },
+    {
      "name": "NHM Meghalaya",
      "url": "https://nhmmeghalaya.nic.in/"
     }
@@ -1430,8 +2233,21 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
    "label": "Health and medical",
    "bodies": [
     {
+     "name": "Mizoram Health & Family Welfare",
+     "url": "https://health.mizoram.gov.in/page/advertisement"
+    },
+    {
      "name": "NHM Mizoram",
      "url": "https://nhmmizoram.org/"
+    }
+   ]
+  },
+  {
+   "label": "Education and universities",
+   "bodies": [
+    {
+     "name": "Mizoram School Education",
+     "url": "https://schooleducation.mizoram.gov.in/"
     }
    ]
   },
@@ -1484,6 +2300,225 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
      "url": "https://esb.mp.gov.in/"
     }
    ]
+  },
+  {
+   "label": "Health and medical",
+   "bodies": [
+    {
+     "name": "NHM Madhya Pradesh",
+     "url": "https://www.nhmmp.gov.in/Vacancy.aspx"
+    }
+   ]
+  },
+  {
+   "label": "Power, transport and state companies",
+   "bodies": [
+    {
+     "name": "MP Poorv Kshetra Vidyut Vitaran (MPEZ)",
+     "url": "https://www.mpez.co.in/career"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "Madhya Pradesh High Court",
+     "url": "https://mphc.gov.in/"
+    },
+    {
+     "name": "Alirajpur District Court",
+     "url": "https://alirajpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Anuppur District Court",
+     "url": "https://anuppur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ashoknagar District Court",
+     "url": "https://ashoknagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Balaghat District Court",
+     "url": "https://balaghat.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Barwani District Court",
+     "url": "https://barwani.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Betul District Court",
+     "url": "https://betul.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bhind District Court",
+     "url": "https://bhind.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bhopal District Court",
+     "url": "https://bhopal.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Burhanpur District Court",
+     "url": "https://burhanpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Chhatarpur District Court",
+     "url": "https://chhatarpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Chhindwara District Court",
+     "url": "https://chhindwara.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Damoh District Court",
+     "url": "https://damoh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Datia District Court",
+     "url": "https://datia.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Dewas District Court",
+     "url": "https://dewas.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Dhar District Court",
+     "url": "https://dhar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Dindori District Court",
+     "url": "https://dindori.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Guna District Court",
+     "url": "https://guna.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Harda District Court",
+     "url": "https://harda.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Indore District Court",
+     "url": "https://indore.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jabalpur District Court",
+     "url": "https://jabalpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jhabua District Court",
+     "url": "https://jhabua.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Katni District Court",
+     "url": "https://katni.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Khandwa District Court",
+     "url": "https://khandwa.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mandla District Court",
+     "url": "https://mandla.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mandsaur District Court",
+     "url": "https://mandsaur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Morena District Court",
+     "url": "https://morena.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Narmadapuram District Court",
+     "url": "https://narmadapuram.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Narsinghpur District Court",
+     "url": "https://narsinghpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Neemuch District Court",
+     "url": "https://neemuch.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Panna District Court",
+     "url": "https://panna.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Raisen District Court",
+     "url": "https://raisen.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Rajgarh District Court",
+     "url": "https://rajgarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ratlam District Court",
+     "url": "https://ratlam.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Rewa District Court",
+     "url": "https://rewa.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sagar District Court",
+     "url": "https://sagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Satna District Court",
+     "url": "https://satna.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sehore District Court",
+     "url": "https://sehore.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Seoni District Court",
+     "url": "https://seoni.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Shahdol District Court",
+     "url": "https://shahdol.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Shajapur District Court",
+     "url": "https://shajapur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sheopur District Court",
+     "url": "https://sheopur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Shivpuri District Court",
+     "url": "https://shivpuri.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sidhi District Court",
+     "url": "https://sidhi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Singrauli District Court",
+     "url": "https://singrauli.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Tikamgarh District Court",
+     "url": "https://tikamgarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ujjain District Court",
+     "url": "https://ujjain.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Umaria District Court",
+     "url": "https://umaria.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Vidisha District Court",
+     "url": "https://vidisha.dcourts.gov.in/notice-category/recruitments/"
+    }
+   ]
   }
  ],
  "nagaland": [
@@ -1520,6 +2555,10 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "NHM Nagaland",
      "url": "https://nhmnagaland.in/advertisement.aspx"
+    },
+    {
+     "name": "Nagaland Health & Family Welfare",
+     "url": "https://nagahealth.nagaland.gov.in/notification/"
     }
    ]
   },
@@ -1559,6 +2598,131 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
      "url": "https://www.ossc.gov.in/"
     }
    ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "Orissa High Court",
+     "url": "https://www.orissahighcourt.nic.in/"
+    },
+    {
+     "name": "Angul District Court",
+     "url": "https://angul.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Balangir District Court",
+     "url": "https://balangir.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Balasore District Court",
+     "url": "https://balasore.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bargarh District Court",
+     "url": "https://bargarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bhadrak District Court",
+     "url": "https://bhadrak.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Boudh District Court",
+     "url": "https://boudh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Cuttack District Court",
+     "url": "https://cuttack.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Deogarh District Court",
+     "url": "https://deogarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Dhenkanal District Court",
+     "url": "https://dhenkanal.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Gajapati District Court",
+     "url": "https://gajapati.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ganjam District Court",
+     "url": "https://ganjam.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jagatsinghpur District Court",
+     "url": "https://jagatsinghpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jajpur District Court",
+     "url": "https://jajpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jharsuguda District Court",
+     "url": "https://jharsuguda.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kalahandi District Court",
+     "url": "https://kalahandi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kandhamal District Court",
+     "url": "https://kandhamal.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kendrapara District Court",
+     "url": "https://kendrapara.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Keonjhar District Court",
+     "url": "https://keonjhar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Koraput District Court",
+     "url": "https://koraput.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Malkangiri District Court",
+     "url": "https://malkangiri.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mayurbhanj District Court",
+     "url": "https://mayurbhanj.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Nabarangpur District Court",
+     "url": "https://nabarangpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Nayagarh District Court",
+     "url": "https://nayagarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Nuapada District Court",
+     "url": "https://nuapada.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Puri District Court",
+     "url": "https://puri.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Rayagada District Court",
+     "url": "https://rayagada.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sambalpur District Court",
+     "url": "https://sambalpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sonepur District Court",
+     "url": "https://sonepur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sundargarh District Court",
+     "url": "https://sundargarh.dcourts.gov.in/notice-category/recruitments/"
+    }
+   ]
   }
  ],
  "puducherry": [
@@ -1577,6 +2741,15 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "Puducherry Police",
      "url": "https://police.py.gov.in/"
+    }
+   ]
+  },
+  {
+   "label": "Health and medical",
+   "bodies": [
+    {
+     "name": "Puducherry Health & Family Welfare",
+     "url": "https://health.py.gov.in/recruitments"
     }
    ]
   },
@@ -1630,6 +2803,113 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
      "url": "https://sssb.punjab.gov.in/"
     }
    ]
+  },
+  {
+   "label": "Health and medical",
+   "bodies": [
+    {
+     "name": "Baba Farid University of Health Sciences",
+     "url": "https://bfuhs.ggsmch.org/university-recruitment/"
+    }
+   ]
+  },
+  {
+   "label": "Power, transport and state companies",
+   "bodies": [
+    {
+     "name": "Punjab State Power Corporation (PSPCL)",
+     "url": "https://www.pspcl.in/Recruitment"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "Amritsar District Court",
+     "url": "https://amritsar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Barnala District Court",
+     "url": "https://barnala.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bathinda District Court",
+     "url": "https://bathinda.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Faridkot District Court",
+     "url": "https://faridkot.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Fatehgarh Sahib District Court",
+     "url": "https://fatehgarhsahib.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Fazilka District Court",
+     "url": "https://fazilka.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ferozepur District Court",
+     "url": "https://ferozepur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Gurdaspur District Court",
+     "url": "https://gurdaspur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Hoshiarpur District Court",
+     "url": "https://hoshiarpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jalandhar District Court",
+     "url": "https://jalandhar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kapurthala District Court",
+     "url": "https://kapurthala.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ludhiana District Court",
+     "url": "https://ludhiana.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Malerkotla District Court",
+     "url": "https://malerkotla.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mansa District Court",
+     "url": "https://mansa.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Moga District Court",
+     "url": "https://moga.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Pathankot District Court",
+     "url": "https://pathankot.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Patiala District Court",
+     "url": "https://patiala.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Rupnagar District Court",
+     "url": "https://rupnagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "SAS Nagar (Mohali) District Court",
+     "url": "https://sasnagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sangrur District Court",
+     "url": "https://sangrur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Tarn Taran District Court",
+     "url": "https://tarntaran.dcourts.gov.in/notice-category/recruitments/"
+    }
+   ]
   }
  ],
  "rajasthan": [
@@ -1655,8 +2935,136 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
    "label": "Courts",
    "bodies": [
     {
+     "name": "Rajasthan High Court",
+     "url": "https://hcraj.nic.in/hcraj/recruitment.php"
+    },
+    {
+     "name": "Ajmer District Court",
+     "url": "https://ajmer.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Alwar District Court",
+     "url": "https://alwar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Banswara District Court",
+     "url": "https://banswara.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Baran District Court",
+     "url": "https://baran.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Barmer District Court",
+     "url": "https://barmer.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bharatpur District Court",
+     "url": "https://bharatpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bhilwara District Court",
+     "url": "https://bhilwara.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bikaner District Court",
+     "url": "https://bikaner.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bundi District Court",
+     "url": "https://bundi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Chittorgarh District Court",
+     "url": "https://chittorgarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Churu District Court",
+     "url": "https://churu.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Dausa District Court",
+     "url": "https://dausa.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Dholpur District Court",
+     "url": "https://dholpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Dungarpur District Court",
+     "url": "https://dungarpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Hanumangarh District Court",
+     "url": "https://hanumangarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
      "name": "Jaipur Metropolitan District Court",
      "url": "https://jaipur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jaisalmer District Court",
+     "url": "https://jaisalmer.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jalore District Court",
+     "url": "https://jalore.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jhalawar District Court",
+     "url": "https://jhalawar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jhunjhunu District Court",
+     "url": "https://jhunjhunu.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jodhpur District Court",
+     "url": "https://jodhpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Karauli District Court",
+     "url": "https://karauli.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kota District Court",
+     "url": "https://kota.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Nagaur District Court",
+     "url": "https://nagaur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Pali District Court",
+     "url": "https://pali.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Pratapgarh District Court",
+     "url": "https://pratapgarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Rajsamand District Court",
+     "url": "https://rajsamand.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sawai Madhopur District Court",
+     "url": "https://sawaimadhopur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sikar District Court",
+     "url": "https://sikar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sirohi District Court",
+     "url": "https://sirohi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Tonk District Court",
+     "url": "https://tonk.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Udaipur District Court",
+     "url": "https://udaipur.dcourts.gov.in/notice-category/recruitments/"
     }
    ]
   }
@@ -1754,6 +3162,10 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "Telangana Residential Educational Institutions Recruitment Board",
      "url": "https://treirb.telangana.gov.in/"
+    },
+    {
+     "name": "Telangana School Education (DSC)",
+     "url": "https://schooledu.telangana.gov.in/"
     }
    ]
   },
@@ -1775,6 +3187,19 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "TGSRTC",
      "url": "https://tgsrtc.telangana.gov.in/careers"
+    }
+   ]
+  },
+  {
+   "label": "Banks",
+   "bodies": [
+    {
+     "name": "Telangana District Cooperative Central Banks (via TGCAB)",
+     "url": "https://tgcab.bank.in/careers/dccbs"
+    },
+    {
+     "name": "Telangana State Cooperative Apex Bank",
+     "url": "https://tgcab.bank.in/careers/apex-bank"
     }
    ]
   },
@@ -1979,8 +3404,136 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
    "label": "Banks",
    "bodies": [
     {
+     "name": "Ariyalur Cooperative District Recruitment Bureau",
+     "url": "https://www.drbariyalur.net/"
+    },
+    {
+     "name": "Chengalpattu Cooperative District Recruitment Bureau",
+     "url": "https://www.drbcgl.in/"
+    },
+    {
+     "name": "Coimbatore Cooperative District Recruitment Bureau",
+     "url": "https://www.drbcbe.in/"
+    },
+    {
+     "name": "Cuddalore Cooperative District Recruitment Bureau",
+     "url": "https://www.drbcud.in/"
+    },
+    {
+     "name": "Dharmapuri Cooperative District Recruitment Bureau",
+     "url": "https://www.drbdharmapuri.net/"
+    },
+    {
+     "name": "Dindigul Cooperative District Recruitment Bureau",
+     "url": "https://www.drbdindigul.net/"
+    },
+    {
+     "name": "Erode Cooperative District Recruitment Bureau",
+     "url": "https://www.drberd.in/"
+    },
+    {
+     "name": "Kallakurichi Cooperative District Recruitment Bureau",
+     "url": "https://www.drbkak.in/"
+    },
+    {
+     "name": "Kancheepuram Cooperative District Recruitment Bureau",
+     "url": "https://www.drbkpm.in/"
+    },
+    {
+     "name": "Karur Cooperative District Recruitment Bureau",
+     "url": "https://www.drbkarur.net/"
+    },
+    {
+     "name": "Krishnagiri Cooperative District Recruitment Bureau",
+     "url": "https://www.drbkrishnagiri.net/"
+    },
+    {
+     "name": "Madurai Cooperative District Recruitment Bureau",
+     "url": "https://www.drbmadurai.net/"
+    },
+    {
+     "name": "Nagapattinam Cooperative District Recruitment Bureau",
+     "url": "https://www.drbngt.in/"
+    },
+    {
+     "name": "Namakkal Cooperative District Recruitment Bureau",
+     "url": "https://www.drbnamakkal.net/"
+    },
+    {
+     "name": "Pudukkottai Cooperative District Recruitment Bureau",
+     "url": "https://www.drbpdk.in/"
+    },
+    {
+     "name": "Ramanathapuram Cooperative District Recruitment Bureau",
+     "url": "https://www.drbramnad.net/"
+    },
+    {
+     "name": "Ranipet Cooperative District Recruitment Bureau",
+     "url": "https://www.drbrpt.in/"
+    },
+    {
+     "name": "Salem Cooperative District Recruitment Bureau",
+     "url": "https://www.drbslm.in/"
+    },
+    {
+     "name": "Sivaganga Cooperative District Recruitment Bureau",
+     "url": "https://www.drbsvg.net/"
+    },
+    {
      "name": "TN Cooperative District Recruitment Bureau (Chennai)",
      "url": "https://www.drbchn.in/"
+    },
+    {
+     "name": "Tenkasi Cooperative District Recruitment Bureau",
+     "url": "https://www.drbtsi.in/"
+    },
+    {
+     "name": "Thanjavur Cooperative District Recruitment Bureau",
+     "url": "https://www.drbtnj.in/"
+    },
+    {
+     "name": "The Nilgiris Cooperative District Recruitment Bureau",
+     "url": "https://www.drbngl.in/"
+    },
+    {
+     "name": "Theni Cooperative District Recruitment Bureau",
+     "url": "https://www.drbtheni.net/"
+    },
+    {
+     "name": "Thoothukudi Cooperative District Recruitment Bureau",
+     "url": "https://www.drbtut.in/"
+    },
+    {
+     "name": "Tiruchirappalli Cooperative District Recruitment Bureau",
+     "url": "https://www.drbtry.in/"
+    },
+    {
+     "name": "Tirupathur Cooperative District Recruitment Bureau",
+     "url": "https://www.drbtpt.in/"
+    },
+    {
+     "name": "Tiruppur Cooperative District Recruitment Bureau",
+     "url": "https://www.drbtiruppur.net/"
+    },
+    {
+     "name": "Tiruvallur Cooperative District Recruitment Bureau",
+     "url": "https://www.drbtvl.in/"
+    },
+    {
+     "name": "Tiruvannamalai Cooperative District Recruitment Bureau",
+     "url": "https://www.drbtvmalai.net/"
+    },
+    {
+     "name": "Tiruvarur Cooperative District Recruitment Bureau",
+     "url": "https://www.drbtvr.in/"
+    },
+    {
+     "name": "Vellore Cooperative District Recruitment Bureau",
+     "url": "https://www.drbvellore.net/"
+    },
+    {
+     "name": "Villupuram Cooperative District Recruitment Bureau",
+     "url": "https://www.drbvpm.in/"
     }
    ]
   },
@@ -2181,6 +3734,10 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "NHM Tripura",
      "url": "https://tripuranrhm.gov.in/"
+    },
+    {
+     "name": "Tripura Health & Family Welfare",
+     "url": "https://health.tripura.gov.in/jobs-and-recruitment"
     }
    ]
   },
@@ -2265,6 +3822,24 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
    ]
   },
   {
+   "label": "Education and universities",
+   "bodies": [
+    {
+     "name": "University of Lucknow",
+     "url": "https://www.lkouniv.ac.in/en/page/current-openings"
+    }
+   ]
+  },
+  {
+   "label": "Power, transport and state companies",
+   "bodies": [
+    {
+     "name": "UP Rajya Vidyut Utpadan Nigam (UPRVUNL)",
+     "url": "https://www.uprvunl.org/career"
+    }
+   ]
+  },
+  {
    "label": "Banks",
    "bodies": [
     {
@@ -2279,6 +3854,274 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "Allahabad High Court",
      "url": "https://www.allahabadhighcourt.in/calendar/itemWiseList.jsp?group=7"
+    },
+    {
+     "name": "Agra District Court",
+     "url": "https://agra.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Aligarh District Court",
+     "url": "https://aligarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ambedkar Nagar District Court",
+     "url": "https://ambedkarnagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Amroha District Court",
+     "url": "https://amroha.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Auraiya District Court",
+     "url": "https://auraiya.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ayodhya District Court",
+     "url": "https://ayodhya.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Azamgarh District Court",
+     "url": "https://azamgarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Baghpat District Court",
+     "url": "https://baghpat.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bahraich District Court",
+     "url": "https://bahraich.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ballia District Court",
+     "url": "https://ballia.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Banda District Court",
+     "url": "https://banda.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Barabanki District Court",
+     "url": "https://barabanki.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bareilly District Court",
+     "url": "https://bareilly.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Basti District Court",
+     "url": "https://basti.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bhadohi District Court",
+     "url": "https://bhadohi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bijnor District Court",
+     "url": "https://bijnor.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Budaun District Court",
+     "url": "https://budaun.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Chandauli District Court",
+     "url": "https://chandauli.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Chitrakoot District Court",
+     "url": "https://chitrakoot.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Deoria District Court",
+     "url": "https://deoria.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Etah District Court",
+     "url": "https://etah.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Etawah District Court",
+     "url": "https://etawah.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Farrukhabad District Court",
+     "url": "https://farrukhabad.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Fatehpur District Court",
+     "url": "https://fatehpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Firozabad District Court",
+     "url": "https://firozabad.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ghaziabad District Court",
+     "url": "https://ghaziabad.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Ghazipur District Court",
+     "url": "https://ghazipur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Gonda District Court",
+     "url": "https://gonda.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Gorakhpur District Court",
+     "url": "https://gorakhpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Hapur District Court",
+     "url": "https://hapur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Hardoi District Court",
+     "url": "https://hardoi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Hathras District Court",
+     "url": "https://hathras.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jalaun District Court",
+     "url": "https://jalaun.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jaunpur District Court",
+     "url": "https://jaunpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Jhansi District Court",
+     "url": "https://jhansi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kannauj District Court",
+     "url": "https://kannauj.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kanpur Dehat District Court",
+     "url": "https://kanpurdehat.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kanpur Nagar District Court",
+     "url": "https://kanpurnagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kasganj District Court",
+     "url": "https://kasganj.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kaushambi District Court",
+     "url": "https://kaushambi.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Kushinagar District Court",
+     "url": "https://kushinagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Lalitpur District Court",
+     "url": "https://lalitpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Lucknow District Court",
+     "url": "https://lucknow.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Maharajganj District Court",
+     "url": "https://maharajganj.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mahoba District Court",
+     "url": "https://mahoba.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mainpuri District Court",
+     "url": "https://mainpuri.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mathura District Court",
+     "url": "https://mathura.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mau District Court",
+     "url": "https://mau.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Meerut District Court",
+     "url": "https://meerut.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Mirzapur District Court",
+     "url": "https://mirzapur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Moradabad District Court",
+     "url": "https://moradabad.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Muzaffarnagar District Court",
+     "url": "https://muzaffarnagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Pilibhit District Court",
+     "url": "https://pilibhit.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Prayagraj District Court",
+     "url": "https://prayagraj.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Rampur District Court",
+     "url": "https://rampur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Saharanpur District Court",
+     "url": "https://saharanpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sambhal District Court",
+     "url": "https://sambhal.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sant Kabir Nagar District Court",
+     "url": "https://santkabirnagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Shahjahanpur District Court",
+     "url": "https://shahjahanpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Shamli District Court",
+     "url": "https://shamli.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Shravasti District Court",
+     "url": "https://shravasti.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Siddharthnagar District Court",
+     "url": "https://siddharthnagar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sitapur District Court",
+     "url": "https://sitapur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sonbhadra District Court",
+     "url": "https://sonbhadra.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Sultanpur District Court",
+     "url": "https://sultanpur.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Unnao District Court",
+     "url": "https://unnao.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Varanasi District Court",
+     "url": "https://varanasi.dcourts.gov.in/notice-category/recruitments/"
     }
    ]
   }
@@ -2301,6 +4144,73 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
      "url": "https://sssc.uk.gov.in/"
     }
    ]
+  },
+  {
+   "label": "Health and medical",
+   "bodies": [
+    {
+     "name": "Uttarakhand Medical Service Selection Board",
+     "url": "https://ukmssb.org/"
+    }
+   ]
+  },
+  {
+   "label": "Power, transport and state companies",
+   "bodies": [
+    {
+     "name": "Power Transmission Corporation of Uttarakhand (PTCUL)",
+     "url": "https://ptcul.org/recruitment-notice"
+    }
+   ]
+  },
+  {
+   "label": "Courts",
+   "bodies": [
+    {
+     "name": "High Court of Uttarakhand",
+     "url": "https://highcourtofuttarakhand.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Almora District Court",
+     "url": "https://almora.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Bageshwar District Court",
+     "url": "https://bageshwar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Chamoli District Court",
+     "url": "https://chamoli.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Champawat District Court",
+     "url": "https://champawat.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Dehradun District Court",
+     "url": "https://dehradun.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Haridwar District Court",
+     "url": "https://haridwar.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Nainital District Court",
+     "url": "https://nainital.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Pithoragarh District Court",
+     "url": "https://pithoragarh.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Rudraprayag District Court",
+     "url": "https://rudraprayag.dcourts.gov.in/notice-category/recruitments/"
+    },
+    {
+     "name": "Uttarkashi District Court",
+     "url": "https://uttarkashi.dcourts.gov.in/notice-category/recruitments/"
+    }
+   ]
   }
  ],
  "wb": [
@@ -2310,6 +4220,15 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "West Bengal Public Service Commission",
      "url": "https://psc.wb.gov.in/"
+    }
+   ]
+  },
+  {
+   "label": "Recruitment and selection boards",
+   "bodies": [
+    {
+     "name": "West Bengal Co-operative Service Commission",
+     "url": "https://www.wbcsc.org.in/wbcsc/"
     }
    ]
   },

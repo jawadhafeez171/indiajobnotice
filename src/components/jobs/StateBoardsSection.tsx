@@ -7,6 +7,8 @@ export function hasStateBoards(stateSlug: string): boolean {
   return (STATE_BOARDS[stateSlug] || []).length > 0;
 }
 
+const DISTRICT = /district court|district recruitment bureau/i;
+
 function BoardLink({ b }: { b: StateBoard }) {
   return (
     <li className="border-b border-line-soft">
@@ -40,8 +42,10 @@ export function StateBoardsSection({ stateSlug, stateName }: { stateSlug: string
       </p>
       <div className="mt-4 sm:columns-2 gap-x-8">
         {groups.map((g) => {
-          const district = g.bodies.filter((b) => /district court/i.test(b.name));
-          const main = g.bodies.filter((b) => !/district court/i.test(b.name));
+          // many alike bodies fold into one line: district courts, district recruitment bureaus (28 in Tamil Nadu)
+          const district = g.bodies.filter((b) => DISTRICT.test(b.name));
+          const main = g.bodies.filter((b) => !DISTRICT.test(b.name));
+          const foldLabel = /recruitment bureau/i.test(district[0]?.name || "") ? "District recruitment bureaus" : "District courts";
           return (
             <div key={g.label} className="break-inside-avoid mb-6">
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted">{g.label}</h3>
@@ -51,7 +55,7 @@ export function StateBoardsSection({ stateSlug, stateName }: { stateSlug: string
               {district.length > 0 && (
                 <details className="group/d">
                   <summary className="flex items-center min-h-[44px] cursor-pointer text-sm font-semibold text-navy hover:text-saffron">
-                    District courts ({district.length})
+                    {foldLabel} ({district.length})
                   </summary>
                   <ul>{district.map((b) => <BoardLink key={b.url} b={b} />)}</ul>
                 </details>
