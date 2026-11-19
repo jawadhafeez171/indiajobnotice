@@ -100,7 +100,7 @@ export function ExamCalendarView({ jobs }: { jobs: JobNotification[] }) {
       if (examSeen.has(e.job.id)) continue;
       examSeen.add(e.job.id);
       events.push({ ...base(e.job), id: `${e.job.id}-exam-${e.date}`, eventType: "EXAM",
-        dateStr: e.date, rawDateLabel: formatDate(e.date), isTentative: e.tentative });
+        dateStr: e.date, rawDateLabel: e.until ? `${formatDate(e.date)} – ${formatDate(e.until)}` : formatDate(e.date), isTentative: e.tentative });
     }
     for (const r of getLatestResults(jobs, 45, today)) {
       events.push({ ...base(r.job), id: `${r.job.id}-result`, eventType: "RESULT",

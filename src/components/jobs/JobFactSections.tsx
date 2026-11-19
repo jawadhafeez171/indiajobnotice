@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { BellRing, CheckCircle2, ChevronDown, Circle, CircleDot, ExternalLink, FileText } from "lucide-react";
 import {
-  JobNotification, StageKind, ageText, formatFee, getJobCanonicalPath, isJobApplicationClosed, stageText, todayIST,
+  JobNotification, StageKind, ageText, formatFee, getJobCanonicalPath, isJobApplicationClosed, stageDatesText, stageEvent, stageText, todayIST,
 } from "@/data/jobs";
 import { formatDate, getDaysRemaining } from "@/lib/utils";
 import { getJobCategoryMatrix, CategoryStatutoryMatrixItem } from "@/lib/exam-details";
@@ -95,7 +95,7 @@ interface Step {
   when: When;
   value: React.ReactNode;
   /** an official document: its summary, its PDF and its page here */
-  doc?: { summary: string; url: string; page?: string; examDates?: string[]; copyName?: string };
+  doc?: { summary: string; url: string; page?: string; examDates?: string[]; copyName?: string; datesText?: string };
 }
 
 const MARK: Record<When, { icon: typeof Circle; cls: string; sr: string }> = {
@@ -258,11 +258,12 @@ export function DatesAndApply({ job }: { job: JobNotification }) {
     seenDocs.add(same);
     steps.push({
       key: `doc-${i}`,
-      label: s.shortlist ? "Shortlist" : KIND_LABEL[s.kind],
+      label: s.shortlist ? "Shortlist" : stageEvent(s) && s.kind === "schedule" ? `${stageEvent(s)} schedule` : KIND_LABEL[s.kind],
       sortKey: s.date || s.found || today,
       when: "done",
       value: s.date ? formatDate(s.date) : "Released",
-      doc: { summary: stageText(s).main, url: s.url, page: KIND_PAGE[s.kind] ? `${base}/${KIND_PAGE[s.kind]}` : undefined, examDates: s.examDates, copyName: s.copyName },
+      doc: { summary: stageText(s).main, url: s.url, page: KIND_PAGE[s.kind] ? `${base}/${KIND_PAGE[s.kind]}` : undefined, examDates: s.examDates, copyName: s.copyName,
+        datesText: (s.examDates || []).length ? `${stageEvent(s) ? `${stageEvent(s)}s` : "Exam / test"}: ${stageDatesText(s, formatDate)}` : "" },
     });
   });
   if (job.exams?.length) {
@@ -324,10 +325,8 @@ export function DatesAndApply({ job }: { job: JobNotification }) {
                 {s.doc && (
                   <>
                     <p className="mt-0.5 text-[13px] text-ink-2 line-clamp-2">{s.doc.summary}</p>
-                    {s.doc.examDates && s.doc.examDates.length > 0 && (
-                      <p className="mt-0.5 text-[13px] font-semibold text-saffron">
-                        Exam / test: {s.doc.examDates.map((x) => formatDate(x)).join(", ")}
-                      </p>
+                    {s.doc.datesText && (
+                      <p className="mt-0.5 text-[13px] font-semibold text-saffron">{s.doc.datesText}</p>
                     )}
                     <p className="mt-1 flex flex-wrap gap-x-4 text-[13px] font-semibold">
                       {s.doc.copyName && <CopyLink name={s.doc.copyName} />}

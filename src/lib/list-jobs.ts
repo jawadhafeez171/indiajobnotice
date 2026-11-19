@@ -8,7 +8,7 @@ function stageForList(s: JobStage): JobStage {
   return {
     kind: s.kind, title, date: s.date, url: s.url, examDates: s.examDates, shortlist: s.shortlist, found: s.found,
     summary: s.summary && NOT_ENGLISH.test(s.title) ? s.summary.slice(0, 200) : undefined,
-    copyName: s.copyName,
+    copyName: s.copyName, event: s.event, dateSpan: s.dateSpan,
   };
 }
 

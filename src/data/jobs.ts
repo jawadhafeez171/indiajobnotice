@@ -216,6 +216,26 @@ export interface JobStage {
   /** Sent by hand without its official address: our stored copy, at /pdf/<copyName> (src/app/pdf). */
   copyName?: string;
   copyKey?: string;
+  /** What the dates are for when it is not a written exam, as the document names it ("Interview"). */
+  event?: string;
+  /** examDates are the first and last day of one period ("interviews from 07.12.2026 to 12.02.2027"). */
+  dateSpan?: boolean;
+}
+
+const INTERVIEW = /(interview|personality test|viva)/i;
+
+/** "Interview" for a schedule or call letter of interviews, else "" (a written exam). */
+export function stageEvent(s: JobStage): string {
+  if (s.event) return s.event;
+  if (s.kind !== "schedule" && s.kind !== "admit_card") return "";
+  return INTERVIEW.test(`${s.title} ${s.summary || ""}`) ? "Interview" : "";
+}
+
+/** The dates a document announces, in words: "07 Dec 2026 – 12 Feb 2027" for a period, else a list. */
+export function stageDatesText(s: JobStage, fmt: (iso: string) => string): string {
+  const d = [...(s.examDates || [])].sort();
+  if (s.dateSpan && d.length >= 2) return `${fmt(d[0])} – ${fmt(d[d.length - 1])}`;
+  return d.map(fmt).join(", ");
 }
 
 /** The text to show for a stage document: its English summary when the title is in another script. */
@@ -253,6 +273,8 @@ export interface ExamDateEntry {
   stage?: JobStage;
   /** Only the notification gives this date (no admit card or schedule confirms it yet). */
   tentative: boolean;
+  /** The last day when the document gives a period (interviews over several weeks). */
+  until?: string;
 }
 
 /**
@@ -269,6 +291,16 @@ export function getExamDates(jobs: JobNotification[], today = todayIST()): ExamD
       .filter((s) => s.kind === "admit_card" || s.kind === "schedule")
       .sort((a, b) => rank(a) - rank(b) || (b.date || "").localeCompare(a.date || ""));
     for (const s of docs) {
+      const span = s.dateSpan && (s.examDates || []).length >= 2 ? [...s.examDates!].sort() : null;
+      if (span) {
+        // one entry for the whole period: its first day while ahead, else its last
+        const [first, last] = [span[0], span[span.length - 1]];
+        if (last >= today && !seen.has(first)) {
+          span.forEach((d) => seen.add(d));
+          out.push({ job, date: first >= today ? first : last, stage: s, tentative: false, until: first >= today ? last : undefined });
+        }
+        continue;
+      }
       for (const d of s.examDates || []) {
         if (d >= today && !seen.has(d)) {
           seen.add(d);
@@ -315,15 +347,19 @@ export function stageSummary(job: JobNotification, today = todayIST()): string |
   // an admit card or schedule whose exam has passed: say so, not "Admit card out"
   if (!exam && (last.kind === "admit_card" || last.kind === "schedule")) {
     const held = (last.examDates || []).filter((d) => d < today).sort().pop();
-    if (held) return `Exam held ${shortDay(held, today)} · result awaited`;
+    if (held) return `${stageEvent(last) ? `${stageEvent(last)}s` : "Exam"} held ${shortDay(held, today)} · result awaited`;
     if (last.date && last.date <= today) {
       return `${last.kind === "admit_card" ? "Admit card issued" : "Exam dates announced"} ${shortDay(last.date, today)}`;
     }
   }
-  const parts = [last.shortlist ? "Shortlist out" : STAGE_LABEL[last.kind] || "Update"];
+  const event = stageEvent(last);
+  const parts = [last.shortlist ? "Shortlist out" : event && last.kind === "schedule" ? `${event} schedule out` : STAGE_LABEL[last.kind] || "Update"];
   if (last.kind === "answer_key") parts.push("result awaited");
   if (last.shortlist && !exam) parts.push("next round to come");
-  if (exam) parts.push(`exam ${shortDay(exam.date, today)}`);
+  const examEvent = exam?.stage ? stageEvent(exam.stage).toLowerCase() : "";
+  if (exam && examEvent && exam.until) parts.push(`${examEvent}s from ${shortDay(exam.date, today)}`);
+  else if (exam && examEvent && exam.stage?.dateSpan) parts.push(`${examEvent}s till ${shortDay(exam.date, today)}`);
+  else if (exam) parts.push(`${examEvent || "exam"} ${shortDay(exam.date, today)}`);
   else if (last.date && last.date <= today) parts.push(shortDay(last.date, today));
   return parts.join(" · ");
 }
