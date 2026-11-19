@@ -533,13 +533,33 @@ export function isOpenOrOpening(job: Pick<JobNotification, "status">): boolean {
   return job.status === "APPLY_OPEN" || job.status === "LAST_DATE_NEAR" || job.status === "UPCOMING";
 }
 
-export function isJobApplicationClosed(job: JobNotification): boolean {
+/** The end of the last day in India: 23:59:59 IST (19 Nov: "T23:59:59Z" was 05:29 IST the next morning). */
+export function lastDayEnd(isoDate: string): string {
+  return `${isoDate.slice(0, 10)}T23:59:59+05:30`;
+}
+
+/** Days a notice without a last date counts as open after it was issued (the agent's NO_LAST_DATE_DAYS). */
+export const NO_LAST_DATE_DAYS = 21;
+
+/**
+ * Does the job page carry JobPosting data (Google for Jobs)? Only while applications are open: a closed job is a
+ * plain WebPage, and a notice without a last date only for NO_LAST_DATE_DAYS after it was issued (else it would
+ * stay a live posting for ever). Same rule as the agent's indexing.has_job_posting.
+ */
+export function hasJobPosting(job: JobNotification, now = Date.now()): boolean {
+  if (isJobApplicationClosed(job, now)) return false;
+  if (job.applicationEndDate) return true;
+  const issued = (job.notificationDate || job.publishedAt || "").slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(issued)) return false;
+  return now <= Date.parse(lastDayEnd(issued)) + NO_LAST_DATE_DAYS * 86400000;
+}
+
+export function isJobApplicationClosed(job: JobNotification, now = Date.now()): boolean {
   if (job.status === "APPLICATIONS_CLOSED" || job.status === "ADMIT_CARD_OUT" || job.status === "RESULT_OUT") {
     return true;
   }
   if (!job.applicationEndDate) return false;
-  const deadline = new Date(`${job.applicationEndDate}T23:59:59Z`).getTime();
-  return Date.now() > deadline;
+  return now > Date.parse(lastDayEnd(job.applicationEndDate));
 }
 
 export function getActiveOpportunities(

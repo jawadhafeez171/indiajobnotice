@@ -1,4 +1,4 @@
-import { JobNotification, isJobApplicationClosed, getJobAgeCutoffDate, formatAgeRange, formatFee, ageText } from "@/data/jobs";
+import { JobNotification, hasJobPosting, lastDayEnd, getJobAgeCutoffDate, formatAgeRange, formatFee, ageText } from "@/data/jobs";
 import { getStateBySlug } from "@/config/states";
 import { getJobTaxonomyLinks } from "@/lib/internal-links";
 import { formatDate } from "@/lib/utils";
@@ -102,7 +102,8 @@ function employmentType(job: JobNotification): string | undefined {
 }
 
 export function generateJobStructuredData(job: JobNotification, canonicalUrl: string) {
-  const isClosed = isJobApplicationClosed(job);
+  // closed, or open-ended and long issued: no JobPosting (a stale posting is penalised by Google for Jobs)
+  const isClosed = !hasJobPosting(job);
   const taxonomy = getJobTaxonomyLinks(job);
   const state = job.stateSlug !== "central" ? getStateBySlug(job.stateSlug) : null;
   // central jobs: the country only ("National / All-India" is not a region)
@@ -132,7 +133,8 @@ export function generateJobStructuredData(job: JobNotification, canonicalUrl: st
         // a fixed date: the notice's own start date, else the day the site added it
         datePosted: new Date(job.notificationDate || job.applicationStartDate || job.lastVerifiedDate || "2026-10-30").toISOString(),
         dateModified: new Date(job.lastVerifiedDate || "2026-10-23").toISOString(),
-        validThrough: job.applicationEndDate ? new Date(`${job.applicationEndDate}T23:59:59Z`).toISOString() : undefined,
+        // the end of the last day in India; open-ended notices end NO_LAST_DATE_DAYS after issue (hasJobPosting)
+        validThrough: job.applicationEndDate ? lastDayEnd(job.applicationEndDate) : undefined,
         ...(employmentType(job) ? { employmentType: employmentType(job) } : {}),
         // no sameAs: the apply or notice link is not the body's own website
         hiringOrganization: {
