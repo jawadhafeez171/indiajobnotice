@@ -49,6 +49,16 @@ interface Props {
   narrow?: boolean;
   /** A state page starts with the state's own jobs (11 Nov, owner's choice); central ones are one tap away. */
   defaultScope?: "ALL" | "STATE";
+  /** The section's heading ("Latest Karnataka government jobs"). */
+  heading?: string;
+  /** Central jobs are not in `jobs` (a state page, 20 Nov): the "+ N central jobs" line links to them instead. */
+  centralLink?: { href: string; count: number };
+  /** Only these stage tabs (a state page: Open, Closing, Exams, Results; 20 Nov critique). Default: all. */
+  tabs?: StatusCategoryKey[];
+  /** The desktop List / Featured / Cards switch (off on state pages). */
+  layoutSwitch?: boolean;
+  /** The section heading only for screen readers on phones (a state page: its H1 already says it). */
+  headingOnPhone?: boolean;
 }
 
 type ViewMode = "ledger" | "spotlight" | "bulletin";
@@ -66,6 +76,14 @@ export type StatusCategoryKey =
 // one row of tabs; the active one takes its stage colour (same as the card stripes)
 // "Today" leads, and only shows on a day something changed
 export const TAB_ORDER: StatusCategoryKey[] = ["TODAY", "APPLY_OPEN", "CLOSING_SOON", "EXAM_DATES", "RESULT", "UNDER_WAY", "ALL"];
+/** What a tab counts: jobs while applications are open, else the recruitments with exams or results. */
+function countNoun(cat: StatusCategoryKey, n: number): string {
+  if (cat === "EXAM_DATES") return n === 1 ? "recruitment with exam dates" : "recruitments with exam dates";
+  if (cat === "RESULT") return n === 1 ? "result" : "results";
+  if (cat === "UNDER_WAY") return n === 1 ? "recruitment under way" : "recruitments under way";
+  return n === 1 ? "job" : "jobs";
+}
+
 export const TABS: Record<StatusCategoryKey, { label: string; short: string; active: string; order?: string }> = {
   TODAY: { label: "Today", short: "Today", active: "bg-today-solid", order: "found on the official sites today · new notices first" },
   APPLY_OPEN: { label: "Open", short: "Open", active: "bg-green-solid", order: "by last date, biggest first" },
@@ -168,9 +186,11 @@ export const STAGE_PARAM: Record<string, StatusCategoryKey> = {
   underway: "UNDER_WAY", all: "ALL",
 };
 
-export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = false, showLayoutSwitch = true, narrow = false, defaultScope = "ALL" }: Props) {
+export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = false, showLayoutSwitch = true, narrow = false, defaultScope = "ALL", heading = "Latest government jobs", centralLink, tabs, layoutSwitch = true, headingOnPhone = true }: Props) {
   const [viewMode, setViewMode] = useState<ViewMode>("ledger");
-  const [activeCategory, setActiveCategory] = useState<StatusCategoryKey>("APPLY_OPEN");
+  const [chosenCategory, setActiveCategory] = useState<StatusCategoryKey>("APPLY_OPEN");
+  // a tab this page does not show (a link to #under-way on a state page) falls back to Open
+  const activeCategory: StatusCategoryKey = !tabs || tabs.includes(chosenCategory) ? chosenCategory : "APPLY_OPEN";
 
   // Search & Multi-Faceted Filters State
   const [searchQuery, setSearchQuery] = useState("");
@@ -179,6 +199,13 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
   const [selectedKind, setSelectedKind] = useState("ALL");
   const [selectedScope, setSelectedScope] = useState<"ALL" | "CENTRAL" | "STATE">(defaultScope);
   const centralOpen = jobs.filter((j) => j.isCentral && isOpenOrOpening(j)).length;
+  // a state page: the empty search suggests that state's own bodies, not SSC or railways it does not list
+  const onStatePage = !!currentStateSlug && currentStateSlug !== "central" && currentStateSlug !== "all";
+  const stateSuggestions = useMemo(() => {
+    const n = new Map<string, number>();
+    for (const j of jobs) if (!j.isCentral && j.orgShortCode) n.set(j.orgShortCode, (n.get(j.orgShortCode) || 0) + 1);
+    return [...n.entries()].sort((a, b) => b[1] - a[1]).slice(0, 4).map(([c]) => c);
+  }, [jobs]);
   const stateName = currentStateSlug ? getStateBySlug(currentStateSlug)?.name || "" : "";
   const [selectedState, setSelectedState] = useState("ALL");
   const [myAge, setMyAge] = useState<number | null>(null);
@@ -333,8 +360,9 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
         return isOpenOrOpening(job);
       case "CLOSING_SOON": {
         if (job.status === "LAST_DATE_NEAR") return true;
+        // the last day itself counts (0 = closes today)
         const days = getDaysRemaining(job.applicationEndDate);
-        return days > 0 && days <= 7;
+        return days >= 0 && days <= 7;
       }
       case "ADMIT_CARD":
         return job.status === "ADMIT_CARD_OUT";
@@ -466,7 +494,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       for (const j of group) {
         const same = perOrg.get(orgKey(j))!;
         const key = `${b}:${orgKey(j)}`;
-        const fold = same.length >= FOLD_AT && !unfolded.has(key);
+        // never within a week of the last date, nor on the Closing tab: a folded row hid 5 of the 6 closing this week
+        const fold = b > 2 && activeCategory !== "CLOSING_SOON" && same.length >= FOLD_AT && !unfolded.has(key);
         if (!fold) {
           items.push({ kind: "job", key: j.id, job: j });
           continue;
@@ -482,7 +511,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       }
     }
     return items;
-  }, [grouped, filteredJobs, unfolded]);
+  }, [grouped, filteredJobs, unfolded, activeCategory]);
 
   // two rows of one body that read the same: the advert number (or year) goes in front
   const titleOf = useMemo(() => {
@@ -493,7 +522,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       const t = rowTitle(j);
       // a Karnataka round's KK / RPC notice always says which (the two often have different titles)
       const area = noticeArea(j)?.code;
-      if (area) return `${area} · ${t.replace(/\s*\((?:KK|RPC)\)/g, "").replace(/\s{2,}/g, " ").trim()}`;
+      // the post first, then which cadre (20 Nov critique: a zone before the post hid what the job is)
+      if (area) return `${t.replace(/\s*\((?:KK|RPC)\)/g, "").replace(/\s{2,}/g, " ").trim()} · ${area === "KK" ? "Kalyana Karnataka" : "Rest of Karnataka"}`;
       if ((seen.get(key(j)) || 0) < 2) return t;
       // look-alikes otherwise differ by the year (lists leave advert numbers out)
       const year = (j.applicationEndDate || j.publishedAt || "").slice(0, 4);
@@ -606,7 +636,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       {searchQuery && !gap && (
         <p className="text-[13px] text-muted">
           Try{" "}
-          {["SSC", "police", "teacher", "railway"].map((q) => (
+          {(onStatePage ? stateSuggestions : ["SSC", "police", "teacher", "railway"]).map((q) => (
             <button
               key={q}
               type="button"
@@ -623,14 +653,14 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       )}
       <p className="text-[13px] text-muted">
         Not listed yet?{" "}
-        <button
+        {!onStatePage && <><button
           type="button"
           onClick={() => window.dispatchEvent(new Event("ijn:open-states"))}
           className="inline-flex items-center gap-1 font-semibold text-navy underline underline-offset-2 py-2"
         >
           <MapPin className="w-3.5 h-3.5" aria-hidden />Pick your state
         </button>{" "}
-        or{" "}
+        or{" "}</>}
         <a href={TELEGRAM} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-navy underline underline-offset-2 py-2">
           <Send className="w-3.5 h-3.5" aria-hidden />get new notices on Telegram
         </a>
@@ -649,18 +679,18 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
   return (
     <section id="major-recruitments" className="space-y-4 scroll-mt-20">
       {/* Section Header with Live View Switcher */}
-      <div className={cn("flex flex-col sm:flex-row sm:items-center justify-between gap-3", showLayoutSwitch ? "pb-3 border-b border-line" : "sr-only")}>
+      <div className={cn("flex flex-col sm:flex-row sm:items-center justify-between gap-3", showLayoutSwitch ? "pb-3 border-b border-line" : "sr-only", showLayoutSwitch && !headingOnPhone && "max-sm:sr-only")}>
         <div>
           <div className="flex items-center gap-2">
             {showLayoutSwitch && <span className="w-2.5 h-2.5 rounded-full bg-navy-solid" />}
             <h2 className={cn("font-serif font-bold text-ink", showLayoutSwitch ? "text-xl sm:text-2xl" : "text-lg sm:text-xl")}>
-              Latest government jobs
+              {heading}
             </h2>
           </div>
         </div>
 
         {/* View Mode Switcher Toggle */}
-        <div className={cn("hidden items-center gap-1 p-1 rounded-md bg-navy-tint border border-navy-line self-start sm:self-auto text-xs", showLayoutSwitch && "md:flex")}>
+        <div className={cn("hidden items-center gap-1 p-1 rounded-md bg-navy-tint border border-navy-line self-start sm:self-auto text-xs", showLayoutSwitch && layoutSwitch && "md:flex")}>
           <span className="text-[11px] uppercase font-mono text-navy font-bold px-2 hidden md:inline">
             Layout:
           </span>
@@ -720,7 +750,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
             narrow ? "md:gap-2 lg:gap-1.5 lg:pr-0 lg:overflow-visible lg:flex-wrap lg:[mask-image:none]" : "md:pr-0 md:overflow-visible md:gap-2 md:[mask-image:none]"
           )}
         >
-          {TAB_ORDER.map((key) => {
+          {TAB_ORDER.filter((key) => !tabs || tabs.includes(key)).map((key) => {
             const isActive = activeCategory === key;
             // no Today tab on a day with nothing new
             if (key === "TODAY" && !categoryCounts.TODAY && !isActive) return null;
@@ -733,7 +763,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 onClick={() => setActiveCategory(key)}
                 className={cn(
                   narrow ? "px-2.5 gap-1 md:px-3 md:gap-1.5" : "px-2.5 gap-1 md:px-3.5 md:gap-2",
-                  "shrink-0 flex items-center min-h-[36px] md:min-h-0 md:py-[9px] rounded-full border text-[12px] md:text-[13px] font-semibold whitespace-nowrap transition-colors motion-reduce:transition-none",
+                  "shrink-0 flex items-center min-h-[44px] md:min-h-0 md:py-[9px] rounded-full border text-[12px] md:text-[13px] font-semibold whitespace-nowrap transition-colors motion-reduce:transition-none",
                   isActive ? cn(t.active, "text-white border-transparent") : "bg-surface border-[#C8D3E3] dark:border-control text-ink hover:border-navy"
                 )}
               >
@@ -747,7 +777,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 >
                   {categoryCounts[key]}
                 </span>
-                <span className="sr-only"> jobs</span>
+                <span className="sr-only"> {countNoun(key, 2)}</span>
               </button>
             );
           })}
@@ -756,9 +786,9 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
 
       {/* ================= COUNT, FILTERS ================= */}
       <div className="space-y-2.5">
-        <div className="flex items-center justify-between gap-3 text-[13px]">
-          <p id="results-count" tabIndex={-1} className="scroll-mt-[140px] md:scroll-mt-[176px] text-ink-2 min-w-0 focus:outline-none" aria-live="polite">
-            <b className="text-ink">{filteredJobs.length}</b> {filteredJobs.length === 1 ? "job" : "jobs"}
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 text-[13px]">
+          <p id="results-count" tabIndex={-1} className="scroll-mt-[140px] md:scroll-mt-[176px] text-ink-2 min-w-[11rem] flex-1 focus:outline-none" aria-live="polite">
+            <b className="text-ink">{filteredJobs.length}</b> {countNoun(activeCategory, filteredJobs.length)}
             {defaultScope === "STATE" && stateName && (selectedScope === "STATE" ? " in " + stateName : selectedScope === "ALL" ? ` in ${stateName} and central` : "")}
             {filteredJobs.length > 0 && TABS[activeCategory].order && <span className="hidden sm:inline text-muted"> · {TABS[activeCategory].order}</span>}
             {defaultScope === "STATE" && selectedScope === "STATE" && centralOpen > 0 && (
@@ -766,7 +796,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 + {centralOpen} central jobs open to all
               </button>
             )}
-            {defaultScope === "STATE" && selectedScope === "ALL" && (
+            {defaultScope === "STATE" && selectedScope === "ALL" && !centralLink && (
               <button type="button" onClick={() => setSelectedScope("STATE")} className="ml-2 py-2 -my-2 font-semibold text-navy underline underline-offset-2 hover:text-saffron">
                 Only {stateName}
               </button>
@@ -829,7 +859,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 onClick={() => setMajorOnly(!majorOnly)}
                 aria-checked={majorOnly}
                 title={`Show only recruitments with ${MAJOR_POSTS} or more posts`}
-                className="group relative flex items-center gap-1.5 md:gap-2 pl-2.5 md:pl-3 pr-1 md:pr-1.5 h-[30px] md:h-auto md:min-h-[36px] before:absolute before:inset-x-0 before:-inset-y-2 md:before:hidden rounded-full border border-line bg-surface text-[12px] md:text-[13px] font-semibold text-ink-2 whitespace-nowrap hover:border-navy"
+                className="group relative flex items-center gap-1.5 md:gap-2 pl-2.5 md:pl-3 pr-1 md:pr-1.5 min-h-[44px] md:min-h-[36px] rounded-full border border-line bg-surface text-[12px] md:text-[13px] font-semibold text-ink-2 whitespace-nowrap hover:border-navy"
               >
                 <span>{MAJOR_POSTS}+ posts<span className="hidden md:inline"> only</span></span>
                 <span
@@ -857,7 +887,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
               onClick={() => setShowFilters(!showFilters)}
               aria-expanded={showFilters}
               className={cn(
-                "md:hidden flex items-center gap-1.5 px-3 min-h-[36px] rounded-lg border text-[13px] font-semibold",
+                "md:hidden flex items-center gap-1.5 px-3 min-h-[44px] rounded-lg border text-[13px] font-semibold",
                 facetCount ? "border-navy text-navy bg-navy-tint" : "border-line text-ink-2 bg-surface"
               )}
             >
@@ -921,7 +951,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
               <option key={q.value} value={q.value}>{q.label}</option>
             ))}
           </select>
-          <div className="flex rounded-lg border border-line bg-surface p-0.5 min-h-[44px] md:min-h-[38px]">
+          {/* no switch when central jobs are only a link away (a state page with its own jobs) */}
+          {!centralLink && <div className="flex rounded-lg border border-line bg-surface p-0.5 min-h-[44px] md:min-h-[38px]">
             {(["ALL", "CENTRAL", "STATE"] as const).map((sc) => (
               <button
                 key={sc}
@@ -934,7 +965,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 {sc === "ALL" ? "All" : sc === "CENTRAL" ? "Central" : "State"}
               </button>
             ))}
-          </div>
+          </div>}
         </div>)}
       </div>
 
@@ -967,6 +998,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
           ) : (() => { const job = it.job; return (
             <li key={job.id} data-job={job.id}>
               <JobRow
+                hidePlace={!!currentStateSlug && !job.isCentral && job.stateSlug === currentStateSlug}
                 job={job}
                 title={titleOf(job)}
                 exam={activeCategory === "EXAM_DATES" || job.status === "ADMIT_CARD_OUT" ? nextExamDate(job) : undefined}
@@ -1056,7 +1088,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                           <abbr title={job.organization} className="no-underline px-1.5 py-0.5 rounded bg-navy-tint text-navy font-bold leading-none border border-navy-line">
                             {job.orgShortCode}
                           </abbr>
-                          <span className="text-muted">{placeLabel(job)}</span>
+                          {!(currentStateSlug && !job.isCentral && job.stateSlug === currentStateSlug) && <span className="text-muted">{placeLabel(job)}</span>}
                           {termsLabel(job) && <span className="text-muted">· {termsLabel(job)}</span>}
                           {/* the stage word only where the list mixes stages (All); Today says what changed */}
                           {(activeCategory === "ALL" || activeCategory === "TODAY") && (
@@ -1350,6 +1382,14 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
             })
           )}
         </div>
+      )}
+      {/* central jobs are not on a state page: one line under the list leads to them */}
+      {centralLink && (
+        <p className="text-sm">
+          <Link href={centralLink.href} className="inline-flex items-center min-h-[44px] font-semibold text-navy underline underline-offset-4 hover:text-saffron">
+            See {centralLink.count} central government jobs open to candidates from every state →
+          </Link>
+        </p>
       )}
     </section>
   );

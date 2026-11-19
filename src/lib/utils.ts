@@ -27,9 +27,13 @@ export function formatDateShort(dateString: string): string {
   return full.endsWith(` ${thisYear}`) ? full.slice(0, -5) : full;
 }
 
-export function getDaysRemaining(targetDate: string): number {
-  const target = new Date(targetDate).getTime();
-  const now = new Date().getTime();
-  const diff = target - now;
-  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+/**
+ * Whole days from today in India to a date: 0 on the day itself ("Closes today"), 1 the day before.
+ * Calendar days in IST, the same count as the deadline groups (daysUntil / todayIST). 20 Nov: this compared
+ * UTC midnight with the current moment, so from 00:00 to 05:30 IST every count was one too high
+ * ("Closes tomorrow" under "Closing today").
+ */
+export function getDaysRemaining(targetDate: string, now = Date.now()): number {
+  const todayIst = new Date(now + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
+  return Math.round((Date.parse(targetDate.slice(0, 10)) - Date.parse(todayIst)) / 86400000);
 }

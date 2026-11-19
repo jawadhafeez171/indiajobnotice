@@ -462,8 +462,10 @@ function deadlineText(job: JobNotification, exam?: ExamDateEntry | null): string
  * The full name and the age are on the job page. No box; rows are separated by lines. The whole row is
  * the link; `action` sits on top.
  */
-export function JobRow({ job, exam, action, title, showStage = false, note }: {
+export function JobRow({ job, exam, action, title, showStage = false, note, hidePlace = false }: {
   job: JobNotification;
+  /** On the job's own state page: no state name; the qualification takes its place on phones. */
+  hidePlace?: boolean;
   exam?: ExamDateEntry | null;
   action?: React.ReactNode;
   /** The title to show, when the list needs a fuller one than rowTitle (two look-alike rows). */
@@ -477,10 +479,10 @@ export function JobRow({ job, exam, action, title, showStage = false, note }: {
   // phones keep the short facts, so the line is not cut off: terms and qualification are on the job page
   const meta = [
     { text: showStage ? style.label : null },
-    { text: placeLabel(job) },
+    { text: hidePlace ? null : placeLabel(job) },
     { text: termsLabel(job), wide: true },
     { text: job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} post${job.totalVacancies === 1 ? "" : "s"}` : null },
-    { text: qualificationLabel(job), wide: true },
+    { text: qualificationLabel(job), wide: !hidePlace },
   ].filter((m) => m.text);
 
   return (

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { JobNotification } from "@/data/jobs";
 import { getJobTaxonomyLinks } from "@/lib/internal-links";
 import { ArrowRight } from "lucide-react";
+import { YEAR } from "@/lib/year";
 
 interface Props {
   job: JobNotification;
@@ -13,7 +14,8 @@ export function JobTaxonomyBar({ job }: Props) {
   const taxonomy = getJobTaxonomyLinks(job);
   const links = [
     taxonomy.organisationHub,
-    taxonomy.stateHub && { ...taxonomy.stateHub, label: job.isCentral ? "Central government jobs" : taxonomy.stateHub.label.replace(/ Govt Jobs Hub$/, " government jobs") },
+    taxonomy.stateHub && { ...taxonomy.stateHub, // the words people search, so the state page is what Google shows for them (20 Nov)
+    label: job.isCentral ? "Central government jobs" : `All ${taxonomy.stateHub.label.replace(/ Govt Jobs Hub$/, "")} government jobs ${YEAR}` },
     taxonomy.sectorHub,
     taxonomy.qualificationHubs[0],
   ].filter((l): l is NonNullable<typeof l> => Boolean(l));
