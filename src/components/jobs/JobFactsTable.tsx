@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ExternalLink } from "lucide-react";
+import { ChevronDown, ExternalLink } from "lucide-react";
 import { JobNotification, ageText, formatFee, isJobApplicationClosed, payText } from "@/data/jobs";
 import { formatDate } from "@/lib/utils";
 import { getJobPostBreakdown } from "@/lib/exam-details";
@@ -19,8 +19,10 @@ import { hasPostsCard, hasSelection } from "./ExecutiveNotificationDigest";
 
 const FIRST = 8;
 
-type Row = { label: React.ReactNode; value: React.ReactNode; key: string; sub?: boolean };
-type Section = { id: string; title: string; rows: Row[]; more?: Row[] };
+/** strong: a row that decides whether to apply (the last date), set apart from the rest */
+type Row = { label: React.ReactNode; value: React.ReactNode; key: string; sub?: boolean; strong?: boolean };
+/** more: rows behind "Show N more"; after: rows shown after that button (a section's own sub-tables) */
+type Section = { id: string; title: string; rows: Row[]; more?: Row[]; after?: Row[] };
 
 const dot = <span className="mx-1.5 text-faint" aria-hidden>·</span>;
 const join = (parts: React.ReactNode[]) =>
@@ -49,7 +51,7 @@ function overview(job: JobNotification): Section {
   const f = job.details?.facts || {};
   const rows: Row[] = [{ key: "org", label: "Organisation", value: job.organization }];
   if (job.advtNo) rows.push({ key: "advt", label: "Advt. No.", value: job.advtNo });
-  if (job.totalVacancies > 0) rows.push({ key: "total", label: "Total posts", value: <b className="text-ink tabular-nums">{job.totalVacancies.toLocaleString("en-IN")}</b> });
+  if (job.totalVacancies > 0) rows.push({ key: "total", label: "Total posts", value: <b className="text-base text-ink tabular-nums">{job.totalVacancies.toLocaleString("en-IN")}</b> });
   rows.push({ key: "where", label: "Job location", value: f.postingPlace?.value ? <>{f.postingPlace.value} <PageRef job={job} page={f.postingPlace.page} /></> : job.isCentral ? "Central government (All India)"
     : [job.districtName, getStateBySlug(job.stateSlug)?.name].filter(Boolean).join(", ") || "State government" });
   for (const [k, label] of [["employmentType", "Type of job"], ["contractPeriod", "Contract period"], ["probation", "Probation"], ["bond", "Bond"]] as const) {
@@ -69,6 +71,7 @@ function dates(job: JobNotification): Section {
   for (const s of steps) {
     rows.push({
       key: s.key,
+      strong: s.key === "end" && s.when === "now",
       label: s.label,
       value: (
         <>
@@ -76,7 +79,7 @@ function dates(job: JobNotification): Section {
           {s.doc && (
             <span className="mt-1 block text-[13px] text-ink-2">
               {s.doc.summary}
-              {s.doc.datesText && <span className="block font-semibold text-saffron">{s.doc.datesText}</span>}
+              {s.doc.datesText && <span className="block font-semibold text-ink">{s.doc.datesText}</span>}
               <span className="mt-1 flex flex-wrap gap-x-4">
                 {s.doc.copyName && <CopyLink name={s.doc.copyName} />}
                 {linkOut(s.doc.url, "Official document")}
@@ -91,24 +94,34 @@ function dates(job: JobNotification): Section {
   return { id: "dates", title: datesHeading(job), rows };
 }
 
+/** The value most posts share, when at least 3 posts and half of them share it, else "". */
+function common(values: string[]): string {
+  const counts = new Map<string, number>();
+  for (const v of values) if (v && v !== "See notification") counts.set(v, (counts.get(v) || 0) + 1);
+  const [v, n] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0] || ["", 0];
+  return n >= 3 && n >= values.length / 2 ? v : "";
+}
+
 function posts(job: JobNotification): Section | null {
   if (!hasPostsCard(job)) return null;
   const d = job.details || {};
   const list = getJobPostBreakdown(job);
   const quals = new Set(list.map((p) => p.qualification));
   const pays = new Set(list.map((p) => p.payLevel));
+  const sharedQual = quals.size > 1 ? common(list.map((p) => p.qualification)) : "";
+  const sharedPay = pays.size > 1 ? common(list.map((p) => p.payLevel)) : "";
   const all: Row[] = list.map((p, i) => ({
     key: `p${i}`,
     label: p.postName,
     value: (
       <>
         {/\d/.test(String(p.vacancies))
-          ? <b className="text-ink tabular-nums">{p.vacancies} post{String(p.vacancies) === "1" ? "" : "s"}</b>
+          ? <b className="text-base text-ink tabular-nums">{p.vacancies} post{String(p.vacancies) === "1" ? "" : "s"}</b>
           : <span className="text-muted">Number in the notice</span>}
-        {pays.size > 1 && p.payLevel !== "See notification" && (
-          <span className="mt-1 block"><span className="text-muted">Pay: </span>{payText(p.payLevel).replace(/^pay\s*/i, "")}</span>
+        {pays.size > 1 && p.payLevel !== "See notification" && p.payLevel !== sharedPay && (
+          <span className="mt-1 block"><span className="text-muted">Pay: </span>{payText(p.payLevel).replace(/^pay\s*(?=[₹\d])/i, "")}</span>
         )}
-        {quals.size > 1 && p.qualification !== "See notification" && (
+        {quals.size > 1 && p.qualification !== "See notification" && p.qualification !== sharedQual && (
           <span className="mt-1 block"><span className="text-muted">Qualification: </span>{p.qualification}</span>
         )}
       </>
@@ -117,9 +130,12 @@ function posts(job: JobNotification): Section | null {
   const rows: Row[] = [];
   if (pays.size === 1 && list.length && [...pays][0] !== "See notification") {
     rows.push({ key: "pay", label: list.length > 1 ? "Pay (all posts)" : "Pay", value: payText([...pays][0]) });
+  } else if (sharedPay) {
+    rows.push({ key: "pay", label: "Pay (unless shown below)", value: payText(sharedPay) });
   } else if (!list.length && job.salary) {
     rows.push({ key: "pay", label: "Pay", value: payText(job.salary) });
   }
+  if (sharedQual) rows.push({ key: "qual", label: "Qualification (unless shown below)", value: sharedQual });
   if (!list.length && job.totalVacancies > 0) rows.push({ key: "n", label: "Posts", value: job.totalVacancies.toLocaleString("en-IN") });
   rows.push(...all.slice(0, FIRST));
   const more = all.slice(FIRST);
@@ -149,12 +165,17 @@ function posts(job: JobNotification): Section | null {
     extra.push(subhead("exp", "Experience required"));
     for (const p of req) extra.push({ key: `exp-${p.post}`, label: p.post, value: <>{p.experience} <PageRef job={job} page={p.page} /></> });
   }
-  return { id: "posts", title: "Posts and vacancies", rows: more.length ? rows : [...rows, ...extra], more: more.length ? [...more, ...extra] : undefined };
+  // the extra tables follow the posts they belong to, not hidden behind "Show more"
+  return { id: "posts", title: "Posts and vacancies", rows: [...rows, ...(more.length ? [] : extra)], more: more.length ? more : undefined,
+    after: more.length ? extra : undefined };
 }
 
 type Limit = NonNullable<JobNotification["ageLimits"]>[number];
 
-/** The printed age limits said once: posts and categories that share a limit are one row. */
+/**
+ * The printed age limits said once. Several posts: a small heading per post (or set of posts sharing limits), then one
+ * row per category. A category with no minimum of its own keeps its post's minimum ("21 to 33", not "Up to 33").
+ */
 function ageRows(limits: Limit[]): Row[] {
   const allPosts = [...new Set(limits.map((l) => l.post).filter(Boolean))];
   const cats = new Set(limits.map((l) => l.category));
@@ -165,12 +186,27 @@ function ageRows(limits: Limit[]): Row[] {
     if (l.post && !g.posts.includes(l.post)) g.posts.push(l.post);
     groups.set(key, g);
   }
-  return [...groups.values()].map((g, i) => {
-    const who = [cats.size > 1 ? g.category : "", allPosts.length > 1 ? (g.posts.length === allPosts.length ? "all posts" : g.posts.join("; ")) : ""]
-      .filter(Boolean).join(", ") || "All candidates";
-    return { key: `age${i}`, label: <span className="tabular-nums">{g.min ? `${g.min} to ${g.max}` : `Up to ${g.max}`} years</span>,
-      value: who.charAt(0).toUpperCase() + who.slice(1) };
-  });
+  const byPosts = new Map<string, { posts: string[]; items: { min?: number; max: number; category: string }[] }>();
+  for (const g of groups.values()) {
+    const k = allPosts.length > 1 ? (g.posts.length === allPosts.length ? "" : g.posts.join("; ")) : "";
+    const b = byPosts.get(k) || { posts: g.posts, items: [] };
+    b.items.push(g);
+    byPosts.set(k, b);
+  }
+  const rows: Row[] = [];
+  let n = 0;
+  for (const [k, b] of byPosts) {
+    const mins = new Set(b.items.map((x) => x.min).filter(Boolean));
+    const postMin = mins.size === 1 ? [...mins][0] : undefined;
+    if (byPosts.size > 1) rows.push(subhead(`agep${n}`, `Age limit: ${k || "all posts"}`));
+    for (const g of b.items) {
+      const min = g.min || postMin;
+      const label = byPosts.size > 1 ? (cats.size > 1 && g.category ? g.category : "All candidates")
+        : cats.size > 1 && g.category ? `Age limit (${g.category})` : "Age limit";
+      rows.push({ key: `age${n++}`, label, value: <b className="text-ink tabular-nums">{min ? `${min} to ${g.max}` : `Up to ${g.max}`} years</b> });
+    }
+  }
+  return rows;
 }
 
 function eligibility(job: JobNotification): Section | null {
@@ -180,7 +216,7 @@ function eligibility(job: JobNotification): Section | null {
   const wording = ageText(job).trim();
   const rows: Row[] = [];
   if (limits.length) {
-    rows.push(subhead("age", "Age limit"), ...ageRows(limits));
+    rows.push(...ageRows(limits));
   } else {
     rows.push({ key: "age", label: "Age limit", value: wording || "See the official notification" });
   }
@@ -192,7 +228,9 @@ function eligibility(job: JobNotification): Section | null {
   if (job.ageAsOn && limits.length) {
     rows.push({ key: "ageCheck", label: "Check your age", value: (
       <details className="group">
-        <summary className="cursor-pointer list-none font-semibold text-navy hover:text-saffron [&::-webkit-details-marker]:hidden">Enter your date of birth</summary>
+        <summary className="inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1.5 font-semibold text-navy hover:text-saffron [&::-webkit-details-marker]:hidden">
+          <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden />Enter your date of birth
+        </summary>
         <div className="pt-2"><AgeCheck asOn={job.ageAsOn} limits={limits} /></div>
       </details>
     ) });
@@ -237,7 +275,7 @@ function fee(job: JobNotification): Section | null {
     for (const f of d.fees) {
       const extra = f.text && f.text.replace(/\.00?(?!\d)/g, "").replace(/[₹\s,/-]|rs\.?|\(?non-refundable\)?|only/gi, "") !== String(f.amount ?? "");
       rows.push({ key: `fee-${f.category}`, label: f.category, value: (
-        <>{f.amount === 0 ? <b className="text-green">No fee</b> : f.amount ? <b className="text-ink tabular-nums">{rupees(f.amount)}</b> : f.text}
+        <>{f.amount === 0 ? <b className="text-green">No fee</b> : f.amount ? <b className="text-base text-ink tabular-nums">{rupees(f.amount)}</b> : f.text}
           {extra && f.amount !== null && <span className="ml-1.5 text-[13px] text-ink-2">({f.text})</span>} <PageRef job={job} page={f.page} /></>
       ) });
     }
@@ -247,17 +285,13 @@ function fee(job: JobNotification): Section | null {
   if (facts.feePaymentMode?.value) rows.push({ key: "pay", label: "How to pay", value: <>{facts.feePaymentMode.value} <PageRef job={job} page={facts.feePaymentMode.page} /></> });
 
   if (d.applySteps?.length) {
-    rows.push(subhead("apply", "How to apply"));
-    d.applySteps.forEach((s, i) => rows.push({ key: `st${i}`, label: `Step ${i + 1}`, value: <>{s.step} <PageRef job={job} page={s.page} /></> }));
+    rows.push({ key: "steps", label: "How to apply", value: <Numbered job={job} items={d.applySteps.map((x) => ({ text: x.step, page: x.page }))} /> });
   } else {
     rows.push({ key: "apply", label: "How to apply", value: <Linked text={job.howToApply?.trim() || "Apply on the official website. The steps are in the official notification."} /> });
   }
   const docs = d.documents || [];
-  let more: Row[] | undefined;
   if (docs.length) {
-    const docRows = docs.map((x, i) => ({ key: `doc${i}`, label: `Document ${i + 1}`, value: <>{x.document} <PageRef job={job} page={x.page} /></> }));
-    rows.push(subhead("docs", "Documents to keep ready"), ...docRows.slice(0, FIRST));
-    if (docRows.length > FIRST) more = docRows.slice(FIRST);
+    rows.push({ key: "docs", label: "Documents to keep ready", value: <Numbered job={job} items={docs.map((x) => ({ text: x.document, page: x.page }))} /> });
   }
   const help: Row[] = [];
   if (facts.helplinePhone?.value) help.push({ key: "phone", label: "Help desk phone", value: facts.helplinePhone.value });
@@ -267,7 +301,7 @@ function fee(job: JobNotification): Section | null {
       ? <span className="break-all">{emails.map((e, i) => <React.Fragment key={e}>{i > 0 && ", "}<a href={`mailto:${e}`} className="text-navy underline underline-offset-2">{e}</a></React.Fragment>)}</span>
       : facts.helplineEmail.value });
   }
-  return { id: "fee", title: "Fee and how to apply", rows: more ? rows : [...rows, ...help], more: more ? [...more, ...help] : undefined };
+  return { id: "fee", title: "Fee and how to apply", rows: [...rows, ...help] };
 }
 
 function selection(job: JobNotification): Section | null {
@@ -275,16 +309,27 @@ function selection(job: JobNotification): Section | null {
   const d = job.details || {};
   const own = (d.selectionStages || []).map((s) => s.stage);
   const stages = (own.length ? own : job.selectionProcess || []).map((t) => t.trim().replace(/[,;:.]+$/, "")).filter(Boolean);
-  const rows: Row[] = stages.map((t, i) => ({ key: `s${i}`, label: stages.length > 1 ? `Stage ${i + 1}` : "Selection", value: t.charAt(0).toUpperCase() + t.slice(1) }));
+  const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+  const rows: Row[] = !stages.length ? [] : stages.length === 1
+    ? [{ key: "s0", label: "Selection", value: cap(stages[0]) }]
+    : [{ key: "stages", label: "Selection stages", value: <Numbered job={job} items={stages.map((t) => ({ text: cap(t), page: 0 }))} /> }];
   const pattern = d.examPattern || [];
   if (pattern.length) {
     rows.push(subhead("pat", "Exam pattern"));
-    const many = new Set(pattern.map((p) => p.stage)).size > 1;
-    pattern.forEach((p, i) => {
-      if (many && p.stage && (i === 0 || pattern[i - 1].stage !== p.stage)) rows.push({ key: `ps${i}`, label: <span className="font-bold text-navy">{p.stage}</span>, value: null });
-      rows.push({ key: `p${i}`, label: p.paper || p.stage || "Paper", value: (
-        <>{join([p.questions && `${p.questions} questions`, p.marks && <b key="m" className="text-ink">{p.marks} marks</b>, p.time])} <PageRef job={job} page={p.page} /></>
-      ) });
+    const groups: { stage: string; rows: typeof pattern }[] = [];
+    for (const p of pattern) {
+      if (!groups.length || groups[groups.length - 1].stage !== p.stage) groups.push({ stage: p.stage, rows: [] });
+      groups[groups.length - 1].rows.push(p);
+    }
+    groups.forEach((g, gi) => {
+      const times = new Set(g.rows.map((p) => p.time));
+      const sharedTime = g.rows.length > 1 && times.size === 1 ? [...times][0] : "";
+      if (groups.length > 1 && g.stage || sharedTime) {
+        rows.push({ key: `ps${gi}`, label: <span className="font-bold text-navy">{[groups.length > 1 ? g.stage : "", sharedTime && `Time: ${sharedTime}`].filter(Boolean).join(" · ")}</span>, value: null });
+      }
+      g.rows.forEach((p, i) => rows.push({ key: `p${gi}-${i}`, label: p.paper || p.stage || "Paper", value: (
+        <>{join([p.questions && `${p.questions} questions`, p.marks && <b key="m" className="text-ink">{p.marks} marks</b>, !sharedTime && p.time])} <PageRef job={job} page={p.page} /></>
+      ) }));
     });
   }
   const neg = d.facts?.negativeMarking;
@@ -329,6 +374,26 @@ function links(job: JobNotification): Section {
 
 // --- the table -----------------------------------------------------------------------------------------
 
+/** Steps, documents or stages: one row, the list in the value cell; more than 8 open on a tap. */
+function Numbered({ job, items }: { job: JobNotification; items: { text: string; page: number }[] }) {
+  const [all, setAll] = useState(false);
+  const shown = all ? items : items.slice(0, FIRST);
+  return (
+    <>
+      <ol className="list-decimal space-y-1.5 pl-5 marker:font-semibold marker:text-navy">
+        {shown.map((x, i) => <li key={i} className="pl-0.5">{x.text} <PageRef job={job} page={x.page} /></li>)}
+      </ol>
+      {items.length > FIRST && (
+        <button type="button" onClick={() => setAll((v) => !v)} aria-expanded={all}
+          className="mt-1 inline-flex min-h-[44px] items-center gap-1.5 text-sm font-bold text-navy hover:text-saffron">
+          <ChevronDown className={`h-4 w-4 transition-transform ${all ? "rotate-180" : ""}`} aria-hidden />
+          {all ? "Show fewer" : `Show all ${items.length}`}
+        </button>
+      )}
+    </>
+  );
+}
+
 function Rows({ rows }: { rows: Row[] }) {
   return (
     <>
@@ -339,9 +404,9 @@ function Rows({ rows }: { rows: Row[] }) {
       ) : r.value === null ? (
         <tr key={r.key}><th colSpan={2} scope="colgroup" className="px-3 pt-3 pb-1 text-left text-[13px]">{r.label}</th></tr>
       ) : (
-        <tr key={r.key} className="align-top">
-          <th scope="row" className="w-[36%] sm:w-[30%] px-3 py-2.5 text-left font-semibold text-ink-2 break-words">{r.label}</th>
-          <td className="px-3 py-2.5 text-ink break-words">{r.value}</td>
+        <tr key={r.key} className={`align-top ${r.strong ? "bg-saffron-tint" : ""}`}>
+          <th scope="row" lang="en" className={`px-2.5 sm:px-3 py-2.5 text-left text-[13px] sm:text-sm hyphens-auto [overflow-wrap:anywhere] ${r.strong ? "font-bold text-ink" : "font-semibold text-ink-2"}`}>{r.label}</th>
+          <td className={`px-3 py-2.5 break-words ${r.strong ? "text-base text-ink" : "text-ink"}`}>{r.value}</td>
         </tr>
       ))}
     </>
@@ -351,24 +416,27 @@ function Rows({ rows }: { rows: Row[] }) {
 function SectionBody({ s }: { s: Section }) {
   const [open, setOpen] = useState(false);
   return (
-    <tbody className="[&>tr>*]:border [&>tr>*]:border-line">
+    <tbody className="[&>tr>*]:border-b [&>tr>*]:border-line">
       <tr>
-        <th id={s.id} colSpan={2} scope="colgroup" className="scroll-mt-28 md:scroll-mt-36 bg-navy-tint px-3 py-2.5 text-left">
+        {/* stays under the site header while its rows scroll (64 px on phones; with the state bar from md) */}
+        <th id={s.id} colSpan={2} scope="colgroup" className="sticky top-16 md:top-[105px] z-10 scroll-mt-28 md:scroll-mt-36 bg-navy-tint px-3 py-2.5 text-left">
           <h2 className="font-serif text-lg font-bold text-navy">{s.title}</h2>
         </th>
       </tr>
       <Rows rows={s.rows} />
-      {s.more && (open ? <Rows rows={s.more} /> : null)}
+      {s.more && open ? <Rows rows={s.more} /> : null}
       {s.more && (
         <tr className="print:hidden">
-          <td colSpan={2} className="px-3 py-1">
+          <td colSpan={2} className="px-3 py-0.5">
             <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}
-              className="min-h-[40px] text-sm font-bold text-navy hover:text-saffron">
-              {open ? "Show fewer" : `Show ${s.more.length} more row${s.more.length === 1 ? "" : "s"}`}
+              className="inline-flex min-h-[44px] items-center gap-1.5 text-sm font-bold text-navy hover:text-saffron">
+              <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden />
+              {open ? "Show fewer" : `Show all ${s.rows.length + s.more.length} rows`}
             </button>
           </td>
         </tr>
       )}
+      {s.after && <Rows rows={s.after} />}
     </tbody>
   );
 }
@@ -377,9 +445,15 @@ export function JobFactsTable({ job }: { job: JobNotification }) {
   const sections = [overview(job), dates(job), posts(job), eligibility(job), fee(job), selection(job), links(job)]
     .filter((s): s is Section => Boolean(s && s.rows.length));
   return (
-    <div className="overflow-hidden rounded-xl border border-line">
-      <table className="w-full table-fixed border-collapse bg-surface text-sm [&_tr>*:first-child]:border-l-0 [&_tr>*:last-child]:border-r-0 [&_tbody:first-child>tr:first-child>*]:border-t-0 [&_tbody:last-child>tr:last-child>*]:border-b-0">
+    // overflow-clip, not hidden: rounded corners without breaking the sticky section headings
+    <div className="overflow-clip rounded-xl border border-line">
+      <table className="w-full table-fixed border-collapse bg-surface text-sm [&_tbody:last-child>tr:last-child>*]:border-b-0">
         <caption className="sr-only">{job.title}: the notice in a table</caption>
+        {/* fixed layout takes widths from the first row, a heading across both columns: the widths go here */}
+        <colgroup>
+          <col className="w-[34%] sm:w-[28%]" />
+          <col />
+        </colgroup>
         {sections.map((s) => <SectionBody key={s.id} s={s} />)}
       </table>
     </div>

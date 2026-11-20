@@ -161,8 +161,8 @@ function ageSummary(job: JobNotification): string {
     const min = mins.size === 1 ? [...mins][0] : 0;
     if (maxes.length === 1) return min ? `${min}–${maxes[0]} years` : `Up to ${maxes[0]} years`;
     const by = new Set(limits.map((l) => l.post)).size > 1 ? ", by post" : new Set(limits.map((l) => l.category)).size > 1 ? ", by category" : "";
-    const range = maxes.length === 2 ? `${maxes[0]} or ${maxes[1]}` : `${maxes[0]}–${maxes[maxes.length - 1]}`;
-    return `${min ? `${min} to` : "Up to"} ${range} years${by}`;
+    const range = maxes.length === 2 ? `${maxes[0]} or ${maxes[1]}` : `${maxes[0]} to ${maxes[maxes.length - 1]}`;
+    return min ? `${min} to ${range} years${by}` : `Upper limit ${range} years${by}`;
   }
   const t = ageText(job).trim();
   if (t && t.length <= 24) return t;
@@ -171,7 +171,7 @@ function ageSummary(job: JobNotification): string {
   if (range) return `${range[1]}–${range[2]} years`;
   const ages = [...new Set([...t.matchAll(/\b(\d{2})\s*years/gi)].map((m) => Number(m[1])))].sort((a, b) => a - b);
   if (ages.length === 1) return `Up to ${ages[0]} years`;
-  if (ages.length > 1) return `Up to ${ages[0]}–${ages[ages.length - 1]} years, varies`;
+  if (ages.length > 1) return `${ages[0]} to ${ages[ages.length - 1]} years (varies)`;
   return /^see notification/i.test(t) || !t ? "See notification" : "See below";
 }
 
@@ -200,7 +200,7 @@ export function glanceFacts(job: JobNotification): GlanceFact[] {
     out.push({ label: "Age limit", value: age, href: age === "See notification" ? undefined : "#eligibility" });
     const quals = (job.qualifications || []).filter(Boolean);
     const stated = quals.length > 0 || (job.posts || []).some((p) => p.qualification?.trim());
-    const level = qualificationLabel(job) || (quals.length === 1 && quals[0].length <= 28 ? quals[0] : stated ? "See below" : "See notification");
+    const level = qualificationLabel(job) || (quals.length === 1 && quals[0].length <= 28 ? quals[0] : stated ? "Differs by post" : "See notification");
     out.push({ label: "Qualification", value: level, href: level === "See notification" ? undefined : "#eligibility" });
   }
   return out;
@@ -242,11 +242,11 @@ export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNull
       <>
         {end ? formatDate(end) : "See notification"}
         {end && !closed && daysLeft >= 0 && (
-          <span className="ml-2 font-semibold text-green">
+          <span className="ml-2 whitespace-nowrap font-semibold text-green">
             {daysLeft === 0 ? "today" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`}
           </span>
         )}
-        {end && closed && <span className="ml-2 font-normal text-muted">closed</span>}
+        {end && closed && <span className="ml-2 whitespace-nowrap font-normal text-muted">closed</span>}
       </>
     ),
   });
@@ -300,7 +300,9 @@ export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNull
     steps.push({ key: "next", label: open ? "Admit card and exam" : "Next stage", sortKey: "", when: "next",
       value: open ? "After applications close" : `To be announced by ${job.orgShortCode}` });
   }
-  steps.sort((a, b) => (a.sortKey || "9999").localeCompare(b.sortKey || "9999"));
+  // a date known only to the month goes after that month's days ("December 2026" after "11 Dec")
+  const order = (k: string) => (!k ? "9999" : k.length === 7 ? `${k}-32` : k);
+  steps.sort((a, b) => order(a.sortKey).localeCompare(order(b.sortKey)));
   return { steps, update };
 }
 
