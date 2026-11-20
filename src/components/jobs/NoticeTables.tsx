@@ -14,7 +14,7 @@ export function PageRef({ job, page }: { job: JobNotification; page?: number }) 
   if (!page) return null;
   const url = job.officialPdfUrl || "";
   const pdf = /\.pdf($|[?#])/i.test(url);
-  const cls = "inline-block whitespace-nowrap text-[12px] font-medium text-muted tabular-nums py-2.5 -my-2.5 px-1.5 -mx-1.5";
+  const cls = "inline-block whitespace-nowrap text-[12px] font-medium text-muted tabular-nums py-3.5 -my-3.5 px-2 -mx-2";
   return pdf ? (
     <a href={`${url.split("#")[0]}#page=${page}`} target="_blank" rel="noreferrer"
       className={`${cls} underline decoration-line underline-offset-2 hover:text-navy`}

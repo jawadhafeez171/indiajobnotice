@@ -20,9 +20,12 @@ import { hasPostsCard, hasSelection } from "./ExecutiveNotificationDigest";
 const FIRST = 8;
 
 /** strong: a row that decides whether to apply (the last date), set apart from the rest */
-type Row = { label: React.ReactNode; value: React.ReactNode; key: string; sub?: boolean; strong?: boolean };
+/** stack: on phones the label runs across the table with the value under it (post names are too long for a third) */
+type Row = { label: React.ReactNode; value: React.ReactNode; key: string; sub?: boolean; strong?: boolean; stack?: boolean };
+/** rows after the first ones open with "Show all N <noun>" */
+type Group = { rows: Row[]; more?: Row[]; noun?: string };
 /** more: rows behind "Show N more"; after: rows shown after that button (a section's own sub-tables) */
-type Section = { id: string; title: string; rows: Row[]; more?: Row[]; after?: Row[] };
+type Section = { id: string; title: string; rows: Row[]; more?: Row[]; noun?: string; after?: Group[] };
 
 const dot = <span className="mx-1.5 text-faint" aria-hidden>·</span>;
 const join = (parts: React.ReactNode[]) =>
@@ -102,17 +105,41 @@ function common(values: string[]): string {
   return n >= 3 && n >= values.length / 2 ? v : "";
 }
 
+/** "As per rule 16.2 (post-wise qualifications)" says nothing a reader can use: treated as not stated. */
+const vague = (q: string) => !q || q === "See notification" || /^as per\b|post-?wise/i.test(q.trim());
+const TOTAL_IN_NAME = /\s*\(\s*total\s+no\.?\s+of\s+posts?\s*[–-]\s*\d+\s*\)/i;
+
+/** A part every post name ends with (" - Government/ZPP/MP"), when there are 2+ posts, else "". */
+function sharedSuffix(names: string[]): string {
+  if (names.length < 2) return "";
+  const tails = names.map((n) => { const i = n.lastIndexOf(" - "); return i > 0 ? n.slice(i + 3).trim() : ""; });
+  return tails[0] && tails.every((t) => t === tails[0]) ? tails[0] : "";
+}
+
+/** Rows past `keep` fold when a sub-table runs longer than `over`. */
+function fold(rows: Row[], noun: string, over = 6, keep = 3): Group {
+  return rows.length > over ? { rows: rows.slice(0, keep), more: rows.slice(keep), noun } : { rows };
+}
+
 function posts(job: JobNotification): Section | null {
   if (!hasPostsCard(job)) return null;
   const d = job.details || {};
-  const list = getJobPostBreakdown(job);
+  const list = getJobPostBreakdown(job).map((p) => ({ ...p, qualification: vague(p.qualification) ? "See notification" : p.qualification }));
+  const suffix = sharedSuffix(list.map((p) => p.postName));
+  const tailOf = (n: string) => { const i = n.lastIndexOf(" - "); return i > 0 ? n.slice(i + 3).trim() : ""; };
+  // no single suffix, but a few that each cover 2+ posts: the posts sit under a small heading per suffix
+  const tails = new Map<string, number>();
+  for (const p of list) tails.set(tailOf(p.postName), (tails.get(tailOf(p.postName)) || 0) + 1);
+  const grouped = !suffix && tails.size > 1 && tails.size <= 4 && [...tails].every(([t, n]) => t && n >= 2);
+  const nameOf = (n: string) => (suffix || grouped ? n.slice(0, n.lastIndexOf(" - ")) : n).replace(TOTAL_IN_NAME, "").trim();
   const quals = new Set(list.map((p) => p.qualification));
   const pays = new Set(list.map((p) => p.payLevel));
   const sharedQual = quals.size > 1 ? common(list.map((p) => p.qualification)) : "";
   const sharedPay = pays.size > 1 ? common(list.map((p) => p.payLevel)) : "";
   const all: Row[] = list.map((p, i) => ({
     key: `p${i}`,
-    label: p.postName,
+    stack: true,
+    label: nameOf(p.postName),
     value: (
       <>
         {/\d/.test(String(p.vacancies))
@@ -128,6 +155,7 @@ function posts(job: JobNotification): Section | null {
     ),
   }));
   const rows: Row[] = [];
+  if (suffix) rows.push({ key: "under", label: list.length > 2 ? "All posts are in" : "Both posts are in", value: suffix });
   if (pays.size === 1 && list.length && [...pays][0] !== "See notification") {
     rows.push({ key: "pay", label: list.length > 1 ? "Pay (all posts)" : "Pay", value: payText([...pays][0]) });
   } else if (sharedPay) {
@@ -137,37 +165,46 @@ function posts(job: JobNotification): Section | null {
   }
   if (sharedQual) rows.push({ key: "qual", label: "Qualification (unless shown below)", value: sharedQual });
   if (!list.length && job.totalVacancies > 0) rows.push({ key: "n", label: "Posts", value: job.totalVacancies.toLocaleString("en-IN") });
-  rows.push(...all.slice(0, FIRST));
-  const more = all.slice(FIRST);
+  let postRows = all;
+  if (grouped) {
+    postRows = [];
+    for (const tail of tails.keys()) {
+      postRows.push(subhead(`tail-${tail}`, tail));
+      list.forEach((p, i) => { if (tailOf(p.postName) === tail) postRows.push(all[i]); });
+    }
+  }
+  const cut = grouped ? postRows.findIndex((_, i) => postRows.slice(0, i + 1).filter((r) => !r.sub).length > FIRST) : FIRST;
+  rows.push(...(cut > 0 ? postRows.slice(0, cut) : postRows));
+  const more = cut > 0 ? postRows.slice(cut) : [];
 
-  const extra: Row[] = [];
+  const after: Group[] = [];
   const t = job.reservation;
   if (t?.rows.length) {
-    extra.push(subhead("res", "Vacancies by category"));
+    const res: Row[] = [subhead("res", "Vacancies by category")];
     for (const r of t.rows) {
-      extra.push({ key: `res-${r.post}`, label: r.post || "All posts",
+      res.push({ key: `res-${r.post}`, stack: true, label: r.post ? nameOf(r.post) : "All posts",
         value: join([...t.categories.filter((c) => r.counts[c] !== undefined).map((c) => `${c} ${r.counts[c]}`), <b key="t" className="text-ink">Total {r.total.toLocaleString("en-IN")}</b>]) });
     }
     const hz = t.horizontal;
-    if (hz.length) extra.push({ key: "hz", label: "Within these categories", value: join(hz.map((h) => `${h.category} ${h.count}${h.post && t.rows.length > 1 ? ` (${h.post})` : ""}`)) });
+    if (hz.length) res.push({ key: "hz", label: "Within these categories", value: join(hz.map((h) => `${h.category} ${h.count}${h.post && t.rows.length > 1 ? ` (${nameOf(h.post)})` : ""}`)) });
+    after.push({ rows: res });
   }
   if (d.regionVacancies?.length) {
     const byPost = [...new Set(d.regionVacancies.map((r) => r.post))];
     for (const post of byPost) {
-      extra.push(subhead(`reg-${post}`, `Vacancies by district / region${post && byPost.length > 1 ? `: ${post}` : ""}`));
-      for (const r of d.regionVacancies.filter((x) => x.post === post)) {
-        extra.push({ key: `reg-${post}-${r.region}`, label: r.region, value: <b className="text-ink tabular-nums">{r.count.toLocaleString("en-IN")}</b> });
-      }
+      const regs = d.regionVacancies.filter((x) => x.post === post).map((r): Row => (
+        { key: `reg-${post}-${r.region}`, label: r.region, value: <b className="text-ink tabular-nums">{r.count.toLocaleString("en-IN")}</b> }));
+      const g = fold(regs, "districts", 10, 6);
+      after.push({ ...g, rows: [subhead(`reg-${post}`, `Vacancies by district / region${post && byPost.length > 1 ? `: ${nameOf(post)}` : ""}`), ...g.rows] });
     }
   }
   const req = (d.postDetails || []).filter((p) => p.experience);
   if (req.length) {
-    extra.push(subhead("exp", "Experience required"));
-    for (const p of req) extra.push({ key: `exp-${p.post}`, label: p.post, value: <>{p.experience} <PageRef job={job} page={p.page} /></> });
+    const exp = req.map((p): Row => ({ key: `exp-${p.post}`, stack: true, label: nameOf(p.post), value: <>{p.experience} <PageRef job={job} page={p.page} /></> }));
+    const g = fold(exp, "posts");
+    after.push({ ...g, rows: [subhead("exp", "Experience required"), ...g.rows] });
   }
-  // the extra tables follow the posts they belong to, not hidden behind "Show more"
-  return { id: "posts", title: "Posts and vacancies", rows: [...rows, ...(more.length ? [] : extra)], more: more.length ? more : undefined,
-    after: more.length ? extra : undefined };
+  return { id: "posts", title: "Posts and vacancies", rows, more: more.length ? more : undefined, noun: "posts", after };
 }
 
 type Limit = NonNullable<JobNotification["ageLimits"]>[number];
@@ -245,7 +282,10 @@ function eligibility(job: JobNotification): Section | null {
     const v = d.facts?.[k];
     if (v?.value) rows.push({ key: k, label, value: <>{v.value} <PageRef job={job} page={v.page} /></> });
   }
-  const other = (d.postDetails || []).filter((p) => p.other);
+  const words = (t: string) => new Set(t.toLowerCase().match(/[a-z]{4,}/g) || []);
+  const ours = (job.posts || []).map((p) => words(p.postName));
+  const inNotice = (post: string) => !ours.length || ours.some((w) => [...words(post)].filter((x) => w.has(x)).length >= Math.min(2, w.size));
+  const other = (d.postDetails || []).filter((p) => p.other && inNotice(p.post));
   if (other.length && other.length <= 3) {
     for (const p of other) rows.push({ key: `oth-${p.post}`, label: other.length > 1 ? `Also needed: ${p.post}` : "Also needed", value: <>{p.other} <PageRef job={job} page={p.page} /></> });
   }
@@ -294,7 +334,15 @@ function fee(job: JobNotification): Section | null {
     rows.push({ key: "docs", label: "Documents to keep ready", value: <Numbered job={job} items={docs.map((x) => ({ text: x.document, page: x.page }))} /> });
   }
   const help: Row[] = [];
-  if (facts.helplinePhone?.value) help.push({ key: "phone", label: "Help desk phone", value: facts.helplinePhone.value });
+  if (facts.helplinePhone?.value) {
+    const v = facts.helplinePhone.value;
+    const nums = v.match(/\+?\d[\d\s-]{6,}\d/g) || [];
+    help.push({ key: "phone", label: "Help desk phone", value: nums.length ? (
+      <span className="flex flex-wrap gap-x-4">
+        {nums.map((n) => <a key={n} href={`tel:${n.replace(/[\s-]/g, "")}`} className="inline-flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2">{n.trim()}</a>)}
+      </span>
+    ) : v });
+  }
   if (facts.helplineEmail?.value) {
     const emails = facts.helplineEmail.value.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g) || [];
     help.push({ key: "mail", label: "Help desk email", value: emails.length
@@ -327,7 +375,7 @@ function selection(job: JobNotification): Section | null {
       if (groups.length > 1 && g.stage || sharedTime) {
         rows.push({ key: `ps${gi}`, label: <span className="font-bold text-navy">{[groups.length > 1 ? g.stage : "", sharedTime && `Time: ${sharedTime}`].filter(Boolean).join(" · ")}</span>, value: null });
       }
-      g.rows.forEach((p, i) => rows.push({ key: `p${gi}-${i}`, label: p.paper || p.stage || "Paper", value: (
+      g.rows.forEach((p, i) => rows.push({ key: `p${gi}-${i}`, label: /^total$/i.test((p.paper || "").trim()) ? <b className="text-ink">Total</b> : p.paper || p.stage || "Paper", value: (
         <>{join([p.questions && `${p.questions} questions`, p.marks && <b key="m" className="text-ink">{p.marks} marks</b>, !sharedTime && p.time])} <PageRef job={job} page={p.page} /></>
       ) }));
     });
@@ -394,7 +442,12 @@ function Numbered({ job, items }: { job: JobNotification; items: { text: string;
   );
 }
 
+/** "SC/ST/BC/EWS" may break after a slash, not mid-word */
+const slashes = (v: React.ReactNode) => (typeof v === "string" ? v.replace(/\//g, "/\u200b") : v);
+
 function Rows({ rows }: { rows: Row[] }) {
+  const th = "px-2.5 sm:px-3 py-2.5 text-left text-[13px] sm:text-sm [overflow-wrap:break-word]";
+  const td = "px-2.5 sm:px-3 py-2.5 text-[15px] leading-snug [overflow-wrap:break-word]";
   return (
     <>
       {rows.map((r) => r.sub ? (
@@ -404,17 +457,49 @@ function Rows({ rows }: { rows: Row[] }) {
       ) : r.value === null ? (
         <tr key={r.key}><th colSpan={2} scope="colgroup" className="px-3 pt-3 pb-1 text-left text-[13px]">{r.label}</th></tr>
       ) : (
-        <tr key={r.key} className={`align-top ${r.strong ? "bg-saffron-tint" : ""}`}>
-          <th scope="row" lang="en" className={`px-2.5 sm:px-3 py-2.5 text-left text-[13px] sm:text-sm hyphens-auto [overflow-wrap:anywhere] ${r.strong ? "font-bold text-ink" : "font-semibold text-ink-2"}`}>{r.label}</th>
-          <td className={`px-3 py-2.5 break-words ${r.strong ? "text-base text-ink" : "text-ink"}`}>{r.value}</td>
-        </tr>
+        <React.Fragment key={r.key}>
+          {r.stack && (
+            // phones: the post name across the table, its facts under it
+            <tr className="align-top sm:hidden">
+              <th scope="row" colSpan={2} lang="en" className={`${th} font-normal`}>
+                <span className="block font-semibold text-ink">{slashes(r.label)}</span>
+                <span className="mt-1 block text-[15px] text-ink">{r.value}</span>
+              </th>
+            </tr>
+          )}
+          <tr className={`align-top ${r.stack ? "hidden sm:table-row" : ""} ${r.strong ? "bg-saffron-tint" : ""}`}>
+            <th scope="row" lang="en" className={`${th} hyphens-auto ${r.strong ? "font-bold text-ink" : "font-normal text-ink-2"}`}>{slashes(r.label)}</th>
+            <td className={`${td} ${r.strong ? "text-base font-semibold text-ink" : "text-ink"}`}>{r.value}</td>
+          </tr>
+        </React.Fragment>
       ))}
     </>
   );
 }
 
-function SectionBody({ s }: { s: Section }) {
+function GroupRows({ g }: { g: Group }) {
   const [open, setOpen] = useState(false);
+  const total = [...g.rows, ...(g.more || [])].filter((r) => !r.sub).length;
+  return (
+    <>
+      <Rows rows={g.rows} />
+      {g.more && open ? <Rows rows={g.more} /> : null}
+      {g.more && (
+        <tr className="print:hidden">
+          <td colSpan={2} className="px-3 py-0.5">
+            <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}
+              className="inline-flex min-h-[44px] items-center gap-1.5 text-sm font-bold text-navy hover:text-saffron">
+              <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden />
+              {open ? "Show fewer" : `Show all ${total} ${g.noun || "rows"}`}
+            </button>
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+function SectionBody({ s }: { s: Section }) {
   return (
     <tbody className="[&>tr>*]:border-b [&>tr>*]:border-line">
       <tr>
@@ -423,20 +508,8 @@ function SectionBody({ s }: { s: Section }) {
           <h2 className="font-serif text-lg font-bold text-navy">{s.title}</h2>
         </th>
       </tr>
-      <Rows rows={s.rows} />
-      {s.more && open ? <Rows rows={s.more} /> : null}
-      {s.more && (
-        <tr className="print:hidden">
-          <td colSpan={2} className="px-3 py-0.5">
-            <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}
-              className="inline-flex min-h-[44px] items-center gap-1.5 text-sm font-bold text-navy hover:text-saffron">
-              <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden />
-              {open ? "Show fewer" : `Show all ${s.rows.length + s.more.length} rows`}
-            </button>
-          </td>
-        </tr>
-      )}
-      {s.after && <Rows rows={s.after} />}
+      <GroupRows g={{ rows: s.rows, more: s.more, noun: s.noun }} />
+      {(s.after || []).map((g, i) => <GroupRows key={i} g={g} />)}
     </tbody>
   );
 }

@@ -159,10 +159,11 @@ function ageSummary(job: JobNotification): string {
     const maxes = [...new Set(limits.map((l) => l.max))].sort((a, b) => a - b);
     const mins = new Set(limits.map((l) => l.min || 0));
     const min = mins.size === 1 ? [...mins][0] : 0;
-    if (maxes.length === 1) return min ? `${min}–${maxes[0]} years` : `Up to ${maxes[0]} years`;
-    const by = new Set(limits.map((l) => l.post)).size > 1 ? ", by post" : new Set(limits.map((l) => l.category)).size > 1 ? ", by category" : "";
-    const range = maxes.length === 2 ? `${maxes[0]} or ${maxes[1]}` : `${maxes[0]} to ${maxes[maxes.length - 1]}`;
-    return min ? `${min} to ${range} years${by}` : `Upper limit ${range} years${by}`;
+    if (maxes.length === 1) return min ? `${min} to ${maxes[0]} years` : `Up to ${maxes[0]} years`;
+    // one wording everywhere: the lowest minimum to the highest maximum, "(varies)"
+    const lows = [...mins].filter(Boolean);
+    const top = maxes[maxes.length - 1];
+    return lows.length ? `${Math.min(...lows)} to ${top} years (varies)` : `Up to ${maxes[0]} to ${top} years (varies)`;
   }
   const t = ageText(job).trim();
   if (t && t.length <= 24) return t;
@@ -201,7 +202,7 @@ export function glanceFacts(job: JobNotification): GlanceFact[] {
     const quals = (job.qualifications || []).filter(Boolean);
     const stated = quals.length > 0 || (job.posts || []).some((p) => p.qualification?.trim());
     const level = qualificationLabel(job) || (quals.length === 1 && quals[0].length <= 28 ? quals[0] : stated ? "Differs by post" : "See notification");
-    out.push({ label: "Qualification", value: level, href: level === "See notification" ? undefined : "#eligibility" });
+    out.push({ label: "Qualification", value: level === "Varies by post" ? "Differs by post" : level, href: level === "See notification" ? undefined : "#eligibility" });
   }
   return out;
 }
@@ -271,10 +272,12 @@ export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNull
   });
   if (job.exams?.length) {
     job.exams.forEach((e, i) => {
+      if (/\bage\b|reckon/i.test(e.stage || "")) return;      // the age date is said under "Who can apply"
       const dated = e.precision === "day" || e.precision === "month";
       steps.push({
         key: `exam-${i}`,
-        label: e.stage || "Exam",
+        // "Paper-1" alone does not say it is an exam
+        label: !e.stage ? "Exam" : /exam|test|interview|written|cbt|viva|skill/i.test(e.stage) ? e.stage : `${e.stage} exam`,
         sortKey: dated ? e.date : "",
         when: dated ? byDate(e.date) : "next",
         value: <>{examWhen(e)}{e.tentative && <span className="font-normal text-muted"> (tentative)</span>}</>,
