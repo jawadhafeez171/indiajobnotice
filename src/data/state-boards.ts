@@ -4,6 +4,17 @@ export interface StateBoard { name: string; url: string }
 export interface StateBoardGroup { label: string; bodies: StateBoard[] }
 
 export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
+ "andaman": [
+  {
+   "label": "State government",
+   "bodies": [
+    {
+     "name": "A&N Islands Administration",
+     "url": "https://andaman.nic.in/"
+    }
+   ]
+  }
+ ],
  "ap": [
   {
    "label": "Public service commissions",
@@ -593,6 +604,15 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
    ]
   },
   {
+   "label": "Recruitment and selection boards",
+   "bodies": [
+    {
+     "name": "Chhattisgarh Vyapam (CG Staff Selection Board)",
+     "url": "https://vyapamcg.cgstate.gov.in/"
+    }
+   ]
+  },
+  {
    "label": "Police, forest and uniformed services",
    "bodies": [
     {
@@ -774,6 +794,10 @@ export const STATE_BOARDS: Record<string, StateBoardGroup[]> = {
     {
      "name": "Delhi High Court",
      "url": "https://delhihighcourt.nic.in/web/recruitment"
+    },
+    {
+     "name": "Delhi District Courts",
+     "url": "https://delhicourts.nic.in/recruitment"
     }
    ]
   }
