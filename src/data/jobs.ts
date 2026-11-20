@@ -101,6 +101,32 @@ export interface JobNotification {
     rows: { post: string; counts: Record<string, number>; total: number }[];
     horizontal: { post: string; category: string; count: number }[];
   };
+  /** The fuller read (agent details.py, 20 Nov): tables copied from the notice, each row with its page.
+   * A section the agent's checks did not bear out is not sent. */
+  details?: JobDetails;
+}
+
+/** A page of the official notice a row was copied from (0: not known). */
+type Paged = { page: number };
+
+export interface JobDetails {
+  dates?: ({ event: string; date: string; text: string } & Paged)[];
+  /** amount in rupees; 0 = no fee; null = not a plain amount */
+  fees?: ({ category: string; amount: number | null; text: string } & Paged)[];
+  ageRelaxations?: ({ category: string; years: number } & Paged)[];
+  postDetails?: ({ post: string; pay: string; experience: string; other: string } & Paged)[];
+  physical?: ({ test: string; men: string; women: string; note: string } & Paged)[];
+  examPattern?: ({ stage: string; paper: string; questions: string; marks: string; time: string } & Paged)[];
+  selectionStages?: ({ stage: string } & Paged)[];
+  applySteps?: ({ step: string } & Paged)[];
+  documents?: ({ document: string } & Paged)[];
+  regionVacancies?: ({ post: string; region: string; count: number } & Paged)[];
+  facts?: Partial<Record<
+    "employmentType" | "contractPeriod" | "probation" | "bond" | "postingPlace" | "nationality" | "domicile"
+    | "language" | "feePaymentMode" | "negativeMarking" | "helplinePhone" | "helplineEmail",
+    { value: string } & Paged>>;
+  syllabus?: { stage: string; paper: string; pageFrom: number; pageTo: number; topics: { text: string; sub: boolean }[] }[];
+  syllabusNote?: string;
 }
 
 export interface DistrictVacancyBreakout {

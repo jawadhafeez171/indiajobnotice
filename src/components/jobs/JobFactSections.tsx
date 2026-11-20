@@ -8,6 +8,9 @@ import { formatDate, getDaysRemaining } from "@/lib/utils";
 import { getJobCategoryMatrix, CategoryStatutoryMatrixItem } from "@/lib/exam-details";
 import { AgeCheck } from "./AgeCheck";
 import { qualificationLabel } from "./JobListCard";
+import {
+  ApplySteps, DocumentsList, FeeTable, Helpline, OtherConditions, PageRef, PhysicalTable, RelaxationTable, extraDates,
+} from "./NoticeTables";
 
 // The job's facts in the order candidates look for them, each said once: the dates, the posts, who can
 // apply, the fee and how to apply, the selection process. Only what the notification states; the rest says so.
@@ -282,6 +285,14 @@ export function DatesAndApply({ job }: { job: JobNotification }) {
     steps.push({ key: "exam", label: "Exam", sortKey: dated ? job.examDate : "", when: dated ? byDate(job.examDate) : "next",
       value: dated ? formatDate(job.examDate) : job.examDate.length <= 32 ? job.examDate : "To be announced" });
   }
+  // the other dates the notice gives (correction window, admit card...), as it names them
+  extraDates(job.details, [job.applicationStartDate, end, job.feeLastDate || "", job.notificationDate || "",
+    job.examDate || "", ...(job.exams || []).map((e) => e.date)]).forEach((d, i) => {
+    steps.push({
+      key: `notice-${i}`, label: d.event, sortKey: d.date, when: byDate(d.date),
+      value: d.date.length === 10 ? formatDate(d.date) : `${MONTHS[Number(d.date.slice(5, 7)) - 1]} ${d.date.slice(0, 4)}`,
+    });
+  });
   // nothing ahead on the list yet: say what comes next, without guessing a date
   const finished = (job.stages || []).some((s) => s.kind === "final_result");
   if (!finished && !steps.some((s) => s.when === "next")) {
@@ -358,22 +369,36 @@ const th = "py-2.5 px-3.5 font-bold";
 export function FeeAndApply({ job }: { job: JobNotification }) {
   if (!hasFeeSection(job)) return null;
   const fee = formatFee(job).replace(/\bRs\.?\s*/gi, "₹");
-  const categories = getJobCategoryMatrix(job);
+  const d = job.details || {};
+  const facts = d.facts || {};
+  // the notice's own fee and relaxation tables replace the general category table
+  const categories = d.fees?.length || d.ageRelaxations?.length ? [] : getJobCategoryMatrix(job);
+  const tables = Boolean(d.fees?.length || d.applySteps?.length);
   return (
     <section id="fee" aria-labelledby="fee-h" className={sectionCls}>
       <h2 id="fee-h" className={h2Cls}>Fee and how to apply</h2>
-      <div className="mt-4 grid gap-6 sm:grid-cols-2">
-        <div>
+      <div className={`mt-4 grid gap-6 ${tables ? "grid-cols-[minmax(0,1fr)]" : "sm:grid-cols-2 [&>*]:min-w-0"}`}>
+        <div className={tables ? "max-w-2xl" : ""}>
           <h3 className={h3Cls}>Application fee</h3>
-          <Groups text={fee} />
+          {d.fees?.length ? <FeeTable job={job} fees={d.fees} /> : <Groups text={fee} />}
+          {facts.feePaymentMode?.value && (
+            <p className="mt-2 text-sm text-ink-2 max-w-prose">
+              <span className="font-semibold text-ink">How to pay:</span> {facts.feePaymentMode.value}{" "}
+              <PageRef job={job} page={facts.feePaymentMode.page} />
+            </p>
+          )}
         </div>
         <div id="apply" className="scroll-mt-28 md:scroll-mt-36">
           <h3 className={h3Cls}>How to apply</h3>
-          <p className="mt-1 text-sm text-ink-2 max-w-prose">
-            <Linked text={job.howToApply?.trim() || "Apply on the official website. The steps are in the official notification."} />
-          </p>
+          {d.applySteps?.length ? <ApplySteps job={job} steps={d.applySteps} /> : (
+            <p className="mt-1 text-sm text-ink-2 max-w-prose">
+              <Linked text={job.howToApply?.trim() || "Apply on the official website. The steps are in the official notification."} />
+            </p>
+          )}
           {job.advtNo && <p className="mt-1 text-[13px] text-muted">Advt. No. {job.advtNo}</p>}
           {job.copyName && <p className="mt-1 text-[13px] font-semibold"><CopyLink name={job.copyName} /></p>}
+          {d.documents?.length ? <DocumentsList job={job} docs={d.documents} /> : null}
+          <Helpline facts={facts} />
         </div>
       </div>
       {categories.length > 0 && (
@@ -469,6 +494,12 @@ export function WhoCanApply({ job }: { job: JobNotification }) {
       <h3 className={`mt-4 ${h3Cls}`}>Age limit</h3>
       {limits.length > 0 ? <AgeLines limits={limits} /> : <Groups text={wording} />}
       {job.ageAsOn && <p className="mt-2 text-sm text-muted">Age is counted as on {formatDate(job.ageAsOn)}.</p>}
+      {job.details?.ageRelaxations?.length ? (
+        <div className="mt-4 max-w-md">
+          <h4 className="text-sm font-semibold text-ink">Upper age relaxation</h4>
+          <RelaxationTable job={job} rows={job.details.ageRelaxations} />
+        </div>
+      ) : null}
       {(limits.length > 0 && wording || job.ageAsOn && limits.length > 0) && (
         <div className="mt-1 flex flex-col">
           {limits.length > 0 && wording && (
@@ -495,6 +526,13 @@ export function WhoCanApply({ job }: { job: JobNotification }) {
           </>
         ) : quals.length ? quals.join("; ") : "See the official notification."}
       </p>
+      {job.details?.facts && <OtherConditions job={job} facts={job.details.facts} />}
+      {job.details?.physical?.length ? (
+        <>
+          <h3 className={`mt-5 ${h3Cls}`}>Physical standards</h3>
+          <PhysicalTable job={job} rows={job.details.physical} />
+        </>
+      ) : null}
     </section>
   );
 }

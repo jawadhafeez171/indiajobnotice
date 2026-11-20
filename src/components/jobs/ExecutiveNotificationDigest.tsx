@@ -3,7 +3,8 @@ import { JobNotification, payText } from "@/data/jobs";
 import { PostList, SharedValues } from "./PostList";
 import { getJobPostBreakdown, PostVacancyBreakdown } from "@/lib/exam-details";
 import { ReservationTable } from "./ReservationTable";
-import { Fold, h2Cls, sectionCls } from "./JobFactSections";
+import { Fold, h2Cls, h3Cls, sectionCls } from "./JobFactSections";
+import { ExamPatternTable, JobTerms, PageRef, PostRequirements, RegionTable, Syllabus } from "./NoticeTables";
 
 interface Props {
   job: JobNotification;
@@ -14,16 +15,18 @@ export function hasPostsCard(job: JobNotification): boolean {
   return getJobPostBreakdown(job).length > 0 || job.totalVacancies > 0 || Boolean(job.salary) || Boolean(job.reservation?.rows.length);
 }
 
-/** The selection process steps as printed, tidied. */
+/** The selection process steps as printed, tidied: the notice's own stages when the fuller read has them. */
 function selectionSteps(job: JobNotification): string[] {
-  return (job.selectionProcess || [])
+  const own = (job.details?.selectionStages || []).map((s) => s.stage);
+  return (own.length ? own : job.selectionProcess || [])
     .map((t) => t.trim().replace(/[,;:.]+$/, ""))
     .filter(Boolean)
     .map((t) => t.charAt(0).toUpperCase() + t.slice(1));
 }
 
 export function hasSelection(job: JobNotification): boolean {
-  return selectionSteps(job).length > 0;
+  const d = job.details || {};
+  return selectionSteps(job).length > 0 || Boolean(d.examPattern?.length || d.syllabus?.length || d.syllabusNote);
 }
 
 // The posts with their vacancies, pay and qualification (what differs by post), then the vacancies by
@@ -77,11 +80,18 @@ export function ExecutiveNotificationDigest({ job }: Props) {
             )}
           </dl>
         )}
+        {job.details?.facts && <JobTerms job={job} facts={job.details.facts} />}
         {Boolean(job.reservation?.rows.length) && (
           <Fold title="Vacancies by category">
             <ReservationTable job={job} />
           </Fold>
         )}
+        {job.details?.regionVacancies?.length ? (
+          <Fold title="Vacancies by district / region">
+            <RegionTable job={job} rows={job.details.regionVacancies} />
+          </Fold>
+        ) : null}
+        {job.details?.postDetails?.length ? <PostRequirements job={job} rows={job.details.postDetails} /> : null}
       </div>
     </section>
   );
@@ -90,19 +100,40 @@ export function ExecutiveNotificationDigest({ job }: Props) {
 /** How candidates are selected, as the notice says. */
 export function SelectionProcess({ job }: Props) {
   const steps = selectionSteps(job);
-  if (!steps.length) return null;
+  const d = job.details || {};
+  if (!hasSelection(job)) return null;
   return (
     <section id="selection" aria-labelledby="selection-h" className={sectionCls}>
-      <h2 id="selection-h" className={h2Cls}>Selection process</h2>
+      <h2 id="selection-h" className={h2Cls}>{d.examPattern?.length || d.syllabus?.length ? "Selection, exam and syllabus" : "Selection process"}</h2>
       {steps.length === 1 ? (
         <p className="mt-3 text-sm text-ink max-w-prose">{steps[0]}</p>
-      ) : (
+      ) : steps.length > 1 ? (
         <ol className="mt-3 list-decimal pl-5 space-y-1 text-sm text-ink max-w-prose marker:font-bold marker:text-navy">
           {steps.map((step, idx) => (
             <li key={idx}>{step}</li>
           ))}
         </ol>
-      )}
+      ) : null}
+      {d.examPattern?.length ? (
+        <div className="mt-6">
+          <h3 className={h3Cls}>Exam pattern</h3>
+          <ExamPatternTable job={job} rows={d.examPattern} negative={d.facts?.negativeMarking?.value} />
+        </div>
+      ) : d.facts?.negativeMarking?.value ? (
+        <p className="mt-3 text-sm text-ink-2 max-w-prose">
+          <b className="font-semibold text-ink">Negative marking:</b> {d.facts.negativeMarking.value}{" "}
+          <PageRef job={job} page={d.facts.negativeMarking.page} />
+        </p>
+      ) : null}
+      {d.syllabus?.length ? (
+        <div className="mt-6">
+          <h3 className={h3Cls}>Syllabus</h3>
+          <p className="mt-1 text-[13px] text-muted">As printed in the notice. Open a paper to see its topics.</p>
+          <Syllabus job={job} papers={d.syllabus} />
+        </div>
+      ) : d.syllabusNote ? (
+        <p className="mt-4 text-sm text-ink-2 max-w-prose"><b className="font-semibold text-ink">Syllabus:</b> {d.syllabusNote}</p>
+      ) : null}
     </section>
   );
 }
