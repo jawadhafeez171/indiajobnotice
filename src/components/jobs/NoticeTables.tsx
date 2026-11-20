@@ -1,5 +1,5 @@
 import React from "react";
-import { Check, Mail, Phone } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import { JobDetails, JobNotification } from "@/data/jobs";
 import { Fold, h3Cls } from "./JobFactSections";
 
@@ -50,6 +50,8 @@ export interface Column<R> {
   numeric?: boolean;
   /** wraps freely; other columns keep to one line where they can */
   wide?: boolean;
+  /** a first column of numbers or short labels: no minimum width */
+  narrow?: boolean;
 }
 
 /**
@@ -65,25 +67,25 @@ export function DataTable<R>({ caption, columns, rows, className = "", groupBy }
   return (
     <>
     {columns.length > 3 && <p className="mt-1 text-[12px] text-muted sm:hidden">Swipe the table sideways to see every column.</p>}
-    <div className={`mt-2 -mx-4 sm:mx-0 overflow-x-auto overscroll-x-contain ${className}`}>
-      <table className="min-w-full border-collapse bg-surface text-sm">
+    <div className={`mt-2 overflow-x-auto overscroll-x-contain rounded-lg border border-line ${className}`}>
+      <table className="min-w-full border-collapse bg-surface text-sm [&_th]:border [&_td]:border [&_th]:border-line [&_td]:border-line [&_tr>*:first-child]:border-l-0 [&_tr>*:last-child]:border-r-0 [&_thead_tr>*]:border-t-0 [&_tbody>tr:last-child>*]:border-b-0">
         <caption className="sr-only">{caption}</caption>
         <thead>
-          <tr className="bg-subtle text-left text-[12px] font-bold uppercase tracking-wide text-muted">
+          <tr className="bg-navy-tint text-left text-[12px] font-bold uppercase tracking-wide text-navy">
             {columns.map((c, i) => (
               <th key={c.key} scope="col"
-                className={`py-2 px-3 first:pl-4 sm:first:pl-3 whitespace-nowrap ${c.numeric ? "text-right" : ""} ${i === 0 ? "sticky left-0 z-10 bg-subtle" : ""}`}>
+                className={`py-2.5 px-3 whitespace-nowrap ${c.numeric ? "text-right" : ""} ${i === 0 ? "sticky left-0 z-10 bg-navy-tint" : ""}`}>
                 {c.label}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className={`divide-y divide-line-soft ${zebra}`}>
+        <tbody className={zebra}>
           {rows.map((r, ri) => (
             <React.Fragment key={ri}>
             {groupBy && groupBy(r) && (ri === 0 || groupBy(rows[ri - 1]) !== groupBy(r)) && (
               <tr className="bg-navy-tint/60">
-                <th colSpan={columns.length} scope="colgroup" className="py-2 px-3 pl-4 sm:pl-3 text-left text-[13px] font-bold text-navy">
+                <th colSpan={columns.length} scope="colgroup" className="py-2 px-3 text-left text-[13px] font-bold text-navy">
                   {groupBy(r)}
                 </th>
               </tr>
@@ -92,7 +94,7 @@ export function DataTable<R>({ caption, columns, rows, className = "", groupBy }
               {columns.map((c, i) => (
                 i === 0 ? (
                   <th key={c.key} scope="row"
-                    className="sticky left-0 z-10 bg-surface py-2.5 px-3 pl-4 sm:pl-3 text-left font-semibold text-ink min-w-[7.5rem] max-w-[10.5rem] sm:min-w-[8.5rem] sm:max-w-[15rem] shadow-[1px_0_0_rgb(var(--c-line-soft))]">
+                    className={`sticky left-0 z-10 bg-surface py-2.5 px-3 text-left font-semibold text-ink ${c.narrow ? "w-12 tabular-nums text-navy" : "min-w-[7.5rem] max-w-[10.5rem] sm:min-w-[8.5rem] sm:max-w-[15rem]"}`}>
                     {c.cell(r)}
                   </th>
                 ) : (
@@ -203,16 +205,21 @@ export function Syllabus({ job, papers }: { job: JobNotification; papers: NonNul
       {papers.map((p, i) => {
         const title = [p.stage, p.paper].filter(Boolean).join(" · ") || `Paper ${i + 1}`;
         const pages = p.pageFrom && p.pageTo && p.pageTo !== p.pageFrom ? [p.pageFrom, p.pageTo] : [p.pageFrom];
+        // a topic printed under another one is numbered under it: 2.1, 2.2...
+        let main = 0, sub = 0;
+        const rows = p.topics.map((t) => {
+          if (t.sub && main) { sub += 1; return { ...t, n: `${main}.${sub}` }; }
+          main += 1; sub = 0;
+          return { ...t, n: String(main) };
+        });
+        type R = (typeof rows)[number];
         return (
           <Fold key={i} title={`${title} (${p.topics.length} topic${p.topics.length === 1 ? "" : "s"})`}>
-            <ul className="pb-3 space-y-1 text-sm text-ink-2 max-w-prose">
-              {p.topics.map((t, j) => (
-                <li key={j} className={t.sub ? "pl-8 relative before:absolute before:left-4 before:top-[0.6em] before:h-px before:w-2 before:bg-faint" : "pl-4 relative before:absolute before:left-0 before:top-[0.55em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-navy/50"}>
-                  {t.text}
-                </li>
-              ))}
-            </ul>
-            <p className="pb-3 text-[12px] text-muted">
+            <DataTable caption={`Syllabus: ${title}`} rows={rows} columns={[
+              { key: "n", label: "No.", narrow: true, cell: (r: R) => r.n },
+              { key: "t", label: "Topic", wide: true, cell: (r: R) => <span className={r.sub ? "block pl-4 text-ink-2" : "font-medium text-ink"}>{r.text}</span> },
+            ]} />
+            <p className="mt-1.5 pb-3 text-[12px] text-muted">
               As printed in the notice,{" "}
               {pages.map((pg, k) => <React.Fragment key={k}>{k > 0 && "–"}<PageRef job={job} page={pg} /></React.Fragment>)}
             </p>
@@ -226,39 +233,35 @@ export function Syllabus({ job, papers }: { job: JobNotification; papers: NonNul
 // --- how to apply ---------------------------------------------------------------------------------
 
 export function ApplySteps({ job, steps }: { job: JobNotification; steps: NonNullable<D["applySteps"]> }) {
+  const rows = steps.map((s, i) => ({ ...s, n: i + 1 }));
+  type R = (typeof rows)[number];
   return (
     <>
-      <ol className="mt-2 space-y-2 text-sm text-ink-2 max-w-prose">
-        {steps.map((s, i) => (
-          <li key={i} className="grid grid-cols-[1.5rem_1fr] gap-x-2">
-            <span className="mt-px flex h-5 w-5 items-center justify-center rounded-full bg-navy-tint text-[11px] font-bold text-navy tabular-nums" aria-hidden>{i + 1}</span>
-            <span>{s.step}</span>
-          </li>
-        ))}
-      </ol>
+      <DataTable caption="How to apply, step by step" rows={rows} columns={[
+        { key: "n", label: "Step", narrow: true, cell: (r: R) => r.n },
+        { key: "s", label: "What to do", wide: true, cell: (r: R) => r.step },
+      ]} />
       <Source job={job} pages={steps.map((s) => s.page)} />
     </>
   );
 }
 
 export function DocumentsList({ job, docs }: { job: JobNotification; docs: NonNullable<D["documents"]> }) {
-  const list = (
+  const rows = docs.map((d, i) => ({ ...d, n: i + 1 }));
+  type R = (typeof rows)[number];
+  const table = (
     <>
-      <ul className="mt-1 grid gap-x-6 gap-y-1.5 text-sm text-ink-2 sm:grid-cols-2">
-        {docs.map((d, i) => (
-          <li key={i} className="grid grid-cols-[1rem_1fr] gap-x-2">
-            <Check className="mt-0.5 h-4 w-4 text-green" aria-hidden />
-            <span>{d.document}</span>
-          </li>
-        ))}
-      </ul>
+      <DataTable caption="Documents to keep ready" rows={rows} columns={[
+        { key: "n", label: "No.", narrow: true, cell: (r: R) => r.n },
+        { key: "d", label: "Document", wide: true, cell: (r: R) => r.document },
+      ]} />
       <Source job={job} pages={docs.map((d) => d.page)} />
     </>
   );
-  return docs.length > 6 ? <Fold title={`Documents to keep ready (${docs.length})`} className="mt-2">{list}</Fold> : (
+  return docs.length > 6 ? <Fold title={`Documents to keep ready (${docs.length})`} className="mt-2">{table}</Fold> : (
     <div className="mt-4">
       <h4 className={h3Cls}>Documents to keep ready</h4>
-      {list}
+      {table}
     </div>
   );
 }
@@ -268,17 +271,23 @@ export function Helpline({ facts }: { facts: NonNullable<D["facts"]> }) {
   const email = facts.helplineEmail?.value;
   if (!phone && !email) return null;
   const emails = (email || "").match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g) || [];
+  const rows = [
+    ...(phone ? [{ k: "Phone", v: <span className="inline-flex items-center gap-1.5"><Phone className="h-3.5 w-3.5 text-muted" aria-hidden />{phone}</span> }] : []),
+    ...(email ? [{ k: "Email", v: (
+      <span className="inline-flex items-center gap-1.5 break-all">
+        <Mail className="h-3.5 w-3.5 text-muted shrink-0" aria-hidden />
+        <span>{emails.length ? emails.map((e, i) => <React.Fragment key={e}>{i > 0 && ", "}<a href={`mailto:${e}`} className="text-navy underline underline-offset-2 hover:text-saffron">{e}</a></React.Fragment>) : email}</span>
+      </span>
+    ) }] : []),
+  ];
   return (
-    <p className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-2">
-      <span className="font-semibold text-ink">Help desk:</span>
-      {phone && <span className="inline-flex items-center gap-1.5"><Phone className="h-3.5 w-3.5 text-muted" aria-hidden />{phone}</span>}
-      {email && (
-        <span className="inline-flex items-center gap-1.5 break-all">
-          <Mail className="h-3.5 w-3.5 text-muted shrink-0" aria-hidden />
-          {emails.length ? emails.map((e, i) => <React.Fragment key={e}>{i > 0 && ", "}<a href={`mailto:${e}`} className="text-navy underline underline-offset-2 hover:text-saffron">{e}</a></React.Fragment>) : email}
-        </span>
-      )}
-    </p>
+    <div className="mt-4">
+      <h4 className={h3Cls}>Help desk</h4>
+      <DataTable caption="Help desk" rows={rows} columns={[
+        { key: "k", label: "Contact", narrow: true, cell: (r) => r.k },
+        { key: "v", label: "Details", wide: true, cell: (r) => r.v },
+      ]} />
+    </div>
   );
 }
 
@@ -290,17 +299,15 @@ const TERMS: [keyof NonNullable<D["facts"]>, string][] = [
 ];
 
 export function JobTerms({ job, facts }: { job: JobNotification; facts: NonNullable<D["facts"]> }) {
-  const rows = TERMS.filter(([k]) => facts[k]?.value);
+  const rows = TERMS.filter(([k]) => facts[k]?.value).map(([k, label]) => ({ label, ...facts[k]! }));
   if (!rows.length) return null;
   return (
-    <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-2 text-sm">
-      {rows.map(([k, label]) => (
-        <div key={k} className="min-w-0">
-          <dt className="text-xs text-muted">{label}</dt>
-          <dd className="text-ink">{facts[k]!.value} <PageRef job={job} page={facts[k]!.page} /></dd>
-        </div>
-      ))}
-    </dl>
+    <div>
+      <DataTable caption="Terms of the job" rows={rows} columns={[
+        { key: "l", label: "Term", cell: (r) => r.label },
+        { key: "v", label: "Details", wide: true, cell: (r) => <>{r.value} <PageRef job={job} page={r.page} /></> },
+      ]} />
+    </div>
   );
 }
 
@@ -366,19 +373,17 @@ const CONDITIONS: [keyof NonNullable<D["facts"]>, string][] = [
 ];
 
 export function OtherConditions({ job, facts }: { job: JobNotification; facts: NonNullable<D["facts"]> }) {
-  const rows = CONDITIONS.filter(([k]) => facts[k]?.value);
+  const rows = CONDITIONS.filter(([k]) => facts[k]?.value).map(([k, label]) => ({ label, ...facts[k]! }));
   if (!rows.length) return null;
   return (
     <>
       <h3 className={`mt-5 ${h3Cls}`}>Other conditions</h3>
-      <dl className="mt-1 space-y-1.5 text-sm max-w-prose">
-        {rows.map(([k, label]) => (
-          <div key={k} className="grid grid-cols-[6.5rem_1fr] gap-x-3">
-            <dt className="text-muted">{label}</dt>
-            <dd className="text-ink-2">{facts[k]!.value} <PageRef job={job} page={facts[k]!.page} /></dd>
-          </div>
-        ))}
-      </dl>
+      <div className="max-w-2xl">
+        <DataTable caption="Other conditions" rows={rows} columns={[
+          { key: "l", label: "Condition", cell: (r) => r.label },
+          { key: "v", label: "Requirement", wide: true, cell: (r) => <>{r.value} <PageRef job={job} page={r.page} /></> },
+        ]} />
+      </div>
     </>
   );
 }

@@ -9,7 +9,7 @@ import { getJobCategoryMatrix, CategoryStatutoryMatrixItem } from "@/lib/exam-de
 import { AgeCheck } from "./AgeCheck";
 import { qualificationLabel } from "./JobListCard";
 import {
-  ApplySteps, DocumentsList, FeeTable, Helpline, OtherConditions, PageRef, PhysicalTable, RelaxationTable, extraDates,
+  ApplySteps, DataTable, DocumentsList, FeeTable, Helpline, OtherConditions, PageRef, PhysicalTable, RelaxationTable, extraDates,
 } from "./NoticeTables";
 
 // The job's facts in the order candidates look for them, each said once: the dates, the posts, who can
@@ -467,14 +467,12 @@ function AgeLines({ limits }: { limits: Limit[] }) {
   // the line for "all other posts" goes last
   const ordered = [...list].sort((a, b) => Number(a === biggest && allPosts.length > 1) - Number(b === biggest && allPosts.length > 1));
   return (
-    <ul className="mt-2 divide-y divide-line-soft border-y border-line-soft max-w-2xl">
-      {ordered.map((g, i) => (
-        <li key={i} className="grid grid-cols-[7.5rem_1fr] gap-3 py-2 text-sm">
-          <span className="font-semibold text-ink tabular-nums">{g.min ? `${g.min} to ${g.max}` : `Up to ${g.max}`} years</span>
-          <span className="text-ink-2">{whom(g).charAt(0).toUpperCase() + whom(g).slice(1)}</span>
-        </li>
-      ))}
-    </ul>
+    <div className="max-w-2xl">
+      <DataTable caption="Age limit" rows={ordered} columns={[
+        { key: "a", label: "Age", cell: (g) => <span className="tabular-nums whitespace-nowrap">{g.min ? `${g.min} to ${g.max}` : `Up to ${g.max}`} years</span> },
+        { key: "w", label: "Applies to", wide: true, cell: (g) => whom(g).charAt(0).toUpperCase() + whom(g).slice(1) },
+      ]} />
+    </div>
   );
 }
 
