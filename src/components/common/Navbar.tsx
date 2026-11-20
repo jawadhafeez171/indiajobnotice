@@ -141,11 +141,6 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
         Skip to main content
       </a>
       <header className="sticky top-0 z-40 on-dark bg-masthead shadow-xs">
-        <div className="flex h-[3px]" aria-hidden>
-          <span className="flex-1 bg-saffron-bright" />
-          <span className="flex-1 bg-white" />
-          <span className="flex-1 bg-green-solid" />
-        </div>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between gap-3 h-16">
             {/* Logo */}
