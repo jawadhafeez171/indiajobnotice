@@ -50,7 +50,7 @@ function Groups({ text }: { text: string }) {
 }
 
 /** Web addresses in a notice's wording as links named by their site ("dsssbonline.nic.in"). */
-function Linked({ text }: { text: string }) {
+export function Linked({ text }: { text: string }) {
   const parts = text.split(/(https?:\/\/[^\s;,)]+)/g);
   return (
     <>
@@ -68,7 +68,7 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
   "October", "November", "December"];
 
 /** "08 Jan 2027", "January 2027", the notice's own short words, or "To be announced" for a long sentence. */
-function examWhen(e: NonNullable<JobNotification["exams"]>[number]): string {
+export function examWhen(e: NonNullable<JobNotification["exams"]>[number]): string {
   if (e.precision === "day") return formatDate(e.date);
   if (e.precision === "month") return `${MONTHS[Number(e.date.slice(5, 7)) - 1]} ${e.date.slice(0, 4)}`;
   return e.text && e.text.length <= 32 ? e.text : "To be announced";
@@ -90,7 +90,7 @@ const KIND_PAGE: Partial<Record<StageKind, string>> = {
 };
 
 type When = "done" | "now" | "next";
-interface Step {
+export interface Step {
   key: string;
   label: string;
   /** YYYY-MM-DD or YYYY-MM for the order; "" for a step with no date yet (it goes last). */
@@ -108,7 +108,7 @@ const MARK: Record<When, { icon: typeof Circle; cls: string; sr: string }> = {
 };
 
 /** Our stored copy of a notice sent by hand; the official page sits beside it. */
-function CopyLink({ name }: { name: string }) {
+export function CopyLink({ name }: { name: string }) {
   return (
     <a href={`/pdf/${name}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 py-1 text-navy hover:text-saffron">
       PDF (our copy) <FileText className="w-3.5 h-3.5" aria-hidden />
@@ -213,7 +213,7 @@ export function glanceFacts(job: JobNotification): GlanceFact[] {
  * official document found since the notification (admit card, answer key, result: each with its
  * PDF and its page here) and the exam dates the notice gives, each marked done, now or to come.
  */
-export function DatesAndApply({ job }: { job: JobNotification }) {
+export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNullable<JobNotification["updates"]>[number] } {
   const today = todayIST();
   const month = today.slice(0, 7);
   const closed = isJobApplicationClosed(job);
@@ -301,7 +301,11 @@ export function DatesAndApply({ job }: { job: JobNotification }) {
       value: open ? "After applications close" : `To be announced by ${job.orgShortCode}` });
   }
   steps.sort((a, b) => (a.sortKey || "9999").localeCompare(b.sortKey || "9999"));
+  return { steps, update };
+}
 
+export function DatesAndApply({ job }: { job: JobNotification }) {
+  const { steps, update } = datesOf(job);
   return (
     <section id="dates" aria-labelledby="dates-h" className={sectionCls}>
       <h2 id="dates-h" className={h2Cls}>{datesHeading(job)}</h2>

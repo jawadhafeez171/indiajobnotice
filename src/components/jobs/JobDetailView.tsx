@@ -22,10 +22,9 @@ import { getStateBySlug } from "@/config/states";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { useWatchlist } from "@/lib/watchlist";
 import { generateGoogleCalendarUrl } from "@/lib/calendar";
-import { ExecutiveNotificationDigest, SelectionProcess, hasPostsCard, hasSelection } from "./ExecutiveNotificationDigest";
-import {
-  DatesAndApply, FeeAndApply, WhoCanApply, datesHeading, glanceFacts, hasEligibility, hasFeeSection, opensLater,
-} from "./JobFactSections";
+import { hasPostsCard, hasSelection } from "./ExecutiveNotificationDigest";
+import { datesHeading, glanceFacts, hasEligibility, hasFeeSection, opensLater } from "./JobFactSections";
+import { JobFactsTable } from "./JobFactsTable";
 import { ClosedRecruitmentAlert } from "./ClosedRecruitmentAlert";
 import { NoticeTitle } from "./NoticeTitle";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
@@ -291,11 +290,8 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
             </ul>
           </nav>}
 
-          <DatesAndApply job={job} />
-          <ExecutiveNotificationDigest job={job} />
-          <WhoCanApply job={job} />
-          <FeeAndApply job={job} />
-          <SelectionProcess job={job} />
+          {/* the whole notice as one two-column table (owner's choice, 20 Nov) */}
+          <JobFactsTable job={job} />
         </div>
       </div>
 
