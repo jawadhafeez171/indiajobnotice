@@ -398,6 +398,6 @@ export function extraDates(details: JobDetails | undefined, shown: string[]): No
     if (seen.has(key)) return false;
     seen.add(key);
     // the age date is said under "Who can apply"; the notice's own date and the application window are already there
-    return !/^(last date|closing date|application (start|end|last)|online application (start|last|end)|notification|notice publication|advertisement)|age|reckon|cut-?off date/i.test(d.event);
+    return !/^(last date|closing date|application (start|end|last)|online application (start|last|end)|notification|notice publication|advertisement)|\bage\b|reckon|cut-?off date/i.test(d.event);
   });
 }

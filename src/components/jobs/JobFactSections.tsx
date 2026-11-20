@@ -214,6 +214,15 @@ export function glanceFacts(job: JobNotification): GlanceFact[] {
  * official document found since the notification (admit card, answer key, result: each with its
  * PDF and its page here) and the exam dates the notice gives, each marked done, now or to come.
  */
+/** A list published as a "result" that is not one: eligibility, provisional, disqualified or rejected lists. */
+function listLabel(s: NonNullable<JobNotification["stages"]>[number]): string {
+  if (s.kind !== "result") return "";
+  const t = stageText(s).main;
+  if (/disqualif|rejected|not eligible|ineligible/i.test(t)) return "Rejected list";
+  if (/eligib|provisional list|scrutiny/i.test(t)) return "Eligibility list";
+  return "";
+}
+
 export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNullable<JobNotification["updates"]>[number] } {
   const today = todayIST();
   const month = today.slice(0, 7);
@@ -262,7 +271,7 @@ export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNull
     seenDocs.add(same);
     steps.push({
       key: `doc-${i}`,
-      label: s.shortlist ? "Shortlist" : stageEvent(s) && s.kind === "schedule" ? `${stageEvent(s)} schedule` : KIND_LABEL[s.kind],
+      label: s.shortlist ? "Shortlist" : stageEvent(s) && s.kind === "schedule" ? `${stageEvent(s)} schedule` : listLabel(s) || KIND_LABEL[s.kind],
       sortKey: s.date || s.found || today,
       when: "done",
       value: s.date ? formatDate(s.date) : "Released",
@@ -283,6 +292,13 @@ export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNull
         value: <>{examWhen(e)}{e.tentative && <span className="font-normal text-muted"> (tentative)</span>}</>,
       });
     });
+    for (let i = steps.length - 1; i > 0; i--) {
+      const a = steps[i - 1], b = steps[i];
+      if (a.key.startsWith("exam-") && b.key.startsWith("exam-") && a.sortKey && a.sortKey === b.sortKey) {
+        const name = (l: string) => l.replace(/\s+exam$/i, "");
+        steps.splice(i - 1, 2, { ...a, label: `${name(a.label)} and ${name(b.label)}${/exam/i.test(a.label) ? " exams" : ""}` });
+      }
+    }
   } else if (job.examDate) {
     const dated = iso.test(job.examDate);
     steps.push({ key: "exam", label: "Exam", sortKey: dated ? job.examDate : "", when: dated ? byDate(job.examDate) : "next",

@@ -248,7 +248,7 @@ export interface JobStage {
   dateSpan?: boolean;
 }
 
-const INTERVIEW = /(interview|personality test|viva)/i;
+const INTERVIEW = /\b(interview|personality test|viva)/i;
 
 /** "Interview" for a schedule or call letter of interviews, else "" (a written exam). */
 export function stageEvent(s: JobStage): string {

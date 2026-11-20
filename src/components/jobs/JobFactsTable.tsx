@@ -59,7 +59,7 @@ function overview(job: JobNotification): Section {
     : [job.districtName, getStateBySlug(job.stateSlug)?.name].filter(Boolean).join(", ") || "State government" });
   for (const [k, label] of [["employmentType", "Type of job"], ["contractPeriod", "Contract period"], ["probation", "Probation"], ["bond", "Bond"]] as const) {
     const v = f[k];
-    if (v?.value) rows.push({ key: k, label, value: <>{v.value} <PageRef job={job} page={v.page} /></> });
+    if (v?.value) rows.push({ key: k, label, value: <>{v.value.charAt(0).toUpperCase() + v.value.slice(1)} <PageRef job={job} page={v.page} /></> });
   }
   if (job.isWalkIn) rows.push({ key: "walkin", label: "Selection by", value: "Walk-in interview" });
   return { id: "overview", title: "Overview", rows };
@@ -85,8 +85,8 @@ function dates(job: JobNotification): Section {
               {s.doc.datesText && <span className="block font-semibold text-ink">{s.doc.datesText}</span>}
               <span className="mt-1 flex flex-wrap gap-x-4">
                 {s.doc.copyName && <CopyLink name={s.doc.copyName} />}
-                {linkOut(s.doc.url, "Official document")}
-                {s.doc.page && <a href={s.doc.page} className="font-semibold text-navy underline underline-offset-2 hover:text-saffron">Details</a>}
+                <span className="inline-flex min-h-[44px] items-center">{linkOut(s.doc.url, "Official document")}</span>
+                {s.doc.page && <a href={s.doc.page} className="inline-flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2 hover:text-saffron">Details</a>}
               </span>
             </span>
           )}
@@ -103,6 +103,14 @@ function common(values: string[]): string {
   for (const v of values) if (v && v !== "See notification") counts.set(v, (counts.get(v) || 0) + 1);
   const [v, n] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0] || ["", 0];
   return n >= 3 && n >= values.length / 2 ? v : "";
+}
+
+const nameWords = (t: string) => new Set(t.toLowerCase().match(/[a-z]{4,}/g) || []);
+/** The fuller read's post (postDetails) that is this listed post, by the words of their names. */
+function samePost(a: string, b: string): boolean {
+  const wa = nameWords(a), wb = nameWords(b);
+  const shared = [...wa].filter((x) => wb.has(x)).length;
+  return shared > 0 && shared >= Math.min(wa.size, wb.size, 3);
 }
 
 /** "As per rule 16.2 (post-wise qualifications)" says nothing a reader can use: treated as not stated. */
@@ -151,6 +159,11 @@ function posts(job: JobNotification): Section | null {
         {quals.size > 1 && p.qualification !== "See notification" && p.qualification !== sharedQual && (
           <span className="mt-1 block"><span className="text-muted">Qualification: </span>{p.qualification}</span>
         )}
+        {(() => {
+          // what else this post asks for (marks, TET...), on its own row instead of a separate list
+          const o = (d.postDetails || []).find((x) => x.other && samePost(x.post, p.postName));
+          return o ? <span className="mt-1 block"><span className="text-muted">Also needed: </span>{o.other} <PageRef job={job} page={o.page} /></span> : null;
+        })()}
       </>
     ),
   }));
@@ -257,11 +270,26 @@ function eligibility(job: JobNotification): Section | null {
   } else {
     rows.push({ key: "age", label: "Age limit", value: wording || "See the official notification" });
   }
-  if (job.ageAsOn) rows.push({ key: "asOn", label: "Age counted as on", value: formatDate(job.ageAsOn) });
+  if (job.ageAsOn || (limits.length && wording)) {
+    rows.push({ key: "asOn", label: job.ageAsOn ? "Age counted as on" : "Age rule as printed", value: (
+      <>
+        {job.ageAsOn && formatDate(job.ageAsOn)}
+        {limits.length > 0 && wording && (
+          job.ageAsOn ? (
+            <details className="group mt-1">
+              <summary className="inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-navy hover:text-saffron [&::-webkit-details-marker]:hidden">
+                <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden />The age rule as printed
+              </summary>
+              <span className="block pb-1 text-ink-2">{wording}</span>
+            </details>
+          ) : wording
+        )}
+      </>
+    ) });
+  }
   for (const r of d.ageRelaxations || []) {
     rows.push({ key: `rel-${r.category}`, label: `Relaxation: ${r.category}`, value: <>+{r.years} year{r.years === 1 ? "" : "s"} <PageRef job={job} page={r.page} /></> });
   }
-  if (limits.length && wording) rows.push({ key: "ageWords", label: "Age rule as printed", value: wording });
   if (job.ageAsOn && limits.length) {
     rows.push({ key: "ageCheck", label: "Check your age", value: (
       <details className="group">
@@ -282,10 +310,9 @@ function eligibility(job: JobNotification): Section | null {
     const v = d.facts?.[k];
     if (v?.value) rows.push({ key: k, label, value: <>{v.value} <PageRef job={job} page={v.page} /></> });
   }
-  const words = (t: string) => new Set(t.toLowerCase().match(/[a-z]{4,}/g) || []);
-  const ours = (job.posts || []).map((p) => words(p.postName));
-  const inNotice = (post: string) => !ours.length || ours.some((w) => [...words(post)].filter((x) => w.has(x)).length >= Math.min(2, w.size));
-  const other = (d.postDetails || []).filter((p) => p.other && inNotice(p.post));
+  // shown on the post's own row when the post is listed; here only for a notice without a post list
+  const listed = getJobPostBreakdown(job);
+  const other = listed.length ? [] : (d.postDetails || []).filter((p) => p.other);
   if (other.length && other.length <= 3) {
     for (const p of other) rows.push({ key: `oth-${p.post}`, label: other.length > 1 ? `Also needed: ${p.post}` : "Also needed", value: <>{p.other} <PageRef job={job} page={p.page} /></> });
   }
