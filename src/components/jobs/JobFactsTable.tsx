@@ -21,7 +21,7 @@ const FIRST = 8;
 
 /** strong: a row that decides whether to apply (the last date), set apart from the rest */
 /** stack: on phones the label runs across the table with the value under it (post names are too long for a third) */
-type Row = { label: React.ReactNode; value: React.ReactNode; key: string; sub?: boolean; strong?: boolean; stack?: boolean };
+type Row = { label: React.ReactNode; value: React.ReactNode; key: string; sub?: boolean; strong?: boolean; stack?: boolean; info?: boolean };
 /** rows after the first ones open with "Show all N <noun>" */
 type Group = { rows: Row[]; more?: Row[]; noun?: string };
 /** more: rows behind "Show N more"; after: rows shown after that button (a section's own sub-tables) */
@@ -168,15 +168,15 @@ function posts(job: JobNotification): Section | null {
     ),
   }));
   const rows: Row[] = [];
-  if (suffix) rows.push({ key: "under", label: list.length > 2 ? "All posts are in" : "Both posts are in", value: suffix });
+  if (suffix) rows.push({ info: true, key: "under", label: list.length > 2 ? "All posts are in" : "Both posts are in", value: suffix });
   if (pays.size === 1 && list.length && [...pays][0] !== "See notification") {
-    rows.push({ key: "pay", label: list.length > 1 ? "Pay (all posts)" : "Pay", value: payText([...pays][0]) });
+    rows.push({ info: true, key: "pay", label: list.length > 1 ? "Pay (all posts)" : "Pay", value: payText([...pays][0]) });
   } else if (sharedPay) {
-    rows.push({ key: "pay", label: "Pay (unless shown below)", value: payText(sharedPay) });
+    rows.push({ info: true, key: "pay", label: "Pay (unless shown below)", value: payText(sharedPay) });
   } else if (!list.length && job.salary) {
     rows.push({ key: "pay", label: "Pay", value: payText(job.salary) });
   }
-  if (sharedQual) rows.push({ key: "qual", label: "Qualification (unless shown below)", value: sharedQual });
+  if (sharedQual) rows.push({ info: true, key: "qual", label: "Qualification (unless shown below)", value: sharedQual });
   if (!list.length && job.totalVacancies > 0) rows.push({ key: "n", label: "Posts", value: job.totalVacancies.toLocaleString("en-IN") });
   let postRows = all;
   if (grouped) {
@@ -469,8 +469,11 @@ function Numbered({ job, items }: { job: JobNotification; items: { text: string;
   );
 }
 
-/** "SC/ST/BC/EWS" may break after a slash, not mid-word */
-const slashes = (v: React.ReactNode) => (typeof v === "string" ? v.replace(/\//g, "/\u200b") : v);
+/** "SC/ST/BC/EWS" may break after a slash, not mid-word (<wbr>: nothing extra when copied) */
+const slashes = (v: React.ReactNode) =>
+  typeof v === "string" && v.includes("/")
+    ? v.split("/").map((part, i) => <React.Fragment key={i}>{i > 0 && <>/<wbr /></>}{part}</React.Fragment>)
+    : v;
 
 function Rows({ rows }: { rows: Row[] }) {
   const th = "px-2.5 sm:px-3 py-2.5 text-left text-[13px] sm:text-sm [overflow-wrap:break-word]";
@@ -506,7 +509,7 @@ function Rows({ rows }: { rows: Row[] }) {
 
 function GroupRows({ g }: { g: Group }) {
   const [open, setOpen] = useState(false);
-  const total = [...g.rows, ...(g.more || [])].filter((r) => !r.sub).length;
+  const total = [...g.rows, ...(g.more || [])].filter((r) => !r.sub && !r.info).length;
   return (
     <>
       <Rows rows={g.rows} />
