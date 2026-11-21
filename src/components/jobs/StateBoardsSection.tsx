@@ -40,7 +40,7 @@ export function StateBoardsSection({ stateSlug, stateName, compact = false }: { 
         Official recruitment sites we check for {stateName}{" "}
         <span className="ml-2 font-sans text-base font-semibold text-muted tabular-nums">{total}</span>
       </h2>
-      <p className="mt-1 text-sm text-ink-2 max-w-prose">
+      <p className="mt-1 text-sm text-ink-2 max-w-[60ch]">
         We check these sites for new notices; the recruitments we find are listed on this page with their official
         link. Applications are made on the official site. Each link opens the official site in a new tab.
       </p>
