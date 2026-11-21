@@ -40,7 +40,7 @@ export function RelatedOpportunitiesSection({ currentJob, related }: Props) {
                   {repeated(job.title) && job.advtNo && <span className="font-normal text-muted"> · Advt. {job.advtNo}</span>}
                 </span>
                 <span className="mt-1 block text-xs text-muted">
-                  {job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} posts · ` : ""}
+                  {job.totalVacancies ? `${job.totalVacancies.toLocaleString("en-IN")} post${job.totalVacancies === 1 ? "" : "s"} · ` : ""}
                   {job.applicationEndDate
                     ? `${closed ? "Closed" : "Last date"} ${formatDate(job.applicationEndDate)}`
                     : job.currentStage || "See notification"}

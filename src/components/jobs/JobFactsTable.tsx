@@ -174,13 +174,20 @@ function posts(job: JobNotification): Section | null {
         {pays.size > 1 && p.payLevel !== "See notification" && p.payLevel !== sharedPay && (
           <span className="mt-1 block"><span className="text-muted">Pay: </span>{payText(p.payLevel).replace(/^pay\s*(?=[₹\d])/i, "")}</span>
         )}
-        {quals.size > 1 && p.qualification !== "See notification" && p.qualification !== sharedQual && (
-          <span className="mt-1 block"><span className="text-muted">Qualification: </span>{p.qualification}</span>
-        )}
+        {(() => {
+          const o = onlyMatch((d.postDetails || []).filter((x) => x.other), p.postName);
+          // the fuller printed text already holds the qualification: it is shown once, as the qualification
+          const fuller = o && p.qualification !== "See notification" && restates(p.qualification, o.other);
+          const showQual = quals.size > 1 && p.qualification !== "See notification" && p.qualification !== sharedQual;
+          return (showQual || fuller) ? (
+            <span className="mt-1 block"><span className="text-muted">Qualification: </span>{fuller ? o!.other : p.qualification}
+              {fuller && <> <PageRef job={job} page={o!.page} /></>}</span>
+          ) : null;
+        })()}
         {(() => {
           // what else this post asks for (marks, TET...), on its own row instead of a separate list
           const o = onlyMatch((d.postDetails || []).filter((x) => x.other), p.postName);
-          return o && !restates(o.other, p.qualification) ? <span className="mt-1 block"><span className="text-muted">Also needed: </span>{o.other} <PageRef job={job} page={o.page} /></span> : null;
+          return o && !restates(o.other, p.qualification) && !(p.qualification !== "See notification" && restates(p.qualification, o.other)) ? <span className="mt-1 block"><span className="text-muted">Also needed: </span>{o.other} <PageRef job={job} page={o.page} /></span> : null;
         })()}
       </>
     ),
@@ -318,7 +325,8 @@ function eligibility(job: JobNotification): Section | null {
       </details>
     ) });
   }
-  const quals = (job.qualifications || []).filter(Boolean);
+  const allQuals = (job.qualifications || []).map((q) => q.trim().replace(/[.;]+$/, "")).filter(Boolean);
+  const quals = allQuals.filter((q, i) => !allQuals.some((o, j) => j !== i && o.length > q.length && o.toLowerCase().startsWith(q.toLowerCase())));
   const postQuals = new Set((job.posts || []).map((p) => p.qualification.trim()).filter(Boolean));
   const varies = (postQuals.size > 1 || quals.length > 1) && (job.posts || []).length > 1;
   rows.push({ key: "qual", label: "Qualification", value: varies
@@ -350,6 +358,17 @@ function eligibility(job: JobNotification): Section | null {
   return { id: "eligibility", title: "Who can apply", rows };
 }
 
+/** What a printed fee says besides its amount: "Rs.1,000/- for each post" -> "for each post". */
+function feeNote(text: string): string {
+  return text
+    .replace(/(?:₹|rs\.?)\s*[\d,]+(?:\.\d+)?\s*(?:\/-?)?/gi, " ")
+    .replace(/[()]/g, " ")
+    .replace(/\bnon-?refundable\b/gi, " ")
+    .replace(/\s+/g, " ")
+    .replace(/^[\s,;:+-]+|[\s,;:+-]+$/g, "")
+    .trim();
+}
+
 function fee(job: JobNotification): Section | null {
   if (!hasFeeSection(job)) return null;
   const d = job.details || {};
@@ -361,7 +380,7 @@ function fee(job: JobNotification): Section | null {
       const extra = f.text && f.text.replace(/\.00?(?!\d)/g, "").replace(/[₹\s,/-]|rs\.?|\(?non-refundable\)?|only/gi, "") !== String(f.amount ?? "");
       rows.push({ key: `fee-${f.category}`, label: f.category, value: (
         <>{f.amount === 0 ? <b className="text-green">No fee</b> : f.amount ? <b className="text-base text-ink tabular-nums">{rupees(f.amount)}</b> : f.text}
-          {extra && f.amount !== null && <span className="ml-1.5 text-[13px] text-ink-2">({f.text})</span>} <PageRef job={job} page={f.page} /></>
+          {extra && f.amount !== null && feeNote(f.text) && <span className="ml-1.5 text-[13px] text-ink-2">({feeNote(f.text)})</span>} <PageRef job={job} page={f.page} /></>
       ) });
     }
   } else {
@@ -401,7 +420,9 @@ function selection(job: JobNotification): Section | null {
   if (!hasSelection(job)) return null;
   const d = job.details || {};
   const own = (d.selectionStages || []).map((s) => s.stage);
-  const stages = (own.length ? own : job.selectionProcess || []).map((t) => t.trim().replace(/[,;:.]+$/, "")).filter(Boolean);
+  const stages = (own.length ? own : job.selectionProcess || []).map((t) => t.trim().replace(/[,;:.]+$/, "")).filter(Boolean)
+    // older notices were stored cut at 120 characters, sometimes mid-word: say it continues in the notice
+    .map((t) => (t.length >= 118 && !/[.)…]$/.test(t) ? `${t.replace(/\s+\S{0,3}$/, "")}… (see the notification)` : t));
   const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
   const rows: Row[] = !stages.length ? [] : stages.length === 1
     ? [{ key: "s0", label: "Selection", value: cap(stages[0]) }]
@@ -414,7 +435,11 @@ function selection(job: JobNotification): Section | null {
       if (!groups.length || groups[groups.length - 1].stage !== p.stage) groups.push({ stage: p.stage, rows: [] });
       groups[groups.length - 1].rows.push(p);
     }
-    const spaced = (t: string) => (t || "").replace(/(\d)([A-Za-z])/g, "$1 $2");
+    const spaced = (t: string) => {
+      const hm = (t || "").trim().match(/^(\d{1,2}):(\d{2})\s*hrs?\.?$/i);
+      if (hm) return `${Number(hm[1])} hour${hm[1] === "01" || hm[1] === "1" ? "" : "s"}${Number(hm[2]) ? ` ${Number(hm[2])} minutes` : ""}`;
+      return (t || "").replace(/(\d)([A-Za-z])/g, "$1 $2");
+    };
     groups.forEach((g, gi) => {
       const times = new Set(g.rows.map((p) => spaced(p.time)));
       const sharedTime = g.rows.length > 1 && times.size === 1 ? [...times][0] : "";
@@ -475,7 +500,6 @@ function links(job: JobNotification): Section {
   if (!closed && job.applyOnlineUrl) rows.push({ key: "apply", label: "Apply online", value: linkOut(job.applyOnlineUrl, hostOf(job.applyOnlineUrl)) });
   rows.push({ key: "pdf", label: "Official notification", value: linkOut(job.officialPdfUrl, /\.pdf($|[?#])/i.test(job.officialPdfUrl) ? "Notification (PDF)" : hostOf(job.officialPdfUrl)) });
   if (job.copyName) rows.push({ key: "copy", label: "Our copy", value: <CopyLink name={job.copyName} /> });
-  rows.push({ key: "report", label: "Found a mistake?", value: <ReportLink job={job} text="Email a correction for this page" /> });
   return { id: "links", title: "Important links", rows };
 }
 

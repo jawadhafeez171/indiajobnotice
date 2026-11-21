@@ -170,7 +170,12 @@ function ageSummary(job: JobNotification): string {
   // the printed wording's own numbers: "18 to 23 years as on…" -> "18–23 years"; "General 40 years; … 45 years" -> "Up to 40–45 years, varies"
   const range = t.match(/\b(\d{2})\s*(?:to|-|–)\s*(\d{2})\s*years/i);
   if (range) return `${range[1]}–${range[2]} years`;
-  const ages = [...new Set([...t.matchAll(/\b(\d{2})\s*years/gi)].map((m) => Number(m[1])))].sort((a, b) => a - b);
+  // a printed minimum is not one of the upper limits
+  const minimum = t.match(/\bmin(?:imum)?\.?\s*(?:age\s*)?(?:of\s*)?(\d{2})/i);
+  const minAge = minimum ? Number(minimum[1]) : 0;
+  const ages = [...new Set([...t.matchAll(/\b(\d{2})\s*years/gi)].map((m) => Number(m[1])))].filter((a) => a !== minAge).sort((a, b) => a - b);
+  if (minAge && ages.length === 1) return `${minAge} to ${ages[0]} years`;
+  if (minAge && ages.length > 1) return `${minAge} to ${ages[0]}–${ages[ages.length - 1]} years (varies)`;
   if (ages.length === 1) return `Up to ${ages[0]} years`;
   // several upper limits ("General 40 years; SC/ST 45 years") are maximums, not a range from 40
   if (ages.length > 1) return `Up to ${ages[0]}–${ages[ages.length - 1]} years (varies)`;

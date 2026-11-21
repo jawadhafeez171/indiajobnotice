@@ -288,7 +288,12 @@ export function getGenuinelyRelatedOpportunities(
     let type: RelatedOpportunity["relationshipType"] = "sector";
 
     // 1. Same Organisation (Highest Relevance)
-    if (candidate.orgShortCode.toUpperCase() === currentJob.orgShortCode.toUpperCase() && currentJob.orgShortCode !== "Central") {
+    // a generic code (District Court, DLSA, NHM...) names a kind of body, not one body: the full name must match
+    const generic = /^(district|dlsa|nhm|zp|collectorate|municipal|court|high court|health)/i.test(currentJob.orgShortCode.trim());
+    const sameOrg = generic
+      ? candidate.organization.trim().toLowerCase() === currentJob.organization.trim().toLowerCase()
+      : candidate.orgShortCode.toUpperCase() === currentJob.orgShortCode.toUpperCase();
+    if (sameOrg && currentJob.orgShortCode !== "Central") {
       score += 50;
       reason = "Same organisation";
       type = "organisation";

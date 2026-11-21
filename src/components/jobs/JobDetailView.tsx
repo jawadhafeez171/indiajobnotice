@@ -203,7 +203,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
                   <dt className="text-xs text-muted">{f.label}</dt>
                   <dd className={cn("text-sm font-semibold text-ink leading-snug", f.strong && "text-[15px] font-bold")}>
                     {f.href ? <a href={f.href} className="hover:text-navy hover:underline underline-offset-2">{f.value}</a> : f.value}
-                    {f.note && <span className={cn("block text-xs font-semibold", f.note === "Closed" ? "text-muted" : "text-green")}>{f.note}</span>}
+                    {f.note && <span className={cn("block text-xs font-semibold", f.note === "Closed" ? "text-muted" : daysLeft >= 0 && daysLeft <= 7 ? "text-saffron" : "text-green")}>{f.note}</span>}
                   </dd>
                 </div>
               ))}
@@ -332,7 +332,11 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
                   <span className="block font-bold text-sm text-ink">
                     {job.isWalkIn ? "Walk-in" : "Last date"} {formatDate(job.applicationEndDate)}
                   </span>
-                  {daysLeft >= 0 && (daysLeft === 0 ? "Closes today" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`)}
+                  {daysLeft >= 0 && (
+                    <span className={cn("font-semibold", daysLeft <= 7 ? "text-saffron" : "text-green")}>
+                      {daysLeft === 0 ? "Closes today" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`}
+                    </span>
+                  )}
                 </>
               ) : (
                 <span className="block font-bold text-sm text-ink truncate">{job.shortTitle}</span>
