@@ -5,14 +5,16 @@ import { Check, Copy } from "lucide-react";
 
 /** The address as a mail link, with a Copy button for phones without an email app (says "Copied" when done). */
 export function CopyEmail({ email }: { email: string }) {
-  const [copied, setCopied] = useState(false);
+  const [state, setState] = useState<"" | "copied" | "failed">("");
+  const copied = state === "copied";
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(email);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      setState("copied");
+      setTimeout(() => setState(""), 2500);
     } catch {
-      /* no clipboard access: the address stays visible and selectable */
+      // in-app browsers (Telegram, WhatsApp) often refuse the clipboard: say how to copy by hand
+      setState("failed");
     }
   };
   return (
@@ -29,7 +31,9 @@ export function CopyEmail({ email }: { email: string }) {
         {copied ? "Copied" : "Copy"}
         <span className="sr-only"> the email address</span>
       </button>
-      <span aria-live="polite" className="sr-only">{copied ? "Email address copied" : ""}</span>
+      <span aria-live="polite" className={state === "failed" ? "basis-full text-sm text-ink-2" : "sr-only"}>
+        {copied ? "Email address copied" : state === "failed" ? "Couldn't copy here. Press and hold the address to copy it." : ""}
+      </span>
     </span>
   );
 }

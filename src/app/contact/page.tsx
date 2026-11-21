@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 
 const EMAIL = "indiajobnotice@gmail.com";
 const correctionMail = `mailto:${EMAIL}?subject=${encodeURIComponent("Correction: ")}&body=${encodeURIComponent(
-  "Job page link:\n\nWhat is wrong on the page:\n\nWhat the official notice says (page number if you know it):\n",
+  "Job page link (copy it from your browser's address bar):\n\nWhat is wrong on the page:\n\nWhat the official notice says (page number if you know it):\n",
 )}`;
 
 const CHANNELS = [
@@ -84,10 +84,9 @@ export default function ContactPage() {
             Email a correction
           </a>
           <p className="mt-2 text-sm text-muted">
-            Opens your email app with these questions filled in. A screenshot or photo of the notice page is fine, and you can
-            write in any language.
+            Opens your email app with the questions filled in. Any language is fine, and you can attach a photo of the notice.
+            No email app? Copy the address:
           </p>
-          <p className="mt-3 text-sm text-muted">No email app? Copy the address and write from anywhere:</p>
           <CopyEmail email={EMAIL} />
         </section>
 
