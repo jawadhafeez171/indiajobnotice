@@ -297,10 +297,6 @@ export default async function StateHomePage({ params }: PageProps) {
           <ul className="flex flex-wrap gap-x-6 gap-y-1 text-sm font-semibold">
             {[
               { href: "/calculator", label: "Check which jobs your age fits" },
-              { href: "/engineering-jobs", label: "Engineering jobs" },
-              { href: "/police-defense-jobs", label: "Police and defence jobs" },
-              { href: "/qualification/graduate", label: "Graduate jobs" },
-              { href: "/qualification/12th-pass", label: "12th pass jobs" },
             ].map((l) => (
               <li key={l.href}>
                 <Link href={l.href} className="inline-flex items-center min-h-[44px] text-navy hover:text-saffron underline-offset-4 hover:underline">
@@ -311,7 +307,7 @@ export default async function StateHomePage({ params }: PageProps) {
           </ul>
         </section>
 
-        {ownOpen && <StateBoardsSection stateSlug={state.slug} stateName={state.name} />}
+        {ownOpen && <StateBoardsSection stateSlug={state.slug} stateName={state.name} compact />}
       </main>
 
       <Footer />

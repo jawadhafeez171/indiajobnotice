@@ -26,7 +26,7 @@ function titles(jobs: JobNotification[]): Map<string, string> {
   const base = (j: JobNotification) => {
     const t = rowTitle(j);
     const area = noticeArea(j)?.code;
-    return area ? `${t.replace(/\s*\((?:KK|RPC)\)/g, "").trim()} · ${area === "KK" ? "Kalyana Karnataka" : "Rest of Karnataka"}` : t;
+    return area ? `${t.replace(/\s*\((?:KK|RPC)\)/g, "").trim()} · ${area === "KK" ? "Kalyana Karnataka (KK)" : "Rest of Karnataka (RPC)"}` : t;
   };
   const seen = new Map<string, number>();
   for (const j of jobs) seen.set(base(j), (seen.get(base(j)) || 0) + 1);

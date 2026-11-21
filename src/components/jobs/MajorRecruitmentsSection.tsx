@@ -524,7 +524,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       // a Karnataka round's KK / RPC notice always says which (the two often have different titles)
       const area = noticeArea(j)?.code;
       // the post first, then which cadre (20 Nov critique: a zone before the post hid what the job is)
-      if (area) return `${t.replace(/\s*\((?:KK|RPC)\)/g, "").replace(/\s{2,}/g, " ").trim()} · ${area === "KK" ? "Kalyana Karnataka" : "Rest of Karnataka"}`;
+      if (area) return `${t.replace(/\s*\((?:KK|RPC)\)/g, "").replace(/\s{2,}/g, " ").trim()} · ${area === "KK" ? "Kalyana Karnataka (KK)" : "Rest of Karnataka (RPC)"}`;
       if ((seen.get(key(j)) || 0) < 2) return t;
       // look-alikes otherwise differ by the year (lists leave advert numbers out)
       const year = (j.applicationEndDate || j.publishedAt || "").slice(0, 4);
@@ -761,7 +761,15 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 key={key}
                 aria-pressed={isActive}
                 title={key === "UNDER_WAY" ? "Applications closed, exams or results still to come" : undefined}
-                onClick={() => setActiveCategory(key)}
+                onClick={() => {
+                  setActiveCategory(key);
+                  const u = new URLSearchParams(window.location.search);
+                  const name = Object.entries(STAGE_PARAM).find(([, v]) => v === key)?.[0];
+                  if (key === "APPLY_OPEN" || !name) u.delete("stage");
+                  else u.set("stage", name);
+                  const qs = u.toString();
+                  window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`);
+                }}
                 className={cn(
                   narrow ? "px-2.5 gap-1 md:px-3 md:gap-1.5" : "px-2.5 gap-1 md:px-3.5 md:gap-2",
                   "shrink-0 flex items-center min-h-[44px] md:min-h-0 md:py-[9px] rounded-full border text-[12px] md:text-[13px] font-semibold whitespace-nowrap transition-colors motion-reduce:transition-none",
