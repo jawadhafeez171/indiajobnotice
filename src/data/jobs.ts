@@ -654,7 +654,8 @@ export function getCalculatorJobs(jobs: JobNotification[]): JobNotification[] {
 
 export function getJobAgeCutoffDate(job: JobNotification): string {
   // the notification's own cut-off date when known, else its last date (the usual reference)
-  return job.ageCutoffDate || job.applicationEndDate || todayIST();
+  // the date the notice counts age on (agent's reading), else an older stored one, else its last date
+  return job.ageAsOn || job.ageCutoffDate || job.applicationEndDate || todayIST();
 }
 
 export function calculateAgeAtDate(dob: string, targetDate: string): { years: number; months: number; days: number } {
