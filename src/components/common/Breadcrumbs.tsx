@@ -57,7 +57,7 @@ export function Breadcrumbs({
                   {c.label}
                 </span>
               ) : (
-                <Link href={c.href} className="inline-block py-1.5 font-medium hover:text-navy transition-colors">
+                <Link href={c.href} className="-my-1.5 inline-block py-3 font-medium hover:text-navy transition-colors">
                   {c.label}
                 </Link>
               )}

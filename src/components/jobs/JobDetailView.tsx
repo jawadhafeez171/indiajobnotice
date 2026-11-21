@@ -207,7 +207,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
                 <div key={f.label} className="min-w-0">
                   <dt className="text-xs text-muted">{f.label}</dt>
                   <dd className={cn("text-sm font-semibold text-ink leading-snug", f.strong && "text-[15px] font-bold")}>
-                    {f.href ? <a href={f.href} className="-my-3 inline-block py-3 hover:text-navy hover:underline underline-offset-2">{f.value}</a> : f.value}
+                    {f.href ? <a href={f.href} className="-my-3 inline-block py-[13px] hover:text-navy hover:underline underline-offset-2">{f.value}</a> : f.value}
                     {f.note && <span className={cn("block text-xs font-semibold", f.note === "Closed" ? "text-muted" : daysLeft >= 0 && daysLeft <= 7 ? "text-saffron" : "text-green")}>{f.note}</span>}
                   </dd>
                 </div>
