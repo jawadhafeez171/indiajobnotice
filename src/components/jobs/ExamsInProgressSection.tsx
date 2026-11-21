@@ -73,7 +73,7 @@ export function ExamsInProgressSection({ jobs, limit = 12, expandRest = false, p
         </summary>
         <dl className="mb-2 grid gap-1 [&>dd]:mb-1.5 sm:[&>dd]:mb-0 text-[13px] text-ink-2 sm:grid-cols-[auto_1fr] sm:gap-x-4">
           <dt className="font-bold text-ink">Admit card issued</dt><dd>Hall tickets for the exam are out on the official site.</dd>
-          <dt className="font-bold text-ink">Answer key out · result awaited</dt><dd>The provisional answers are published; objections may be invited. The result comes next.</dd>
+          <dt className="font-bold text-ink">Answer key out · result awaited</dt><dd>The provisional answers are published. The result comes next.</dd>
           <dt className="font-bold text-ink">Shortlist / eligibility list out</dt><dd>Candidates called to the next round, or whose documents are checked next. Not the final selection.</dd>
           <dt className="font-bold text-ink">Result out</dt><dd>The recruiting body has published a result. Its document says which round.</dd>
         </dl>
