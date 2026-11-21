@@ -243,7 +243,7 @@ export function rowTitle(job: JobNotification): string {
   for (const re of TITLE_FILLER) t = t.replace(re, " ");
   t = t.replace(/\s+([,)])/g, "$1").replace(/\s{2,}/g, " ").replace(/^[\s,;:–—-]+|[\s,;:–—-]+$/g, "").trim();
   const withNo = t;
-  t = withoutAdvtNo(t);
+  t = withoutAdvtNo(t).replace(/(?:\s*,){2,}/g, ",").replace(/,\s*$/, "");
   const postList = postNames(job);
   if (GENERIC_TITLE.test(t) && postList) t = postList;
   // a long title: first without the department or service it ends with; still long, the post names

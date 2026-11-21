@@ -28,6 +28,7 @@ export function BoardJobs({ open, underWay, earlier, dept, boardName }: {
   boardName: string;
 }) {
   const [only, setOnly] = useState<string | null>(null);
+  const [allChips, setAllChips] = useState(false);
   const all = [...open, ...underWay, ...earlier];
   const counts = new Map<string, number>();
   for (const j of all) counts.set(dept[j.id] || "", (counts.get(dept[j.id] || "") || 0) + 1);
@@ -37,23 +38,39 @@ export function BoardJobs({ open, underWay, earlier, dept, boardName }: {
 
   return (
     <div className="space-y-10">
-      {depts.length > 1 && (
-        <div>
-          <p className="text-sm font-semibold text-ink">Recruiting for</p>
-          <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Show notices by department">
-            {[[null, all.length] as const, ...depts.map(([d, n]) => [d, n] as const)].map(([d, n]) => {
-              const active = only === d;
-              return (
-                <button key={d ?? "all"} type="button" aria-pressed={active} onClick={() => setOnly(d)}
-                  className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-semibold ${active ? "border-transparent bg-navy-solid text-white" : "border-line bg-surface text-ink hover:border-navy"}`}>
-                  {d === null ? "All" : d === "" ? boardName : d}
-                  <span className={`tabular-nums ${active ? "text-white/80" : "text-muted"}`}>{n}</span>
+      {depts.length > 1 && (() => {
+        const chips = [[null, all.length] as const, ...depts.map(([d, n]) => [d, n] as const)];
+        // four first; the chosen one stays in view when folded
+        const shown = allChips || chips.length <= 6 ? chips : chips.filter((c, i) => i < 5 || c[0] === only);
+        return (
+          <div>
+            <p className="text-sm font-semibold text-ink">Recruiting for</p>
+            <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Show notices by department">
+              {shown.map(([d, n]) => {
+                const active = only === d;
+                const label = d === null ? "All" : d === "" ? boardName : d;
+                return (
+                  <button key={d ?? "all"} type="button" aria-pressed={active} onClick={() => setOnly(d)} title={label}
+                    className={`inline-flex min-h-[44px] max-w-full items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-semibold ${active ? "border-transparent bg-navy-solid text-white" : "border-line bg-surface text-ink hover:border-navy"}`}>
+                    <span className="truncate">{label}</span>
+                    <span className={`shrink-0 tabular-nums ${active ? "text-white/80" : "text-muted"}`}>{n}</span>
+                  </button>
+                );
+              })}
+              {shown.length < chips.length && (
+                <button type="button" onClick={() => setAllChips(true)}
+                  className="inline-flex min-h-[44px] items-center rounded-full px-3 text-[13px] font-bold text-navy hover:text-saffron">
+                  {chips.length - shown.length} more
                 </button>
-              );
-            })}
+              )}
+            </div>
+            <p className="mt-2 text-[13px] text-ink-2" aria-live="polite">
+              {only === null ? <>Showing all {all.length} notices.</> : <>Showing {o.length + u.length + e.length} of {all.length} · {only || boardName}.{" "}
+                <button type="button" onClick={() => setOnly(null)} className="font-semibold text-navy underline underline-offset-2">Show all</button></>}
+            </p>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       <section aria-labelledby="open-h">
         <h2 id="open-h" className="font-serif text-xl font-bold text-ink">
@@ -70,13 +87,18 @@ export function BoardJobs({ open, underWay, earlier, dept, boardName }: {
           </ul>
         ) : (
           <p className="mt-2 text-sm text-ink-2 max-w-prose">
-            No notice {only ? `for ${only || boardName} ` : ""}is open for applications right now. New ones appear here once the
-            official site posts them.
+            No notice {only !== null ? `for ${only || boardName} ` : ""}is open for applications right now. New ones appear here once the
+            official site posts them.{" "}
+            <span className="block mt-1">Get them as they come: <a href="https://t.me/india_jobnotice" target="_blank" rel="noreferrer" className="font-semibold text-navy underline underline-offset-2">Telegram</a> or{" "}
+              <a href="https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C" target="_blank" rel="noreferrer" className="font-semibold text-navy underline underline-offset-2">WhatsApp</a>.</span>
           </p>
         )}
       </section>
 
       <ExamsInProgressSection jobs={u} limit={4} expandRest heading="Recruitments under way" />
+      {only !== null && !u.length && underWay.length > 0 && (
+        <p className="text-sm text-ink-2">No recruitment of {only || boardName} is under way.</p>
+      )}
 
       {e.length > 0 && (
         <section aria-labelledby="earlier-h" className="border-t border-line pt-6">
@@ -88,7 +110,7 @@ export function BoardJobs({ open, underWay, earlier, dept, boardName }: {
             {e.slice(0, 12).map((j) => (
               <li key={j.id}>
                 <Link href={getJobCanonicalPath(j)} className="group block py-3">
-                  <span className="block text-sm font-semibold text-ink group-hover:text-navy leading-snug">{j.shortTitle || j.title}</span>
+                  <span className="block text-sm font-semibold text-ink group-hover:text-navy leading-snug">{titleOf(j)}</span>
                   <span className="mt-0.5 block text-[13px] text-muted tabular-nums">
                     {j.totalVacancies ? `${j.totalVacancies.toLocaleString("en-IN")} post${j.totalVacancies === 1 ? "" : "s"} · ` : ""}
                     {j.applicationEndDate ? `closed ${formatDateShort(j.applicationEndDate)}` : "closed"}

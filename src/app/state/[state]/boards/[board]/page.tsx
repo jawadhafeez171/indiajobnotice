@@ -32,6 +32,19 @@ export async function generateStaticParams() {
   return [];
 }
 
+/** The group's name for one body: "Power, transport and state companies" -> "State company". */
+const KIND: Record<string, string> = {
+  "Public service commissions": "Public service commission",
+  "Recruitment and selection boards": "Recruitment and selection board",
+  "Police, forest and uniformed services": "Police, forest or uniformed service",
+  "Health and medical": "Health and medical",
+  "Education and universities": "Education or university",
+  "Power, transport and state companies": "State company",
+  "Banks": "Bank",
+  "State government": "State government",
+  "Courts": "Court",
+};
+
 function hostOf(url: string): string {
   try {
     return new URL(url).hostname.replace(/^www\./, "");
@@ -68,7 +81,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const lead = `${code || name} Recruitment ${YEAR}`;
   const counted = open.length ? `${lead}: ${open.length} Notification${open.length === 1 ? "" : "s"} Open` : lead;
   const title = counted.length <= 60 ? counted : lead.length <= 60 ? lead : `${name} Recruitment`;
-  const first = open.slice(0, 2).map((j) => `${rowTitle(j)}${j.totalVacancies ? ` (${j.totalVacancies.toLocaleString("en-IN")} posts` : " ("}${j.applicationEndDate ? `${j.totalVacancies ? ", " : ""}last date ${formatDateShort(j.applicationEndDate)})` : j.totalVacancies ? ")" : ""}`.replace(/ \($/, ""));
+  const plainT = (j: JobNotification) => {
+    const area = rowTitle(j).match(/\((KK|RPC)\)/)?.[1];
+    const t = rowTitle(j).replace(/\s*\((?:KK|RPC)\)/g, "").trim();
+    return area ? `${t}, ${area === "KK" ? "Kalyana Karnataka" : "Rest of Karnataka"}` : t;
+  };
+  const first = open.slice(0, 2).map((j) => `${plainT(j)}${j.totalVacancies ? ` (${j.totalVacancies.toLocaleString("en-IN")} posts` : " ("}${j.applicationEndDate ? `${j.totalVacancies ? ", " : ""}last date ${formatDateShort(j.applicationEndDate)})` : j.totalVacancies ? ")" : ""}`.replace(/ \($/, ""));
   const who = code && !name.includes(`(${code})`) ? `${name} (${code})` : name;
   const description = (open.length
     ? `${who}: ${open.length} notification${open.length === 1 ? "" : "s"} open${posts ? ` for ${posts.toLocaleString("en-IN")} posts` : ""}. ${first.join("; ")}.${underWay.length ? ` ${underWay.length} more under way.` : ""} Official links.`
@@ -101,12 +119,35 @@ export default async function BoardPage({ params }: PageProps) {
   const posts = open.reduce((n, j) => n + (j.totalVacancies || 0), 0);
   const week = new Date(Date.parse(todayIST()) + 7 * 86400000).toISOString().slice(0, 10);
   const closingSoon = open.filter((j) => j.applicationEndDate && j.applicationEndDate <= week).length;
-  const dept = Object.fromEntries([...open, ...underWay, ...earlier].map((j) => [j.id, board.members ? j.organization : department(j, board)]));
+  const dept = Object.fromEntries([...open, ...underWay, ...earlier].map((j) => [j.id, board.members
+    ? j.organization.replace(/\s*\([^)]*\)/g, "").replace(/,\s*$/, "").trim() : department(j, board)]));
   const title = board.members ? `${board.name} in ${state.name}` : board.name;
   const code = boardCode(board, all);
   const shownCode = code && !board.name.includes(`(${code})`) ? code : "";
   const biggest = [...open].sort((a, b) => (b.totalVacancies || 0) - (a.totalVacancies || 0))[0];
   const depts = [...new Set(Object.values(dept).filter(Boolean))];
+  // the post's name as the lists say it, its cadre in words: "Second Division Assistant, 2026 (Rest of Karnataka)"
+  const plain = (j: JobNotification) => {
+    const area = rowTitle(j).match(/\((KK|RPC)\)/)?.[1];
+    const t = rowTitle(j).replace(/\s*\((?:KK|RPC)\)/g, "").trim();
+    return area ? `${t} (${area === "KK" ? "Kalyana Karnataka" : "Rest of Karnataka"})` : t;
+  };
+  const who = shownCode || title;
+  const many = Boolean(board.members);
+  const factsLine = (
+    <>
+      {open.length > 0 ? (
+        <>
+          {who} {many ? "have" : "has"} {open.length} recruitment notification{open.length === 1 ? "" : "s"} open
+          {posts > 0 && <> for {posts.toLocaleString("en-IN")} posts</>}.
+          {biggest && (biggest.totalVacancies || 0) > 1 && open.length > 1 && <> Biggest: {plain(biggest)}, {biggest.totalVacancies.toLocaleString("en-IN")} posts
+            {biggest.applicationEndDate && <>, last date {formatDate(biggest.applicationEndDate)}</>}.</>}
+        </>
+      ) : <>No notification from {who} is open for applications right now.</>}
+      {underWay.length > 0 && <> {underWay.length} recruitment{underWay.length === 1 ? " is" : "s are"} under way, with admit cards, answer keys or results.</>}
+      {depts.length > 0 && !many && <> {who} also posts notices for {depts.slice(0, 3).join(", ")}{depts.length > 3 ? ` and ${depts.length - 3} more` : ""}.</>}
+    </>
+  );
   // other bodies of the state with notices open now: where a reader (and a crawler) goes next
   const others = getBoardsOfState(state.slug).filter((b) => b.slug !== board.slug && boardHasListings(b, all))
     .map((b) => ({ b, n: boardJobs(b, all).open.length })).sort((x, y) => y.n - x.n).slice(0, 12);
@@ -140,7 +181,7 @@ export default async function BoardPage({ params }: PageProps) {
             {board.members ? `${state.name} ${board.slug === "district-courts" ? "District Court" : "District Recruitment Bureau"}` : title}
             {shownCode && <> ({shownCode})</>} <span className="whitespace-nowrap">Recruitment {YEAR}</span>
           </h1>
-          <p className="mt-1 text-[13px] font-semibold text-ink-2">{board.group.replace(/s$/, "")} · {state.name}</p>
+          <p className="mt-1 text-[13px] font-semibold text-ink-2">{KIND[board.group] || board.group} · {state.name}</p>
           <p className="mt-2 text-sm text-ink">
             {open.length > 0 ? (
               <>
@@ -159,20 +200,7 @@ export default async function BoardPage({ params }: PageProps) {
             </a>
           )}
           {/* what the page holds, in a sentence of its own facts */}
-          {(open.length > 0 || underWay.length > 0) && (
-            <p className="mt-3 max-w-[68ch] text-sm leading-relaxed text-ink-2">
-              {open.length > 0 ? (
-                <>
-                  {shownCode || title} has {open.length} recruitment notification{open.length === 1 ? "" : "s"} open
-                  {posts > 0 && <> for {posts.toLocaleString("en-IN")} posts</>}
-                  {biggest && (biggest.totalVacancies || 0) > 1 && <>; the biggest is {rowTitle(biggest)} ({biggest.totalVacancies.toLocaleString("en-IN")} posts
-                    {biggest.applicationEndDate && <>, last date {formatDate(biggest.applicationEndDate)}</>})</>}.
-                </>
-              ) : <>No {shownCode || title} notification is open for applications right now. </>}
-              {underWay.length > 0 && <> {underWay.length} of its recruitment{underWay.length === 1 ? " is" : "s are"} under way, with admit cards, answer keys or results.</>}
-              {depts.length > 0 && !board.members && <> It also posts notices for {depts.slice(0, 3).join(", ")}{depts.length > 3 ? ` and ${depts.length - 3} more` : ""}.</>}
-            </p>
-          )}
+          {(open.length > 0 || underWay.length > 0) && <p className="mt-3 hidden max-w-[62ch] text-sm leading-relaxed text-ink-2 sm:block">{factsLine}</p>}
           {checkedText && (
             <p className="mt-2 text-[13px] text-muted">
               We last checked {board.members ? "these sites" : "this site"} <time dateTime={checkedAt || undefined}>{checkedText}</time> IST.
@@ -184,6 +212,13 @@ export default async function BoardPage({ params }: PageProps) {
 
       <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-10">
         <BoardJobs open={open.map(forList)} underWay={underWay.map(forList)} earlier={earlier.map(forList)} dept={dept} boardName={board.name} />
+
+        {(open.length > 0 || underWay.length > 0) && (
+          <section aria-labelledby="about-h" className="border-t border-line pt-6 sm:hidden">
+            <h2 id="about-h" className="font-serif text-xl font-bold text-ink">About these notices</h2>
+            <p className="mt-2 text-sm leading-relaxed text-ink-2">{factsLine}</p>
+          </section>
+        )}
 
         {board.members && (
           <section aria-labelledby="courts-h" className="border-t border-line pt-6">
