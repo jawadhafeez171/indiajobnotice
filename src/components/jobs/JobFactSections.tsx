@@ -252,6 +252,7 @@ export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNull
     value: (
       <>
         {end ? formatDate(end) : "See notification"}
+        {end && !closed && daysLeft >= 0 && " "}
         {end && !closed && daysLeft >= 0 && (
           <span className={`ml-2 whitespace-nowrap font-semibold ${daysLeft <= 7 ? "text-saffron" : "text-green"}`}>
             {daysLeft === 0 ? "today" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`}

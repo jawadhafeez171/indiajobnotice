@@ -36,9 +36,9 @@ const rupees = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 /** A heading row inside a section (an exam's stage, "Vacancies by category"). */
 const subhead = (key: string, text: string): Row => ({ key, label: text, value: null, sub: true });
 
-function linkOut(href: string, text: string) {
+function linkOut(href: string, text: string, extra = "") {
   return (
-    <a href={href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-navy underline underline-offset-2 hover:text-saffron break-all">
+    <a href={href} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-1 ${extra} font-semibold text-navy underline underline-offset-2 hover:text-saffron break-all`}>
       {text} <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden />
     </a>
   );
@@ -81,11 +81,12 @@ function dates(job: JobNotification): Section {
           <span className={s.when === "now" ? "font-bold text-ink" : s.when === "next" ? "text-ink-2" : "font-semibold text-ink"}>{s.value}</span>
           {s.doc && (
             <span className="mt-1 block text-[13px] text-ink-2">
-              {s.doc.summary}
+              {/* the row already gives the date: a summary starting with it ("16/10/2026 Result…") drops it */}
+              {s.doc.summary.replace(/^\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\s*[-–:]?\s*/, "")}
               {s.doc.datesText && <span className="block font-semibold text-ink">{s.doc.datesText}</span>}
               <span className="mt-1 flex flex-wrap gap-x-4">
                 {s.doc.copyName && <CopyLink name={s.doc.copyName} />}
-                <span className="inline-flex min-h-[44px] items-center">{linkOut(s.doc.url, "Official document")}</span>
+                {linkOut(s.doc.url, "Official document", "min-h-[44px]")}
                 {s.doc.page && <a href={s.doc.page} className="inline-flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2 hover:text-saffron">Details</a>}
               </span>
             </span>
