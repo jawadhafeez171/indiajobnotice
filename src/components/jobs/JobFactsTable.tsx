@@ -65,6 +65,11 @@ function overview(job: JobNotification): Section {
   return { id: "overview", title: "Overview", rows };
 }
 
+const LIST_MEANING: Record<string, string> = {
+  "Eligibility list": "Candidates whose forms and certificates are checked next. Being on it is not final selection.",
+  "Rejected list": "Candidates the recruiting body has found not eligible or disqualified.",
+};
+
 function dates(job: JobNotification): Section {
   const { steps, update } = datesOf(job);
   const rows: Row[] = [];
@@ -84,6 +89,8 @@ function dates(job: JobNotification): Section {
               {/* the row already gives the date: a summary starting with it ("16/10/2026 Result…") drops it */}
               {s.doc.summary.replace(/^\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\s*[-–:]?\s*/, "")}
               {s.doc.datesText && <span className="block font-semibold text-ink">{s.doc.datesText}</span>}
+              {/* what these lists mean for the reader, in general terms (the document itself has the detail) */}
+              {LIST_MEANING[String(s.label)] && <span className="mt-1 block text-muted">{LIST_MEANING[String(s.label)]}</span>}
               <span className="mt-1 flex flex-wrap gap-x-4">
                 {s.doc.copyName && <CopyLink name={s.doc.copyName} />}
                 {linkOut(s.doc.url, "Official document", "min-h-[44px]")}
@@ -286,6 +293,23 @@ function ageRows(limits: Limit[]): Row[] {
   }
   const rows: Row[] = [];
   let n = 0;
+  // the same categories for every post (EIBI: MT and Manager): one row per category, each post's limit in it
+  const lists = [...byPosts.values()].map((b) => b.items.map((x) => x.category).join("|"));
+  if (byPosts.size > 1 && byPosts.size <= 4 && ![...byPosts.keys()].includes("") && lists.every((l) => l === lists[0])) {
+    const posts = [...byPosts.entries()];
+    rows.push(subhead("agep", "Age limit by post"));
+    posts[0][1].items.forEach((first, i) => {
+      rows.push({ key: `age${i}`, label: first.category || "General / others", value: (
+        <>{posts.map(([k, b]) => {
+          const mins = new Set(b.items.map((x) => x.min).filter(Boolean));
+          const g = b.items[i];
+          const min = g.min || (mins.size === 1 ? [...mins][0] : undefined);
+          return <span key={k} className="block"><span className="text-ink-2">{k}: </span><b className="whitespace-nowrap text-ink tabular-nums">{min ? `${min} to ${g.max}` : `Up to ${g.max}`} years</b></span>;
+        })}</>
+      ) });
+    });
+    return rows;
+  }
   for (const [k, b] of byPosts) {
     const mins = new Set(b.items.map((x) => x.min).filter(Boolean));
     const postMin = mins.size === 1 ? [...mins][0] : undefined;
