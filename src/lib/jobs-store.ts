@@ -254,3 +254,8 @@ export async function getSourcesCheckedAt(sources: string[]): Promise<string | n
   const all = await cachedSourceChecks();
   return sources.map((s) => all[s]).filter(Boolean).sort().pop() || null;
 }
+
+/** The agent's latest successful check of any state's official sites (ISO), or null: the site-wide "last checked". */
+export async function getLastCheckedAt(): Promise<string | null> {
+  return Object.values(await cachedStateChecks()).sort().pop() || null;
+}
