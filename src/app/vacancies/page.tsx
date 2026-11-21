@@ -63,7 +63,7 @@ export default async function VacanciesPage() {
           </h1>
           <p className="mt-2 text-sm text-ink-2 leading-relaxed max-w-[68ch]">
             Central and state recruitments grouped by the education they ask for, each read from its official
-            notice. Colleges and libraries print this list for their notice boards.
+            notice. Colleges and libraries can print this list for their notice boards.
           </p>
         </header>
         <QualificationVacancyTracker jobs={getListingJobs(await getAllJobs()).map(forList)} />
