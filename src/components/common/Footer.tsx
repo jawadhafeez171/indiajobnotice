@@ -248,7 +248,7 @@ export function Footer() {
           <p className="pt-1 sm:pt-0">© {new Date().getFullYear()} India Job Notice · indiajobnotice.com</p>
           <div className="grid grid-cols-3 w-full text-center sm:w-auto sm:flex sm:flex-wrap sm:items-center sm:gap-6 text-on-navy [&_a]:flex [&_a]:items-center [&_a]:justify-center [&_a]:min-h-[44px] sm:[&_a]:min-h-0 sm:[&_a]:inline-block">
             <Link href="/about" className="hover:text-white transition-colors">About</Link>
-            <Link href="/editorial-policy" className="hover:text-white transition-colors">How we verify</Link>
+            <Link href="/editorial-policy" className="hover:text-white transition-colors">How we check notices</Link>
             <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
             <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy policy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms of use</Link>

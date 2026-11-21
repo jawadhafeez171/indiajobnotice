@@ -46,24 +46,24 @@ export default function ContactPage() {
     <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar />
 
-      <section className="border-b border-line bg-subtle py-8 sm:py-12 px-4 sm:px-6">
+      <section className="border-b border-line bg-subtle py-6 sm:py-12 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto space-y-3">
           <Breadcrumbs items={[{ label: "Contact" }]} className="mb-3" />
           <h1 className="text-3xl sm:text-4xl font-bold text-ink tracking-tight">Contact</h1>
-          <p className="text-base sm:text-lg text-ink-2 leading-relaxed max-w-prose">
-            One email address for everything:
-            <a href={`mailto:${EMAIL}`} className="mt-1 flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2 hover:text-saffron">{EMAIL}</a>
+          {/* phones: the address is under the button, so the button stays on the first screen */}
+          <p className="hidden sm:block text-lg text-ink-2 leading-relaxed max-w-prose">
+            One email address for everything: <span className="font-semibold text-ink">{EMAIL}</span>
           </p>
         </div>
       </section>
 
-      <main id="main-content" className="max-w-3xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-10 text-base text-ink-2 leading-relaxed">
+      <main id="main-content" className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10 flex-1 w-full space-y-10 text-base text-ink-2 leading-relaxed">
         {/* the reason most people come here */}
         <section aria-labelledby="mistake-h" className="rounded-xl border border-line bg-surface p-5 sm:p-6">
           <h2 id="mistake-h" className="text-xl font-bold text-ink">Found a mistake on a job page?</h2>
-          <p className="mt-2 max-w-prose">
-            Every job page is taken from the official notice, and its facts link to the page of the notice they came from.
-            If something does not match the notice, tell us and we will check it against the notice and correct the page.
+          <p className="mt-2 max-w-[60ch]">
+            Job pages are taken from official notices. If a page does not match its notice, tell us and we will check it and
+            correct the page.
           </p>
           <p className="mt-4 font-semibold text-ink">Please include:</p>
           <ol className="mt-1 list-decimal space-y-1 pl-6 marker:font-semibold marker:text-navy">
@@ -79,14 +79,19 @@ export default function ContactPage() {
             Email a correction
           </a>
           <p className="mt-2 text-sm text-muted">
-            Opens your email app with these questions filled in. Or write to{" "}
-            <span className="select-all break-all font-semibold text-ink">{EMAIL}</span>
+            Opens your email app with these questions filled in. A screenshot of the notice is fine, and you can write in any language.
+            Each job page also has a link that fills in its address for you.
+          </p>
+          <p className="mt-1 text-sm text-muted">
+            Or write to <span className="block select-all font-semibold text-ink sm:inline">{EMAIL}</span>
           </p>
         </section>
 
         <section aria-labelledby="other-h">
           <h2 id="other-h" className="text-xl font-bold text-ink">Anything else</h2>
-          <p className="mt-2 max-w-prose">
+          <p className="mt-2 max-w-[60ch]">
+            How notices are read and checked:{" "}
+            <Link href="/editorial-policy" className="font-semibold text-navy underline underline-offset-2 hover:text-saffron">how we check notices</Link>.
             Questions about the site, a notice we have missed, or a request from a college or coaching centre: write to the
             same address. Colleges and libraries can print our list of open jobs from the{" "}
             <Link href="/vacancies" className="font-semibold text-navy underline underline-offset-2 hover:text-saffron">vacancies page</Link>.
@@ -119,7 +124,7 @@ export default function ContactPage() {
 
         <section aria-labelledby="money-h" className="rounded-xl border border-saffron-line bg-saffron-tint p-5">
           <h2 id="money-h" className="text-lg font-bold text-ink">We never ask for money</h2>
-          <p className="mt-2 max-w-prose">
+          <p className="mt-2 max-w-[60ch]">
             India Job Notice does not take applications, interview anyone or issue appointment letters, and never asks for
             fees, UPI payments or bank details. Application fees are paid only on the recruiting body&apos;s own website.
           </p>

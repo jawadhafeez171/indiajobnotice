@@ -450,7 +450,7 @@ export function Navbar({ currentStateSlug, compact = false }: Props) {
 
           <div className="shrink-0 border-t border-line px-4 py-1 flex items-center justify-center gap-5 text-[13px] text-muted">
             <Link href="/about" onClick={close} className="inline-flex items-center min-h-[44px] hover:text-navy">About</Link>
-            <Link href="/editorial-policy" onClick={close} className="inline-flex items-center min-h-[44px] hover:text-navy">How we verify</Link>
+            <Link href="/editorial-policy" onClick={close} className="inline-flex items-center min-h-[44px] hover:text-navy">How we check notices</Link>
             <Link href="/contact" onClick={close} className="inline-flex items-center min-h-[44px] hover:text-navy">Contact</Link>
           </div>
         </div>

@@ -96,7 +96,7 @@ export default async function HomePage() {
             <span className="whitespace-nowrap">
               ·{" "}
               <Link href="/editorial-policy" className="py-2.5 underline decoration-[#9FB3D6]/50 underline-offset-2 hover:text-white hover:decoration-white">
-                How we verify
+                How we check notices
               </Link>
             </span>
           </p>

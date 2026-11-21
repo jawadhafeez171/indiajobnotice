@@ -81,7 +81,7 @@ export async function CategoryHubView({ hub, parentCrumb }: Props) {
           {underWay > 0 && <> · {underWay} more with exams or results to come</>}
           , each read from its official notice.{" "}
           <Link href="/editorial-policy" className="font-semibold text-navy underline underline-offset-2">
-            How we verify
+            How we check notices
           </Link>
         </p>
         <p className="mt-3 text-sm text-muted leading-relaxed max-w-[68ch]">{hub.overview}</p>

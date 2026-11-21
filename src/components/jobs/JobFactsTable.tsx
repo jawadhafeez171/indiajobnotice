@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ChevronDown, ExternalLink } from "lucide-react";
-import { JobNotification, ageText, formatFee, isJobApplicationClosed, payText } from "@/data/jobs";
+import { JobNotification, ageText, formatFee, getJobCanonicalPath, isJobApplicationClosed, payText } from "@/data/jobs";
 import { formatDate } from "@/lib/utils";
 import { getJobPostBreakdown } from "@/lib/exam-details";
 import { getStateBySlug } from "@/config/states";
@@ -462,6 +462,15 @@ function links(job: JobNotification): Section {
   if (!closed && job.applyOnlineUrl) rows.push({ key: "apply", label: "Apply online", value: linkOut(job.applyOnlineUrl, hostOf(job.applyOnlineUrl)) });
   rows.push({ key: "pdf", label: "Official notification", value: linkOut(job.officialPdfUrl, /\.pdf($|[?#])/i.test(job.officialPdfUrl) ? "Notification (PDF)" : hostOf(job.officialPdfUrl)) });
   if (job.copyName) rows.push({ key: "copy", label: "Our copy", value: <CopyLink name={job.copyName} /> });
+  // the reader who spots a wrong date is on this page: the email opens with its link and title filled in
+  const pageUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}`;
+  const mail = `mailto:indiajobnotice@gmail.com?subject=${encodeURIComponent(`Correction: ${job.shortTitle || job.title}`.slice(0, 150))}&body=${encodeURIComponent(
+    `Job page link: ${pageUrl}\n\nWhat is wrong on the page:\n\nWhat the official notice says (page number if you know it):\n`)}`;
+  rows.push({ key: "report", label: "Found a mistake?", value: (
+    <a href={mail} className="inline-flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2 hover:text-saffron">
+      Email a correction for this page
+    </a>
+  ) });
   return { id: "links", title: "Important links", rows };
 }
 
