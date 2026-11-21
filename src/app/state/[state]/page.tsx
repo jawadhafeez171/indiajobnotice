@@ -9,7 +9,7 @@ import { getStateBySlug, STATES_REGISTRY } from "@/config/states";
 import { getJobsByState, getListingJobs, getExamsInProgress, isOpenOrOpening, getJobCanonicalPath, JobNotification, nextExamDate } from "@/data/jobs";
 import { formatDateShort, getDaysRemaining } from "@/lib/utils";
 import { ExamsInProgressSection } from "@/components/jobs/ExamsInProgressSection";
-import { getAllJobs } from "@/lib/jobs-store";
+import { getAllJobs, getStateCheckedAt } from "@/lib/jobs-store";
 
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
@@ -91,6 +91,11 @@ export default async function StateHomePage({ params }: PageProps) {
   }
 
   const allJobs = await getAllJobs();
+  // when the agent last checked this state's official sites (from its own records; nothing shown if unknown)
+  const checkedAt = await getStateCheckedAt(state.name);
+  const checkedText = checkedAt
+    ? new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", day: "2-digit", month: "short", hour: "numeric", minute: "2-digit", hour12: true }).format(new Date(checkedAt))
+    : null;
   const jobs = getJobsByState(getListingJobs(allJobs), state.slug);
   const ownOpen = jobs.some((j) => !j.isCentral && isOpenOrOpening(j));
   const own = getJobsByState(allJobs, state.slug, false);
@@ -182,6 +187,12 @@ export default async function StateHomePage({ params }: PageProps) {
                   {facts.biggest.orgShortCode.split(" · ")[0]} {rowTitle(facts.biggest).replace(/\s*\((?:KK|RPC)\)/g, "")}</Link>, {facts.biggest.totalVacancies.toLocaleString("en-IN")} posts.</>
               )}
               {sitesLink && <> See the {sitesLink}.</>}
+            </p>
+          )}
+
+          {checkedText && (
+            <p className="mt-2 text-[13px] text-muted">
+              Official sites last checked <time dateTime={checkedAt || undefined}>{checkedText}</time> IST
             </p>
           )}
 

@@ -202,3 +202,28 @@ function prepare(jobs: JobNotification[]): JobNotification[] {
   });
   return disambiguateCodes(cleaned);
 }
+
+// When each state's official sites were last checked by the agent (view site_state_checks: one row per state,
+// readable by the site's role, 21 Nov). Cached with the job list and refreshed with it after each agent run, so
+// it adds no page rebuilds of its own.
+const stateKey = (name: string) => name.toLowerCase().replace(/s*([^)]*)/g, "").replace(/&/g, "and").replace(/[^a-z]/g, "");
+
+async function loadStateChecks(): Promise<Record<string, string>> {
+  const conn = db();
+  if (!conn) return {};
+  try {
+    const rows = await conn<{ state: string; at: string | null }[]>`
+      select state, last_checked::text as at from site_state_checks`;
+    return Object.fromEntries(rows.filter((r) => r.at).map((r) => [stateKey(r.state), r.at as string]));
+  } catch (err) {
+    console.warn("state check times not read:", err);
+    return {};
+  }
+}
+
+const cachedStateChecks = dev ? loadStateChecks : unstable_cache(loadStateChecks, ["state-checks"], { tags: ["jobs"], revalidate: 86400 });
+
+/** When the agent last checked this state's official sites successfully (ISO), or null when not known. */
+export async function getStateCheckedAt(stateName: string): Promise<string | null> {
+  return (await cachedStateChecks())[stateKey(stateName)] || null;
+}
