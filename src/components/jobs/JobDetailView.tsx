@@ -202,7 +202,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
                 <div key={f.label} className="min-w-0">
                   <dt className="text-xs text-muted">{f.label}</dt>
                   <dd className={cn("text-sm font-semibold text-ink leading-snug", f.strong && "text-[15px] font-bold")}>
-                    {f.href ? <a href={f.href} className="hover:text-navy hover:underline underline-offset-2">{f.value}</a> : f.value}
+                    {f.href ? <a href={f.href} className="-my-3 inline-block py-3 hover:text-navy hover:underline underline-offset-2">{f.value}</a> : f.value}
                     {f.note && <span className={cn("block text-xs font-semibold", f.note === "Closed" ? "text-muted" : daysLeft >= 0 && daysLeft <= 7 ? "text-saffron" : "text-green")}>{f.note}</span>}
                   </dd>
                 </div>
@@ -216,7 +216,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
                   Applications closed{job.applicationEndDate ? ` on ${formatDate(job.applicationEndDate)}` : ""}
                 </p>
               ) : opens ? (
-                <p className="flex flex-col items-center justify-center px-4 py-2.5 rounded-lg bg-navy-tint border border-navy-line text-center">
+                <p className="flex flex-col items-center justify-center px-4 py-2.5 rounded-lg bg-navy-tint text-center">
                   <span className="inline-flex items-center gap-2 font-bold text-sm text-navy">
                     <Clock className="w-4 h-4" aria-hidden />
                     Applications open {formatDate(opens)}
@@ -282,7 +282,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
             <ul className="flex flex-wrap gap-x-5 gap-y-1 text-sm">
               {sections.map((x) => (
                 <li key={x.id}>
-                  <a href={`#${x.id}`} className="inline-flex items-center min-h-[40px] font-semibold text-navy underline-offset-4 hover:underline">
+                  <a href={`#${x.id}`} className="inline-flex items-center min-h-[44px] font-semibold text-navy underline-offset-4 hover:underline">
                     {x.label}
                   </a>
                 </li>

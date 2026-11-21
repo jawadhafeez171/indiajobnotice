@@ -385,7 +385,7 @@ function fee(job: JobNotification): Section | null {
       const extra = f.text && f.text.replace(/\.00?(?!\d)/g, "").replace(/[₹\s,/-]|rs\.?|\(?non-refundable\)?|only/gi, "") !== String(f.amount ?? "");
       rows.push({ key: `fee-${f.category}`, label: f.category, value: (
         <>{f.amount === 0 ? <b className="text-green">No fee</b> : f.amount ? <b className="text-base text-ink tabular-nums">{rupees(f.amount)}</b> : f.text}
-          {extra && f.amount !== null && feeNote(f.text) && !restates(feeNote(f.text), f.category) && <span className="ml-1.5 text-[13px] text-ink-2">({feeNote(f.text)})</span>} <PageRef job={job} page={f.page} /></>
+          {extra && f.amount !== null && feeNote(f.text) && !restates(feeNote(f.text), f.category) && <> <span className="text-[13px] text-ink-2">({feeNote(f.text)})</span></>} <PageRef job={job} page={f.page} /></>
       ) });
     }
   } else {
