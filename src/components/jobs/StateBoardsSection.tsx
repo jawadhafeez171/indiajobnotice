@@ -3,6 +3,11 @@ import { ExternalLink } from "lucide-react";
 import { STATE_BOARDS, StateBoard } from "@/data/state-boards";
 
 /** Whether the agent watches any official body in this state (src/data/state-boards.ts). */
+/** How many official sites the agent checks for a state. */
+export function stateBoardCount(stateSlug: string): number {
+  return (STATE_BOARDS[stateSlug] || []).reduce((n, g) => n + g.bodies.length, 0);
+}
+
 export function hasStateBoards(stateSlug: string): boolean {
   return (STATE_BOARDS[stateSlug] || []).length > 0;
 }
@@ -30,7 +35,7 @@ export function StateBoardsSection({ stateSlug, stateName }: { stateSlug: string
   const total = groups.reduce((n, g) => n + g.bodies.length, 0);
   if (!total) return null;
   return (
-    <section aria-labelledby="boards-h" className="border-t border-line pt-6">
+    <section aria-labelledby="boards-h" id="official-sites" className="scroll-mt-28 border-t border-line pt-6">
       <h2 id="boards-h" className="font-serif text-xl font-bold text-ink">
         Official recruitment sites we check for {stateName}{" "}
         <span className="ml-2 font-sans text-base font-semibold text-muted tabular-nums">{total}</span>

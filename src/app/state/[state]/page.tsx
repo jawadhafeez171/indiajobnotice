@@ -7,7 +7,7 @@ import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSec
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { getStateBySlug, STATES_REGISTRY } from "@/config/states";
 import { getJobsByState, getListingJobs, getExamsInProgress, isOpenOrOpening, getJobCanonicalPath, JobNotification, nextExamDate } from "@/data/jobs";
-import { formatDateShort } from "@/lib/utils";
+import { formatDateShort, getDaysRemaining } from "@/lib/utils";
 import { ExamsInProgressSection } from "@/components/jobs/ExamsInProgressSection";
 import { getAllJobs } from "@/lib/jobs-store";
 
@@ -21,7 +21,7 @@ import { stateHubFacts, stateHubDescription, bodiesPhrase } from "@/lib/state-hu
 import { noticeArea } from "@/lib/internal-links";
 import { rowTitle } from "@/components/jobs/JobListCard";
 import { safeJson } from "@/lib/json-ld";
-import { StateBoardsSection, hasStateBoards } from "@/components/jobs/StateBoardsSection";
+import { StateBoardsSection, hasStateBoards, stateBoardCount } from "@/components/jobs/StateBoardsSection";
 
 const SITE = "https://www.indiajobnotice.com";
 // the stage tabs a state page shows (20 Nov critique: seven tabs repeated the sections below them)
@@ -100,6 +100,10 @@ export default async function StateHomePage({ params }: PageProps) {
   const listJobs = (ownOpen ? jobs.filter((j) => !j.isCentral) : jobs).map(withoutStateCode);
   const underWay = getJobsByState(getExamsInProgress(allJobs), state.slug, false).map(withoutStateCode);
   const centralOpen = jobs.filter((j) => j.isCentral && isOpenOrOpening(j)).length;
+  const sites = stateBoardCount(state.slug);
+  const sitesLink = sites > 0 && (
+    <a href="#official-sites" className="font-semibold text-navy underline underline-offset-2 hover:text-saffron">{sites} official sites we check</a>
+  );
   // what the tabs already list (an exam ahead, an admit card, a result) is not listed again under "under way"
   const inTabs = (j: JobNotification) => j.status === "ADMIT_CARD_OUT" || j.status === "RESULT_OUT" || nextExamDate(j) !== null;
   const underWayRest = underWay.filter((j) => !inTabs(j));
@@ -153,8 +157,9 @@ export default async function StateHomePage({ params }: PageProps) {
           {!ownOpen && (
             <p className="mt-3 text-sm text-ink max-w-prose leading-relaxed">
               <b>No {state.name} notification is open for applications right now.</b>
-              {underWay.length > 0 && <> {underWay.length} {state.name} recruitment{underWay.length === 1 ? " is" : "s are"} under way: their admit cards, exam dates and results are just below.</>}
-              {centralOpen > 0 && <> All-India jobs, open to candidates from every state, follow the official sites we check.</>}
+              {" "}Below: the {sitesLink || "official sites we check"}
+              {centralOpen > 0 && <>, All-India jobs open to candidates from every state</>}
+              {underWay.length > 0 && <>, and {underWay.length} {state.name} recruitment{underWay.length === 1 ? "" : "s"} under way (admit cards, results)</>}.
             </p>
           )}
           {/* at a glance: counted from the notices themselves, never written by hand */}
@@ -163,6 +168,7 @@ export default async function StateHomePage({ params }: PageProps) {
               <b>{facts.open.length.toLocaleString("en-IN")}</b> open
               {facts.posts > 0 && <> · <b>{facts.posts.toLocaleString("en-IN")}</b> posts</>}
               {facts.closingSoon.length > 0 && <> · <a href="#closing-soon" className="font-semibold text-navy underline underline-offset-2">{facts.closingSoon.length} close{facts.closingSoon.length === 1 ? "s" : ""} this week</a></>}
+              {sitesLink && <> · {sitesLink}</>}
             </p>
           )}
           {facts.open.length > 0 && (
@@ -175,6 +181,7 @@ export default async function StateHomePage({ params }: PageProps) {
                 <> Biggest: <Link href={getJobCanonicalPath(facts.biggest)} className="font-semibold text-navy underline underline-offset-2 hover:text-saffron">
                   {facts.biggest.orgShortCode.split(" · ")[0]} {rowTitle(facts.biggest).replace(/\s*\((?:KK|RPC)\)/g, "")}</Link>, {facts.biggest.totalVacancies.toLocaleString("en-IN")} posts.</>
               )}
+              {sitesLink && <> See the {sitesLink}.</>}
             </p>
           )}
 
@@ -215,7 +222,6 @@ export default async function StateHomePage({ params }: PageProps) {
         ) : (
           <>
             {/* nothing of its own open: the state's own recruitments under way, the sites we check, then All-India jobs */}
-            <ExamsInProgressSection jobs={underWay} limit={4} expandRest place={state.name} />
             <StateBoardsSection stateSlug={state.slug} stateName={state.name} />
             {allIndia.length > 0 && (
               <section aria-labelledby="all-india-h" className="border-t border-line pt-6">
@@ -235,7 +241,11 @@ export default async function StateHomePage({ params }: PageProps) {
                         </span>
                         <span className="mt-0.5 block text-[13px] text-ink-2 tabular-nums">
                           {j.totalVacancies ? `${j.totalVacancies.toLocaleString("en-IN")} post${j.totalVacancies === 1 ? "" : "s"}` : "Posts: see notification"}
-                          {j.applicationEndDate && <> · last date <b className="text-ink">{formatDateShort(j.applicationEndDate)}</b></>}
+                          {j.applicationEndDate && <> · last date <b className="text-ink">{formatDateShort(j.applicationEndDate)}</b>
+                            {(() => {
+                              const d = getDaysRemaining(j.applicationEndDate);
+                              return d >= 0 && d <= 7 ? <b className="text-saffron"> · {d === 0 ? "closes today" : `${d} day${d === 1 ? "" : "s"} left`}</b> : null;
+                            })()}</>}
                         </span>
                       </Link>
                     </li>
@@ -248,6 +258,7 @@ export default async function StateHomePage({ params }: PageProps) {
                 )}
               </section>
             )}
+            <ExamsInProgressSection jobs={underWay} limit={4} expandRest place={state.name} />
           </>
         )}
 
