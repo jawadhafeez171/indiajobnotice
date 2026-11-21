@@ -532,6 +532,23 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
     };
   }, [filteredJobs]);
 
+  // a Karnataka round's KK and RPC notices of one recruitment: each row points to the other (21 Nov critique)
+  const twinOf = useMemo(() => {
+    const base = (j: JobNotification) => `${orgKey(j)}|${rowTitle(j).replace(/\s*\((?:KK|RPC)\)/g, "").replace(/\s+/g, " ").trim().toLowerCase()}`;
+    const by = new Map<string, JobNotification[]>();
+    for (const j of jobs) if (noticeArea(j)) by.set(base(j), [...(by.get(base(j)) || []), j]);
+    const out = new Map<string, { href: string; label: string }>();
+    for (const group of by.values()) {
+      for (const j of group) {
+        const mine = noticeArea(j)?.code;
+        const other = group.find((x) => noticeArea(x)?.code && noticeArea(x)?.code !== mine);
+        if (other) out.set(j.id, { href: getJobCanonicalPath(other),
+          label: `Also: ${noticeArea(other)?.code === "KK" ? "Kalyana Karnataka (KK)" : "Rest of Karnataka (RPC)"}${other.totalVacancies ? `, ${other.totalVacancies.toLocaleString("en-IN")} posts` : ""}` });
+      }
+    }
+    return out;
+  }, [jobs]);
+
   // "Show more" counts jobs, not headings
   const shownItems = useMemo(() => {
     const out: ListItem[] = [];
@@ -1010,6 +1027,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                 hidePlace={!!currentStateSlug && !job.isCentral && job.stateSlug === currentStateSlug}
                 job={job}
                 title={titleOf(job)}
+                also={twinOf.get(job.id)}
                 exam={activeCategory === "EXAM_DATES" || job.status === "ADMIT_CARD_OUT" ? nextExamDate(job) : undefined}
                 showStage={activeCategory === "ALL"}
                 note={activeCategory === "TODAY" ? (todayChange(job)?.kind === "new" ? "New" : todayChange(job)?.label) : undefined}
@@ -1117,6 +1135,11 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
                         >
                           {titleOf(job)}
                         </Link>
+                        {twinOf.get(job.id) && (
+                          <Link href={twinOf.get(job.id)!.href} className="mt-1 inline-flex min-h-[28px] items-center text-[12px] font-semibold text-navy underline underline-offset-2 hover:text-saffron">
+                            {twinOf.get(job.id)!.label}
+                          </Link>
+                        )}
                       </td>
 
                       {docMode ? (

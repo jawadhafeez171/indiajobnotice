@@ -475,8 +475,10 @@ function deadlineText(job: JobNotification, exam?: ExamDateEntry | null): string
  * The full name and the age are on the job page. No box; rows are separated by lines. The whole row is
  * the link; `action` sits on top.
  */
-export function JobRow({ job, exam, action, title, showStage = false, note, hidePlace = false }: {
+export function JobRow({ job, exam, action, title, showStage = false, note, hidePlace = false, also }: {
   job: JobNotification;
+  /** The same recruitment's notice for the other cadre (KK / RPC): "Also: Kalyana Karnataka (KK), 563 posts". */
+  also?: { href: string; label: string };
   /** On the job's own state page: no state name; the qualification takes its place on phones. */
   hidePlace?: boolean;
   exam?: ExamDateEntry | null;
@@ -512,15 +514,25 @@ export function JobRow({ job, exam, action, title, showStage = false, note, hide
         </Link>
         <div className="flex items-center gap-2 text-[11px] leading-tight">
           <p className="min-w-0 flex-1 truncate text-muted">
-            {meta.map((m, i) => (
-              <span key={m.text} className={m.wide ? "hidden sm:inline" : undefined}>{i > 0 && " · "}{m.text}</span>
-            ))}
+            {meta.map((m, i) => {
+              const firstOnPhone = !m.wide && meta.slice(0, i).every((x) => x.wide);
+              return (
+                <span key={m.text} className={m.wide ? "hidden sm:inline" : undefined}>
+                  {i > 0 && (firstOnPhone ? <span className="hidden sm:inline"> · </span> : " · ")}{m.text}
+                </span>
+              );
+            })}
           </p>
           <p className="shrink-0 whitespace-nowrap">
             <RowDate job={job} exam={exam} />
           </p>
           {action && <span className="relative z-10 shrink-0">{action}</span>}
         </div>
+        {also && (
+          <Link href={also.href} className="relative z-10 -my-1 inline-flex min-h-[36px] items-center text-[12px] font-semibold text-navy underline underline-offset-2 hover:text-saffron">
+            {also.label}
+          </Link>
+        )}
       </div>
     </div>
   );

@@ -7,7 +7,6 @@ import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSec
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { getStateBySlug, STATES_REGISTRY } from "@/config/states";
 import { getJobsByState, getListingJobs, getExamsInProgress, isOpenOrOpening, getJobCanonicalPath, JobNotification, nextExamDate } from "@/data/jobs";
-import { formatDateShort, getDaysRemaining } from "@/lib/utils";
 import { ExamsInProgressSection } from "@/components/jobs/ExamsInProgressSection";
 import { getAllJobs, getStateCheckedAt } from "@/lib/jobs-store";
 
@@ -19,7 +18,7 @@ import { YEAR } from "@/lib/year";
 import { stateHasListings } from "@/lib/index-rules";
 import { stateHubFacts, stateHubDescription, bodiesPhrase } from "@/lib/state-hub";
 import { noticeArea } from "@/lib/internal-links";
-import { rowTitle } from "@/components/jobs/JobListCard";
+import { JobRow, rowTitle } from "@/components/jobs/JobListCard";
 import { safeJson } from "@/lib/json-ld";
 import { boardOfJob, boardPath } from "@/lib/boards";
 import type { HiringBody } from "@/lib/state-hub";
@@ -249,7 +248,6 @@ export default async function StateHomePage({ params }: PageProps) {
               layoutSwitch={false}
               headingOnPhone={false}
             />
-            <OpenJobLinks jobs={listJobs} heading={`All open ${state.name} government job notifications`} />
             {/* exams and results are the list's tabs; here only what they do not hold (answer keys, lists...) */}
             <ExamsInProgressSection jobs={underWayRest} limit={4} expandRest place={state.name}
               heading={`More ${state.name} recruitments under way`}
@@ -269,24 +267,8 @@ export default async function StateHomePage({ params }: PageProps) {
                 <p className="mt-1 text-sm text-ink-2 max-w-prose">
                   Central government recruitments any state&apos;s candidates may apply to, biggest first. Some are for posts in one city: the notice says where.
                 </p>
-                <ul className="mt-2 divide-y divide-line-soft">
-                  {allIndia.map((j) => (
-                    <li key={j.id}>
-                      <Link href={getJobCanonicalPath(j)} className="group block py-3">
-                        <span className="block text-sm font-semibold text-ink group-hover:text-navy leading-snug">
-                          <span className="font-bold text-navy">{j.orgShortCode}</span> {rowTitle(j)}
-                        </span>
-                        <span className="mt-0.5 block text-[13px] text-ink-2 tabular-nums">
-                          {j.totalVacancies ? `${j.totalVacancies.toLocaleString("en-IN")} post${j.totalVacancies === 1 ? "" : "s"}` : "Posts: see notification"}
-                          {j.applicationEndDate && <> · last date <b className="text-ink">{formatDateShort(j.applicationEndDate)}</b>
-                            {(() => {
-                              const d = getDaysRemaining(j.applicationEndDate);
-                              return d >= 0 && d <= 7 ? <b className="text-saffron"> · {d === 0 ? "closes today" : `${d} day${d === 1 ? "" : "s"} left`}</b> : null;
-                            })()}</>}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
+                <ul className="mt-3 divide-y divide-line-soft rounded-xl border border-line bg-surface">
+                  {allIndia.map((j) => <li key={j.id}><JobRow job={j} /></li>)}
                 </ul>
                 {centralOpen > allIndia.length && (
                   <Link href="/?scope=central#major-recruitments" className="mt-1 inline-flex min-h-[44px] items-center text-sm font-bold text-navy hover:text-saffron">
@@ -346,6 +328,8 @@ export default async function StateHomePage({ params }: PageProps) {
         </section>
 
         {ownOpen && <StateBoardsSection stateSlug={state.slug} stateName={state.name} compact />}
+        {/* every open notice as a plain link (for crawlers and printing), after everything a reader decides on */}
+        {ownOpen && <OpenJobLinks jobs={listJobs} heading={`All open ${state.name} government job notifications`} />}
       </main>
 
       <Footer />
