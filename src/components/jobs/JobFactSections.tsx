@@ -329,8 +329,9 @@ export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNull
   const finished = (job.stages || []).some((s) => s.kind === "final_result");
   if (!finished && !steps.some((s) => s.when === "next")) {
     const open = Boolean(end) && !closed;
-    steps.push({ key: "next", label: open ? "Admit card and exam" : "Next stage", sortKey: "", when: "next",
-      value: open ? "After applications close" : `To be announced by ${job.orgShortCode}` });
+    // not every recruitment has an exam or an admit card (some select by marks): name no step the notice does not give
+    steps.push({ key: "next", label: "Next stage", sortKey: "", when: "next",
+      value: open ? `Announced by ${job.orgShortCode} after applications close` : `To be announced by ${job.orgShortCode}` });
   }
   // a date known only to the month goes after that month's days ("December 2026" after "11 Dec")
   const order = (k: string) => (!k ? "9999" : k.length === 7 ? `${k}-32` : k);

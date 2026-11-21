@@ -149,6 +149,9 @@ function fold(rows: Row[], noun: string, over = 6, keep = 3): Group {
   return rows.length > over ? { rows: rows.slice(0, keep), more: rows.slice(keep), noun } : { rows };
 }
 
+/** A pay scale printed without a currency sign ("Pay scale 27,000-650-…") gets ₹ before its first amount. */
+const rupee = (t: string) => (/₹|rs\.?\s?\d/i.test(t) ? t : t.replace(/(^|[\s:])(\d{1,3}(?:,\d{2,3})+)/, "$1₹$2"));
+
 function posts(job: JobNotification): Section | null {
   if (!hasPostsCard(job)) return null;
   const d = job.details || {};
@@ -181,6 +184,9 @@ function posts(job: JobNotification): Section | null {
           // the fuller printed text already holds the qualification: it is shown once, as the qualification
           const fuller = o && p.qualification !== "See notification" && restates(p.qualification, o.other);
           const showQual = quals.size > 1 && p.qualification !== "See notification" && p.qualification !== sharedQual;
+          if (quals.size > 1 && p.qualification === "See notification" && o) {
+            return <span className="mt-1 block"><span className="text-muted">Qualification: </span>{o.other} <PageRef job={job} page={o.page} /></span>;
+          }
           if (quals.size > 1 && p.qualification === "See notification" && !fuller) {
             return <span className="mt-1 block"><span className="text-muted">Qualification: </span>see the official notification</span>;
           }
@@ -192,7 +198,7 @@ function posts(job: JobNotification): Section | null {
         {(() => {
           // what else this post asks for (marks, TET...), on its own row instead of a separate list
           const o = onlyMatch((d.postDetails || []).filter((x) => x.other), p.postName);
-          return o && !restates(o.other, p.qualification) && !(p.qualification !== "See notification" && restates(p.qualification, o.other)) ? <span className="mt-1 block"><span className="text-muted">Also needed: </span>{o.other} <PageRef job={job} page={o.page} /></span> : null;
+          return o && p.qualification !== "See notification" && !restates(o.other, p.qualification) && !restates(p.qualification, o.other) ? <span className="mt-1 block"><span className="text-muted">Also needed: </span>{o.other} <PageRef job={job} page={o.page} /></span> : null;
         })()}
       </>
     ),
@@ -200,11 +206,11 @@ function posts(job: JobNotification): Section | null {
   const rows: Row[] = [];
   if (suffix) rows.push({ info: true, key: "under", label: list.length > 2 ? "All posts are in" : "Both posts are in", value: suffix });
   if (pays.size === 1 && list.length && [...pays][0] !== "See notification") {
-    rows.push({ info: true, key: "pay", label: list.length > 1 ? "Pay (all posts)" : "Pay", value: payText([...pays][0]) });
+    rows.push({ info: true, key: "pay", label: list.length > 1 ? "Pay (all posts)" : "Pay", value: rupee(payText([...pays][0])) });
   } else if (sharedPay) {
-    rows.push({ info: true, key: "pay", label: "Pay (unless shown below)", value: payText(sharedPay) });
+    rows.push({ info: true, key: "pay", label: "Pay (unless shown below)", value: rupee(payText(sharedPay)) });
   } else if (!list.length && job.salary) {
-    rows.push({ key: "pay", label: "Pay", value: payText(job.salary) });
+    rows.push({ key: "pay", label: "Pay", value: rupee(payText(job.salary)) });
   }
   if (sharedQual) rows.push({ info: true, key: "qual", label: "Qualification (unless shown below)", value: sharedQual });
   if (!list.length && job.totalVacancies > 0) rows.push({ key: "n", label: "Posts", value: job.totalVacancies.toLocaleString("en-IN") });
@@ -623,7 +629,7 @@ export function JobFactsTable({ job }: { job: JobNotification }) {
     // overflow-clip, not hidden: rounded corners without breaking the sticky section headings
     <div className="overflow-clip rounded-xl border border-line">
       <table className="w-full table-fixed border-collapse bg-surface text-sm [&_tbody:last-child>tr:last-child>*]:border-b-0">
-        <caption className="sr-only">{job.title}: the notice in a table</caption>
+        <caption className="sr-only">The notice in a table</caption>
         {/* fixed layout takes widths from the first row, a heading across both columns: the widths go here */}
         <colgroup>
           <col className="w-[34%] sm:w-[28%]" />

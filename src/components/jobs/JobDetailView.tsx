@@ -185,7 +185,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
         {area && sibling && siblingArea && (
           <p className="mt-2 text-sm text-ink-2 max-w-prose">
             This notice: posts in the {area.label}.{" "}
-            <Link href={getJobCanonicalPath(sibling)} className="font-semibold text-navy underline underline-offset-2 hover:text-saffron">
+            <Link href={getJobCanonicalPath(sibling)} className="inline-flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2 hover:text-saffron">
               Posts in the {siblingArea.label}: separate notice
             </Link>
             {sibling.applicationEndDate && <span className="text-muted"> (last date {formatDate(sibling.applicationEndDate)})</span>}
