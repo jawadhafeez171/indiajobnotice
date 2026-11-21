@@ -158,8 +158,8 @@ export default async function StateHomePage({ params }: PageProps) {
             <p className="mt-3 text-sm text-ink max-w-prose leading-relaxed">
               <b>No {state.name} notification is open for applications right now.</b>
               {" "}Below: the {sitesLink || "official sites we check"}
-              {centralOpen > 0 && <>, All-India jobs open to candidates from every state</>}
-              {underWay.length > 0 && <>, and {underWay.length} {state.name} recruitment{underWay.length === 1 ? "" : "s"} under way (admit cards, results)</>}.
+              {centralOpen > 0 && <>, <a href="#all-india" className="font-semibold text-navy underline underline-offset-2 hover:text-saffron">All-India jobs</a> open to candidates from every state</>}
+              {underWay.length > 0 && <>, and <a href="#recruitments-under-way" className="font-semibold text-navy underline underline-offset-2 hover:text-saffron">{underWay.length} {state.name} recruitment{underWay.length === 1 ? "" : "s"} under way</a> (admit cards, results)</>}.
             </p>
           )}
           {/* at a glance: counted from the notices themselves, never written by hand */}
@@ -222,9 +222,9 @@ export default async function StateHomePage({ params }: PageProps) {
         ) : (
           <>
             {/* nothing of its own open: the state's own recruitments under way, the sites we check, then All-India jobs */}
-            <StateBoardsSection stateSlug={state.slug} stateName={state.name} />
+            <StateBoardsSection stateSlug={state.slug} stateName={state.name} compact />
             {allIndia.length > 0 && (
-              <section aria-labelledby="all-india-h" className="border-t border-line pt-6">
+              <section aria-labelledby="all-india-h" id="all-india" className="scroll-mt-28 border-t border-line pt-6">
                 <h2 id="all-india-h" className="font-serif text-xl font-bold text-ink">
                   All-India jobs open to {state.name} candidates{" "}
                   <span className="ml-1 font-sans text-base font-semibold text-muted tabular-nums">{centralOpen}</span>

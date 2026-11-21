@@ -209,7 +209,20 @@ const ADVT_NO = [
   /\s*[([]?\s*\b(?:advt\.?|advertisement)\s*(?:no\.?|number)?\s*[:.-]?\s*(?=[\w/.-]*\d)[\w/.-]+(?:\s*(?:dated|dt\.?)\s*[\d/.-]+)?\s*[)\]]?/gi,
   /\s*[([]?\s*\b(?:(?:employment|recruitment)\s+)?(?:notification|notice)\s+(?:no\.?|number)\s*[:.-]?\s*(?=[\w/.-]*\d)[\w/.-]+\s*[)\]]?/gi,
 ];
+/** "(Advt. No. 11(XVII)/2021 & 81/2024)" removed to its matching bracket. */
+function dropAdvtGroup(t: string): string {
+  const i = t.search(/\(\s*advt/i);
+  if (i < 0) return t;
+  let depth = 0;
+  for (let k = i; k < t.length; k++) {
+    if (t[k] === "(") depth++;
+    else if (t[k] === ")" && --depth === 0) return `${t.slice(0, i)} ${t.slice(k + 1)}`;
+  }
+  return t.slice(0, i);
+}
+
 export function withoutAdvtNo(t: string): string {
+  t = dropAdvtGroup(dropAdvtGroup(t));
   for (const re of ADVT_NO) t = t.replace(re, " ");
   return t.replace(/\(\s*\)/g, "").replace(/\s{2,}/g, " ").replace(/^[\s,;:–—-]+|[\s,;:–—-]+$/g, "").trim();
 }

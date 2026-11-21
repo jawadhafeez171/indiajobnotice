@@ -30,7 +30,7 @@ function BoardLink({ b }: { b: StateBoard }) {
  * Every official recruiting body of the state the agent watches, grouped by kind, each linked to its own
  * recruitment page (20 Nov, owner's choice). District courts are many (28 in Karnataka) and fold away.
  */
-export function StateBoardsSection({ stateSlug, stateName }: { stateSlug: string; stateName: string }) {
+export function StateBoardsSection({ stateSlug, stateName, compact = false }: { stateSlug: string; stateName: string; compact?: boolean }) {
   const groups = STATE_BOARDS[stateSlug] || [];
   const total = groups.reduce((n, g) => n + g.bodies.length, 0);
   if (!total) return null;
@@ -44,8 +44,10 @@ export function StateBoardsSection({ stateSlug, stateName }: { stateSlug: string
         We check these sites for new notices; the recruitments we find are listed on this page with their official
         link. Applications are made on the official site. Each link opens the official site in a new tab.
       </p>
+      {(() => {
+        const block = (list: typeof groups) => (
       <div className="mt-4 sm:columns-2 gap-x-8">
-        {groups.map((g) => {
+        {list.map((g) => {
           // many alike bodies fold into one line: district courts, district recruitment bureaus (28 in Tamil Nadu)
           const district = g.bodies.filter((b) => DISTRICT.test(b.name));
           const main = g.bodies.filter((b) => !DISTRICT.test(b.name));
@@ -68,6 +70,21 @@ export function StateBoardsSection({ stateSlug, stateName }: { stateSlug: string
           );
         })}
       </div>
+        );
+        if (!compact || groups.length < 2) return block(groups);
+        const rest = groups.slice(1).reduce((n, g) => n + g.bodies.length, 0);
+        return (
+          <>
+            {block(groups.slice(0, 1))}
+            <details className="group -mt-2">
+              <summary className="inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1.5 text-sm font-bold text-navy hover:text-saffron [&::-webkit-details-marker]:hidden">
+                Show the other {rest} site{rest === 1 ? "" : "s"}
+              </summary>
+              {block(groups.slice(1))}
+            </details>
+          </>
+        );
+      })()}
     </section>
   );
 }
