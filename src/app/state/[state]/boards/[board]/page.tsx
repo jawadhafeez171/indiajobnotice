@@ -265,7 +265,7 @@ export default async function BoardPage({ params }: PageProps) {
         </p>}
       </main>
 
-      <Footer />
+      <Footer openStates />
     </div>
   );
 }

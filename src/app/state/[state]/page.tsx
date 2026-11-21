@@ -339,7 +339,7 @@ export default async function StateHomePage({ params }: PageProps) {
         {ownOpen && <OpenJobLinks jobs={listJobs} heading={`All open ${state.name} government job notifications`} />}
       </main>
 
-      <Footer />
+      <Footer openStates />
     </div>
   );
 }

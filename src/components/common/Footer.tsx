@@ -3,9 +3,10 @@ import Link from "next/link";
 import { POPULAR_STATES, STATES_REGISTRY, STATE_ZONES, StateInfo } from "@/config/states";
 import { getLastCheckedAt } from "@/lib/jobs-store";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
-import { ShieldCheck, Landmark, ChevronDown } from "lucide-react";
+import { ShieldCheck, ChevronDown } from "lucide-react";
 import { TelegramLogo, WhatsAppLogo, InstagramLogo, YouTubeLogo, INSTAGRAM_URL, YOUTUBE_URL } from "./SocialIcons";
 import { BrandLogo } from "./BrandLogo";
+import { StateJump } from "./StateJump";
 
 type FooterLink = { href: string; label: string; external?: boolean; divider?: boolean };
 type FooterGroup = { title: string; links: FooterLink[] };
@@ -83,7 +84,7 @@ function SocialButtons() {
   );
 }
 
-export async function Footer() {
+export async function Footer({ openStates = false }: { openStates?: boolean } = {}) {
   // when the agent last checked the official sites (its own records); nothing said when unknown
   const checked = await getLastCheckedAt();
   const checkedText = checked
@@ -119,7 +120,7 @@ export async function Footer() {
             </p>
             {checkedText && (
               <p className="text-xs text-on-navy">
-                We check the official sites three times a day. Last check: <time dateTime={checked || undefined} className="font-semibold text-white">{checkedText} IST</time>.{" "}
+                We check the official sites three times a day. Last check: <time dateTime={checked || undefined} className="whitespace-nowrap font-semibold text-white">{checkedText} IST</time>.{" "}
                 <Link href="/editorial-policy" className="inline-flex min-h-[44px] items-center font-semibold text-saffron-light underline underline-offset-2 hover:text-white md:min-h-0">How we check notices</Link>
               </p>
             )}
@@ -166,21 +167,19 @@ export async function Footer() {
         {/* Jobs by state (the home page's "All 36 states" link lands here) */}
         <nav id="all-states" aria-label="Jobs by state and union territory" className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-on-navy-2/25 scroll-mt-28">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-2">
-            <div className="flex items-center gap-2">
-              <Landmark className="w-4 h-4 text-saffron" />
-              <h3 className="text-base font-semibold text-white">
-                Jobs by state and union territory
-              </h3>
-            </div>
+            <h3 className="text-base font-semibold text-white">Jobs by state and union territory</h3>
           </div>
 
-          <p className="text-xs text-on-navy mb-4 md:mb-6 max-w-4xl">
+          <p className="text-xs text-on-navy mb-4 max-w-[62ch]">
             Each state page lists recruitments from that state&apos;s public service commission, staff selection
             and police boards, courts and departments, with the official link for each.
           </p>
+          <div className="mb-4 md:mb-6">
+            <StateJump states={states.map((st) => ({ name: st.name, href: getStateSubdomainUrl(st.slug) }))} />
+          </div>
 
           {/* phones: one list behind a tap (the region cards stacked were ~4 screens) */}
-          <details className="md:hidden group rounded-lg border border-on-navy-2/25 bg-navy-deep/60">
+          <details open={openStates} className="md:hidden group rounded-lg border border-on-navy-2/25 bg-navy-deep/60">
             <summary className="flex items-center justify-between px-4 min-h-[48px] cursor-pointer list-none text-sm font-semibold text-white">
               All 36 states and union territories
               <ChevronDown aria-hidden className="w-4 h-4 text-saffron-light transition-transform group-open:rotate-180" />
@@ -199,20 +198,14 @@ export async function Footer() {
             ))}
           </details>
 
-          <div className="hidden md:flex md:flex-wrap md:items-center md:gap-x-5 md:gap-y-1 mb-5 text-[13px]">
-            <span className="font-semibold text-white">Most visited:</span>
-            {states.slice(0, POPULAR_STATES.length).map((st) => (
-              <a key={st.slug} href={getStateSubdomainUrl(st.slug)} className="inline-flex min-h-[28px] items-center font-medium text-on-navy hover:text-saffron-light">{st.name}</a>
-            ))}
-          </div>
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 items-start text-xs">
+          <div className="hidden md:grid md:grid-cols-3 xl:grid-cols-5 gap-x-6 gap-y-6 items-start text-xs">
             {STATE_ZONES.map((zone) => {
               const zoneStates = zone.slugs
                 .map((slug) => STATES_REGISTRY.find((s) => s.slug === slug))
                 .filter((s): s is StateInfo => Boolean(s));
 
               return (
-                <div key={zone.id} className="bg-navy-deep/60 rounded-lg p-3.5 border border-on-navy-2/25 space-y-2">
+                <div key={zone.id} className="space-y-1">
                   <div className="flex items-center justify-between pb-1.5 border-b border-on-navy-2/25">
                     <span className="font-semibold text-white text-[13px] flex items-center gap-1">
                       {zone.name}
@@ -223,7 +216,8 @@ export async function Footer() {
                   <ul className="pt-0.5">
                     {zoneStates.map((st) => (
                       <li key={st.slug}>
-                        <a href={getStateSubdomainUrl(st.slug)} className="inline-flex min-h-[28px] items-center text-[13px] font-medium text-on-navy hover:text-saffron-light">
+                        <a href={getStateSubdomainUrl(st.slug)}
+                          className={`inline-flex min-h-[28px] items-center text-[13px] hover:text-saffron-light ${POPULAR_STATES.includes(st.slug) ? "font-semibold text-white" : "font-medium text-on-navy"}`}>
                           {st.name}
                         </a>
                       </li>
@@ -238,7 +232,7 @@ export async function Footer() {
 
       {/* About this site */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="max-w-2xl rounded-xl bg-navy-deep p-4 md:p-5 border border-on-navy-2/25 text-xs text-on-navy flex flex-row gap-3 md:gap-4 items-start md:items-center">
+        <div className="max-w-2xl mx-auto rounded-xl bg-navy-deep p-4 md:p-5 border border-on-navy-2/25 text-xs text-on-navy flex flex-row gap-3 md:gap-4 items-start md:items-center">
           <ShieldCheck className="w-6 h-6 md:w-8 md:h-8 text-green shrink-0" />
           <div className="space-y-1 text-[13px] leading-relaxed max-w-[62ch]">
             <p className="font-bold text-white">Apply only on the official site.</p>
@@ -253,7 +247,6 @@ export async function Footer() {
           <p className="pt-1 sm:pt-0">© {new Date().getFullYear()} India Job Notice · indiajobnotice.com</p>
           <nav aria-label="About this site" className="flex w-full flex-wrap items-center justify-center gap-x-5 sm:w-auto sm:gap-x-6 text-on-navy [&_a]:inline-flex [&_a]:items-center [&_a]:min-h-[44px] sm:[&_a]:min-h-[28px]">
             <Link href="/about" className="hover:text-white transition-colors">About</Link>
-            <Link href="/editorial-policy" className="hover:text-white transition-colors">How we check notices</Link>
             <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
             <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy policy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms of use</Link>
