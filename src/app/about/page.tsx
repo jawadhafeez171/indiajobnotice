@@ -4,31 +4,22 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { 
-  ShieldCheck, 
-  Target, 
-  Users, 
-  FileCheck, 
-  Scale, 
-  MapPin, 
-  CheckCircle2, 
-  ArrowRight,
-  Sparkles,
-  Building2,
-  Mail
-} from "lucide-react";
+import { ArrowRight, Mail } from "lucide-react";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
 
+// About (21 Nov): what the site is and how it works, said plainly. No team, desk, audience size or speed claims:
+// none can be backed. Who runs it is not described (owner's choice).
+
 export const metadata: Metadata = {
-  title: "About Us - Independent Public Employment Gazette",
-  description: "Learn about IndiaJobNotice.com, our mission to democratize public career intelligence for competitive exam aspirants across India, our editorial standards, and our verification methodology.",
+  title: "About",
+  description: "India Job Notice lists central and state government job notices taken from the recruiting bodies' own websites, with the facts from each notice and a link to it.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/about",
   },
   openGraph: {
     images: SITE_OG_IMAGES,
-    title: "About India Job Notice - Independent Public Career Intelligence",
-    description: "Empowering 40M+ Indian youth with verified government job gazettes, exam dates, syllabus patterns, and district-level notices.",
+    title: "About India Job Notice",
+    description: "Government job notices from official websites, with the facts from each notice and a link to it.",
     url: "https://www.indiajobnotice.com/about",
     siteName: "India Job Notice",
     locale: "en_IN",
@@ -36,168 +27,85 @@ export const metadata: Metadata = {
   },
 };
 
+const h2 = "text-xl font-bold text-ink";
+const link = "font-semibold text-navy underline underline-offset-2 hover:text-saffron";
+
 export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar />
 
-      {/* Editorial Header */}
       <section className="border-b border-line bg-subtle py-8 sm:py-12 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto space-y-3">
+        <div className="max-w-3xl mx-auto space-y-3">
           <Breadcrumbs items={[{ label: "About" }]} className="mb-3" />
-
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-ink tracking-tight">
-            Democratizing Government Career Notices for Every Aspirant
-          </h1>
-
-          <p className="text-base sm:text-lg text-ink-2 font-serif leading-relaxed max-w-3xl pt-2">
-            IndiaJobNotice.com is an independent educational and public notice directory built to bridge the gap between complex official government gazettes and competitive examination aspirants across all 36 States &amp; Union Territories.
+          <h1 className="text-3xl sm:text-4xl font-bold text-ink tracking-tight">About India Job Notice</h1>
+          <p className="text-base sm:text-lg text-ink-2 leading-relaxed max-w-prose">
+            Government job notices from central and state recruiting bodies, in one place: what the posts are, who can
+            apply, the fee and the last date, taken from each official notice, with a link to it.
           </p>
         </div>
       </section>
 
-      {/* Main Content Area */}
-      <main id="main-content" className="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-12 text-sm text-ink-2 leading-relaxed">
-        
-        {/* Core Mission & The Problem We Solve */}
-        <section className="space-y-4">
-          <div className="flex items-center gap-2 border-b border-line pb-2">
-            <Target className="w-5 h-5 text-navy" />
-            <h2 className="font-serif text-2xl font-bold text-ink">Our Mission &amp; Purpose</h2>
-          </div>
-          <p>
-            Every year, over <strong>40 million young Indians</strong> prepare for central civil services, defense forces, railways, banking, state public service commissions (PSCs), staff selection exams, and judicial recruitments. However, vital recruitment information is often buried in multi-page bureaucratic PDFs, dispersed across hundreds of sluggish departmental websites, or obfuscated by clickbait portals and scam advertisements.
-          </p>
-          <p>
-            <strong>IndiaJobNotice.com was created to solve this challenge.</strong> We transform multi-page statutory gazettes into structured, accessible, mobile-first summaries containing verified qualification criteria, precise age-reckoning cut-off dates, syllabus outlines, district vacancy allocations, and direct links to official `.gov.in` and `.nic.in` application servers.
+      <main id="main-content" className="max-w-3xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full space-y-10 text-base text-ink-2 leading-relaxed">
+        <section aria-labelledby="where-h" className="space-y-2">
+          <h2 id="where-h" className={h2}>Where the notices come from</h2>
+          <p className="max-w-prose">
+            Only from the recruiting bodies&apos; own websites: public service commissions, staff selection boards, railways,
+            banks, police and other recruitment boards, public sector companies, courts and government departments, central
+            and state. Several times a day, software checks these websites for new notices. Other job sites are never copied.
           </p>
         </section>
 
-        {/* 4 Pillars of IndiaJobNotice */}
-        <section className="space-y-4">
-          <div className="flex items-center gap-2 border-b border-line pb-2">
-            <ShieldCheck className="w-5 h-5 text-green" />
-            <h2 className="font-serif text-2xl font-bold text-ink">Our Four Operating Pillars</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-            {/* Pillar 1 */}
-            <div className="bg-surface p-5 rounded-lg border border-line shadow-2xs space-y-2">
-              <div className="flex items-center gap-2 text-navy font-bold font-serif text-base">
-                <FileCheck className="w-5 h-5" />
-                <h3>1. Primary Source Purity</h3>
-              </div>
-              <p className="text-xs text-ink-2 leading-relaxed">
-                We never cite rumors, unverified social media forwards, or third-party blogs. Every single notice on IndiaJobNotice is corroborated directly against an official signed gazette notification issued by competent authorities.
-              </p>
-            </div>
-
-            {/* Pillar 2 */}
-            <div className="bg-surface p-5 rounded-lg border border-line shadow-2xs space-y-2">
-              <div className="flex items-center gap-2 text-green font-bold font-serif text-base">
-                <CheckCircle2 className="w-5 h-5" />
-                <h3>2. 100% Free &amp; Unrestricted Access</h3>
-              </div>
-              <p className="text-xs text-ink-2 leading-relaxed">
-                No candidate is ever asked to pay a fee, buy a subscription, or register personal credentials to read gazettes or download syllabi. Platform maintenance is sustained via non-intrusive display advertising.
-              </p>
-            </div>
-
-            {/* Pillar 3 */}
-            <div className="bg-surface p-5 rounded-lg border border-line shadow-2xs space-y-2">
-              <div className="flex items-center gap-2 text-saffron font-bold font-serif text-base">
-                <MapPin className="w-5 h-5" />
-                <h3>3. District-Level Granularity</h3>
-              </div>
-              <p className="text-xs text-ink-2 leading-relaxed">
-                Aspirants in rural areas and tier-2/3 cities deserve hyper-local notice tracking. We index District Courts, CMO Health Societies (NHM), Zilla Parishads, and Collectorate recruitment drives across 194+ districts.
-              </p>
-            </div>
-
-            {/* Pillar 4 */}
-            <div className="bg-surface p-5 rounded-lg border border-line shadow-2xs space-y-2">
-              <div className="flex items-center gap-2 text-muted font-bold font-serif text-base">
-                <Sparkles className="w-5 h-5 text-navy" />
-                <h3>4. High-Performance Engineering</h3>
-              </div>
-              <p className="text-xs text-ink-2 leading-relaxed">
-                Built on Next.js with Static Site Generation (SSG), IndiaJobNotice loads in milliseconds even on 2G/3G mobile networks in rural India, with zero Cumulative Layout Shift (CLS) and clean responsive design.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Editorial Desk & Who We Are */}
-        <section className="space-y-4">
-          <div className="flex items-center gap-2 border-b border-line pb-2">
-            <Users className="w-5 h-5 text-navy" />
-            <h2 className="font-serif text-2xl font-bold text-ink">Our Editorial Desk &amp; Research Team</h2>
-          </div>
-          <p>
-            IndiaJobNotice is managed by an independent team of educational researchers, civic-data technologists, and civil service examination mentors. Our editorial desk monitors daily publications from:
-          </p>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-ink-2 pt-1 font-semibold">
-            <li className="p-2.5 rounded bg-surface border border-line flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-navy" />
-              <span>Union Public Service Commission (UPSC)</span>
-            </li>
-            <li className="p-2.5 rounded bg-surface border border-line flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-navy" />
-              <span>Staff Selection Commission (SSC)</span>
-            </li>
-            <li className="p-2.5 rounded bg-surface border border-line flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-navy" />
-              <span>Railway Recruitment Boards (RRB)</span>
-            </li>
-            <li className="p-2.5 rounded bg-surface border border-line flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-navy" />
-              <span>State PSCs (UPPSC, BPSC, KPSC, RPSC, etc.)</span>
-            </li>
+        <section aria-labelledby="page-h" className="space-y-2">
+          <h2 id="page-h" className={h2}>What a job page shows</h2>
+          <ul className="max-w-prose list-disc space-y-1.5 pl-6 marker:text-faint">
+            <li>The facts the notice states: dates, posts, age limits, fee, qualification, how to apply.</li>
+            <li>Where a fact came from: the page number in the notice, linked to it.</li>
+            <li>&ldquo;See notification&rdquo; when the notice does not state something. Nothing is guessed.</li>
+            <li>The official notification and the official website to apply on. Applications are always made there.</li>
           </ul>
-          <p className="text-xs text-muted pt-2">
-            Read our complete <Link href="/editorial-policy" className="text-navy underline font-bold">Editorial &amp; Verification Policy</Link> to learn about our 5-step fact-checking and errata correction protocol.
+          <p className="max-w-prose">
+            How notices are read and checked before they appear:{" "}
+            <Link href="/editorial-policy" className={link}>how we check notices</Link>.
           </p>
         </section>
 
-        {/* replaces the separate page for colleges and libraries (11 Nov): one line, one link */}
-        <section className="space-y-2">
-          <h2 className="font-serif text-2xl font-bold text-ink">For colleges, libraries and coaching centres</h2>
-          <p className="text-sm text-ink-2 leading-relaxed max-w-prose">
+        <section aria-labelledby="free-h" className="space-y-2">
+          <h2 id="free-h" className={h2}>Free to use</h2>
+          <p className="max-w-prose">
+            No sign-up and no fees. Jobs you save stay on your own phone or computer. India Job Notice never asks for money
+            or bank details.
+          </p>
+        </section>
+
+        <section aria-labelledby="colleges-h" className="space-y-2">
+          <h2 id="colleges-h" className={h2}>For colleges, libraries and coaching centres</h2>
+          <p className="max-w-prose">
             Placement cells and libraries are welcome to print our list of open jobs for their notice boards. The{" "}
-            <Link href="/vacancies" className="text-navy underline font-bold">vacancies page</Link> groups them by
-            qualification and prints on one sheet.
+            <Link href="/vacancies" className={link}>vacancies page</Link> groups them by qualification and prints on one sheet.
           </p>
         </section>
 
-        {/* Statutory Non-Affiliation Box */}
-        <section className="bg-saffron-tint rounded-lg border-2 border-saffron-bright p-5 shadow-2xs space-y-3">
-          <div className="flex items-center gap-2 font-serif font-bold text-saffron text-base">
-            <Scale className="w-5 h-5 text-saffron shrink-0" />
-            <h2>Statutory Non-Affiliation &amp; Legal Transparency</h2>
-          </div>
-          <p className="text-xs text-ink-2 leading-relaxed">
-            <strong>IndiaJobNotice.com is NOT a government website and is NOT affiliated with, authorized by, or endorsed by the Government of India, any State Government, or any recruiting commission.</strong>
-          </p>
-          <p className="text-xs text-ink-2 leading-relaxed">
-            All government department names, agency acronyms (UPSC, SSC, RRB, PSC), emblems, and trademarks referenced on this platform belong to their respective statutory owners. Their presence on IndiaJobNotice is solely for identification, descriptive reference, and public educational information under fair use. Candidates are always instructed to download and verify the original signed gazette PDF before submitting application forms or fee payments.
+        <section aria-labelledby="gov-h" className="rounded-xl border border-saffron-line bg-saffron-tint p-5 space-y-2">
+          <h2 id="gov-h" className="text-lg font-bold text-ink">Not a government website</h2>
+          <p className="max-w-prose">
+            India Job Notice is not part of, or approved by, any government or recruiting body. Names such as UPSC, SSC or
+            RRB are used only to say whose notice it is. Always check the official notification before you apply or pay a fee.
           </p>
         </section>
 
-        {/* Contact & Reach Out CTA */}
-        <section className="bg-surface rounded-lg border border-line p-6 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h3 className="font-serif text-lg font-bold text-ink">Have Questions or an Errata Correction?</h3>
-            <p className="text-xs text-muted">
-              Our editorial and compliance desk reviews inquiries within 24 to 48 hours.
-            </p>
+        <section className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-ink">Found a mistake?</h2>
+            <p className="text-sm">Tell us and we will check it against the official notice.</p>
           </div>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-navy-solid hover:bg-navy-strong text-white text-xs font-bold shadow-xs transition-colors shrink-0"
+            className="inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 rounded-lg bg-navy-solid px-5 text-sm font-bold text-white hover:bg-navy-strong"
           >
-            <Mail className="w-4 h-4" />
-            <span>Contact Editorial Desk</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <Mail className="h-4 w-4" aria-hidden />
+            Contact
+            <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
         </section>
       </main>
