@@ -269,12 +269,13 @@ export default async function StateHomePage({ params }: PageProps) {
         <section aria-labelledby="bodies-h" className="border-t border-line pt-6 space-y-4">
           <h2 id="bodies-h" className="font-serif text-xl font-bold text-ink">{facts.bodies.length ? `Who is hiring in ${state.name}` : "More ways to find jobs"}</h2>
           {facts.bodies.length > 0 && (
-            <ul className="grid sm:grid-cols-2 gap-x-6 text-sm">
+            <ul className="flex flex-wrap gap-2 text-sm">
               {facts.bodies.slice(0, 16).map((b) => (
-                <li key={b.name} className="border-b border-line-soft">
-                  <Link href={b.href} className="flex items-baseline justify-between gap-3 min-h-[44px] py-2 group">
-                    <span className="font-semibold text-ink group-hover:text-navy">{b.name}{b.code && b.code.length <= 10 && !b.name.includes(b.code) ? ` (${b.code})` : ""}</span>
-                    <span className="shrink-0 text-muted tabular-nums">{b.open} open{b.posts > 0 ? ` · ${b.posts.toLocaleString("en-IN")} posts` : ""}</span>
+                <li key={b.name}>
+                  <Link href={b.href} title={b.name}
+                    className="inline-flex min-h-[44px] flex-wrap items-center gap-x-2 rounded-lg border border-line bg-surface px-3.5 py-2 font-semibold leading-snug text-ink hover:border-navy hover:text-navy">
+                    {b.code && b.code.length <= 10 ? b.code : b.name}
+                    <span className="font-normal text-muted tabular-nums">{b.open} open{b.posts > 0 ? ` · ${b.posts.toLocaleString("en-IN")} posts` : ""}</span>
                   </Link>
                 </li>
               ))}
