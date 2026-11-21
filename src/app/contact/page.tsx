@@ -38,7 +38,7 @@ const correctionMail = `mailto:${EMAIL}?subject=${encodeURIComponent("Correction
 const CHANNELS = [
   { href: "https://t.me/india_jobnotice", name: "Telegram", handle: "@india_jobnotice", text: "New job notices, admit cards and results", Logo: TelegramLogo, bg: "bg-[#1A7DB0]" },
   { href: "https://whatsapp.com/channel/0029Vb9GFwsGzzKXYJyKer1C", name: "WhatsApp", handle: "India Job Notice", text: "New notices on your phone", Logo: WhatsAppLogo, bg: "bg-[#13853F]" },
-  { href: INSTAGRAM_URL, name: "Instagram", handle: "@indiajobnotice", text: "Short videos on big new vacancies", Logo: InstagramLogo, bg: "bg-instagram" },
+  { href: INSTAGRAM_URL, name: "Instagram", handle: "@indiajobnotice1", text: "Short videos on big new vacancies", Logo: InstagramLogo, bg: "bg-instagram" },
   { href: YOUTUBE_URL, name: "YouTube", handle: "@indiajobnotice", text: "Shorts on big new vacancies", Logo: YouTubeLogo, bg: "bg-[#CC0000]" },
 ];
 

@@ -37,7 +37,7 @@ export function WhatsAppLogo({ className = "w-4 h-4", size, ...props }: IconProp
   );
 }
 
-export const INSTAGRAM_URL = "https://www.instagram.com/indiajobnotice/";
+export const INSTAGRAM_URL = "https://www.instagram.com/indiajobnotice1/";
 export const YOUTUBE_URL = "https://www.youtube.com/@Indiajobnotice";
 
 export function InstagramLogo({ className = "w-4 h-4", size, ...props }: IconProps) {
