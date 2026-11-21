@@ -537,9 +537,11 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
     const area = (j: JobNotification) => noticeArea(j)?.code;
     const title = (j: JobNotification) => rowTitle(j).replace(/\s*\((?:KK|RPC)\)/g, "").replace(/\s+/g, " ").trim().toLowerCase();
     // KEA files a round's two notices in matching folders ("gpcjecivilrpc2026" / "gpcjecivilkk2026")
+    // or in matching file names ("..._KKkannada.pdf" / "..._RPCkannada.pdf")
+    const CADRE = /(?:rpc|kk)(?=20\d\d)|(?<![a-z])(?:rpc|kk)(?=kannada|english|[^a-z]|$)/;
     const folder = (j: JobNotification) => {
-      const seg = (j.officialPdfUrl || "").toLowerCase().split(/[/?#]/).find((x) => /(?:rpc|kk)20\d\d/.test(x));
-      return seg ? seg.replace(/(?:rpc|kk)(?=20\d\d)/, "~").replace(/\.[a-z]+$/, "") : "";
+      const seg = (j.officialPdfUrl || "").toLowerCase().split(/[/?#]/).find((x) => CADRE.test(x));
+      return seg ? seg.replace(CADRE, "~").replace(/\.[a-z]+$/, "") : "";
     };
     const words = (t: string) => new Set(t.match(/[a-z]{4,}/g) || []);
     const cadred = jobs.filter((j) => area(j));
