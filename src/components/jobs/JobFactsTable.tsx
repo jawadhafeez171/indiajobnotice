@@ -305,7 +305,7 @@ function eligibility(job: JobNotification): Section | null {
               <summary className="inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-navy hover:text-saffron [&::-webkit-details-marker]:hidden">
                 <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden />The age rule as printed
               </summary>
-              <span className="block pb-1 text-ink-2">{wording}</span>
+              <span className="block pb-1 text-ink-2">{wording.replace(/\b\d{4}-\d{2}-\d{2}\b/g, (d) => formatDate(d))}</span>
             </details>
           ) : wording
         )}
