@@ -66,8 +66,9 @@ export default function AboutPage() {
               ))}
             </ul>
             <p className="text-sm">
-              Each state page lists the official bodies watched in that state. The{" "}
-              <Link href="/directory" className={link}>directory</Link> lists the commissions and boards of every state.
+              Choose your state from the menu at the top: its page lists the official bodies watched there. The{" "}
+              <Link href="/directory" className={link}>directory</Link> lists the commissions and boards of every state, and
+              colleges and libraries can print the <Link href="/vacancies" className={link}>vacancies page</Link>.
             </p>
           </section>
 
@@ -86,7 +87,7 @@ export default function AboutPage() {
                   <tbody className="[&>tr>*]:border-b [&>tr>*]:border-line [&>tr:last-child>*]:border-b-0">
                     <tr className="bg-saffron-tint">
                       <th scope="row" className="px-3 py-2.5 text-left font-bold text-ink">Last date to apply</th>
-                      <td className="px-3 py-2.5 font-semibold text-ink">25 Nov 2026 <span className="font-medium text-muted underline decoration-line underline-offset-2">p. 3</span></td>
+                      <td className="px-3 py-2.5 font-semibold text-ink">25 Nov 2026 <span className="font-medium text-muted">p. 3</span></td>
                     </tr>
                     <tr>
                       <th scope="row" className="px-3 py-2.5 text-left font-normal text-ink-2">Application fee</th>
@@ -108,15 +109,13 @@ export default function AboutPage() {
             <h2 id="gov-h" className={h2}>Check before you pay</h2>
             <p className="max-w-prose">
               India Job Notice is not approved by any government or recruiting body. Names such as SSC or RRB only say whose
-              notice it is. Before you apply or pay a fee, check the official notification. Official recruitment websites
-              usually end in .gov.in or .nic.in; banks and public sector companies use their own.
+              notice it is. Before you apply or pay a fee:
             </p>
+            <ul className="max-w-prose list-disc space-y-1 pl-6 marker:text-faint">
+              <li>read the official notification;</li>
+              <li>check the website&apos;s address: official recruitment sites usually end in .gov.in or .nic.in, and banks use their own (such as sbi.co.in).</li>
+            </ul>
           </section>
-
-          <p className="max-w-prose text-sm">
-            For colleges and libraries: the <Link href="/vacancies" className={link}>vacancies page</Link> is laid out for printing,
-            grouped by qualification.
-          </p>
 
           <section aria-labelledby="next-h" className="rounded-xl border border-line bg-surface p-5 space-y-3">
             <h2 id="next-h" className={h2}>Found a mistake?</h2>
