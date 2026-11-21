@@ -16,7 +16,6 @@ function BoardLink({ b }: { b: StateBoard }) {
         className="flex items-center justify-between gap-3 min-h-[44px] py-2 text-sm font-semibold text-ink hover:text-navy group">
         <span>{b.name}</span>
         <ExternalLink className="w-3.5 h-3.5 shrink-0 text-muted group-hover:text-navy" aria-hidden />
-        <span className="sr-only"> (official site, opens in a new tab)</span>
       </a>
     </li>
   );
@@ -38,7 +37,7 @@ export function StateBoardsSection({ stateSlug, stateName }: { stateSlug: string
       </h2>
       <p className="mt-1 text-sm text-ink-2 max-w-prose">
         We check these sites for new notices; the recruitments we find are listed on this page with their official
-        link. Applications are made on the official site.
+        link. Applications are made on the official site. Each link opens the official site in a new tab.
       </p>
       <div className="mt-4 sm:columns-2 gap-x-8">
         {groups.map((g) => {

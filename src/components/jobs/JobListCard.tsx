@@ -407,7 +407,7 @@ function RowDate({ job, exam }: { job: JobNotification; exam?: ExamDateEntry | n
       <>
         <span className="text-muted">Exam </span>
         <b className="text-ink">{formatDateShort(exam.date)}</b>
-        <span className="font-semibold text-navy"> · {examWhen(exam.date).toLowerCase()}</span>
+        <span className={daysUntil(exam.date) <= 1 ? "font-bold text-saffron" : "font-semibold text-navy"}> · {examWhen(exam.date).toLowerCase()}</span>
       </>
     );
   }

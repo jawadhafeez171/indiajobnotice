@@ -66,7 +66,7 @@ export function StateQuickStrip({ currentStateSlug, onOpenSelector }: Props) {
                 key={slug}
                 href={getStateSubdomainUrl(slug)}
                 className={cn(
-                  "shrink-0 text-ink-2 hover:text-navy whitespace-nowrap",
+                  "shrink-0 py-1.5 text-ink-2 hover:text-navy whitespace-nowrap",
                   i >= 6 && "hidden xl:inline"
                 )}
               >

@@ -410,7 +410,8 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
     () => words.length > 0 && !gap && !jobs.some((j) => words.every((w) => w.test(primaryText(j)))),
     [words, gap, jobs]
   );
-  const openTab = activeCategory === "APPLY_OPEN" || activeCategory === "CLOSING_SOON";
+  // "100+ posts" works on every stage tab (21 Nov critique: it vanished on Exams and Results)
+  const openTab = activeCategory !== "TODAY" && activeCategory !== "ALL";
   const majorOn = majorOnly && openTab;
 
   // every filter except the stage tab: used for the list and for the tab counts
@@ -577,7 +578,7 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
 
     jobs.forEach((j) => {
       if (!passesFacets(j)) return;
-      // "100+ posts" narrows the open tabs only
+      // "100+ posts" narrows every stage tab
       const big = !majorOn || j.totalVacancies >= MAJOR_POSTS;
 
       counts.ALL += 1;
@@ -585,9 +586,9 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
       if (matchesStatus(j, "APPLY_OPEN") && big) counts.APPLY_OPEN += 1;
       if (matchesStatus(j, "CLOSING_SOON") && big) counts.CLOSING_SOON += 1;
       if (matchesStatus(j, "ADMIT_CARD")) counts.ADMIT_CARD += 1;
-      if (matchesStatus(j, "EXAM_DATES")) counts.EXAM_DATES += 1;
-      if (matchesStatus(j, "RESULT")) counts.RESULT += 1;
-      if (matchesStatus(j, "UNDER_WAY")) counts.UNDER_WAY += 1;
+      if (matchesStatus(j, "EXAM_DATES") && big) counts.EXAM_DATES += 1;
+      if (matchesStatus(j, "RESULT") && big) counts.RESULT += 1;
+      if (matchesStatus(j, "UNDER_WAY") && big) counts.UNDER_WAY += 1;
     });
 
     return counts;

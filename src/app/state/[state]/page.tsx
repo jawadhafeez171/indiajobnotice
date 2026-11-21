@@ -6,7 +6,8 @@ import { Footer } from "@/components/common/Footer";
 import { MajorRecruitmentsSection } from "@/components/jobs/MajorRecruitmentsSection";
 import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { getStateBySlug, STATES_REGISTRY } from "@/config/states";
-import { getJobsByState, getListingJobs, getExamsInProgress, isOpenOrOpening, getJobCanonicalPath, JobNotification } from "@/data/jobs";
+import { getJobsByState, getListingJobs, getExamsInProgress, isOpenOrOpening, getJobCanonicalPath, JobNotification, nextExamDate } from "@/data/jobs";
+import { formatDateShort } from "@/lib/utils";
 import { ExamsInProgressSection } from "@/components/jobs/ExamsInProgressSection";
 import { getAllJobs } from "@/lib/jobs-store";
 
@@ -99,6 +100,12 @@ export default async function StateHomePage({ params }: PageProps) {
   const listJobs = (ownOpen ? jobs.filter((j) => !j.isCentral) : jobs).map(withoutStateCode);
   const underWay = getJobsByState(getExamsInProgress(allJobs), state.slug, false).map(withoutStateCode);
   const centralOpen = jobs.filter((j) => j.isCentral && isOpenOrOpening(j)).length;
+  // what the tabs already list (an exam ahead, an admit card, a result) is not listed again under "under way"
+  const inTabs = (j: JobNotification) => j.status === "ADMIT_CARD_OUT" || j.status === "RESULT_OUT" || nextExamDate(j) !== null;
+  const underWayRest = underWay.filter((j) => !inTabs(j));
+  // a state with nothing of its own open: the ten biggest All-India jobs, not the whole central list (21 Nov)
+  const allIndia = jobs.filter((j) => j.isCentral && isOpenOrOpening(j))
+    .sort((a, b) => (b.totalVacancies || 0) - (a.totalVacancies || 0)).slice(0, 10);
   const pageUrl = `${SITE}/state/${state.slug}`;
   const structured = {
     "@context": "https://schema.org",
@@ -147,7 +154,7 @@ export default async function StateHomePage({ params }: PageProps) {
             <p className="mt-3 text-sm text-ink max-w-prose leading-relaxed">
               <b>No {state.name} notification is open for applications right now.</b>
               {underWay.length > 0 && <> {underWay.length} {state.name} recruitment{underWay.length === 1 ? " is" : "s are"} under way: their admit cards, exam dates and results are just below.</>}
-              {centralOpen > 0 && <> Central government jobs, open to candidates from every state, are listed after them.</>}
+              {centralOpen > 0 && <> All-India jobs, open to candidates from every state, follow the official sites we check.</>}
             </p>
           )}
           {/* at a glance: counted from the notices themselves, never written by hand */}
@@ -177,41 +184,72 @@ export default async function StateHomePage({ params }: PageProps) {
       </section>
 
       {/* Main Content Area */}
-      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-8 flex-1 w-full space-y-10">
-        {/* The jobs: the state's own first when it has open ones (11 Nov, owner's choice), central a tap away */}
-        {!ownOpen && <ExamsInProgressSection jobs={underWay} limit={6} expandRest place={state.name} />}
-
-        {listJobs.some((j) => noticeArea(j)) && (
-          <p className="hidden sm:block -mb-6 text-[13px] text-ink-2 max-w-prose leading-relaxed">
-            <b className="text-ink">Kalyana Karnataka</b> posts are in the region&apos;s local cadre (Article 371-J);{" "}
-            <b className="text-ink">Rest of Karnataka</b> posts are in the residual parent cadre (RPC). Each notification
-            says who may apply to which.
-          </p>
+      <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-8 flex-1 w-full space-y-10 [&>section:first-child]:border-t-0 [&>section:first-child]:pt-0">
+        {ownOpen ? (
+          <>
+            {/* Karnataka's notices come in two cadres; the key comes before the rows that use it (21 Nov critique) */}
+            {listJobs.some((j) => noticeArea(j)) && (
+              <p className="-mb-6 text-[13px] text-ink-2 max-w-prose leading-relaxed">
+                <b className="text-ink">Kalyana Karnataka (KK)</b> posts are in the region&apos;s local cadre (Article 371-J);{" "}
+                <b className="text-ink">Rest of Karnataka</b> posts are in the residual parent cadre (RPC). Each notification
+                says who may apply to which.
+              </p>
+            )}
+            <MajorRecruitmentsSection
+              jobs={listJobs.map(forList)}
+              currentStateSlug={state.slug}
+              defaultScope="STATE"
+              heading={`Latest ${state.name} government jobs`}
+              centralLink={centralOpen > 0 ? { href: "/?scope=central#major-recruitments", count: centralOpen } : undefined}
+              tabs={[...STATE_TABS]}
+              layoutSwitch={false}
+              headingOnPhone={false}
+            />
+            <OpenJobLinks jobs={listJobs} heading={`All open ${state.name} government job notifications`} />
+            {/* exams and results are the list's tabs; here only what they do not hold (answer keys, lists...) */}
+            <ExamsInProgressSection jobs={underWayRest} limit={4} expandRest place={state.name}
+              heading={`More ${state.name} recruitments under way`}
+              note={<>Exam dates, admit cards and results are in the <a href="#exam-dates" className="font-semibold text-navy underline underline-offset-2">Exams</a> and{" "}
+                <a href="#results" className="font-semibold text-navy underline underline-offset-2">Results</a> tabs above.</>} />
+          </>
+        ) : (
+          <>
+            {/* nothing of its own open: the state's own recruitments under way, the sites we check, then All-India jobs */}
+            <ExamsInProgressSection jobs={underWay} limit={4} expandRest place={state.name} />
+            <StateBoardsSection stateSlug={state.slug} stateName={state.name} />
+            {allIndia.length > 0 && (
+              <section aria-labelledby="all-india-h" className="border-t border-line pt-6">
+                <h2 id="all-india-h" className="font-serif text-xl font-bold text-ink">
+                  All-India jobs open to {state.name} candidates{" "}
+                  <span className="ml-1 font-sans text-base font-semibold text-muted tabular-nums">{centralOpen}</span>
+                </h2>
+                <p className="mt-1 text-sm text-ink-2 max-w-prose">
+                  Central government recruitments any state&apos;s candidates may apply to, biggest first. Some are for posts in one city: the notice says where.
+                </p>
+                <ul className="mt-2 divide-y divide-line-soft">
+                  {allIndia.map((j) => (
+                    <li key={j.id}>
+                      <Link href={getJobCanonicalPath(j)} className="group block py-3">
+                        <span className="block text-sm font-semibold text-ink group-hover:text-navy leading-snug">
+                          <span className="font-bold text-navy">{j.orgShortCode}</span> {rowTitle(j)}
+                        </span>
+                        <span className="mt-0.5 block text-[13px] text-ink-2 tabular-nums">
+                          {j.totalVacancies ? `${j.totalVacancies.toLocaleString("en-IN")} post${j.totalVacancies === 1 ? "" : "s"}` : "Posts: see notification"}
+                          {j.applicationEndDate && <> · last date <b className="text-ink">{formatDateShort(j.applicationEndDate)}</b></>}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                {centralOpen > allIndia.length && (
+                  <Link href="/?scope=central#major-recruitments" className="mt-1 inline-flex min-h-[44px] items-center text-sm font-bold text-navy hover:text-saffron">
+                    See all {centralOpen} central government jobs →
+                  </Link>
+                )}
+              </section>
+            )}
+          </>
         )}
-        <MajorRecruitmentsSection
-          jobs={listJobs.map(forList)}
-          currentStateSlug={state.slug}
-          defaultScope={ownOpen ? "STATE" : "ALL"}
-          heading={ownOpen ? `Latest ${state.name} government jobs` : `Central government jobs open to ${state.name} candidates`}
-          centralLink={ownOpen && centralOpen > 0 ? { href: "/?scope=central#major-recruitments", count: centralOpen } : undefined}
-          tabs={[...STATE_TABS]}
-          layoutSwitch={false}
-          headingOnPhone={!ownOpen}
-        />
-
-        {/* Karnataka's notices come in two cadres; the rows name which (20 Nov critique) */}
-        {listJobs.some((j) => noticeArea(j)) && (
-          <p className="sm:hidden -mt-6 text-[13px] text-ink-2 max-w-prose leading-relaxed">
-            <b className="text-ink">Kalyana Karnataka</b> posts are in the region&apos;s local cadre (Article 371-J);{" "}
-            <b className="text-ink">Rest of Karnataka</b> posts are in the residual parent cadre (RPC). Each notification
-            says who may apply to which.
-          </p>
-        )}
-
-        <OpenJobLinks jobs={listJobs} heading={ownOpen ? `All open ${state.name} government job notifications` : `All open central government job notifications`} />
-
-        {/* exams and results are the list's tabs; recruitments under way have their own list (a thin state shows it first) */}
-        {ownOpen && <ExamsInProgressSection jobs={underWay} limit={6} expandRest place={state.name} />}
 
         {/* Reserved Ad Space (0.00 CLS Protected) */}
         <ReservedAdSlot slotType="leaderboard" slotId={`state-${state.slug}-leaderboard`} />
@@ -262,7 +300,7 @@ export default async function StateHomePage({ params }: PageProps) {
           </ul>
         </section>
 
-        <StateBoardsSection stateSlug={state.slug} stateName={state.name} />
+        {ownOpen && <StateBoardsSection stateSlug={state.slug} stateName={state.name} />}
       </main>
 
       <Footer />
