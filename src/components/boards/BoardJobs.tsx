@@ -104,7 +104,7 @@ export function BoardJobs({ open, underWay, earlier, dept, boardName, stateName,
             <span className="text-ink-2">Order:</span>
             {[[false, "Last date first"], [true, "Most posts first"]].map(([v, l]) => (
               <button key={String(v)} type="button" aria-pressed={byPosts === v} onClick={() => setByPosts(v as boolean)}
-                className={`inline-flex min-h-[44px] items-center rounded-lg px-2.5 font-semibold ${byPosts === v ? "text-navy underline underline-offset-4" : "text-ink-2 hover:text-navy"}`}>
+                className={`inline-flex min-h-[44px] items-center rounded-full border px-3 font-semibold ${byPosts === v ? "border-transparent bg-navy-solid text-white" : "border-line bg-surface text-ink-2 hover:border-navy hover:text-navy"}`}>
                 {l as string}
               </button>
             ))}

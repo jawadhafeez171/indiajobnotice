@@ -257,11 +257,12 @@ export default async function BoardPage({ params }: PageProps) {
           </section>
         )}
 
-        <p className="border-t border-line pt-6 text-sm">
+        {/* an empty board already links to the list in its message */}
+        {open.length > 0 && <p className="border-t border-line pt-6 text-sm">
           <Link href={`/state/${state.slug}#official-sites`} className="inline-flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2 hover:text-saffron">
             All {stateBoardCount(state.slug)} official sites we check for {state.name} →
           </Link>
-        </p>
+        </p>}
       </main>
 
       <Footer />
