@@ -69,14 +69,24 @@ export function bodiesPhrase(bodies: HiringBody[], show = 3): string {
 const n = (x: number) => x.toLocaleString("en-IN");
 
 /** Search description: the count, who is hiring, what closes soon (about 155 characters). */
-export function stateHubDescription(stateName: string, f: StateHubFacts): string {
+export function stateHubDescription(stateName: string, f: StateHubFacts, nativeName = ""): string {
+  const native = nativeName && nativeName !== stateName ? ` (${nativeName})` : "";
   if (!f.open.length) {
-    return `${stateName} government job notifications from its commissions, boards, police and courts: last dates, `
+    return `${stateName}${native} government job notifications from its commissions, boards, police and courts: last dates, `
       + "eligibility, admit cards and results, each with the official notification link.";
   }
-  const parts = [`${n(f.open.length)} open ${stateName} government job notification${f.open.length === 1 ? "" : "s"}`];
+  let head = `${n(f.open.length)} open ${stateName}${native} government job notification${f.open.length === 1 ? "" : "s"}`;
+  if (f.posts > 0) head += ` for ${n(f.posts)} post${f.posts === 1 ? "" : "s"}`;
   const who = bodiesPhrase(f.bodies);
-  if (who) parts[0] += ` from ${who}`;
+  if (who) head += ` from ${who}`;
+  const bigCode = (f.biggest?.orgShortCode || "").split(" · ")[0];
+  const big = f.biggest && (f.biggest.totalVacancies || 0) > 1 && f.open.length > 1
+    ? `Biggest: ${bigCode} ${f.biggest.shortTitle.startsWith(`${bigCode} `) ? f.biggest.shortTitle.slice(bigCode.length).trim() : f.biggest.shortTitle}`.replace(/\s*\(\d[\d,]* posts?\)/i, "")
+      + ` (${n(f.biggest.totalVacancies)} posts${f.biggest.applicationEndDate ? `, last date ${shortDate(f.biggest.applicationEndDate)}` : ""}).`
+    : "";
   const tail = f.closingSoon.length ? `${n(f.closingSoon.length)} close${f.closingSoon.length === 1 ? "s" : ""} this week.` : "";
-  return `${parts[0]}. ${tail} Last dates, eligibility and the official notification links.`.replace(/\s+/g, " ").trim();
+  return `${head}. ${big} ${tail} Official notification links.`.replace(/\s+/g, " ").trim();
 }
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const shortDate = (iso: string) => `${Number(iso.slice(8, 10))} ${MONTHS[Number(iso.slice(5, 7)) - 1]}`;

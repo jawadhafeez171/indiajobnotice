@@ -20,7 +20,7 @@ import { stateHubFacts, stateHubDescription, bodiesPhrase } from "@/lib/state-hu
 import { noticeArea } from "@/lib/internal-links";
 import { JobRow, rowTitle } from "@/components/jobs/JobListCard";
 import { safeJson } from "@/lib/json-ld";
-import { boardOfJob, boardPath } from "@/lib/boards";
+import { boardOfJob, boardPath, getBoardsOfState } from "@/lib/boards";
 import type { HiringBody } from "@/lib/state-hub";
 import { StateBoardsSection, hasStateBoards, stateBoardCount } from "@/components/jobs/StateBoardsSection";
 
@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: PageProps) {
     title: count
       ? `${state.name} Govt Jobs ${YEAR}: ${count} Open Notification${count === 1 ? "" : "s"}`
       : `${state.name} Govt Jobs ${YEAR}: Notifications, Admit Cards & Results`,
-    description: stateHubDescription(state.name, facts),
+    description: stateHubDescription(state.name, facts, state.nativeName),
     alternates: {
       canonical: canonicalUrl,
     },
@@ -71,8 +71,8 @@ export async function generateMetadata({ params }: PageProps) {
     robots: listed ? undefined : { index: false, follow: true },
     openGraph: {
       images: SITE_OG_IMAGES,
-      title: `${state.name} Government Jobs ${YEAR} - India Job Notice`,
-      description: stateHubDescription(state.name, facts),
+      title: count ? `${state.name} Govt Jobs ${YEAR}: ${count} Open Notification${count === 1 ? "" : "s"}` : `${state.name} Government Jobs ${YEAR}`,
+      description: stateHubDescription(state.name, facts, state.nativeName),
       url: canonicalUrl,
       siteName: "India Job Notice",
       locale: "en_IN",
@@ -80,8 +80,8 @@ export async function generateMetadata({ params }: PageProps) {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${state.name} Government Jobs ${YEAR}`,
-      description: stateHubDescription(state.name, facts),
+      title: count ? `${state.name} Govt Jobs ${YEAR}: ${count} Open Notification${count === 1 ? "" : "s"}` : `${state.name} Government Jobs ${YEAR}`,
+      description: stateHubDescription(state.name, facts, state.nativeName),
     },
   };
 }
@@ -146,7 +146,14 @@ export default async function StateHomePage({ params }: PageProps) {
     "@type": "CollectionPage",
     name: `${state.name} Government Jobs ${YEAR}`,
     url: pageUrl,
-    about: { "@type": "AdministrativeArea", name: state.name },
+    inLanguage: "en-IN",
+    description: stateHubDescription(state.name, facts, state.nativeName),
+    ...(checkedAt ? { dateModified: new Date(checkedAt).toISOString() } : {}),
+    about: { "@type": "AdministrativeArea", name: state.name, ...(state.nativeName && state.nativeName !== state.name ? { alternateName: state.nativeName } : {}) },
+    mentions: hiring.flatMap((h) => {
+      const b = getBoardsOfState(state.slug).find((x) => boardPath(x) === h.href);
+      return b && !b.members ? [{ "@type": "GovernmentOrganization", name: b.name, url: b.url, ...(h.code ? { alternateName: h.code } : {}) }] : [];
+    }),
     mainEntity: {
       "@type": "ItemList",
       name: `Open ${state.name} government job notifications`,
@@ -293,7 +300,7 @@ export default async function StateHomePage({ params }: PageProps) {
                 <li key={b.name}>
                   <Link href={b.href} title={b.name}
                     className="inline-flex min-h-[44px] flex-wrap items-center gap-x-2 rounded-lg border border-line bg-surface px-3.5 py-2 font-semibold leading-snug text-ink hover:border-navy hover:text-navy">
-                    {b.code && b.code.length <= 10 ? b.code : b.name}
+                    {b.code && b.code.length <= 10 ? <>{b.code}<span className="sr-only"> ({b.name}) recruitment</span></> : b.name}
                     <span className="font-normal text-muted tabular-nums">{b.open} open{b.posts > 0 ? ` · ${b.posts.toLocaleString("en-IN")} posts` : ""}</span>
                   </Link>
                 </li>
