@@ -10,11 +10,13 @@ import { BoardJobs } from "@/components/boards/BoardJobs";
 import { getStateBySlug } from "@/config/states";
 import { getJobCanonicalPath, JobNotification, todayIST } from "@/data/jobs";
 import { getAllJobsDaily, getSourcesCheckedAt } from "@/lib/jobs-store";
-import { Board, boardJobs, boardPath, getBoard } from "@/lib/boards";
+import { Board, boardCode, boardHasListings, boardJobs, boardPath, getBoard, getBoardsOfState } from "@/lib/boards";
+import { rowTitle } from "@/components/jobs/JobListCard";
 import { forList } from "@/lib/list-jobs";
 import { safeJson } from "@/lib/json-ld";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
 import { YEAR } from "@/lib/year";
+import { formatDate, formatDateShort } from "@/lib/utils";
 
 // One official recruiting body (21 Nov, owner's plan): its open notices, recruitments under way and earlier ones,
 // from the daily copy of the job list (rebuilt at most once a day: Vercel counts every rebuild).
@@ -57,19 +59,28 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const state = getStateBySlug(stateSlug);
   const board = state && getBoard(state.slug, boardSlug);
   if (!state || !board) return { title: "Not found" };
-  const { open, underWay } = boardJobs(board, await getAllJobsDaily());
-  const name = board.members ? `${state.name} ${board.name.toLowerCase()}` : board.name;
+  const all = await getAllJobsDaily();
+  const { open, underWay } = boardJobs(board, all);
+  const code = boardCode(board, all);
+  const name = board.members ? `${state.name} ${board.slug === "district-courts" ? "District Court" : "District Recruitment Bureau"}` : board.name;
   const url = `${SITE}${boardPath(board)}`;
-  const description = open.length
-    ? `${open.length} ${name} notification${open.length === 1 ? " is" : "s are"} open now, with last dates and the official links. Recruitments under way and earlier notices.`
-    : `${name} recruitment notices from its official website: what is open, under way and earlier, with the official links.`;
+  const posts = open.reduce((n, j) => n + (j.totalVacancies || 0), 0);
+  const lead = `${code || name} Recruitment ${YEAR}`;
+  const counted = open.length ? `${lead}: ${open.length} Notification${open.length === 1 ? "" : "s"} Open` : lead;
+  const title = counted.length <= 60 ? counted : lead.length <= 60 ? lead : `${name} Recruitment`;
+  const first = open.slice(0, 2).map((j) => `${rowTitle(j)}${j.totalVacancies ? ` (${j.totalVacancies.toLocaleString("en-IN")} posts` : " ("}${j.applicationEndDate ? `${j.totalVacancies ? ", " : ""}last date ${formatDateShort(j.applicationEndDate)})` : j.totalVacancies ? ")" : ""}`.replace(/ \($/, ""));
+  const who = code && !name.includes(`(${code})`) ? `${name} (${code})` : name;
+  const description = (open.length
+    ? `${who}: ${open.length} notification${open.length === 1 ? "" : "s"} open${posts ? ` for ${posts.toLocaleString("en-IN")} posts` : ""}. ${first.join("; ")}.${underWay.length ? ` ${underWay.length} more under way.` : ""} Official links.`
+    : `${who} recruitment ${YEAR}: ${underWay.length ? `${underWay.length} recruitment${underWay.length === 1 ? "" : "s"} under way (admit cards, answer keys, results), ` : ""}earlier notices and the official links.`).slice(0, 300);
   return {
-    title: `${name} Recruitment ${YEAR}: Notifications and Last Dates`,
+    title,
     description,
     alternates: { canonical: url },
     // nothing open or under way: out of search until there is (same rule as state pages)
     robots: open.length + underWay.length ? undefined : { index: false, follow: true },
-    openGraph: { images: SITE_OG_IMAGES, title: `${name} Recruitment ${YEAR}`, description, url, siteName: "India Job Notice", locale: "en_IN", type: "website" },
+    openGraph: { images: SITE_OG_IMAGES, title, description, url, siteName: "India Job Notice", locale: "en_IN", type: "website" },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
@@ -92,17 +103,28 @@ export default async function BoardPage({ params }: PageProps) {
   const closingSoon = open.filter((j) => j.applicationEndDate && j.applicationEndDate <= week).length;
   const dept = Object.fromEntries([...open, ...underWay, ...earlier].map((j) => [j.id, board.members ? j.organization : department(j, board)]));
   const title = board.members ? `${board.name} in ${state.name}` : board.name;
+  const code = boardCode(board, all);
+  const shownCode = code && !board.name.includes(`(${code})`) ? code : "";
+  const biggest = [...open].sort((a, b) => (b.totalVacancies || 0) - (a.totalVacancies || 0))[0];
+  const depts = [...new Set(Object.values(dept).filter(Boolean))];
+  // other bodies of the state with notices open now: where a reader (and a crawler) goes next
+  const others = getBoardsOfState(state.slug).filter((b) => b.slug !== board.slug && boardHasListings(b, all))
+    .map((b) => ({ b, n: boardJobs(b, all).open.length })).sort((x, y) => y.n - x.n).slice(0, 12);
 
   const structured = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: `${title} recruitment`,
     url: `${SITE}${boardPath(board)}`,
-    about: board.members ? undefined : { "@type": "GovernmentOrganization", name: board.name, url: board.url },
+    description: `Recruitment notices of ${title}, from its official website.`,
+    about: board.members ? undefined : {
+      "@type": "GovernmentOrganization", name: board.name, ...(shownCode ? { alternateName: shownCode } : {}),
+      url: board.url, areaServed: { "@type": "AdministrativeArea", name: state.name },
+    },
     mainEntity: {
       "@type": "ItemList",
-      numberOfItems: open.length,
-      itemListElement: open.slice(0, 50).map((j, i) => ({ "@type": "ListItem", position: i + 1, name: j.title, url: `${SITE}${getJobCanonicalPath(j)}` })),
+      numberOfItems: open.length + underWay.length,
+      itemListElement: [...open, ...underWay].slice(0, 50).map((j, i) => ({ "@type": "ListItem", position: i + 1, name: j.title, url: `${SITE}${getJobCanonicalPath(j)}` })),
     },
   };
 
@@ -114,8 +136,11 @@ export default async function BoardPage({ params }: PageProps) {
       <section className="border-b border-line bg-subtle py-5 sm:py-6 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <Breadcrumbs items={[{ label: state.name, href: `/state/${state.slug}` }, { label: title }]} className="mb-3" />
-          <p className="text-[13px] font-semibold text-ink-2">{board.group} · {state.name}</p>
-          <h1 className="mt-1 font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight text-balance">{title}</h1>
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight text-balance">
+            {board.members ? `${state.name} ${board.slug === "district-courts" ? "District Court" : "District Recruitment Bureau"}` : title}
+            {shownCode && <> ({shownCode})</>} <span className="whitespace-nowrap">Recruitment {YEAR}</span>
+          </h1>
+          <p className="mt-1 text-[13px] font-semibold text-ink-2">{board.group.replace(/s$/, "")} · {state.name}</p>
           <p className="mt-2 text-sm text-ink">
             {open.length > 0 ? (
               <>
@@ -132,6 +157,21 @@ export default async function BoardPage({ params }: PageProps) {
               <span className="min-w-0 break-words">Official site: <span className="font-semibold">{hostOf(board.url)}</span></span>
               <ExternalLink className="h-4 w-4" aria-hidden /><span className="sr-only"> (opens in a new tab)</span>
             </a>
+          )}
+          {/* what the page holds, in a sentence of its own facts */}
+          {(open.length > 0 || underWay.length > 0) && (
+            <p className="mt-3 max-w-[68ch] text-sm leading-relaxed text-ink-2">
+              {open.length > 0 ? (
+                <>
+                  {shownCode || title} has {open.length} recruitment notification{open.length === 1 ? "" : "s"} open
+                  {posts > 0 && <> for {posts.toLocaleString("en-IN")} posts</>}
+                  {biggest && (biggest.totalVacancies || 0) > 1 && <>; the biggest is {rowTitle(biggest)} ({biggest.totalVacancies.toLocaleString("en-IN")} posts
+                    {biggest.applicationEndDate && <>, last date {formatDate(biggest.applicationEndDate)}</>})</>}.
+                </>
+              ) : <>No {shownCode || title} notification is open for applications right now. </>}
+              {underWay.length > 0 && <> {underWay.length} of its recruitment{underWay.length === 1 ? " is" : "s are"} under way, with admit cards, answer keys or results.</>}
+              {depts.length > 0 && !board.members && <> It also posts notices for {depts.slice(0, 3).join(", ")}{depts.length > 3 ? ` and ${depts.length - 3} more` : ""}.</>}
+            </p>
           )}
           {checkedText && (
             <p className="mt-2 text-[13px] text-muted">
@@ -158,6 +198,22 @@ export default async function BoardPage({ params }: PageProps) {
                     className="flex min-h-[44px] items-center justify-between gap-3 py-2 text-sm font-semibold text-ink hover:text-navy">
                     {m.name}<ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted" aria-hidden />
                   </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {others.length > 0 && (
+          <section aria-labelledby="others-h" className="border-t border-line pt-6">
+            <h2 id="others-h" className="font-serif text-xl font-bold text-ink">Other {state.name} bodies with notices</h2>
+            <ul className="mt-3 flex flex-wrap gap-2 text-sm">
+              {others.map(({ b, n }) => (
+                <li key={b.slug}>
+                  <Link href={boardPath(b)} className="inline-flex min-h-[44px] flex-wrap items-center gap-x-2 rounded-lg border border-line bg-surface px-3.5 py-2 font-semibold leading-snug text-ink hover:border-navy hover:text-navy">
+                    {b.members ? `${b.name} in ${state.name}` : b.name}
+                    <span className="font-normal text-muted tabular-nums">{n ? `${n} open` : "under way"}</span>
+                  </Link>
                 </li>
               ))}
             </ul>

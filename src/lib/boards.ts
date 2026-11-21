@@ -93,3 +93,36 @@ export function withBoard(job: JobNotification, all: JobNotification[]): JobNoti
   const board = source ? boardOfJob({ source }) : undefined;
   return board ? { ...job, source, boardHref: boardPath(board), boardName: board.members ? `${board.name} in ${getStateBySlug(board.stateSlug)?.name || board.stateSlug}` : board.name } : job;
 }
+
+const SMALL = new Set(["of", "and", "the", "for", "&"]);
+
+/** "Karnataka Examinations Authority" -> "KEA", "UP Public Service Commission" -> "UPPSC". */
+function initials(name: string): string {
+  return name.replace(/\([^)]*\)/g, "").split(/[\s-]+/).filter((w) => w && !SMALL.has(w.toLowerCase()))
+    .map((w) => (/^[A-Z&]{2,}$/.test(w) ? w.replace(/&/g, "") : w[0].toUpperCase())).join("");
+}
+
+/**
+ * The short code people search for ("KEA recruitment"): the one our list prints in brackets, else the code the
+ * board's notices carry when it is exactly the initials of its name. Never an invented one ("GAP", "HFWS").
+ */
+export function boardCode(board: Board, jobs: JobNotification[]): string {
+  const printed = board.name.match(/\(([A-Z][A-Z0-9&]{1,7})\)/);
+  if (printed) return printed[1];
+  if (board.members) return "";
+  const counts = new Map<string, number>();
+  for (const j of jobs) {
+    if (!j.source || !board.sources.includes(j.source)) continue;
+    const c = (j.orgShortCode || "").split(" · ")[0].trim();
+    if (c) counts.set(c, (counts.get(c) || 0) + 1);
+  }
+  const code = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || "";
+  return code.length >= 3 && code === initials(board.name) ? code : "";
+}
+
+/** The day of the board's newest notice or stage (YYYY-MM-DD), for the sitemap. */
+export function boardDay(board: Board, jobs: JobNotification[]): string {
+  return jobs.filter((j) => j.source && board.sources.includes(j.source))
+    .flatMap((j) => [j.publishedAt || "", ...(j.stages || []).map((s) => s.found || s.date || "")])
+    .map((d) => d.slice(0, 10)).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort().pop() || "";
+}

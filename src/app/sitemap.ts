@@ -4,7 +4,7 @@ import { DISTRICTS_REGISTRY } from "@/config/districts";
 import { getJobCanonicalPath, istDate, JobNotification, todayIST } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
 import { STATE_BOARDS } from "@/data/state-boards";
-import { boardHasListings, boardPath, getBoardsOfState } from "@/lib/boards";
+import { boardDay, boardHasListings, boardPath, getBoardsOfState } from "@/lib/boards";
 import { districtHasOwnJobs, jobInSitemap, stateHasListings } from "@/lib/index-rules";
 
 import { 
@@ -149,7 +149,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Board pages (/state/[state]/boards/[board]): only those with something open or under way (others are noindex)
   const boardRoutes: MetadataRoute.Sitemap = Object.keys(STATE_BOARDS).flatMap((st) => getBoardsOfState(st))
     .filter((b) => boardHasListings(b, jobs))
-    .map((b) => ({ url: `${baseUrl}${boardPath(b)}`, changeFrequency: "daily", priority: 0.8 }));
+    .map((b) => ({ url: `${baseUrl}${boardPath(b)}`, ...lastmod(boardDay(b, jobs)), changeFrequency: "daily", priority: 0.8 }));
 
   // Central and State Job detail pages
   const offered = jobs.filter((job) => jobInSitemap(job, today));
