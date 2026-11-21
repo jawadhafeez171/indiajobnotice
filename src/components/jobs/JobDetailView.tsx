@@ -23,7 +23,7 @@ import { ReservedAdSlot } from "@/components/ads/ReservedAdSlot";
 import { useWatchlist } from "@/lib/watchlist";
 import { generateGoogleCalendarUrl } from "@/lib/calendar";
 import { hasPostsCard, hasSelection } from "./ExecutiveNotificationDigest";
-import { datesHeading, glanceFacts, hasEligibility, hasFeeSection, opensLater } from "./JobFactSections";
+import { datesHeading, documentOnly, glanceFacts, hasEligibility, hasFeeSection, opensLater } from "./JobFactSections";
 import { JobFactsTable } from "./JobFactsTable";
 import { ClosedRecruitmentAlert } from "./ClosedRecruitmentAlert";
 import { NoticeTitle } from "./NoticeTitle";
@@ -244,7 +244,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
                 className="flex items-center justify-center gap-2 px-5 py-3 rounded-lg border-2 border-navy bg-surface hover:bg-navy-tint text-navy font-bold text-sm transition-colors"
               >
                 <FileText className="w-4 h-4" aria-hidden />
-                Official notification
+                {documentOnly(job) ? "Latest official document" : "Official notification"}
               </a>
               <div className="flex flex-wrap items-center justify-center gap-x-5">
                 {!isClosed && job.applicationEndDate && (
@@ -267,7 +267,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
           </div>
           <p className="mt-3 px-1 text-xs text-muted flex items-center gap-1.5 flex-wrap">
             <ShieldCheck className="w-3.5 h-3.5 text-green" aria-hidden />
-            <span>From the official notification</span>
+            <span>{documentOnly(job) ? "From the official documents" : "From the official notification"}</span>
             {verificationMeta.lastVerifiedDate && <span>· Added {formatDate(verificationMeta.lastVerifiedDate)}</span>}
           </p>
         </aside>

@@ -8,7 +8,7 @@ import { getJobPostBreakdown } from "@/lib/exam-details";
 import { getStateBySlug } from "@/config/states";
 import { AgeCheck } from "./AgeCheck";
 import { qualificationLabel } from "./JobListCard";
-import { CopyLink, Linked, datesHeading, datesOf, hasEligibility, hasFeeSection, opensLater } from "./JobFactSections";
+import { CopyLink, Linked, datesHeading, datesOf, documentOnly, hasEligibility, hasFeeSection, opensLater } from "./JobFactSections";
 import { PageRef } from "./NoticeTables";
 import { hasPostsCard, hasSelection } from "./ExecutiveNotificationDigest";
 
@@ -87,7 +87,7 @@ function dates(job: JobNotification): Section {
               <span className="mt-1 flex flex-wrap gap-x-4">
                 {s.doc.copyName && <CopyLink name={s.doc.copyName} />}
                 {linkOut(s.doc.url, "Official document", "min-h-[44px]")}
-                {s.doc.page && <a href={s.doc.page} className="inline-flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2 hover:text-saffron">Details</a>}
+                {s.doc.page && <a href={s.doc.page} className="inline-flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2 hover:text-saffron">Details<span className="sr-only">: {typeof s.label === "string" ? s.label.toLowerCase() : "document"}, {s.value}</span></a>}
               </span>
             </span>
           )}
@@ -166,6 +166,9 @@ function posts(job: JobNotification): Section | null {
   const quals = new Set(list.map((p) => p.qualification));
   const pays = new Set(list.map((p) => p.payLevel));
   const sharedQual = quals.size > 1 ? common(list.map((p) => p.qualification)) : "";
+  const unstated = list.filter((p) => quals.size > 1 && p.qualification === "See notification"
+    && !onlyMatch((d.postDetails || []).filter((x) => x.other), p.postName)).length;
+  const qualAbove = !sharedQual && unstated >= 3;
   const sharedPay = pays.size > 1 ? common(list.map((p) => p.payLevel)) : "";
   const all: Row[] = list.map((p, i) => ({
     key: `p${i}`,
@@ -188,6 +191,7 @@ function posts(job: JobNotification): Section | null {
             return <span className="mt-1 block"><span className="text-muted">Qualification: </span>{o.other} <PageRef job={job} page={o.page} /></span>;
           }
           if (quals.size > 1 && p.qualification === "See notification" && !fuller) {
+            if (qualAbove) return null;
             return <span className="mt-1 block"><span className="text-muted">Qualification: </span>see the official notification</span>;
           }
           return (showQual || fuller) ? (
@@ -213,6 +217,7 @@ function posts(job: JobNotification): Section | null {
     rows.push({ key: "pay", label: "Pay", value: rupee(payText(job.salary)) });
   }
   if (sharedQual) rows.push({ info: true, key: "qual", label: "Qualification (unless shown below)", value: sharedQual });
+  else if (qualAbove) rows.push({ info: true, key: "qual", label: "Qualification (unless shown below)", value: "See the official notification" });
   if (!list.length && job.totalVacancies > 0) rows.push({ key: "n", label: "Posts", value: job.totalVacancies.toLocaleString("en-IN") });
   let postRows = all;
   if (grouped) {
@@ -459,11 +464,14 @@ function selection(job: JobNotification): Section | null {
       const into = foldRest && gi > 0 ? more : rows;
       const times = new Set(g.rows.map((p) => spaced(p.time)));
       const sharedTime = g.rows.length > 1 && times.size === 1 ? [...times][0] : "";
-      if (groups.length > 1 && g.stage || sharedTime) {
-        into.push({ key: `ps${gi}`, label: <span className="font-bold text-navy">{[groups.length > 1 ? g.stage : "", sharedTime && `Time: ${sharedTime}`].filter(Boolean).join(" · ")}</span>, value: null });
+      const pages = new Set(g.rows.map((p) => p.page || 0));
+      const sharedPage = g.rows.length > 1 && pages.size === 1 ? [...pages][0] : 0;
+      if (groups.length > 1 && g.stage || sharedTime || sharedPage) {
+        const head = [groups.length > 1 ? g.stage : "", sharedTime && `Time: ${sharedTime}`].filter(Boolean).join(" · ");
+        into.push({ key: `ps${gi}`, label: <><span className="font-bold text-navy">{head || "From the notice"}</span>{sharedPage ? <> <PageRef job={job} page={sharedPage} /></> : null}</>, value: null });
       }
       g.rows.forEach((p, i) => into.push({ key: `p${gi}-${i}`, label: /^total$/i.test((p.paper || "").trim()) ? <b className="text-ink">Total</b> : p.paper || p.stage || "Paper", value: (
-        <>{join([p.questions && `${p.questions} question${p.questions === "1" ? "" : "s"}`, p.marks && <b key="m" className="text-ink">{p.marks} mark{p.marks === "1" ? "" : "s"}</b>, !sharedTime && spaced(p.time)])} <PageRef job={job} page={p.page} /></>
+        <>{join([p.questions && `${p.questions} question${p.questions === "1" ? "" : "s"}`, p.marks && <b key="m" className="text-ink">{p.marks} mark{p.marks === "1" ? "" : "s"}</b>, !sharedTime && spaced(p.time)])}{sharedPage ? null : <> <PageRef job={job} page={p.page} /></>}</>
       ) }));
     });
   }
@@ -520,7 +528,7 @@ function links(job: JobNotification): Section {
   const rows: Row[] = [];
   const opens = opensLater(job);
   if (!closed && job.applyOnlineUrl) rows.push({ key: "apply", label: opens ? `Apply online (opens ${formatDate(opens)})` : "Apply online", value: linkOut(job.applyOnlineUrl, hostOf(job.applyOnlineUrl), "min-h-[44px]") });
-  rows.push({ key: "pdf", label: "Official notification", value: linkOut(job.officialPdfUrl, /\.pdf($|[?#])/i.test(job.officialPdfUrl) ? "Notification (PDF)" : hostOf(job.officialPdfUrl), "min-h-[44px]") });
+  if (!documentOnly(job)) rows.push({ key: "pdf", label: "Official notification", value: linkOut(job.officialPdfUrl, /\.pdf($|[?#])/i.test(job.officialPdfUrl) ? "Notification (PDF)" : hostOf(job.officialPdfUrl), "min-h-[44px]") });
   if (job.copyName) rows.push({ key: "copy", label: "Our copy", value: <CopyLink name={job.copyName} /> });
   return { id: "links", title: "Important links", rows };
 }

@@ -165,6 +165,12 @@ function ageSummary(job: JobNotification): string {
     // a relaxed category that names General ("PwBD (General/EWS)", "Ex-servicemen (General)") is not the general limit
     const relaxed = /pwbd|pwd|\bph\b|disab|divyang|ex-?s|ex-?serv|widow|sport|meritorious|depart|in-?service|govt\.? ?emp/i;
     const general = limits.filter((l) => !relaxed.test(l.category || "") && (!l.category || /gen|unreserved|\bur\b|\bgm\b|open|other/i.test(l.category)));
+    const byPost = new Set(general.map((l) => l.post || ""));
+    if (general.length && byPost.size > 1 && !byPost.has("")) {
+      const ranges = [...new Set(general.map((l) => (l.min ? `${l.min}–${l.max}` : `up to ${l.max}`)))];
+      if (ranges.length > 3) return "Differs by post";
+      if (ranges.length > 1) return `${ranges.join(" or ")} years, by post`;
+    }
     const gMax = [...new Set((general.length ? general : limits).map((l) => l.max))].sort((a, b) => a - b);
     const range = gMax.length === 1 ? `${gMax[0]}` : `${gMax[0]}–${gMax[gMax.length - 1]}`;
     const from = lows.length ? `${Math.min(...lows)} to ${range}` : `Up to ${range}`;
@@ -188,6 +194,11 @@ function ageSummary(job: JobNotification): string {
   return /^see notification/i.test(t) || !t ? "See notification" : "See below";
 }
 
+/** The page's main link is one of its later documents (an eligibility list...), not the advertisement. */
+export function documentOnly(job: JobNotification): boolean {
+  return Boolean(job.officialPdfUrl) && (job.stages || []).some((s) => s.url === job.officialPdfUrl);
+}
+
 export interface GlanceFact { label: string; value: string; note?: string; href?: string; strong?: boolean }
 
 /** The few facts that decide whether to apply, in a few words each; the sections below give the detail. */
@@ -205,8 +216,6 @@ export function glanceFacts(job: JobNotification): GlanceFact[] {
       strong: !closed,
     });
   }
-  const opens = opensLater(job);
-  if (opens) out.push({ label: "Applications open", value: formatDate(opens) });
   if (!closed) {
     out.push({ label: "Fee", value: feeSummary(job), href: "#fee" });
     const age = ageSummary(job);
@@ -331,7 +340,7 @@ export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNull
     const open = Boolean(end) && !closed;
     // not every recruitment has an exam or an admit card (some select by marks): name no step the notice does not give
     steps.push({ key: "next", label: "Next stage", sortKey: "", when: "next",
-      value: open ? `Announced by ${job.orgShortCode} after applications close` : `To be announced by ${job.orgShortCode}` });
+      value: open ? `To be announced by ${job.orgShortCode} after applications close` : `To be announced by ${job.orgShortCode}` });
   }
   // a date known only to the month goes after that month's days ("December 2026" after "11 Dec")
   const order = (k: string) => (!k ? "9999" : k.length === 7 ? `${k}-32` : k);
