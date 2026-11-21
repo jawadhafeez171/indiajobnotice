@@ -6,6 +6,7 @@ import { Footer } from "@/components/common/Footer";
 import { JobDetailView } from "@/components/jobs/JobDetailView";
 import { getJobCanonicalPath, getActiveOpportunities } from "@/data/jobs";
 import { getJobPage } from "@/lib/jobs-store";
+import { withBoard } from "@/lib/boards";
 import { jobSeoTitle, jobSeoDescription } from "@/lib/seo";
 import { getGenuinelyRelatedOpportunities, getSiblingNotices } from "@/lib/internal-links";
 
@@ -74,7 +75,7 @@ export default async function StateJobPage({ params }: Props) {
       <Navbar currentStateSlug={resolvedParams.state} compact />
       <main id="main-content" className="flex-1">
         <JobDetailView
-          job={job}
+          job={withBoard(job, allJobs)}
           stateSlug={resolvedParams.state}
           activeJobs={getActiveOpportunities(allJobs, job.id, job.category, job.stateSlug, 3)}
           related={getGenuinelyRelatedOpportunities(allJobs, job, 4)}

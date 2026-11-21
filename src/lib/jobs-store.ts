@@ -71,10 +71,12 @@ async function loadJobs(): Promise<JobNotification[]> {
     console.warn("JOBS_DATABASE_URL is not set: no jobs to show");
     return [];
   }
-  const rows = await conn<{ data: string; at: string | null }[]>`
-    select data, coalesce(published_at, created_at)::text as at from notices where status = 'published'
-    order by coalesce(published_at, created_at) desc`;
-  const jobs = rows.map((r) => ({ ...(JSON.parse(r.data) as JobNotification), publishedAt: r.at || undefined }));
+  const rows = await conn<{ data: string; at: string | null; source: string | null }[]>`
+    select n.data, coalesce(n.published_at, n.created_at)::text as at, s.slug as source
+    from notices n left join site_sources s on s.id = n.source_id where n.status = 'published'
+    order by coalesce(n.published_at, n.created_at) desc`;
+  const jobs = rows.map((r) => ({ ...(JSON.parse(r.data) as JobNotification), publishedAt: r.at || undefined,
+    ...(r.source ? { source: r.source } : {}) }));
   if (dev) await saveSnapshot(jobs);
   return jobs;
 }
@@ -94,10 +96,12 @@ async function loadOne(slug: string): Promise<JobNotification | null> {
   if (dev) return (await loadJobs()).find((j) => j.slug.toLowerCase() === slug.toLowerCase()) || null;
   const conn = db();
   if (!conn) return null;
-  const rows = await conn<{ data: string; at: string | null }[]>`
-    select data, coalesce(published_at, created_at)::text as at from notices
-    where status = 'published' and lower(slug) = lower(${slug}) limit 1`;
-  return rows[0] ? { ...(JSON.parse(rows[0].data) as JobNotification), publishedAt: rows[0].at || undefined } : null;
+  const rows = await conn<{ data: string; at: string | null; source: string | null }[]>`
+    select n.data, coalesce(n.published_at, n.created_at)::text as at, s.slug as source
+    from notices n left join site_sources s on s.id = n.source_id
+    where n.status = 'published' and lower(n.slug) = lower(${slug}) limit 1`;
+  const r = rows[0];
+  return r ? { ...(JSON.parse(r.data) as JobNotification), publishedAt: r.at || undefined, ...(r.source ? { source: r.source } : {}) } : null;
 }
 
 const cachedJob = (slug: string) => dev ? loadOne(slug)
@@ -226,4 +230,27 @@ const cachedStateChecks = dev ? loadStateChecks : unstable_cache(loadStateChecks
 /** When the agent last checked this state's official sites successfully (ISO), or null when not known. */
 export async function getStateCheckedAt(stateName: string): Promise<string | null> {
   return (await cachedStateChecks())[stateKey(stateName)] || null;
+}
+
+// When each of the agent's sources was last read successfully (view site_sources), for board pages; cached with
+// the job list like the state times.
+async function loadSourceChecks(): Promise<Record<string, string>> {
+  const conn = db();
+  if (!conn) return {};
+  try {
+    const rows = await conn<{ slug: string; at: string | null }[]>`
+      select slug, last_checked::text as at from site_sources where last_checked is not null`;
+    return Object.fromEntries(rows.map((r) => [r.slug, r.at as string]));
+  } catch (err) {
+    console.warn("source check times not read:", err);
+    return {};
+  }
+}
+
+const cachedSourceChecks = dev ? loadSourceChecks : unstable_cache(loadSourceChecks, ["source-checks"], { tags: ["jobs"], revalidate: 86400 });
+
+/** The latest successful check among these sources (ISO), or null. */
+export async function getSourcesCheckedAt(sources: string[]): Promise<string | null> {
+  const all = await cachedSourceChecks();
+  return sources.map((s) => all[s]).filter(Boolean).sort().pop() || null;
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { STATE_BOARDS, StateBoard } from "@/data/state-boards";
 
@@ -14,13 +15,17 @@ export function hasStateBoards(stateSlug: string): boolean {
 
 const DISTRICT = /district court|district recruitment bureau/i;
 
-function BoardLink({ b }: { b: StateBoard }) {
+/** The body's page here (its notices), and its official site beside it. */
+function BoardLink({ b, stateSlug }: { b: StateBoard; stateSlug: string }) {
   return (
-    <li className="border-b border-line-soft">
-      <a href={b.url} target="_blank" rel="noopener noreferrer"
-        className="flex items-center justify-between gap-3 min-h-[44px] py-2 text-sm font-semibold text-ink hover:text-navy group">
-        <span>{b.name}</span>
-        <ExternalLink className="w-3.5 h-3.5 shrink-0 text-muted group-hover:text-navy" aria-hidden />
+    <li className="flex items-center gap-2 border-b border-line-soft">
+      <Link href={`/state/${stateSlug}/boards/${b.board}`}
+        className="flex min-h-[44px] flex-1 items-center py-2 text-sm font-semibold text-navy hover:text-saffron underline-offset-2 hover:underline">
+        {b.name}
+      </Link>
+      <a href={b.url} target="_blank" rel="noopener noreferrer" title="Official site"
+        className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-muted hover:text-navy">
+        <ExternalLink className="h-4 w-4" aria-hidden /><span className="sr-only">{b.name}: official site</span>
       </a>
     </li>
   );
@@ -42,7 +47,7 @@ export function StateBoardsSection({ stateSlug, stateName, compact = false }: { 
       </h2>
       <p className="mt-1 text-sm text-ink-2 max-w-[60ch]">
         We check these sites for new notices; the recruitments we find are listed on this page with their official
-        link. Applications are made on the official site. Each link opens the official site in a new tab.
+        link. Each name opens its notices here; the arrow opens its official site in a new tab, where applications are made.
       </p>
       {(() => {
         const block = (list: typeof groups) => (
@@ -56,14 +61,14 @@ export function StateBoardsSection({ stateSlug, stateName, compact = false }: { 
             <div key={g.label} className="break-inside-avoid mb-6">
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted">{g.label}</h3>
               <ul className="mt-1">
-                {main.map((b) => <BoardLink key={b.url} b={b} />)}
+                {main.map((b) => <BoardLink key={b.url} b={b} stateSlug={stateSlug} />)}
               </ul>
               {district.length > 0 && (
                 <details className="group/d">
                   <summary className="flex items-center min-h-[44px] cursor-pointer text-sm font-semibold text-navy hover:text-saffron">
                     {foldLabel} ({district.length})
                   </summary>
-                  <ul>{district.map((b) => <BoardLink key={b.url} b={b} />)}</ul>
+                  <ul>{district.map((b) => <BoardLink key={b.url} b={b} stateSlug={stateSlug} />)}</ul>
                 </details>
               )}
             </div>

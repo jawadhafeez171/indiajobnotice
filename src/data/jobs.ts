@@ -91,6 +91,11 @@ export interface JobNotification {
   currentStage?: string;
   /** When the site published this notice (database time), set by the loader. */
   publishedAt?: string;
+  /** The agent's source that found it (its board page groups notices by this), set by the loader. */
+  source?: string;
+  /** Its board's page here, worked out by the server for the job page (the board list stays out of the browser). */
+  boardHref?: string;
+  boardName?: string;
   /** Applications closed, exams or results under way: listed under "Exams in progress". */
   inProgress?: boolean;
   /** Exam dates the notification gives: a day or only a month, tentative or not (agent, 2 Nov). */

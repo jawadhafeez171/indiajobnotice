@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { ChevronDown, ExternalLink } from "lucide-react";
 import { JobNotification, ageText, formatFee, getJobCanonicalPath, isJobApplicationClosed, payText } from "@/data/jobs";
 import { formatDate } from "@/lib/utils";
@@ -52,7 +53,13 @@ function hostOf(url: string): string {
 
 function overview(job: JobNotification): Section {
   const f = job.details?.facts || {};
-  const rows: Row[] = [{ key: "org", label: "Organisation", value: job.organization }];
+  // the body links to its page here, with every notice it has posted (21 Nov)
+  // a notice posted by another body (KEA for the Fire Services) names both: the link goes where it was posted
+  const own = job.boardName && job.organization.toLowerCase().startsWith(job.boardName.toLowerCase());
+  const boardLink = "font-semibold text-navy underline underline-offset-2 hover:text-saffron";
+  const rows: Row[] = [{ key: "org", label: "Organisation", value: !job.boardHref ? job.organization : own
+    ? <Link href={job.boardHref} className={boardLink}>{job.organization}</Link>
+    : <>{job.organization}<span className="mt-1 block text-[13px] text-ink-2">Notice posted by <Link href={job.boardHref} className={boardLink}>{job.boardName}</Link></span></> }];
   if (job.advtNo) rows.push({ key: "advt", label: "Advt. No.", value: job.advtNo });
   if (job.totalVacancies > 0) rows.push({ key: "total", label: "Total posts", value: <b className="text-base text-ink tabular-nums">{job.totalVacancies.toLocaleString("en-IN")}</b> });
   rows.push({ key: "where", label: "Job location", value: f.postingPlace?.value ? <>{f.postingPlace.value} <PageRef job={job} page={f.postingPlace.page} /></> : job.isCentral ? "Central government (All India)"

@@ -3,6 +3,8 @@ import { STATES_REGISTRY } from "@/config/states";
 import { DISTRICTS_REGISTRY } from "@/config/districts";
 import { getJobCanonicalPath, istDate, JobNotification, todayIST } from "@/data/jobs";
 import { getAllJobs } from "@/lib/jobs-store";
+import { STATE_BOARDS } from "@/data/state-boards";
+import { boardHasListings, boardPath, getBoardsOfState } from "@/lib/boards";
 import { districtHasOwnJobs, jobInSitemap, stateHasListings } from "@/lib/index-rules";
 
 import { 
@@ -144,6 +146,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: district.isMajorHub ? 0.82 : 0.75,
   }));
 
+  // Board pages (/state/[state]/boards/[board]): only those with something open or under way (others are noindex)
+  const boardRoutes: MetadataRoute.Sitemap = Object.keys(STATE_BOARDS).flatMap((st) => getBoardsOfState(st))
+    .filter((b) => boardHasListings(b, jobs))
+    .map((b) => ({ url: `${baseUrl}${boardPath(b)}`, changeFrequency: "daily", priority: 0.8 }));
+
   // Central and State Job detail pages
   const offered = jobs.filter((job) => jobInSitemap(job, today));
   const jobRoutes: MetadataRoute.Sitemap = offered.map((job) => ({
@@ -158,6 +165,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...sectorRoutes,
     ...qualificationRoutes,
     ...organisationRoutes,
+    ...boardRoutes,
     ...stateRoutes,
     ...districtRoutes,
     // admit card / answer key / result pages are left out: indexable while their document is recent,

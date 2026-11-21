@@ -21,11 +21,16 @@ import { stateHubFacts, stateHubDescription, bodiesPhrase } from "@/lib/state-hu
 import { noticeArea } from "@/lib/internal-links";
 import { rowTitle } from "@/components/jobs/JobListCard";
 import { safeJson } from "@/lib/json-ld";
+import { boardOfJob, boardPath } from "@/lib/boards";
+import type { HiringBody } from "@/lib/state-hub";
 import { StateBoardsSection, hasStateBoards, stateBoardCount } from "@/components/jobs/StateBoardsSection";
 
 const SITE = "https://www.indiajobnotice.com";
 // the stage tabs a state page shows (20 Nov critique: seven tabs repeated the sections below them)
 const STATE_TABS = ["APPLY_OPEN", "CLOSING_SOON", "EXAM_DATES", "RESULT"] as const;
+
+/** "District Court" names a kind of body, not this one. */
+const board_generic = (code: string) => /^(district|court|govt|government)/i.test(code);
 
 /** On its own state's page a body needs no state suffix: "KEA · KA" -> "KEA". */
 function withoutStateCode(j: JobNotification): JobNotification {
@@ -100,6 +105,27 @@ export default async function StateHomePage({ params }: PageProps) {
   const ownOpen = jobs.some((j) => !j.isCentral && isOpenOrOpening(j));
   const own = getJobsByState(allJobs, state.slug, false);
   const facts = stateHubFacts(own);
+  // who is hiring, by the board whose site posted each notice (its page has them all); else by the notice's body
+  const hiring: HiringBody[] = (() => {
+    const by = new Map<string, HiringBody & { codes: Map<string, number> }>();
+    for (const j of facts.open) {
+      const board = boardOfJob(j);
+      if (!board) continue;
+      const h = by.get(board.slug) || { name: board.name, code: "", open: 0, posts: 0, href: boardPath(board), codes: new Map() };
+      h.open += 1;
+      h.posts += j.totalVacancies || 0;
+      const code = (j.orgShortCode || "").split(" · ")[0].trim();
+      if (code) h.codes.set(code, (h.codes.get(code) || 0) + 1);
+      by.set(board.slug, h);
+    }
+    const boards = [...by.values()].map(({ codes, ...h }) => {
+      const code = [...codes.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || "";
+      return { ...h, code: code.length <= 10 && !board_generic(code) ? code : "" };
+    });
+    const covered = new Set(facts.open.filter((j) => boardOfJob(j)).map((j) => j.id));
+    const rest = facts.open.some((j) => !covered.has(j.id)) ? stateHubFacts(own.filter((j) => !covered.has(j.id))).bodies : [];
+    return [...boards, ...rest].sort((a, b) => b.open - a.open || b.posts - a.posts || a.name.localeCompare(b.name));
+  })();
   // with jobs of its own the page carries only those; central ones are a link away (20 Nov: 47 central jobs made
   // the page ~0.9 MB and about something else)
   const listJobs = (ownOpen ? jobs.filter((j) => !j.isCentral) : jobs).map(withoutStateCode);
@@ -278,10 +304,10 @@ export default async function StateHomePage({ params }: PageProps) {
 
         {/* The bodies that recruit here, and more ways in; the age check has its own page */}
         <section aria-labelledby="bodies-h" className="border-t border-line pt-6 space-y-4">
-          <h2 id="bodies-h" className="font-serif text-xl font-bold text-ink">{facts.bodies.length ? `Who is hiring in ${state.name}` : "More ways to find jobs"}</h2>
-          {facts.bodies.length > 0 && (
+          <h2 id="bodies-h" className="font-serif text-xl font-bold text-ink">{hiring.length ? `Who is hiring in ${state.name}` : "More ways to find jobs"}</h2>
+          {hiring.length > 0 && (
             <ul className="flex flex-wrap gap-2 text-sm">
-              {facts.bodies.slice(0, 16).map((b) => (
+              {hiring.slice(0, 16).map((b) => (
                 <li key={b.name}>
                   <Link href={b.href} title={b.name}
                     className="inline-flex min-h-[44px] flex-wrap items-center gap-x-2 rounded-lg border border-line bg-surface px-3.5 py-2 font-semibold leading-snug text-ink hover:border-navy hover:text-navy">
