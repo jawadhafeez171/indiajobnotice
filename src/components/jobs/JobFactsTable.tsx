@@ -95,6 +95,7 @@ function dates(job: JobNotification): Section {
       ),
     });
   }
+  rows.push({ key: "report-dates", label: "Something wrong?", value: <ReportLink job={job} text="Email a correction" /> });
   return { id: "dates", title: datesHeading(job), rows };
 }
 
@@ -456,21 +457,25 @@ function selection(job: JobNotification): Section | null {
   return { id: "selection", title: own.length || pattern.length ? "Selection and exam" : "Selection process", rows };
 }
 
+/** "Email a correction": the email opens with this page's link and title filled in (the reader is on the page). */
+function ReportLink({ job, text }: { job: JobNotification; text: string }) {
+  const pageUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}`;
+  const mail = `mailto:indiajobnotice@gmail.com?subject=${encodeURIComponent(`Correction: ${job.shortTitle || job.title}`.slice(0, 150))}&body=${encodeURIComponent(
+    `Job page link: ${pageUrl}\n\nWhat is wrong on the page:\n\nWhat the official notice says (page number if you know it):\n`)}`;
+  return (
+    <a href={mail} className="inline-flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2 hover:text-saffron">
+      {text}
+    </a>
+  );
+}
+
 function links(job: JobNotification): Section {
   const closed = isJobApplicationClosed(job);
   const rows: Row[] = [];
   if (!closed && job.applyOnlineUrl) rows.push({ key: "apply", label: "Apply online", value: linkOut(job.applyOnlineUrl, hostOf(job.applyOnlineUrl)) });
   rows.push({ key: "pdf", label: "Official notification", value: linkOut(job.officialPdfUrl, /\.pdf($|[?#])/i.test(job.officialPdfUrl) ? "Notification (PDF)" : hostOf(job.officialPdfUrl)) });
   if (job.copyName) rows.push({ key: "copy", label: "Our copy", value: <CopyLink name={job.copyName} /> });
-  // the reader who spots a wrong date is on this page: the email opens with its link and title filled in
-  const pageUrl = `https://www.indiajobnotice.com${getJobCanonicalPath(job)}`;
-  const mail = `mailto:indiajobnotice@gmail.com?subject=${encodeURIComponent(`Correction: ${job.shortTitle || job.title}`.slice(0, 150))}&body=${encodeURIComponent(
-    `Job page link: ${pageUrl}\n\nWhat is wrong on the page:\n\nWhat the official notice says (page number if you know it):\n`)}`;
-  rows.push({ key: "report", label: "Found a mistake?", value: (
-    <a href={mail} className="inline-flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2 hover:text-saffron">
-      Email a correction for this page
-    </a>
-  ) });
+  rows.push({ key: "report", label: "Found a mistake?", value: <ReportLink job={job} text="Email a correction for this page" /> });
   return { id: "links", title: "Important links", rows };
 }
 

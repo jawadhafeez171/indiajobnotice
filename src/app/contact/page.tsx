@@ -7,6 +7,7 @@ import { Footer } from "@/components/common/Footer";
 import { WhatsAppLogo, TelegramLogo, InstagramLogo, YouTubeLogo, INSTAGRAM_URL, YOUTUBE_URL } from "@/components/common/SocialIcons";
 import { ExternalLink, Mail } from "lucide-react";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
+import { CopyEmail } from "@/components/common/CopyEmail";
 
 // Contact (21 Nov, critique 16/40): only what is true. One address; reporting a mistake first, with what to
 // include and an email that opens with the subject and the questions filled in. No offices, desks, hours or
@@ -46,6 +47,7 @@ export default function ContactPage() {
     <div className="min-h-screen flex flex-col bg-canvas">
       <Navbar />
 
+      <main id="main-content" className="flex-1 w-full">
       <section className="border-b border-line bg-subtle py-6 sm:py-12 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto space-y-3">
           <Breadcrumbs items={[{ label: "Contact" }]} className="mb-3" />
@@ -57,7 +59,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <main id="main-content" className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10 flex-1 w-full space-y-10 text-base text-ink-2 leading-relaxed">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full space-y-10 text-base text-ink-2 leading-relaxed">
         {/* the reason most people come here */}
         <section aria-labelledby="mistake-h" className="rounded-xl border border-line bg-surface p-5 sm:p-6">
           <h2 id="mistake-h" className="text-xl font-bold text-ink">Found a mistake on a job page?</h2>
@@ -71,6 +73,9 @@ export default function ContactPage() {
             <li>what is wrong on it</li>
             <li>what the official notice says, with its page number if you know it</li>
           </ol>
+          <p className="mt-3 text-sm text-ink-2">
+            On the job page itself? Its &ldquo;Email a correction&rdquo; link fills in the page link for you.
+          </p>
           <a
             href={correctionMail}
             className="mt-5 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg bg-navy-solid px-5 py-3 text-base font-bold text-white hover:bg-navy-strong sm:inline-flex sm:w-auto"
@@ -79,22 +84,24 @@ export default function ContactPage() {
             Email a correction
           </a>
           <p className="mt-2 text-sm text-muted">
-            Opens your email app with these questions filled in. A screenshot of the notice is fine, and you can write in any language.
-            Each job page also has a link that fills in its address for you.
+            Opens your email app with these questions filled in. A screenshot or photo of the notice page is fine, and you can
+            write in any language.
           </p>
-          <p className="mt-1 text-sm text-muted">
-            Or write to <span className="block select-all font-semibold text-ink sm:inline">{EMAIL}</span>
-          </p>
+          <p className="mt-3 text-sm text-muted">No email app? Copy the address and write from anywhere:</p>
+          <CopyEmail email={EMAIL} />
         </section>
 
-        <section aria-labelledby="other-h">
+        <section aria-labelledby="other-h" className="space-y-2">
           <h2 id="other-h" className="text-xl font-bold text-ink">Anything else</h2>
-          <p className="mt-2 max-w-[60ch]">
-            How notices are read and checked:{" "}
-            <Link href="/editorial-policy" className="font-semibold text-navy underline underline-offset-2 hover:text-saffron">how we check notices</Link>.
-            Questions about the site, a notice we have missed, or a request from a college or coaching centre: write to the
-            same address. Colleges and libraries can print our list of open jobs from the{" "}
+          <p className="max-w-[60ch]">
+            Questions, a notice we have missed, or a request from a college or coaching centre: write to the same address.
+          </p>
+          <p className="max-w-[60ch]">
+            Printing for a notice board? Use the{" "}
             <Link href="/vacancies" className="font-semibold text-navy underline underline-offset-2 hover:text-saffron">vacancies page</Link>.
+          </p>
+          <p>
+            <Link href="/editorial-policy" className="inline-flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2 hover:text-saffron">How we check notices</Link>
           </p>
         </section>
 
@@ -129,6 +136,7 @@ export default function ContactPage() {
             fees, UPI payments or bank details. Application fees are paid only on the recruiting body&apos;s own website.
           </p>
         </section>
+      </div>
       </main>
 
       <Footer />
