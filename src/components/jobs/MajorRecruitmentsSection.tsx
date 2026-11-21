@@ -534,17 +534,28 @@ export function MajorRecruitmentsSection({ jobs, currentStateSlug, hideSearch = 
 
   // a Karnataka round's KK and RPC notices of one recruitment: each row points to the other (21 Nov critique)
   const twinOf = useMemo(() => {
-    const base = (j: JobNotification) => `${orgKey(j)}|${rowTitle(j).replace(/\s*\((?:KK|RPC)\)/g, "").replace(/\s+/g, " ").trim().toLowerCase()}`;
-    const by = new Map<string, JobNotification[]>();
-    for (const j of jobs) if (noticeArea(j)) by.set(base(j), [...(by.get(base(j)) || []), j]);
+    const area = (j: JobNotification) => noticeArea(j)?.code;
+    const title = (j: JobNotification) => rowTitle(j).replace(/\s*\((?:KK|RPC)\)/g, "").replace(/\s+/g, " ").trim().toLowerCase();
+    // KEA files a round's two notices in matching folders ("gpcjecivilrpc2026" / "gpcjecivilkk2026")
+    const folder = (j: JobNotification) => {
+      const seg = (j.officialPdfUrl || "").toLowerCase().split(/[/?#]/).find((x) => /(?:rpc|kk)20\d\d/.test(x));
+      return seg ? seg.replace(/(?:rpc|kk)(?=20\d\d)/, "~").replace(/\.[a-z]+$/, "") : "";
+    };
+    const words = (t: string) => new Set(t.match(/[a-z]{4,}/g) || []);
+    const cadred = jobs.filter((j) => area(j));
     const out = new Map<string, { href: string; label: string }>();
-    for (const group of by.values()) {
-      for (const j of group) {
-        const mine = noticeArea(j)?.code;
-        const other = group.find((x) => noticeArea(x)?.code && noticeArea(x)?.code !== mine);
-        if (other) out.set(j.id, { href: getJobCanonicalPath(other),
-          label: `Also: ${noticeArea(other)?.code === "KK" ? "Kalyana Karnataka (KK)" : "Rest of Karnataka (RPC)"}${other.totalVacancies ? `, ${other.totalVacancies.toLocaleString("en-IN")} posts` : ""}` });
-      }
+    for (const j of cadred) {
+      const mine = area(j);
+      const candidates = cadred.filter((x) => area(x) !== mine && orgKey(x) === orgKey(j)
+        && (title(x) === title(j) || (folder(j) && folder(x) === folder(j))));
+      if (!candidates.length) continue;
+      // several in one folder (First and Second Division Assistant): the one whose title shares most words
+      const wj = words(title(j));
+      const score = (x: JobNotification) => [...words(title(x))].filter((w) => wj.has(w)).length;
+      const other = [...candidates].sort((a, b) => score(b) - score(a))[0];
+      if (candidates.length > 1 && score(other) === score(candidates.find((c) => c !== other)!)) continue; // no guessing
+      out.set(j.id, { href: getJobCanonicalPath(other),
+        label: `Also: ${area(other) === "KK" ? "Kalyana Karnataka (KK)" : "Rest of Karnataka (RPC)"}${other.totalVacancies ? `, ${other.totalVacancies.toLocaleString("en-IN")} posts` : ""}` });
     }
     return out;
   }, [jobs]);
