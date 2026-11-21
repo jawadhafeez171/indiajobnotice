@@ -174,8 +174,10 @@ export async function Footer({ openStates = false }: { openStates?: boolean } = 
             Each state page lists recruitments from that state&apos;s public service commission, staff selection
             and police boards, courts and departments, with the official link for each.
           </p>
-          <div className="mb-4 md:mb-6">
+          {/* phones on a state page already have the full list open: one way to reach a state there */}
+          <div className={`mb-4 md:mb-6 md:flex md:items-center md:gap-6 ${openStates ? "hidden md:flex" : ""}`}>
             <StateJump states={states.map((st) => ({ name: st.name, href: getStateSubdomainUrl(st.slug) }))} />
+            <p className="hidden md:block text-[12px] text-on-navy">Most visited states are in <b className="font-semibold text-white">bold</b>.</p>
           </div>
 
           {/* phones: one list behind a tap (the region cards stacked were ~4 screens) */}
