@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 const h2 = "text-xl font-bold text-ink";
 const link = "font-semibold text-navy underline underline-offset-2 hover:text-saffron";
 const BODIES = ["Staff Selection Commission (SSC)", "Railway Recruitment Boards", "IBPS and the banks", "State public service commissions",
-  "KEA and other exam authorities", "Police recruitment boards", "Public sector companies", "High courts and district courts"];
+  "KEA (Karnataka) and other exam authorities", "Police recruitment boards", "Public sector companies", "High courts and district courts"];
 
 export default function AboutPage() {
   return (
@@ -48,53 +48,55 @@ export default function AboutPage() {
             {/* the first thing a careful reader asks: is this the government, and will it ask for money */}
             <p className="flex max-w-prose items-start gap-2 rounded-lg border border-saffron-line bg-saffron-tint px-3 py-2.5 text-sm text-ink">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-saffron" aria-hidden />
-              <span><b>Not a government website.</b> Free to use, no sign-up. We never ask for money or bank details.</span>
+              <span><b>Not a government website.</b> Free to use, no sign-up; jobs you save stay on your own phone. We never ask for money or bank details.</span>
             </p>
           </div>
         </section>
 
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full space-y-10 text-base text-ink-2 leading-relaxed">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10 w-full space-y-10 text-base text-ink-2 leading-relaxed [&_p]:max-w-[64ch]">
           <section aria-labelledby="where-h" className="space-y-3">
             <h2 id="where-h" className={h2}>Where the notices come from</h2>
             <p className="max-w-prose">
-              Only from official websites. Several times a day, software checks more than 1,000 of them for new notices.
+              Only from official websites. Three times a day, software checks more than 1,000 of them for new notices.
               Other job sites are never copied.
             </p>
             <ul className="flex flex-wrap gap-2" aria-label="Kinds of recruiting bodies">
               {BODIES.map((b) => (
-                <li key={b} className="rounded-full border border-line bg-surface px-3 py-1 text-sm text-ink">{b}</li>
+                <li key={b} className="rounded-full border border-line bg-surface px-2.5 py-0.5 text-[13px] text-ink">{b}</li>
               ))}
             </ul>
             <p className="text-sm">
-              Each state page lists the official bodies watched in that state.
+              Each state page lists the official bodies watched in that state. The{" "}
+              <Link href="/directory" className={link}>directory</Link> lists the commissions and boards of every state.
             </p>
           </section>
 
           <section aria-labelledby="page-h" className="space-y-3">
             <h2 id="page-h" className={h2}>What a job page shows</h2>
             <p className="max-w-prose">
-              The facts the notice states, in a table. Where the notice is a PDF, a fact shows the page it came from, as a
-              link. When the notice does not state something, the page says so instead of guessing.
+              The facts the notice states, in a table. Most facts show the page of the notice they came from. If the notice
+              does not say something, the page says so. Nothing is guessed.
             </p>
             {/* an example row, drawn like the real table */}
-            <figure className="max-w-xl">
+            <figure className="max-w-xl" aria-label="Example of a job page row">
+              <p className="mb-1.5 text-[12px] font-bold uppercase tracking-wide text-muted">Example</p>
               <div className="overflow-hidden rounded-xl border border-line">
                 <table className="w-full table-fixed border-collapse bg-surface text-sm">
                   <colgroup><col className="w-[40%]" /><col /></colgroup>
                   <tbody className="[&>tr>*]:border-b [&>tr>*]:border-line [&>tr:last-child>*]:border-b-0">
                     <tr className="bg-saffron-tint">
                       <th scope="row" className="px-3 py-2.5 text-left font-bold text-ink">Last date to apply</th>
-                      <td className="px-3 py-2.5 font-semibold text-ink">25 Nov 2026 <span className="font-medium text-muted">p. 3</span></td>
+                      <td className="px-3 py-2.5 font-semibold text-ink">25 Nov 2026 <span className="font-medium text-muted underline decoration-line underline-offset-2">p. 3</span></td>
                     </tr>
                     <tr>
                       <th scope="row" className="px-3 py-2.5 text-left font-normal text-ink-2">Application fee</th>
-                      <td className="px-3 py-2.5 text-ink">See the official notification</td>
+                      <td className="px-3 py-2.5 text-ink">See notification</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <figcaption className="mt-1.5 text-sm text-muted">
-                An example: &ldquo;p. 3&rdquo; opens the notice at page 3. Applications are always made on the official website.
+                On a real page, &ldquo;p. 3&rdquo; opens the notice at page 3. Applications are always made on the official website.
               </figcaption>
             </figure>
             <Link href="/editorial-policy" className={`inline-flex min-h-[44px] items-center gap-1.5 ${link}`}>
@@ -103,11 +105,11 @@ export default function AboutPage() {
           </section>
 
           <section aria-labelledby="gov-h" className="space-y-2">
-            <h2 id="gov-h" className={h2}>Not a government website</h2>
+            <h2 id="gov-h" className={h2}>Check before you pay</h2>
             <p className="max-w-prose">
-              India Job Notice is not part of, or approved by, any government or recruiting body. Names such as SSC or RRB are
-              used only to say whose notice it is. Always check the official notification before you apply or pay a fee.
-              Jobs you save stay on your own phone or computer.
+              India Job Notice is not approved by any government or recruiting body. Names such as SSC or RRB only say whose
+              notice it is. Before you apply or pay a fee, check the official notification. Official recruitment websites
+              usually end in .gov.in or .nic.in; banks and public sector companies use their own.
             </p>
           </section>
 
@@ -119,7 +121,7 @@ export default function AboutPage() {
           <section aria-labelledby="next-h" className="rounded-xl border border-line bg-surface p-5 space-y-3">
             <h2 id="next-h" className={h2}>Found a mistake?</h2>
             <p className="max-w-prose text-sm">
-              Send the link to the job page and what looks wrong. We will check it against the official notice.
+              Send the link to the job page and what looks wrong, by email from the contact page. We will check it against the official notice.
             </p>
             <div className="flex flex-col gap-2 sm:flex-row">
               <Link
