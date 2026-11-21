@@ -160,10 +160,15 @@ function ageSummary(job: JobNotification): string {
     const mins = new Set(limits.map((l) => l.min || 0));
     const min = mins.size === 1 ? [...mins][0] : 0;
     if (maxes.length === 1) return min ? `${min} to ${maxes[0]} years` : `Up to ${maxes[0]} years`;
-    // one wording everywhere: the lowest minimum to the highest maximum, "(varies)"
+    // the general limit, said as such: a relaxed category's higher limit is not everyone's (PwBD 45 vs General 28)
     const lows = [...mins].filter(Boolean);
-    const top = maxes[maxes.length - 1];
-    return lows.length ? `${Math.min(...lows)} to ${top} years (varies)` : `Up to ${maxes[0]}–${top} years (varies)`;
+    // a relaxed category that names General ("PwBD (General/EWS)", "Ex-servicemen (General)") is not the general limit
+    const relaxed = /pwbd|pwd|\bph\b|disab|divyang|ex-?s|ex-?serv|widow|sport|meritorious|depart|in-?service|govt\.? ?emp/i;
+    const general = limits.filter((l) => !relaxed.test(l.category || "") && (!l.category || /gen|unreserved|\bur\b|\bgm\b|open|other/i.test(l.category)));
+    const gMax = [...new Set((general.length ? general : limits).map((l) => l.max))].sort((a, b) => a - b);
+    const range = gMax.length === 1 ? `${gMax[0]}` : `${gMax[0]}–${gMax[gMax.length - 1]}`;
+    const from = lows.length ? `${Math.min(...lows)} to ${range}` : `Up to ${range}`;
+    return `${from} years${general.length ? " (General; more for some)" : " (varies)"}`;
   }
   const t = ageText(job).trim();
   if (t && t.length <= 24) return t;
@@ -175,10 +180,11 @@ function ageSummary(job: JobNotification): string {
   const minAge = minimum ? Number(minimum[1]) : 0;
   const ages = [...new Set([...t.matchAll(/\b(\d{2})\s*years/gi)].map((m) => Number(m[1])))].filter((a) => a !== minAge).sort((a, b) => a - b);
   if (minAge && ages.length === 1) return `${minAge} to ${ages[0]} years`;
-  if (minAge && ages.length > 1) return `${minAge} to ${ages[0]}–${ages[ages.length - 1]} years (varies)`;
+  // several printed upper limits: the lowest is the general one, the others are relaxations
+  if (minAge && ages.length > 1) return `${minAge} to ${ages[0]} years (General; more for some)`;
   if (ages.length === 1) return `Up to ${ages[0]} years`;
   // several upper limits ("General 40 years; SC/ST 45 years") are maximums, not a range from 40
-  if (ages.length > 1) return `Up to ${ages[0]}–${ages[ages.length - 1]} years (varies)`;
+  if (ages.length > 1) return `Up to ${ages[0]} years (General; more for some)`;
   return /^see notification/i.test(t) || !t ? "See notification" : "See below";
 }
 
@@ -260,7 +266,7 @@ export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNull
         {end && !closed && daysLeft >= 0 && " "}
         {end && !closed && daysLeft >= 0 && (
           <span className={`ml-2 whitespace-nowrap font-semibold ${daysLeft <= 7 ? "text-saffron" : "text-green"}`}>
-            {daysLeft === 0 ? "today" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`}
+            {daysLeft === 0 ? "Closes today" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`}
           </span>
         )}
         {end && closed && <span className="ml-2 whitespace-nowrap font-normal text-muted">closed</span>}

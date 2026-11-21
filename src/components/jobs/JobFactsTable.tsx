@@ -8,7 +8,7 @@ import { getJobPostBreakdown } from "@/lib/exam-details";
 import { getStateBySlug } from "@/config/states";
 import { AgeCheck } from "./AgeCheck";
 import { qualificationLabel } from "./JobListCard";
-import { CopyLink, Linked, datesHeading, datesOf, hasEligibility, hasFeeSection } from "./JobFactSections";
+import { CopyLink, Linked, datesHeading, datesOf, hasEligibility, hasFeeSection, opensLater } from "./JobFactSections";
 import { PageRef } from "./NoticeTables";
 import { hasPostsCard, hasSelection } from "./ExecutiveNotificationDigest";
 
@@ -23,9 +23,9 @@ const FIRST = 8;
 /** stack: on phones the label runs across the table with the value under it (post names are too long for a third) */
 type Row = { label: React.ReactNode; value: React.ReactNode; key: string; sub?: boolean; strong?: boolean; stack?: boolean; info?: boolean };
 /** rows after the first ones open with "Show all N <noun>" */
-type Group = { rows: Row[]; more?: Row[]; noun?: string };
+type Group = { rows: Row[]; more?: Row[]; noun?: string; moreLabel?: string };
 /** more: rows behind "Show N more"; after: rows shown after that button (a section's own sub-tables) */
-type Section = { id: string; title: string; rows: Row[]; more?: Row[]; noun?: string; after?: Group[] };
+type Section = { id: string; title: string; rows: Row[]; more?: Row[]; noun?: string; moreLabel?: string; after?: Group[] };
 
 const dot = <span className="mx-1.5 text-faint" aria-hidden>·</span>;
 const join = (parts: React.ReactNode[]) =>
@@ -123,7 +123,9 @@ function onlyMatch<T extends { post: string }>(items: T[], name: string): T | un
   return hits.length === 1 ? hits[0] : undefined;
 }
 
-const textWords = (t: string) => new Set(t.toLowerCase().match(/[a-z0-9]{3,}/g) || []);
+const STOP = new Set(["with", "and", "the", "for", "from", "any", "its", "his", "her", "who", "has", "have", "that", "this", "are", "was", "not", "all"]);
+const textWords = (t: string) => new Set((t.toLowerCase().match(/[a-z0-9][a-z0-9.]*[a-z0-9]|[a-z0-9]/g) || [])
+  .map((w) => w.replace(/\./g, "")).filter((w) => w.length >= 2 && !STOP.has(w) && w !== "or"));
 /** Most of a's words are already in b ("Also needed" restating the qualification). */
 function restates(a: string, b: string): boolean {
   const wa = textWords(a), wb = textWords(b);
@@ -179,6 +181,9 @@ function posts(job: JobNotification): Section | null {
           // the fuller printed text already holds the qualification: it is shown once, as the qualification
           const fuller = o && p.qualification !== "See notification" && restates(p.qualification, o.other);
           const showQual = quals.size > 1 && p.qualification !== "See notification" && p.qualification !== sharedQual;
+          if (quals.size > 1 && p.qualification === "See notification" && !fuller) {
+            return <span className="mt-1 block"><span className="text-muted">Qualification: </span>see the official notification</span>;
+          }
           return (showQual || fuller) ? (
             <span className="mt-1 block"><span className="text-muted">Qualification: </span>{fuller ? o!.other : p.qualification}
               {fuller && <> <PageRef job={job} page={o!.page} /></>}</span>
@@ -276,7 +281,7 @@ function ageRows(limits: Limit[]): Row[] {
     if (byPosts.size > 1) rows.push(subhead(`agep${n}`, `Age limit: ${k || "all posts"}`));
     for (const g of b.items) {
       const min = g.min || postMin;
-      const label = byPosts.size > 1 ? (cats.size > 1 && g.category ? g.category : "All candidates")
+      const label = byPosts.size > 1 ? (cats.size > 1 ? g.category || "General / others" : "All candidates")
         : cats.size > 1 && g.category ? `Age limit (${g.category})` : "Age limit";
       rows.push({ key: `age${n++}`, label, value: <b className="text-ink tabular-nums">{min ? `${min} to ${g.max}` : `Up to ${g.max}`} years</b> });
     }
@@ -380,7 +385,7 @@ function fee(job: JobNotification): Section | null {
       const extra = f.text && f.text.replace(/\.00?(?!\d)/g, "").replace(/[₹\s,/-]|rs\.?|\(?non-refundable\)?|only/gi, "") !== String(f.amount ?? "");
       rows.push({ key: `fee-${f.category}`, label: f.category, value: (
         <>{f.amount === 0 ? <b className="text-green">No fee</b> : f.amount ? <b className="text-base text-ink tabular-nums">{rupees(f.amount)}</b> : f.text}
-          {extra && f.amount !== null && feeNote(f.text) && <span className="ml-1.5 text-[13px] text-ink-2">({feeNote(f.text)})</span>} <PageRef job={job} page={f.page} /></>
+          {extra && f.amount !== null && feeNote(f.text) && !restates(feeNote(f.text), f.category) && <span className="ml-1.5 text-[13px] text-ink-2">({feeNote(f.text)})</span>} <PageRef job={job} page={f.page} /></>
       ) });
     }
   } else {
@@ -428,6 +433,8 @@ function selection(job: JobNotification): Section | null {
     ? [{ key: "s0", label: "Selection", value: cap(stages[0]) }]
     : [{ key: "stages", label: "Selection stages", value: <Numbered job={job} items={stages.map((t) => ({ text: cap(t), page: 0 }))} /> }];
   const pattern = d.examPattern || [];
+  const more: Row[] = [];
+  let groupCount = 0;
   if (pattern.length) {
     rows.push(subhead("pat", "Exam pattern"));
     const groups: { stage: string; rows: typeof pattern }[] = [];
@@ -440,17 +447,21 @@ function selection(job: JobNotification): Section | null {
       if (hm) return `${Number(hm[1])} hour${hm[1] === "01" || hm[1] === "1" ? "" : "s"}${Number(hm[2]) ? ` ${Number(hm[2])} minutes` : ""}`;
       return (t || "").replace(/(\d)([A-Za-z])/g, "$1 $2");
     };
+    groupCount = groups.length;
+    const foldRest = groups.length > 1 && pattern.length > 12;
     groups.forEach((g, gi) => {
+      const into = foldRest && gi > 0 ? more : rows;
       const times = new Set(g.rows.map((p) => spaced(p.time)));
       const sharedTime = g.rows.length > 1 && times.size === 1 ? [...times][0] : "";
       if (groups.length > 1 && g.stage || sharedTime) {
-        rows.push({ key: `ps${gi}`, label: <span className="font-bold text-navy">{[groups.length > 1 ? g.stage : "", sharedTime && `Time: ${sharedTime}`].filter(Boolean).join(" · ")}</span>, value: null });
+        into.push({ key: `ps${gi}`, label: <span className="font-bold text-navy">{[groups.length > 1 ? g.stage : "", sharedTime && `Time: ${sharedTime}`].filter(Boolean).join(" · ")}</span>, value: null });
       }
-      g.rows.forEach((p, i) => rows.push({ key: `p${gi}-${i}`, label: /^total$/i.test((p.paper || "").trim()) ? <b className="text-ink">Total</b> : p.paper || p.stage || "Paper", value: (
+      g.rows.forEach((p, i) => into.push({ key: `p${gi}-${i}`, label: /^total$/i.test((p.paper || "").trim()) ? <b className="text-ink">Total</b> : p.paper || p.stage || "Paper", value: (
         <>{join([p.questions && `${p.questions} question${p.questions === "1" ? "" : "s"}`, p.marks && <b key="m" className="text-ink">{p.marks} mark{p.marks === "1" ? "" : "s"}</b>, !sharedTime && spaced(p.time)])} <PageRef job={job} page={p.page} /></>
       ) }));
     });
   }
+  const tailStart = rows.length;
   const neg = d.facts?.negativeMarking;
   if (neg?.value) rows.push({ key: "neg", label: "Negative marking", value: <>{neg.value} <PageRef job={job} page={neg.page} /></> });
   if (d.syllabus?.length) {
@@ -466,7 +477,7 @@ function selection(job: JobNotification): Section | null {
         <>
           {p.topics.length > 6 ? (
             <details className="group">
-              <summary className="cursor-pointer list-none font-semibold text-navy hover:text-saffron [&::-webkit-details-marker]:hidden">
+              <summary className="inline-flex min-h-[44px] cursor-pointer list-none items-center font-semibold text-navy hover:text-saffron [&::-webkit-details-marker]:hidden">
                 Show {p.topics.length} topics
               </summary>
               <div className="pt-2">{list}</div>
@@ -479,7 +490,11 @@ function selection(job: JobNotification): Section | null {
   } else if (d.syllabusNote) {
     rows.push({ key: "sylnote", label: "Syllabus", value: d.syllabusNote });
   }
-  return { id: "selection", title: own.length || pattern.length ? "Selection and exam" : "Selection process", rows };
+  // the folded exam patterns open under the first; negative marking and the syllabus follow the button
+  const tail = more.length ? rows.splice(tailStart) : [];
+  return { id: "selection", title: own.length || pattern.length ? "Selection and exam" : "Selection process", rows,
+    more: more.length ? more : undefined, moreLabel: `Show ${groupCount - 1} more exam pattern${groupCount - 1 === 1 ? "" : "s"}`,
+    after: tail.length ? [{ rows: tail }] : undefined };
 }
 
 /** "Email a correction": the email opens with this page's link and title filled in (the reader is on the page). */
@@ -497,8 +512,9 @@ function ReportLink({ job, text }: { job: JobNotification; text: string }) {
 function links(job: JobNotification): Section {
   const closed = isJobApplicationClosed(job);
   const rows: Row[] = [];
-  if (!closed && job.applyOnlineUrl) rows.push({ key: "apply", label: "Apply online", value: linkOut(job.applyOnlineUrl, hostOf(job.applyOnlineUrl)) });
-  rows.push({ key: "pdf", label: "Official notification", value: linkOut(job.officialPdfUrl, /\.pdf($|[?#])/i.test(job.officialPdfUrl) ? "Notification (PDF)" : hostOf(job.officialPdfUrl)) });
+  const opens = opensLater(job);
+  if (!closed && job.applyOnlineUrl) rows.push({ key: "apply", label: opens ? `Apply online (opens ${formatDate(opens)})` : "Apply online", value: linkOut(job.applyOnlineUrl, hostOf(job.applyOnlineUrl), "min-h-[44px]") });
+  rows.push({ key: "pdf", label: "Official notification", value: linkOut(job.officialPdfUrl, /\.pdf($|[?#])/i.test(job.officialPdfUrl) ? "Notification (PDF)" : hostOf(job.officialPdfUrl), "min-h-[44px]") });
   if (job.copyName) rows.push({ key: "copy", label: "Our copy", value: <CopyLink name={job.copyName} /> });
   return { id: "links", title: "Important links", rows };
 }
@@ -576,7 +592,7 @@ function GroupRows({ g }: { g: Group }) {
             <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}
               className="inline-flex min-h-[44px] items-center gap-1.5 text-sm font-bold text-navy hover:text-saffron">
               <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden />
-              {open ? "Show fewer" : `Show all ${total} ${g.noun || "rows"}`}
+              {open ? "Show fewer" : g.moreLabel || `Show all ${total} ${g.noun || "rows"}`}
             </button>
           </td>
         </tr>
@@ -594,7 +610,7 @@ function SectionBody({ s }: { s: Section }) {
           <h2 className="font-serif text-lg font-bold text-navy">{s.title}</h2>
         </th>
       </tr>
-      <GroupRows g={{ rows: s.rows, more: s.more, noun: s.noun }} />
+      <GroupRows g={{ rows: s.rows, more: s.more, noun: s.noun, moreLabel: s.moreLabel }} />
       {(s.after || []).map((g, i) => <GroupRows key={i} g={g} />)}
     </tbody>
   );
