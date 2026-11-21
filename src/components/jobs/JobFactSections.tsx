@@ -225,7 +225,8 @@ export function glanceFacts(job: JobNotification): GlanceFact[] {
     out.push({ label: "Age limit", value: age, href: age === "See notification" ? undefined : "#eligibility" });
     const quals = (job.qualifications || []).filter(Boolean);
     const stated = quals.length > 0 || (job.posts || []).some((p) => p.qualification?.trim());
-    const level = qualificationLabel(job) || (quals.length === 1 && quals[0].length <= 28 ? quals[0] : stated ? "Differs by post" : "See notification");
+    const first = quals.length === 1 ? quals[0].split(/;|\s\(/)[0].trim() : "";
+    const level = qualificationLabel(job) || (first && first.length <= 40 ? first : stated ? "Differs by post" : "See notification");
     out.push({ label: "Qualification", value: level === "Varies by post" ? "Differs by post" : level, href: level === "See notification" ? undefined : "#eligibility" });
   }
   return out;

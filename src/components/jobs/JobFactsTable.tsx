@@ -324,26 +324,72 @@ function ageRows(limits: Limit[]): Row[] {
   return rows;
 }
 
+const capFirst = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+
+/**
+ * Older readings keep the age as one printed sentence. When it lists one limit per category ("General 40 years;
+ * 2A/2B 43 years", "maximum 40 years (general), 43 years (Cat 2A)"), the rows it states; else null (shown as printed).
+ */
+function ageFromText(text: string): { min?: number; rows: { cat: string; max: number }[] } | null {
+  let t = text.trim();
+  const m = t.match(/\bmin(?:imum)?(?:\s*age)?\s*:?\s*(\d{2})\s*years?\s*[;,]?/i);
+  const min = m ? Number(m[1]) : undefined;
+  if (m) t = t.replace(m[0], " ");
+  t = t.replace(/\b(?:upper\s*)?max(?:imum)?(?:\s*age(?:\s*limit)?)?\s*:?/gi, " ").trim();
+  const rows: { cat: string; max: number }[] = [];
+  const bracketed = /(\d{2})\s*years?\s*\(([^)]+)\)/gi;
+  const hits = [...t.matchAll(bracketed)];
+  if (hits.length >= 2 && t.replace(bracketed, "").replace(/[\s,;.]/g, "") === "") {
+    for (const h of hits) rows.push({ cat: h[2].trim(), max: Number(h[1]) });
+  } else {
+    for (const part of t.split(";").map((p) => p.trim().replace(/[.,]$/, "")).filter(Boolean)) {
+      const p = part.match(/^(.+?)\s+(\d{2})\s*years?$/i);
+      if (!p) return null;
+      rows.push({ cat: p[1].replace(/\bcandidates?\b/i, "").trim(), max: Number(p[2]) });
+    }
+  }
+  return rows.length >= 2 && rows.every((r) => r.cat && r.max >= 18 && r.max <= 65) ? { min, rows } : null;
+}
+
+/** The same for an older reading's fee sentence ("Rs 750 (general); Rs 500 (SC, ST); PwBD exempt"); else null. */
+function feeFromText(text: string): { rows: { cat: string; amount: number }[]; notes: string[] } | null {
+  const rows: { cat: string; amount: number }[] = [];
+  const notes: string[] = [];
+  for (const part of text.split(";").map((p) => p.trim().replace(/\.$/, "")).filter(Boolean)) {
+    const a = part.match(/^(?:rs\.?|₹)\s*([\d,]+)(?:\/-)?\s*(?:\((.+)\)|for\s+(.+))$/i);
+    if (a) { rows.push({ cat: (a[2] || a[3]).trim(), amount: Number(a[1].replace(/,/g, "")) }); continue; }
+    const e = part.match(/^(.+?)\s+(?:are\s+|is\s+)?(?:exempt(?:ed)?|nil|no fee)$/i);
+    if (e) { rows.push({ cat: e[1].trim(), amount: 0 }); continue; }
+    if (/\d/.test(part)) return null;
+    notes.push(part);
+  }
+  return rows.length >= 2 ? { rows, notes } : null;
+}
+
 function eligibility(job: JobNotification): Section | null {
   if (!hasEligibility(job)) return null;
   const d = job.details || {};
   const limits = job.ageLimits || [];
   const wording = ageText(job).trim();
+  const printed = !limits.length && wording ? ageFromText(wording) : null;
   const rows: Row[] = [];
   if (limits.length) {
     rows.push(...ageRows(limits));
+  } else if (printed) {
+    printed.rows.forEach((r, i) => rows.push({ key: `age${i}`, label: `Age limit (${capFirst(r.cat)})`,
+      value: <b className="text-ink tabular-nums">{printed.min ? `${printed.min} to ${r.max}` : `Up to ${r.max}`} years</b> }));
   } else {
     rows.push({ key: "age", label: "Age limit", value: wording || "See the official notification" });
   }
-  if (job.ageAsOn || (limits.length && wording)) {
+  if (job.ageAsOn || ((limits.length || printed) && wording)) {
     rows.push({ key: "asOn", label: job.ageAsOn ? "Age counted as on" : "Age rule as printed", value: (
       <>
         {job.ageAsOn && formatDate(job.ageAsOn)}
-        {limits.length > 0 && wording && (
-          job.ageAsOn ? (
+        {(limits.length > 0 || printed) && wording && (
+          job.ageAsOn || printed ? (
             <details className="group mt-1">
               <summary className="inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-navy hover:text-saffron [&::-webkit-details-marker]:hidden">
-                <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden />The age rule as printed
+                <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden />{job.ageAsOn ? "The age rule as printed" : "Show the printed wording"}
               </summary>
               <span className="block pb-1 text-ink-2">{wording.replace(/\b\d{4}-\d{2}-\d{2}\b/g, (d) => formatDate(d))}</span>
             </details>
@@ -424,7 +470,15 @@ function fee(job: JobNotification): Section | null {
       ) });
     }
   } else {
-    rows.push({ key: "fee", label: "Application fee", value: formatFee(job).replace(/\bRs\.?\s*/gi, "₹") });
+    const printed = feeFromText(formatFee(job));
+    if (printed) {
+      rows.push(subhead("fee", "Application fee"));
+      printed.rows.forEach((f, i) => rows.push({ key: `fee${i}`, label: capFirst(f.cat), value: f.amount === 0
+        ? <b className="text-green">No fee</b> : <b className="text-base text-ink tabular-nums">{rupees(f.amount)}</b> }));
+      if (printed.notes.length) rows.push({ key: "feeNote", label: "Note", value: capFirst(printed.notes.join("; ")) });
+    } else {
+      rows.push({ key: "fee", label: "Application fee", value: formatFee(job).replace(/\bRs\.?\s*/gi, "₹") });
+    }
   }
   if (facts.feePaymentMode?.value) rows.push({ key: "pay", label: "How to pay", value: <>{facts.feePaymentMode.value} <PageRef job={job} page={facts.feePaymentMode.page} /></> });
 

@@ -32,7 +32,7 @@ import { JobTaxonomyBar } from "./JobTaxonomyBar";
 import { RelatedOpportunitiesSection } from "./RelatedOpportunitiesSection";
 import { getJobTaxonomyLinks, noticeArea, RelatedOpportunity } from "@/lib/internal-links";
 import { generateJobStructuredData } from "@/lib/structured-data";
-import { isJobApplicationClosed, getJobVerificationMeta, getJobCanonicalPath } from "@/data/jobs";
+import { isJobApplicationClosed, getJobVerificationMeta, getJobCanonicalPath, stageSummary } from "@/data/jobs";
 
 interface Props {
   job: JobNotification;
@@ -155,10 +155,15 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
           >
             {job.isCentral ? "Central" : stateInfo?.name}
           </span>
-          <JobStatusBadge
-            className="shrink-0"
-            status={isClosed && job.status !== "RESULT_OUT" && job.status !== "ADMIT_CARD_OUT" ? "APPLICATIONS_CLOSED" : job.status}
-          />
+          {/* a recruitment under way: where it stands ("Eligibility list out · 16 Oct"), not just "closed" */}
+          {job.inProgress && isClosed && stageSummary(job) ? (
+            <span className="min-w-0 truncate rounded bg-navy-tint px-2 py-1 text-xs font-bold text-navy">{stageSummary(job)}</span>
+          ) : (
+            <JobStatusBadge
+              className="shrink-0"
+              status={isClosed && job.status !== "RESULT_OUT" && job.status !== "ADMIT_CARD_OUT" ? "APPLICATIONS_CLOSED" : job.status}
+            />
+          )}
           <button
             type="button"
             onClick={() => toggleSave(job.id)}
