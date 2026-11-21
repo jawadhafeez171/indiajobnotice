@@ -3,7 +3,7 @@ import Link from "next/link";
 import { POPULAR_STATES, STATES_REGISTRY, STATE_ZONES, StateInfo } from "@/config/states";
 import { getLastCheckedAt } from "@/lib/jobs-store";
 import { getStateSubdomainUrl, getCentralPortalUrl } from "@/lib/subdomains";
-import { ShieldCheck, MapPin, Landmark, ChevronDown } from "lucide-react";
+import { ShieldCheck, Landmark, ChevronDown } from "lucide-react";
 import { TelegramLogo, WhatsAppLogo, InstagramLogo, YouTubeLogo, INSTAGRAM_URL, YOUTUBE_URL } from "./SocialIcons";
 import { BrandLogo } from "./BrandLogo";
 
@@ -24,7 +24,7 @@ const GROUPS: FooterGroup[] = [
     ],
   },
   {
-    title: "Tools",
+    title: "Tools and updates",
     links: [
       { href: "/?stage=exams#major-recruitments", label: "Admit cards and exam dates" },
       { href: "/?stage=results#major-recruitments", label: "Results" },
@@ -119,7 +119,8 @@ export async function Footer() {
             </p>
             {checkedText && (
               <p className="text-xs text-on-navy">
-                We check the official sites three times a day. Last check: <time dateTime={checked || undefined} className="font-semibold text-white">{checkedText} IST</time>.
+                We check the official sites three times a day. Last check: <time dateTime={checked || undefined} className="font-semibold text-white">{checkedText} IST</time>.{" "}
+                <Link href="/editorial-policy" className="inline-flex min-h-[44px] items-center font-semibold text-saffron-light underline underline-offset-2 hover:text-white md:min-h-0">How we check notices</Link>
               </p>
             )}
 
@@ -137,7 +138,7 @@ export async function Footer() {
                 <nav aria-label={g.title}>
                   <ul className="grid grid-cols-2 gap-x-3 px-4 pb-3 text-[13px]">
                     {g.links.map((l) => (
-                      <li key={l.href + l.label}>
+                      <li key={l.href + l.label} className={l.divider ? "col-span-2 border-t border-on-navy-2/25" : undefined}>
                         <FooterAnchor link={l} className="flex items-center min-h-[44px] text-on-navy hover:text-white font-medium" />
                       </li>
                     ))}
@@ -184,18 +185,27 @@ export async function Footer() {
               All 36 states and union territories
               <ChevronDown aria-hidden className="w-4 h-4 text-saffron-light transition-transform group-open:rotate-180" />
             </summary>
-            <ul className="grid grid-cols-2 gap-x-3 px-4 pb-4 text-[13px]">
-              {states.map((st, i) => (
-                <li key={st.slug} className={i === POPULAR_STATES.length ? "col-span-2 mt-1 border-t border-on-navy-2/25 pt-1" : undefined}>
-                  <a href={getStateSubdomainUrl(st.slug)} className="flex items-center min-h-[44px] text-on-navy hover:text-white">
-                    {st.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            {[["Most visited", states.slice(0, POPULAR_STATES.length)], ["All others", states.slice(POPULAR_STATES.length)]].map(([label, list]) => (
+              <div key={label as string} className="px-4 pb-3">
+                <p className="pt-1 text-[12px] font-semibold uppercase tracking-wide text-on-navy-2">{label as string}</p>
+                <ul className="grid grid-cols-2 gap-x-3 text-[13px]">
+                  {(list as StateInfo[]).map((st) => (
+                    <li key={st.slug}>
+                      <a href={getStateSubdomainUrl(st.slug)} className="flex items-center min-h-[44px] text-on-navy hover:text-white">{st.name}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </details>
 
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 text-xs">
+          <div className="hidden md:flex md:flex-wrap md:items-center md:gap-x-5 md:gap-y-1 mb-5 text-[13px]">
+            <span className="font-semibold text-white">Most visited:</span>
+            {states.slice(0, POPULAR_STATES.length).map((st) => (
+              <a key={st.slug} href={getStateSubdomainUrl(st.slug)} className="inline-flex min-h-[28px] items-center font-medium text-on-navy hover:text-saffron-light">{st.name}</a>
+            ))}
+          </div>
+          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 items-start text-xs">
             {STATE_ZONES.map((zone) => {
               const zoneStates = zone.slugs
                 .map((slug) => STATES_REGISTRY.find((s) => s.slug === slug))
@@ -205,7 +215,6 @@ export async function Footer() {
                 <div key={zone.id} className="bg-navy-deep/60 rounded-lg p-3.5 border border-on-navy-2/25 space-y-2">
                   <div className="flex items-center justify-between pb-1.5 border-b border-on-navy-2/25">
                     <span className="font-semibold text-white text-[13px] flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-saffron" />
                       {zone.name}
                     </span>
                     <span className="text-[12px] text-on-navy-2 tabular-nums">{zoneStates.length}</span>
@@ -229,10 +238,10 @@ export async function Footer() {
 
       {/* About this site */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="max-w-3xl rounded-xl bg-navy-deep p-4 md:p-5 border border-on-navy-2/25 text-xs text-on-navy flex flex-row gap-3 md:gap-4 items-start md:items-center">
+        <div className="max-w-2xl rounded-xl bg-navy-deep p-4 md:p-5 border border-on-navy-2/25 text-xs text-on-navy flex flex-row gap-3 md:gap-4 items-start md:items-center">
           <ShieldCheck className="w-6 h-6 md:w-8 md:h-8 text-green shrink-0" />
           <div className="space-y-1 text-[13px] leading-relaxed max-w-[62ch]">
-            <p className="font-bold text-white">About India Job Notice</p>
+            <p className="font-bold text-white">Apply only on the official site.</p>
             <p>
               <strong>India Job Notice</strong> is not a government website. We list recruitments from the official websites of commissions, boards and departments, with a link to each official notification. The site is free to use. We never ask for money, bank details or passwords. Always check the official notification before you apply.
             </p>
