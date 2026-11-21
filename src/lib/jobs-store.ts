@@ -206,7 +206,7 @@ function prepare(jobs: JobNotification[]): JobNotification[] {
 // When each state's official sites were last checked by the agent (view site_state_checks: one row per state,
 // readable by the site's role, 21 Nov). Cached with the job list and refreshed with it after each agent run, so
 // it adds no page rebuilds of its own.
-const stateKey = (name: string) => name.toLowerCase().replace(/s*([^)]*)/g, "").replace(/&/g, "and").replace(/[^a-z]/g, "");
+const stateKey = (name: string) => name.toLowerCase().replace(/\s*\([^)]*\)/g, "").replace(/&/g, "and").replace(/[^a-z]/g, "");
 
 async function loadStateChecks(): Promise<Record<string, string>> {
   const conn = db();
