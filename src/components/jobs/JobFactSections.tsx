@@ -163,7 +163,7 @@ function ageSummary(job: JobNotification): string {
     // one wording everywhere: the lowest minimum to the highest maximum, "(varies)"
     const lows = [...mins].filter(Boolean);
     const top = maxes[maxes.length - 1];
-    return lows.length ? `${Math.min(...lows)} to ${top} years (varies)` : `Up to ${maxes[0]} to ${top} years (varies)`;
+    return lows.length ? `${Math.min(...lows)} to ${top} years (varies)` : `Up to ${maxes[0]}–${top} years (varies)`;
   }
   const t = ageText(job).trim();
   if (t && t.length <= 24) return t;
@@ -172,7 +172,8 @@ function ageSummary(job: JobNotification): string {
   if (range) return `${range[1]}–${range[2]} years`;
   const ages = [...new Set([...t.matchAll(/\b(\d{2})\s*years/gi)].map((m) => Number(m[1])))].sort((a, b) => a - b);
   if (ages.length === 1) return `Up to ${ages[0]} years`;
-  if (ages.length > 1) return `${ages[0]} to ${ages[ages.length - 1]} years (varies)`;
+  // several upper limits ("General 40 years; SC/ST 45 years") are maximums, not a range from 40
+  if (ages.length > 1) return `Up to ${ages[0]}–${ages[ages.length - 1]} years (varies)`;
   return /^see notification/i.test(t) || !t ? "See notification" : "See below";
 }
 
@@ -252,7 +253,7 @@ export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNull
       <>
         {end ? formatDate(end) : "See notification"}
         {end && !closed && daysLeft >= 0 && (
-          <span className="ml-2 whitespace-nowrap font-semibold text-green">
+          <span className={`ml-2 whitespace-nowrap font-semibold ${daysLeft <= 7 ? "text-saffron" : "text-green"}`}>
             {daysLeft === 0 ? "today" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`}
           </span>
         )}

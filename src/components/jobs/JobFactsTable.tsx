@@ -108,9 +108,25 @@ function common(values: string[]): string {
 const nameWords = (t: string) => new Set(t.toLowerCase().match(/[a-z]{4,}/g) || []);
 /** The fuller read's post (postDetails) that is this listed post, by the words of their names. */
 function samePost(a: string, b: string): boolean {
+  const norm = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  if (norm(a) === norm(b)) return true;
   const wa = nameWords(a), wb = nameWords(b);
-  const shared = [...wa].filter((x) => wb.has(x)).length;
-  return shared > 0 && shared >= Math.min(wa.size, wb.size, 3);
+  const [small, big] = wa.size <= wb.size ? [wa, wb] : [wb, wa];
+  return small.size > 0 && [...small].every((x) => big.has(x));
+}
+
+/** The one fuller-read post that is this post; none when two could be (no guessing). */
+function onlyMatch<T extends { post: string }>(items: T[], name: string): T | undefined {
+  const hits = items.filter((x) => samePost(x.post, name));
+  return hits.length === 1 ? hits[0] : undefined;
+}
+
+const textWords = (t: string) => new Set(t.toLowerCase().match(/[a-z0-9]{3,}/g) || []);
+/** Most of a's words are already in b ("Also needed" restating the qualification). */
+function restates(a: string, b: string): boolean {
+  const wa = textWords(a), wb = textWords(b);
+  if (!wa.size || !wb.size) return false;
+  return [...wa].filter((x) => wb.has(x)).length / wa.size >= 0.6;
 }
 
 /** "As per rule 16.2 (post-wise qualifications)" says nothing a reader can use: treated as not stated. */
@@ -161,8 +177,8 @@ function posts(job: JobNotification): Section | null {
         )}
         {(() => {
           // what else this post asks for (marks, TET...), on its own row instead of a separate list
-          const o = (d.postDetails || []).find((x) => x.other && samePost(x.post, p.postName));
-          return o ? <span className="mt-1 block"><span className="text-muted">Also needed: </span>{o.other} <PageRef job={job} page={o.page} /></span> : null;
+          const o = onlyMatch((d.postDetails || []).filter((x) => x.other), p.postName);
+          return o && !restates(o.other, p.qualification) ? <span className="mt-1 block"><span className="text-muted">Also needed: </span>{o.other} <PageRef job={job} page={o.page} /></span> : null;
         })()}
       </>
     ),
@@ -214,7 +230,7 @@ function posts(job: JobNotification): Section | null {
   const req = (d.postDetails || []).filter((p) => p.experience);
   if (req.length) {
     const exp = req.map((p): Row => ({ key: `exp-${p.post}`, stack: true, label: nameOf(p.post), value: <>{p.experience} <PageRef job={job} page={p.page} /></> }));
-    const g = fold(exp, "posts");
+    const g = fold(exp, "entries");
     after.push({ ...g, rows: [subhead("exp", "Experience required"), ...g.rows] });
   }
   return { id: "posts", title: "Posts and vacancies", rows, more: more.length ? more : undefined, noun: "posts", after };
@@ -305,7 +321,7 @@ function eligibility(job: JobNotification): Section | null {
   const varies = (postQuals.size > 1 || quals.length > 1) && (job.posts || []).length > 1;
   rows.push({ key: "qual", label: "Qualification", value: varies
     ? <>Differs by post{qualificationLabel(job) && qualificationLabel(job) !== "Varies by post" ? ` (${qualificationLabel(job)})` : ""}: see <a href="#posts" className="font-semibold text-navy underline underline-offset-2">Posts and vacancies</a></>
-    : quals.length ? quals.join("; ") : "See the official notification." });
+    : quals.length ? [...new Set(quals.map((q) => q.trim().replace(/[.;]+$/, "")))].join("; ") : "See the official notification." });
   for (const [k, label] of [["nationality", "Nationality"], ["domicile", "Domicile"], ["language", "Language"]] as const) {
     const v = d.facts?.[k];
     if (v?.value) rows.push({ key: k, label, value: <>{v.value} <PageRef job={job} page={v.page} /></> });
@@ -396,14 +412,15 @@ function selection(job: JobNotification): Section | null {
       if (!groups.length || groups[groups.length - 1].stage !== p.stage) groups.push({ stage: p.stage, rows: [] });
       groups[groups.length - 1].rows.push(p);
     }
+    const spaced = (t: string) => (t || "").replace(/(\d)([A-Za-z])/g, "$1 $2");
     groups.forEach((g, gi) => {
-      const times = new Set(g.rows.map((p) => p.time));
+      const times = new Set(g.rows.map((p) => spaced(p.time)));
       const sharedTime = g.rows.length > 1 && times.size === 1 ? [...times][0] : "";
       if (groups.length > 1 && g.stage || sharedTime) {
         rows.push({ key: `ps${gi}`, label: <span className="font-bold text-navy">{[groups.length > 1 ? g.stage : "", sharedTime && `Time: ${sharedTime}`].filter(Boolean).join(" · ")}</span>, value: null });
       }
       g.rows.forEach((p, i) => rows.push({ key: `p${gi}-${i}`, label: /^total$/i.test((p.paper || "").trim()) ? <b className="text-ink">Total</b> : p.paper || p.stage || "Paper", value: (
-        <>{join([p.questions && `${p.questions} questions`, p.marks && <b key="m" className="text-ink">{p.marks} marks</b>, !sharedTime && p.time])} <PageRef job={job} page={p.page} /></>
+        <>{join([p.questions && `${p.questions} question${p.questions === "1" ? "" : "s"}`, p.marks && <b key="m" className="text-ink">{p.marks} mark{p.marks === "1" ? "" : "s"}</b>, !sharedTime && spaced(p.time)])} <PageRef job={job} page={p.page} /></>
       ) }));
     });
   }
