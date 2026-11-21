@@ -19,6 +19,8 @@ interface Props {
   heading?: string;
   /** What the list leaves out and where it is. */
   note?: React.ReactNode;
+  /** "What the stage words mean" starts open. */
+  helpOpen?: boolean;
 }
 
 /** Each row's title: the post, its cadre (KK / RPC), and the advert number when two rows still read alike. */
@@ -54,7 +56,7 @@ function Row({ job, title }: { job: JobNotification; title: string }) {
 // Recruitments whose applications have closed and whose exams or results are under way, with the
 // latest official document, as plain rows (11 Nov: the boxed two-column grid ran to many screens).
 // Shown only when there is at least one.
-export function ExamsInProgressSection({ jobs, limit = 12, expandRest = false, place, heading, note }: Props) {
+export function ExamsInProgressSection({ jobs, limit = 12, expandRest = false, place, heading, note, helpOpen = false }: Props) {
   if (!jobs.length) return null;
   const shown = jobs.slice(0, limit);
   const named = titles(jobs);
@@ -67,7 +69,7 @@ export function ExamsInProgressSection({ jobs, limit = 12, expandRest = false, p
       <p className="mt-1 text-sm text-ink-2 max-w-prose">
         Applications have closed; admit cards, answer keys or results are coming out.{note && <> {note}</>}
       </p>
-      <details className="group/h mt-1">
+      <details className="group/h mt-1" open={helpOpen}>
         <summary className="inline-flex min-h-[44px] cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-navy hover:text-saffron [&::-webkit-details-marker]:hidden">
           <ChevronDown className="h-4 w-4 transition-transform group-open/h:rotate-180" aria-hidden />What the stage words mean
         </summary>

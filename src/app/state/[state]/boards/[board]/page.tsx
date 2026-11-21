@@ -14,6 +14,7 @@ import { Board, boardCode, boardHasListings, boardJobs, boardPath, getBoard, get
 import { rowTitle } from "@/components/jobs/JobListCard";
 import { forList } from "@/lib/list-jobs";
 import { safeJson } from "@/lib/json-ld";
+import { stateBoardCount } from "@/components/jobs/StateBoardsSection";
 import { SITE_OG_IMAGES } from "@/lib/site-image";
 import { YEAR } from "@/lib/year";
 import { formatDate, formatDateShort } from "@/lib/utils";
@@ -179,7 +180,8 @@ export default async function BoardPage({ params }: PageProps) {
           <Breadcrumbs items={[{ label: state.name, href: `/state/${state.slug}` }, { label: title }]} className="mb-3" />
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-ink tracking-tight text-balance">
             {board.members ? `${state.name} ${board.slug === "district-courts" ? "District Court" : "District Recruitment Bureau"}` : title}
-            {shownCode && <> ({shownCode})</>} <span className="whitespace-nowrap">Recruitment {YEAR}</span>
+            {shownCode && <> ({shownCode})</>}{" "}
+            <span className="mt-1 block font-sans text-lg sm:text-xl font-semibold text-ink-2">Recruitment {YEAR}</span>
           </h1>
           <p className="mt-1 text-[13px] font-semibold text-ink-2">{KIND[board.group] || board.group} · {state.name}</p>
           <p className="mt-2 text-sm text-ink">
@@ -200,7 +202,6 @@ export default async function BoardPage({ params }: PageProps) {
             </a>
           )}
           {/* what the page holds, in a sentence of its own facts */}
-          {(open.length > 0 || underWay.length > 0) && <p className="mt-3 hidden max-w-[62ch] text-sm leading-relaxed text-ink-2 sm:block">{factsLine}</p>}
           {checkedText && (
             <p className="mt-2 text-[13px] text-muted">
               We last checked {board.members ? "these sites" : "this site"} <time dateTime={checkedAt || undefined}>{checkedText}</time> IST.
@@ -211,12 +212,13 @@ export default async function BoardPage({ params }: PageProps) {
       </section>
 
       <main id="main-content" className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-10">
-        <BoardJobs open={open.map(forList)} underWay={underWay.map(forList)} earlier={earlier.map(forList)} dept={dept} boardName={board.name} />
+        <BoardJobs open={open.map(forList)} underWay={underWay.map(forList)} earlier={earlier.map(forList)} dept={dept} boardName={board.name} stateName={state.name}
+          sitesHref={`/state/${state.slug}#official-sites`} sitesCount={stateBoardCount(state.slug)} />
 
         {(open.length > 0 || underWay.length > 0) && (
-          <section aria-labelledby="about-h" className="border-t border-line pt-6 sm:hidden">
+          <section aria-labelledby="about-h" className="border-t border-line pt-6">
             <h2 id="about-h" className="font-serif text-xl font-bold text-ink">About these notices</h2>
-            <p className="mt-2 text-sm leading-relaxed text-ink-2">{factsLine}</p>
+            <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-ink-2">{factsLine}</p>
           </section>
         )}
 
@@ -257,7 +259,7 @@ export default async function BoardPage({ params }: PageProps) {
 
         <p className="border-t border-line pt-6 text-sm">
           <Link href={`/state/${state.slug}#official-sites`} className="inline-flex min-h-[44px] items-center font-semibold text-navy underline underline-offset-2 hover:text-saffron">
-            Every official site we check for {state.name} →
+            All {stateBoardCount(state.slug)} official sites we check for {state.name} →
           </Link>
         </p>
       </main>
