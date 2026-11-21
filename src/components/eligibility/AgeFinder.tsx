@@ -29,8 +29,8 @@ export interface AgeJob {
 type Verdict = { kind: "general" | "some" | "over" | "under" | "range"; text: string };
 
 // "General", "UR", "GM", "General (ಸಾಮಾನ್ಯ ಅರ್ಹತೆ)", "सामान्य"; not a relaxed group that names General ("PwBD (General/EWS)")
-const RELAXED = /pwbd|pwd|ph|disab|divyang|ex-?s|ex-?serv|widow|sport|depart|in-?service|govt\.? ?emp/i;
-const isGeneral = (c: string) => !c.trim() || (!RELAXED.test(c) && /(gen(eral)?|ur|unreserved|gm|open)|ಸಾಮಾನ್ಯ|सामान्य|अनारक्षित/i.test(c));
+const RELAXED = /pwbd|pwd|\bph\b|disab|divyang|ex-?s|ex-?serv|widow|sport|depart|in-?service|govt\.? ?emp/i;
+const isGeneral = (c: string) => !c.trim() || (!RELAXED.test(c) && /\b(gen(eral)?|ur|unreserved|gm|open)\b|ಸಾಮಾನ್ಯ|सामान्य|अनारक्षित/i.test(c));
 
 function verdict(job: AgeJob, years: number, months: number): Verdict {
   const age = years + months / 12;
