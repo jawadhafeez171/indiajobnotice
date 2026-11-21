@@ -26,7 +26,7 @@ export function NoticeTitle({ text, prefix }: { text: string; prefix?: string })
         ref={ref}
         className={cn(
           "font-serif text-[21px] leading-snug sm:text-[28px] sm:leading-tight font-bold text-ink text-balance print:line-clamp-none",
-          !open && "line-clamp-3 sm:line-clamp-2"
+          !open && text.length + (prefix?.length || 0) > 110 && "line-clamp-3 sm:line-clamp-2"
         )}
       >
         {prefix && <span className="text-saffron">{prefix}: </span>}

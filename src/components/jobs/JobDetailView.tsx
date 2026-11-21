@@ -219,7 +219,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
                 <p className="flex flex-col items-center justify-center px-4 py-2.5 rounded-lg bg-navy-tint text-center">
                   <span className="inline-flex items-center gap-2 font-bold text-sm text-navy">
                     <Clock className="w-4 h-4" aria-hidden />
-                    Applications open {formatDate(opens)}
+                    Opens {formatDate(opens)}{getDaysRemaining(opens) > 0 ? ` · in ${getDaysRemaining(opens)} day${getDaysRemaining(opens) === 1 ? "" : "s"}` : ""}
                   </span>
                   {applyHost && <span className="text-[12px] font-medium text-ink-2">on {applyHost}</span>}
                 </p>
@@ -324,7 +324,7 @@ export function JobDetailView({ job, stateSlug, activeJobs, related, siblings = 
             <p className="flex-1 min-w-0 text-xs text-muted leading-tight">
               {opens ? (
                 <>
-                  <span className="block font-bold text-sm text-ink">Applications open {formatDate(opens)}</span>
+                  <span className="block font-bold text-sm text-ink">Opens {formatDate(opens)}</span>
                   {job.applicationEndDate && `Last date ${formatDate(job.applicationEndDate)}`}
                 </>
               ) : job.applicationEndDate ? (

@@ -144,11 +144,14 @@ export function hasFeeSection(job: JobNotification): boolean {
 function feeSummary(job: JobNotification): string {
   const t = formatFee(job).replace(/\bRs\.?\s*/gi, "₹").trim();
   if (t.length <= 16) return t;
-  const amounts = [...new Set([...t.matchAll(/₹\s?([\d,]+)/g)].map((m) => Number(m[1].replace(/,/g, ""))))].sort((a, b) => a - b);
+  const fees = (job.details?.fees || []).filter((f) => f.amount !== null) as { amount: number }[];
+  const amounts = (fees.length ? [...new Set(fees.map((f) => f.amount).filter((a) => a > 0))]
+    : [...new Set([...t.matchAll(/₹\s?([\d,]+)/g)].map((m) => Number(m[1].replace(/,/g, ""))))]).sort((a, b) => a - b);
   if (!amounts.length) return "See below";
   const rupees = (n: number) => `₹${n.toLocaleString("en-IN")}`;
   const money = amounts.length === 1 ? rupees(amounts[0]) : `${rupees(amounts[0])}–${rupees(amounts[amounts.length - 1])}`;
-  if (/\b(nil|exempt\w*|no fee|free)\b/i.test(t)) return `${money}; some exempt`;
+  const exempt = fees.length ? fees.some((f) => f.amount === 0) : /\b(nil|exempt\w*|no fee|free)\b/i.test(t);
+  if (exempt) return `${money}; some exempt`;
   return amounts.length > 1 ? `${money}, by category` : money;
 }
 
@@ -340,7 +343,7 @@ export function datesOf(job: JobNotification): { steps: Step[]; update?: NonNull
     const open = Boolean(end) && !closed;
     // not every recruitment has an exam or an admit card (some select by marks): name no step the notice does not give
     steps.push({ key: "next", label: "Next stage", sortKey: "", when: "next",
-      value: open ? `To be announced by ${job.orgShortCode} after applications close` : `To be announced by ${job.orgShortCode}` });
+      value: open ? "To be announced on the official website after applications close" : "To be announced on the official website" });
   }
   // a date known only to the month goes after that month's days ("December 2026" after "11 Dec")
   const order = (k: string) => (!k ? "9999" : k.length === 7 ? `${k}-32` : k);

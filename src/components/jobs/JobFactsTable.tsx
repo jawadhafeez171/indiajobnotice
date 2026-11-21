@@ -177,7 +177,7 @@ function posts(job: JobNotification): Section | null {
     value: (
       <>
         {/\d/.test(String(p.vacancies))
-          ? <b className="text-base text-ink tabular-nums">{p.vacancies} post{String(p.vacancies) === "1" ? "" : "s"}</b>
+          ? <b className="text-sm text-ink tabular-nums">{p.vacancies} post{String(p.vacancies) === "1" ? "" : "s"}</b>
           : <span className="text-muted">Number in the notice</span>}
         {pays.size > 1 && p.payLevel !== "See notification" && p.payLevel !== sharedPay && (
           <span className="mt-1 block"><span className="text-muted">Pay: </span>{payText(p.payLevel).replace(/^pay\s*(?=[₹\d])/i, "")}</span>
@@ -346,7 +346,7 @@ function eligibility(job: JobNotification): Section | null {
   const postQuals = new Set((job.posts || []).map((p) => p.qualification.trim()).filter(Boolean));
   const varies = (postQuals.size > 1 || quals.length > 1) && (job.posts || []).length > 1;
   rows.push({ key: "qual", label: "Qualification", value: varies
-    ? <>Differs by post{qualificationLabel(job) && qualificationLabel(job) !== "Varies by post" ? ` (${qualificationLabel(job)})` : ""}: see <a href="#posts" className="font-semibold text-navy underline underline-offset-2">Posts and vacancies</a></>
+    ? <>Differs by post{qualificationLabel(job) && qualificationLabel(job) !== "Varies by post" ? ` (${qualificationLabel(job)})` : ""}: see <a href="#posts" className="-my-3 inline-block py-3 font-semibold text-navy underline underline-offset-2">Posts and vacancies</a></>
     : quals.length ? [...new Set(quals.map((q) => q.trim().replace(/[.;]+$/, "")))].join("; ") : "See the official notification." });
   for (const [k, label] of [["nationality", "Nationality"], ["domicile", "Domicile"], ["language", "Language"]] as const) {
     const v = d.facts?.[k];
@@ -438,7 +438,11 @@ function selection(job: JobNotification): Section | null {
   const own = (d.selectionStages || []).map((s) => s.stage);
   const stages = (own.length ? own : job.selectionProcess || []).map((t) => t.trim().replace(/[,;:.]+$/, "")).filter(Boolean)
     // older notices were stored cut at 120 characters, sometimes mid-word: say it continues in the notice
-    .map((t) => (t.length >= 118 && !/[.)…]$/.test(t) ? `${t.replace(/\s+\S{0,3}$/, "")}… (see the notification)` : t));
+    .map((t) => {
+      if (t.length < 118 || /[.)…]$/.test(t)) return t;
+      const at = Math.max(t.lastIndexOf(", "), t.lastIndexOf("; "), t.lastIndexOf(" then "));
+      return `${at > 40 ? t.slice(0, at) : t.replace(/\s+\S{0,3}$/, "")}… (see the notification)`;
+    });
   const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
   const rows: Row[] = !stages.length ? [] : stages.length === 1
     ? [{ key: "s0", label: "Selection", value: cap(stages[0]) }]
@@ -578,7 +582,7 @@ function Rows({ rows }: { rows: Row[] }) {
             // phones: the post name across the table, its facts under it
             <tr className="align-top sm:hidden">
               <th scope="row" colSpan={2} lang="en" className={`${th} font-normal`}>
-                <span className="block font-semibold text-ink">{slashes(r.label)}</span>
+                <span className="block text-[15px] font-semibold text-ink">{slashes(r.label)}</span>
                 <span className="mt-1 block text-[15px] text-ink">{r.value}</span>
               </th>
             </tr>

@@ -219,9 +219,17 @@ export function stageStatus(stages: JobStage[], today: string): JobStatus | null
 
 export type StageKind = "schedule" | "admit_card" | "answer_key" | "result" | "final_result";
 
-/** A result candidates wait for; a shortlist for the next stage (interview, mains) is not one. */
+/** "Eligibility list" / "Rejected list": lists published as results that only check who goes on, else "". */
+export function stageList(s: JobStage): string {
+  if (s.kind !== "result") return "";
+  if (/disqualif|rejected|not eligible|ineligible/i.test(s.title)) return "Rejected list";
+  if (/eligib|provisional list|scrutiny/i.test(s.title)) return "Eligibility list";
+  return "";
+}
+
+/** A result candidates wait for; a shortlist for the next stage (interview, mains) or an eligibility list is not one. */
 function isResult(s: JobStage): boolean {
-  return (s.kind === "result" || s.kind === "final_result") && !s.shortlist;
+  return (s.kind === "result" || s.kind === "final_result") && !s.shortlist && !stageList(s);
 }
 
 export interface JobStage {
@@ -379,7 +387,7 @@ export function stageSummary(job: JobNotification, today = todayIST()): string |
     }
   }
   const event = stageEvent(last);
-  const parts = [last.shortlist ? "Shortlist out" : event && last.kind === "schedule" ? `${event} schedule out` : STAGE_LABEL[last.kind] || "Update"];
+  const parts = [last.shortlist ? "Shortlist out" : stageList(last) ? "Eligibility list out" : event && last.kind === "schedule" ? `${event} schedule out` : STAGE_LABEL[last.kind] || "Update"];
   if (last.kind === "answer_key") parts.push("result awaited");
   if (last.shortlist && !exam) parts.push("next round to come");
   const examEvent = exam?.stage ? stageEvent(exam.stage).toLowerCase() : "";
