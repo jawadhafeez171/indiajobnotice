@@ -8,7 +8,7 @@ import { SITE_OG_IMAGES } from "@/lib/site-image";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Official privacy policy for IndiaJobNotice.com. Explains data protection practices, log files, cookie policies, Google AdSense & DoubleClick DART cookies, and user rights.",
+  description: "Official privacy policy for IndiaJobNotice.com. Explains data protection practices, log files, Google Analytics, cookie policies, Google AdSense & DoubleClick DART cookies, and user rights.",
   alternates: {
     canonical: "https://www.indiajobnotice.com/privacy-policy",
   },
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPolicyPage() {
-  const lastUpdated = "October 18, 2026";
+  const lastUpdated = "November 24, 2026";
 
   return (
     <div className="min-h-screen flex flex-col bg-canvas">
@@ -70,6 +70,12 @@ export default function PrivacyPolicyPage() {
           <ul className="list-disc pl-5 space-y-2 text-xs text-ink-2">
             <li>
               <strong>Standard Log Files:</strong> Like most standard websites, we utilize log files. Information recorded includes internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamps, referring/exit pages, and number of clicks. This data is not linked to any personally identifiable information and is used exclusively for analyzing traffic patterns, administering the platform, and mitigating denial-of-service threats.
+            </li>
+            <li>
+              <strong>Google Analytics:</strong> We use Google Analytics 4, a web analytics service provided by Google, to understand how visitors use the site (pages viewed, time on page, device and browser type, approximate location and how visitors found us). Google Analytics sets cookies in your browser and sends this usage data to Google; we receive only aggregated reports and do not use it to identify you. Google&apos;s use of this data is described in{" "}
+              <a href="https://policies.google.com/technologies/partner-sites" className="text-navy underline" target="_blank" rel="noopener noreferrer">How Google uses information from sites that use its services</a>. You can block it with the{" "}
+              <a href="https://tools.google.com/dlpage/gaoptout" className="text-navy underline" target="_blank" rel="noopener noreferrer">Google Analytics opt-out browser add-on</a>{" "}
+              or by blocking cookies in your browser settings. We also use Vercel Web Analytics, which counts page views without cookies.
             </li>
             <li>
               <strong>Direct Correspondence:</strong> If you contact our editorial team via email (e.g., to report an errata or request assistance), we may retain your email address and message history solely to reply and correct the circular. We never share or sell correspondence lists.
