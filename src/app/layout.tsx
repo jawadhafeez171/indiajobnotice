@@ -2,6 +2,10 @@ import { safeJson } from "@/lib/json-ld";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { GoogleAnalytics } from "@next/third-parties/google";
+
+// Google Analytics 4: loads only when the Measurement ID (G-...) is set in Vercel's env.
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import "./globals.css";
 import { YEAR } from "@/lib/year";
@@ -112,6 +116,7 @@ export default function RootLayout({
         <ScrollToTop />
         <Analytics />
       </body>
+      {GA_ID ? <GoogleAnalytics gaId={GA_ID} /> : null}
     </html>
   );
 }
