@@ -31,8 +31,10 @@ function istStamp(ts: string): string | null {
 // the year in the title follows the calendar (set when the page is built)
 const YEAR = new Date().getFullYear();
 
+// Google showed "indiajobnotice.com" as the site name (25 Nov): the name now opens the home page title, one of the
+// places Google's site-name system reads (with the WebSite data in the layout and og:site_name)
 export const metadata = {
-  title: `Latest Government Jobs ${YEAR}, Sarkari Naukri Notifications | India Job Notice`,
+  title: { absolute: `India Job Notice: Latest Government Jobs ${YEAR}, Sarkari Naukri Notifications` },
   description: "Government job notifications from official sources across India: last dates, eligibility, admit cards and results for central and state recruitments.",
   alternates: {
     canonical: "https://www.indiajobnotice.com",

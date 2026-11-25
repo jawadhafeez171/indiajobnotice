@@ -61,8 +61,13 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  // Google Search shows a site icon from the home page's icon links: a PNG of a multiple of 48 px is what it asks
+  // for (25 Nov: only the .ico was linked and Google still showed the old icon six days after the 19 Nov change)
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
     shortcut: "/favicon.ico",
     apple: "/apple-icon.png",
   },
