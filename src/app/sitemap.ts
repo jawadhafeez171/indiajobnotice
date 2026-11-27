@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { STATES_REGISTRY } from "@/config/states";
 import { DISTRICTS_REGISTRY } from "@/config/districts";
 import { getJobCanonicalPath, istDate, JobNotification, todayIST } from "@/data/jobs";
-import { getAllJobs } from "@/lib/jobs-store";
+import { getAllJobsFresh } from "@/lib/jobs-store";
 import { STATE_BOARDS } from "@/data/state-boards";
 import { boardDay, boardHasListings, boardPath, getBoardsOfState } from "@/lib/boards";
 import { districtHasOwnJobs, jobInSitemap, stateHasListings } from "@/lib/index-rules";
@@ -13,8 +13,9 @@ import {
   ORGANISATION_HUBS 
 } from "@/data/permanent-categories";
 
-// Route handlers are cached at build time; refresh hourly so newly published jobs are listed.
-export const revalidate = 86400; // daily: hourly rebuilds counted as ISR writes (9 Nov)
+// Made on every request from the current job list (27 Nov): the cached one (daily, then tag "jobs") stayed at the
+// 25 Nov build's list on Vercel. Google fetches it a few times a day; no ISR writes, the R2 download is free.
+export const dynamic = "force-dynamic";
 
 /** The latest of these days (YYYY-MM-DD), never one still ahead; "" when none is known. */
 function latestDay(days: (string | undefined)[], today: string): string {
@@ -35,7 +36,7 @@ function verifiedDay(text?: string): string {
 const lastmod = (day: string) => (day ? { lastModified: day } : {});
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const jobs = await getAllJobs();
+  const jobs = await getAllJobsFresh();
   const baseUrl = "https://www.indiajobnotice.com";
   const today = todayIST();
 

@@ -173,6 +173,15 @@ export async function getAllJobs(): Promise<JobNotification[]> {
   return prepare(await cachedJobs());
 }
 
+/**
+ * Every published job, read now (R2 copy, else the database), past every cache: for the sitemap. On Vercel it kept
+ * the list of its 25 Nov build for days while the pages moved on (27 Nov: 182 jobs published since were missing,
+ * and Google learnt of none of them); the list is ~3.7 MB, over the data cache's 2 MB item limit.
+ */
+export async function getAllJobsFresh(): Promise<JobNotification[]> {
+  return prepare(await loadJobs());
+}
+
 /** Every published job as of the daily copy: for pages that need not change on every refresh (districts). */
 export async function getAllJobsDaily(): Promise<JobNotification[]> {
   return prepare(await cachedJobsDaily());
